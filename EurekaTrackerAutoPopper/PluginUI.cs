@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
+using Dalamud.Game.ClientState.Fates;
 
 namespace ItemVendorLocation
 {
@@ -82,6 +83,7 @@ namespace ItemVendorLocation
                     Task.Run(() =>
                     {
                         SetupNewTracker();
+                        checkForRelevantFates(Plugin.ClientState.TerritoryType);
                     });
                 }
                 if (Instance.Length > 0)
@@ -137,6 +139,8 @@ namespace ItemVendorLocation
 
         private async void SetDataCenter()
         {
+            // not going to set data center until I can figure some things out
+            return;
             uint? dataCenterId = Plugin.ClientState.LocalPlayer?.CurrentWorld.GameData?.DataCenter.Row;
             // keep trying this method until we get the local player
             if (dataCenterId == null)
@@ -152,5 +156,44 @@ namespace ItemVendorLocation
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
         }
 
+        private void checkForRelevantFates(ushort currentTerritory)
+        {
+            List<Fate> newFates = Plugin.FateTable.ToList();
+            Dictionary<ushort, ushort> relevantFateDictionary = new();
+            switch (currentTerritory)
+            {
+                case 827:  // Hydatos
+                    relevantFateDictionary = Plugin.hydatosFates;
+                    break;
+                case 795:  // Pyrost
+                    relevantFateDictionary = Plugin.pyrosFates;
+                    break;
+                case 763:  // Pagos
+                    relevantFateDictionary = Plugin.pagosFates;
+                    break;
+                case 732:  // Anemos
+                    relevantFateDictionary = Plugin.anemosFates;
+                    break;
+            }
+            List<ushort> newRelevantFateIds = newFates.Select(i => i.FateId).Intersect(relevantFateDictionary.Keys.ToList()).ToList();
+            foreach (ushort fateId in newRelevantFateIds)
+            {
+                popNM(relevantFateDictionary[fateId]);
+            }
+        }
+
+        private async void popNM(int nmId)
+        {
+            ClientWebSocket socket = new();
+            await socket.ConnectAsync(new Uri("wss://ffxiv-eureka.com/socket/websocket?vsn=2.0.0"), CancellationToken.None);
+            await socket.SendAsync(Encoding.UTF8.GetBytes($"[\"1\",\"1\",\"instance:{Instance}\",\"phx_join\",{{\"password\":\"{Password}\"}}]"), WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
+            await socket.SendAsync(Encoding.UTF8.GetBytes($"[\"2\",\"2\",\"instance:{Instance}\",\"set_kill_time\",{{\"id\":{nmId},\"time\":{getEpochTime()}}}]"), WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
+            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
+        }
+
+        private long getEpochTime()
+        {
+            return (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+        }
     }
 }

@@ -152,35 +152,23 @@ namespace UIDev
             _ = await socket.ReceiveAsync(segment, System.Threading.CancellationToken.None);
             _ = await socket.ReceiveAsync(segment, System.Threading.CancellationToken.None);
             string result = Encoding.UTF8.GetString(buffer);
-            dynamic deserializedResult = JsonConvert.DeserializeObject(result)!;
-            IEnumerable<dynamic> data = ((IEnumerable<dynamic>)deserializedResult[4].data).Where(i => i.relationships.zone.data.id == 1);
-            if (data.Count() == 0)
+            try
+            {
+                dynamic deserializedResult = JsonConvert.DeserializeObject(result)!;
+                IEnumerable<dynamic> data = ((IEnumerable<dynamic>)deserializedResult[4].data).Where(i => i.relationships.zone.data.id == 1);
+                if (data.Count() == 0)
+                {
+                    return;
+                }
+
+                var instance = ((Newtonsoft.Json.Linq.JValue)data.First().id).Value;
+            }
+            catch (Newtonsoft.Json.JsonReaderException)
             {
                 return;
             }
 
-            var instance = ((Newtonsoft.Json.Linq.JValue)data.First().id).Value;
-
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, System.Threading.CancellationToken.None);
-        }
-
-        class Attributes
-        {
-            public string id;
-            public Relationships relationship;
-        }
-        class Relationships
-        {
-            public Zone zone;
-        }
-        class Zone
-        {
-            public Data data;
-        }
-        class Data
-        {
-            public string id;
-            public string type;
         }
     }
 }

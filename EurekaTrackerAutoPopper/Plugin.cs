@@ -36,7 +36,7 @@ namespace ItemVendorLocation
         private List<Fate> lastPolledFates = new();
         private ushort lastPolledTerritory;
 
-        private static Dictionary<ushort, ushort> anemosFates = new()
+        public static Dictionary<ushort, ushort> anemosFates = new()
         {
             { 1332, 1 },   // Unsafety Dance                     => Sabotender Corrido
             { 1348, 2 },   // The Shadow over Anemos             => The Lord of Anemos
@@ -60,7 +60,7 @@ namespace ItemVendorLocation
             { 1329, 20 },  // Wail in the Willows                => Pazuzu
         };
 
-        private static Dictionary<ushort, ushort> pagosFates = new()
+        public static Dictionary<ushort, ushort> pagosFates = new()
         {
             { 1351, 21 },  // Eternity                       => The Snow Queen
             { 1369, 22 },  // Cairn Blight 451               => Taxim
@@ -81,7 +81,7 @@ namespace ItemVendorLocation
             { 1364, 37 },  // Louhi on Ice                   => Louhi
         };
 
-        private static Dictionary<ushort, ushort> pyrosFates = new()
+        public static Dictionary<ushort, ushort> pyrosFates = new()
         {
             { 1388, 38 },  // Medias Res             => Leucosia
             { 1389, 39 },  // High Voltage           => Flauros
@@ -102,7 +102,7 @@ namespace ItemVendorLocation
             { 1404, 54 }   // Lost Epic              => Penthesilea
         };
 
-        private static Dictionary<ushort, ushort> hydatosFates = new()
+        public static Dictionary<ushort, ushort> hydatosFates = new()
         {
             { 1412, 55 },  // I Ink, Therefore I Am          => Khalamari
             { 1413, 56 },  // From Tusk till Dawn            => Stegodon
@@ -229,6 +229,8 @@ namespace ItemVendorLocation
 
         private async void SetDataCenter()
         {
+            // not going to set data center until I can figure somet things out
+            return;
             uint? dataCenterId = ClientState.LocalPlayer?.CurrentWorld.GameData?.DataCenter.Row;
             // keep trying this method until we get the local player
             if (dataCenterId == null)
@@ -353,26 +355,35 @@ namespace ItemVendorLocation
             _ = await socket.ReceiveAsync(segment, CancellationToken.None);
             _ = await socket.ReceiveAsync(segment, CancellationToken.None);
             string result = Encoding.UTF8.GetString(buffer);
-            dynamic deserializedResult = JsonConvert.DeserializeObject(result)!;
-            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
-            IEnumerable<dynamic> data = ((IEnumerable<dynamic>)deserializedResult[4].data).Where(i => i.relationships.zone.data.id == zoneId);
-            if (data.Count() == 0)
+            try
             {
-                // SetupNewTracker(); let's not set up a new tracker by default for now
-                return;
-            }
-            else
-            {
-                Logger.LogDebug("Found existing tracker");
-                string? instance = (string?)((Newtonsoft.Json.Linq.JValue)data.First().id).Value;
-                if (instance == null)
+                dynamic deserializedResult = JsonConvert.DeserializeObject(result)!;
+                IEnumerable<dynamic> data = ((IEnumerable<dynamic>)deserializedResult[4].data).Where(i => i.relationships.zone.data.id == zoneId);
+                if (data.Count() == 0)
                 {
-                    Logger.LogError("Problem getting Eureka instance");
+                    // SetupNewTracker(); let's not set up a new tracker by default for now
                     return;
                 }
-                Chat.PrintChat(new Dalamud.Game.Text.XivChatEntry { Message = $"[{Name}] Join existing tracker: https://ffxiv-eureka.com/{instance}" });
-                PluginUi.Instance = instance;
-                ImGui.SetClipboardText($"https://ffxiv-eureka.com/{instance}");
+                else
+                {
+                    Logger.LogDebug("Found existing tracker");
+                    string? instance = (string?)((Newtonsoft.Json.Linq.JValue)data.First().id).Value;
+                    if (instance == null)
+                    {
+                        Logger.LogError("Problem getting Eureka instance");
+                        return;
+                    }
+                    Chat.PrintChat(new Dalamud.Game.Text.XivChatEntry { Message = $"[{Name}] Join existing tracker: https://ffxiv-eureka.com/{instance}" });
+                    PluginUi.Instance = instance;
+                    ImGui.SetClipboardText($"https://ffxiv-eureka.com/{instance}");
+                }
+            }
+            catch (JsonReaderException)
+            {
+            }
+            finally
+            {
+                await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
             }
         }
     }
