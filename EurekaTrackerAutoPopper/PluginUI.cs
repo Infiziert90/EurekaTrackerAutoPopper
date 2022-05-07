@@ -1,37 +1,37 @@
-﻿using Dalamud.Game.Text.SeStringHandling.Payloads;
-using ImGuiNET;
+﻿using ImGuiNET;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using Dalamud.DrunkenToad;
 using System.Diagnostics;
-using System.IO;
-using Newtonsoft.Json;
-using System.Net;
-using System.Text;
-using System.Threading;
-using System.Net.WebSockets;
 using System.Threading.Tasks;
-using Dalamud.Game.ClientState.Fates;
+using System.Collections.Generic;
 
-namespace ItemVendorLocation
+namespace EurekaTrackerAutoPopper
 {
     // It is good to have this be disposable in general, in case you ever need it
     // to do any cleanup
     internal class PluginUI : IDisposable
     {
-        private readonly Configuration configuration;
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Won't change")]
+        private Configuration Configuration { get; init; }
+        private Plugin Plugin { get; init; }
 
         private bool settingsVisible = false;
         private string instance = "";
         private string password = "";
+        private bool echoNMPop = true;
+        private bool playSoundEffect = true;
+        private int soundEffect = 36;
+
+        public bool EchoNMPop => echoNMPop;
+        public bool PlaySoundEffect => playSoundEffect;
+        public uint SoundEffect => (uint)soundEffect;
 
         public bool SettingsVisible
         {
             get => settingsVisible;
             set => settingsVisible = value;
         }
+
 
         public string Instance
         {
@@ -45,9 +45,10 @@ namespace ItemVendorLocation
             set => password = value;
         }
 
-        public PluginUI(Configuration configuration)
+        public PluginUI(Configuration configuration, Plugin plugin)
         {
-            this.configuration = configuration;
+            Configuration = configuration;
+            Plugin = plugin;
         }
 
         public void Dispose()
@@ -74,21 +75,45 @@ namespace ItemVendorLocation
 
             ImGui.SetNextWindowSize(new Vector2(375, 330), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSizeConstraints(new Vector2(375, 330), new Vector2(float.MaxValue, float.MaxValue));
-            if (ImGui.Begin("Test", ref settingsVisible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoCollapse))
+            if (ImGui.Begin("Eureka Tracker Auto Popper", ref settingsVisible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoCollapse))
             {
-                _ = ImGui.InputText("Instance", ref instance, 50);
+                ImGui.Checkbox("Echo NM pops", ref echoNMPop);
+                ImGui.Checkbox("Play Sound when NM pops", ref playSoundEffect);
+                _ = ImGui.InputText("Instance", ref instance, 6);
+                if (!string.IsNullOrEmpty(instance))
+                {
+                    ImGui.SameLine();
+                    if (Dalamud.Interface.Components.ImGuiComponents.IconButton(1, Dalamud.Interface.FontAwesomeIcon.Clipboard))
+                    {
+                        ImGui.SetClipboardText(instance);
+                    }
+                }
                 _ = ImGui.InputText("Password", ref password, 50);
-                if (ImGui.Button("Start New Tracker"))
+                if (!string.IsNullOrEmpty(password))
+                {
+                    ImGui.SameLine();
+                    if (Dalamud.Interface.Components.ImGuiComponents.IconButton(2, Dalamud.Interface.FontAwesomeIcon.Clipboard))
+                    {
+                        ImGui.SetClipboardText(password);
+                    }
+                }
+                if (Plugin.PlayerInEureka && string.IsNullOrEmpty(instance) && ImGui.Button("Start New Tracker"))
                 {
                     Task.Run(() =>
                     {
-                        SetupNewTracker();
-                        checkForRelevantFates(Plugin.ClientState.TerritoryType);
+                        bool previousSoundEffectSetting = playSoundEffect;
+                        bool previousEchoNMPopSetting = echoNMPop;
+                        (instance, password) = EurekaTrackerWrapper.WebRequests.CreateNewTracker(Library.TerritoryToTrackerDictionary[Plugin.ClientState.TerritoryType]);
+                        playSoundEffect = false;
+                        echoNMPop = false;
+                        Plugin.ProcessCurrentFates(Plugin.ClientState.TerritoryType);
+                        playSoundEffect = previousSoundEffectSetting;
+                        echoNMPop = previousEchoNMPopSetting;
                     });
                 }
                 if (Instance.Length > 0)
                 {
-                    if (ImGui.Button("Open Tracker in Browser"))
+                    if (Dalamud.Interface.Components.ImGuiComponents.IconButton(Dalamud.Interface.FontAwesomeIcon.Globe))
                     {
                         _ = Process.Start(new ProcessStartInfo()
                         {
@@ -96,104 +121,31 @@ namespace ItemVendorLocation
                             UseShellExecute = true
                         });
                     }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetTooltip("Open Tracker in Browser");
+                    }
                 }
+#if DEBUG
+                //ImGui.InputInt("Sound Effect Number", ref soundEffect);
+                //if (ImGui.Button("Test Sound"))
+                //{
+                //    Plugin.PlaySoundEffect((uint)soundEffect);
+                //}
+                //if (Library.TerritoryToFateDictionary.ContainsKey(Plugin.ClientState.TerritoryType))
+                //{
+                //    List<Library.EurekaFate> fates = Library.TerritoryToFateDictionary[Plugin.ClientState.TerritoryType];
+                //    foreach (Library.EurekaFate fate in fates)
+                //    {
+                //        if (ImGui.Button($"Test Pop Echo for {fate.name}"))
+                //        {
+                //            Plugin.EchoNMPop(fate);
+                //        }
+                //    }
+                //}
+#endif
                 ImGui.End();
             }
-        }
-
-        private void SetupNewTracker()
-        {
-            ushort zoneId = 0;
-            switch (Plugin.ClientState.TerritoryType)
-            {
-                case 827:  // Hydatos
-                    zoneId = 4;
-                    break;
-                case 795:  // Pyros
-                    zoneId = 3;
-                    break;
-                case 763:  // Pagos
-                    zoneId = 2;
-                    break;
-                case 732:  // Anemos
-                    zoneId = 1;
-                    break;
-            }
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ffxiv-eureka.com/api/instances");
-            request.Method = "POST";
-            request.Headers.Add("Content-Type:application/json");
-            request.GetRequestStream().Write(Encoding.UTF8.GetBytes($"{{\"data\":{{\"attributes\":{{\"zone-id\":\"{zoneId}\"}},\"type\":\"instances\"}}}}"));
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                StreamReader reader = new(response.GetResponseStream());
-                string result = reader.ReadToEnd();
-                dynamic deserializedResult = JsonConvert.DeserializeObject(result)!;
-                string instance = deserializedResult.data.id;
-                string password = deserializedResult.data.attributes.password;
-                Instance = instance;
-                Password = password;
-                SetDataCenter();
-            }
-        }
-
-        private async void SetDataCenter()
-        {
-            // not going to set data center until I can figure some things out
-            return;
-            uint? dataCenterId = Plugin.ClientState.LocalPlayer?.CurrentWorld.GameData?.DataCenter.Row;
-            // keep trying this method until we get the local player
-            if (dataCenterId == null)
-            {
-                Thread.Sleep(500);
-                SetDataCenter();
-                return;
-            }
-            ClientWebSocket socket = new();
-            await socket.ConnectAsync(new Uri("wss://ffxiv-eureka.com/socket/websocket?vsn=2.0.0"), CancellationToken.None);
-            await socket.SendAsync(Encoding.UTF8.GetBytes($"[\"1\",\"1\",\"instance:{Instance}\",\"phx_join\",{{\"password\":\"{Password}\"}}]"), WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
-            await socket.SendAsync(Encoding.UTF8.GetBytes($"[\"2\",\"2\",\"instance:{Instance}\",\"set_instance_information\",{{\"data_center_id\":{dataCenterId}}}]"), WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
-            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
-        }
-
-        private void checkForRelevantFates(ushort currentTerritory)
-        {
-            List<Fate> newFates = Plugin.FateTable.ToList();
-            Dictionary<ushort, ushort> relevantFateDictionary = new();
-            switch (currentTerritory)
-            {
-                case 827:  // Hydatos
-                    relevantFateDictionary = Plugin.hydatosFates;
-                    break;
-                case 795:  // Pyrost
-                    relevantFateDictionary = Plugin.pyrosFates;
-                    break;
-                case 763:  // Pagos
-                    relevantFateDictionary = Plugin.pagosFates;
-                    break;
-                case 732:  // Anemos
-                    relevantFateDictionary = Plugin.anemosFates;
-                    break;
-            }
-            List<ushort> newRelevantFateIds = newFates.Select(i => i.FateId).Intersect(relevantFateDictionary.Keys.ToList()).ToList();
-            foreach (ushort fateId in newRelevantFateIds)
-            {
-                popNM(relevantFateDictionary[fateId]);
-            }
-        }
-
-        private async void popNM(int nmId)
-        {
-            ClientWebSocket socket = new();
-            await socket.ConnectAsync(new Uri("wss://ffxiv-eureka.com/socket/websocket?vsn=2.0.0"), CancellationToken.None);
-            await socket.SendAsync(Encoding.UTF8.GetBytes($"[\"1\",\"1\",\"instance:{Instance}\",\"phx_join\",{{\"password\":\"{Password}\"}}]"), WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
-            await socket.SendAsync(Encoding.UTF8.GetBytes($"[\"2\",\"2\",\"instance:{Instance}\",\"set_kill_time\",{{\"id\":{nmId},\"time\":{getEpochTime()}}}]"), WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
-            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
-        }
-
-        private long getEpochTime()
-        {
-            return (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
     }
 }

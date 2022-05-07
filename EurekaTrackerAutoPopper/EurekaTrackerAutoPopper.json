@@ -4,6 +4,7 @@
   "DalamudApiLevel": 6,
   "Description": "Automatically pops NMs in the Eureka Tracker",
   "InternalName": "eurekaTrackerAutoPopper",
+  "Punchline":  "",
   "Name": "Eureka Tracker Auto Popper",
   "RepoUrl": "https://github.com/electr0sheep/EurekaTrackerAutoPopper",
   "Tags": [

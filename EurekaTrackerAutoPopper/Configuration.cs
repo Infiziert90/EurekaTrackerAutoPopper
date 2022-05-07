@@ -2,7 +2,7 @@
 using Dalamud.Plugin;
 using System;
 
-namespace ItemVendorLocation
+namespace EurekaTrackerAutoPopper
 {
     [Serializable]
     public class Configuration : IPluginConfiguration
