@@ -132,7 +132,7 @@ namespace EurekaTrackerAutoPopper
             List<Library.EurekaFate> relevantCurrentFates = relevantFates.Where(i => currentFates.Select(i => i.FateId).Contains(i.fateId)).ToList();
             foreach (Library.EurekaFate fate in relevantCurrentFates)
             {
-                if (fate.trackerId != null)
+                if (fate.trackerId != null && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
                 {
                     EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.trackerId, PluginUi.Instance, PluginUi.Password);
                 }
@@ -143,7 +143,7 @@ namespace EurekaTrackerAutoPopper
         {
             EchoNMPop(fate);
             PlaySoundEffect(PluginUi.SoundEffect);
-            if (fate.trackerId != null)
+            if (fate.trackerId != null && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
             {
                 EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.trackerId, PluginUi.Instance, PluginUi.Password);
             }
