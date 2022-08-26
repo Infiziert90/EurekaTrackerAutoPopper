@@ -44,8 +44,14 @@ namespace EurekaTrackerAutoPopper.EurekaTrackerWrapper
         public static async Task<string?> FindTracker(uint dataCenterId, short zoneId)
         {
             ClientWebSocket socket = new();
-            await socket.ConnectAsync(new Uri("wss://ffxiv-eureka.com/socket/websocket?vsn=2.0.0"), CancellationToken.None);
-            await socket.SendAsync(Encoding.UTF8.GetBytes($"[\"1\",\"1\",\"datacenter:{dataCenterId}\",\"phx_join\",{{}}]"), WebSocketMessageType.Text, true, CancellationToken.None);
+            try {
+                await socket.ConnectAsync(new Uri("wss://ffxiv-eureka.com/socket/websocket?vsn=2.0.0"), CancellationToken.None);
+                await socket.SendAsync(Encoding.UTF8.GetBytes($"[\"1\",\"1\",\"datacenter:{dataCenterId}\",\"phx_join\",{{}}]"), WebSocketMessageType.Text, true, CancellationToken.None);
+            }
+            catch
+            {
+                return null;
+            }
             byte[]? buffer = new byte[60000];
             ArraySegment<byte> segment = new(buffer);
             _ = await socket.ReceiveAsync(segment, CancellationToken.None);
