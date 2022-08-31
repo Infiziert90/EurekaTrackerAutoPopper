@@ -4,6 +4,9 @@ using System.Numerics;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Dalamud.Game.Text;
+using XivCommon.Functions;
+using Dalamud.Game.Text.SeStringHandling;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -99,11 +102,11 @@ namespace EurekaTrackerAutoPopper
                 }
                 if (Plugin.PlayerInEureka && string.IsNullOrEmpty(instance) && ImGui.Button("Start New Tracker"))
                 {
-                    Task.Run(() =>
+                    Task.Run(async () =>
                     {
                         bool previousSoundEffectSetting = playSoundEffect;
                         bool previousEchoNMPopSetting = echoNMPop;
-                        (instance, password) = EurekaTrackerWrapper.WebRequests.CreateNewTracker(Library.TerritoryToTrackerDictionary[Plugin.ClientState.TerritoryType]);
+                        (instance, password) = await EurekaTrackerWrapper.WebRequests.CreateNewTracker(Library.TerritoryToTrackerDictionary[Plugin.ClientState.TerritoryType]);
                         playSoundEffect = false;
                         echoNMPop = false;
                         Plugin.ProcessCurrentFates(Plugin.ClientState.TerritoryType);
