@@ -1,7 +1,5 @@
 {
-  "ApplicableVersion": "any",
   "Author": "electr0sheep",
-  "DalamudApiLevel": 6,
   "Description": "Automatically pops NMs in the Eureka Tracker",
   "InternalName": "eurekaTrackerAutoPopper",
   "Punchline":  "",
