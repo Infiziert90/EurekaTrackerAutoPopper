@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<Authors>electr0sheep</Authors>
 		<Company></Company>
-		<Version>0.0.0.2</Version>
+		<Version>0.0.0.3</Version>
 		<Description>XIV Launcher plugin for item vendors</Description>
 		<Copyright></Copyright>
 		<PackageProjectUrl></PackageProjectUrl>
@@ -12,7 +12,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net7.0-windows</TargetFramework>
 		<Platforms>x64</Platforms>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
@@ -39,7 +39,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Dalamud.DrunkenToad" Version="1.2.1" />
-		<PackageReference Include="DalamudPackager" Version="2.1.8" />
+		<PackageReference Include="DalamudPackager" Version="2.1.10" />
 		<PackageReference Include="ILRepack" Version="2.0.18" />
 		<PackageReference Include="XivCommon" Version="6.0.2" />
 		<Reference Include="FFXIVClientStructs">
