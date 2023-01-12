@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Dalamud.Game.Text;
 using XivCommon.Functions;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Interface;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -24,10 +25,13 @@ namespace EurekaTrackerAutoPopper
         private bool echoNMPop = true;
         private bool playSoundEffect = true;
         private int soundEffect = 36;
+        private bool showPopToast = true;
 
         public bool EchoNMPop => echoNMPop;
         public bool PlaySoundEffect => playSoundEffect;
         public uint SoundEffect => (uint)soundEffect;
+
+        public bool ShowPopToast => showPopToast;
 
         public bool SettingsVisible
         {
@@ -82,23 +86,35 @@ namespace EurekaTrackerAutoPopper
             {
                 ImGui.Checkbox("Echo NM pops", ref echoNMPop);
                 ImGui.Checkbox("Play Sound when NM pops", ref playSoundEffect);
+                ImGui.Checkbox("Show Toast when NM pops", ref showPopToast);
+                
+                ImGuiHelpers.ScaledDummy(10);
+                ImGui.Separator();
+                ImGuiHelpers.ScaledDummy(5);
+                ImGui.TextUnformatted("Tracker:");
+                ImGuiHelpers.ScaledDummy(10);
+                
                 _ = ImGui.InputText("Instance", ref instance, 6);
                 if (!string.IsNullOrEmpty(instance))
                 {
                     ImGui.SameLine();
-                    if (Dalamud.Interface.Components.ImGuiComponents.IconButton(1, Dalamud.Interface.FontAwesomeIcon.Clipboard))
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    if (ImGui.Button($"{FontAwesomeIcon.Clipboard.ToIconString()}##instance_copy"))
                     {
                         ImGui.SetClipboardText(instance);
                     }
+                    ImGui.PopFont();
                 }
                 _ = ImGui.InputText("Password", ref password, 50);
                 if (!string.IsNullOrEmpty(password))
                 {
                     ImGui.SameLine();
-                    if (Dalamud.Interface.Components.ImGuiComponents.IconButton(2, Dalamud.Interface.FontAwesomeIcon.Clipboard))
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    if (ImGui.Button($"{FontAwesomeIcon.Clipboard.ToIconString()}##password_copy"))
                     {
                         ImGui.SetClipboardText(password);
                     }
+                    ImGui.PopFont();
                 }
                 if (Plugin.PlayerInEureka && string.IsNullOrEmpty(instance) && ImGui.Button("Start New Tracker"))
                 {

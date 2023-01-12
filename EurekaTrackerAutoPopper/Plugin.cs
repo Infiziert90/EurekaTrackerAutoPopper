@@ -11,6 +11,7 @@ using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState;
 using Dalamud.Game;
 using System.Threading;
+using Dalamud.Game.Gui.Toast;
 using ImGuiNET;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text;
@@ -29,6 +30,7 @@ namespace EurekaTrackerAutoPopper
 
         [PluginService] public static ChatGui Chat { get; private set; } = null!;
         [PluginService] public static GameGui GameGui { get; private set; } = null!;
+        [PluginService] public static ToastGui Toast { get; private set; } = null!;
         [PluginService] public static Dalamud.Data.DataManager DataManager { get; private set; } = null!;
         [PluginService] public static FateTable FateTable { get; private set; } = null!;
         [PluginService] public static Framework Framework { get; private set; } = null!;
@@ -49,7 +51,7 @@ namespace EurekaTrackerAutoPopper
                 HelpMessage = "Opens the config window",
                 ShowInHelp = true
             });
-
+            
             DalamudPluginInterface.UiBuilder.Draw += DrawUI;
             DalamudPluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
 
@@ -66,7 +68,7 @@ namespace EurekaTrackerAutoPopper
         {
             DrawConfigUI();
         }
-
+        
         private void TerritoryChangePoll(object? sender, ushort territoryId)
         {
             if (PlayerInRelevantTerritory())
@@ -159,12 +161,18 @@ namespace EurekaTrackerAutoPopper
 
         public void EchoNMPop(Library.EurekaFate fate)
         {
+            SeString payload = new();
+            _ = payload.Append($"{fate.name} pop: ");
+            _ = payload.Append(fate.mapLinkPayload);
+            
             if (PluginUi.EchoNMPop)
             {
-                SeString payload = new();
-                _ = payload.Append($"{fate.name} pop: ");
-                _ = payload.Append(fate.mapLinkPayload);
                 Chat.PrintChat(new XivChatEntry { Message = payload });
+            }
+
+            if (PluginUi.ShowPopToast)
+            {
+                Toast.ShowQuest(payload);
             }
         }
 
