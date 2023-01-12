@@ -3,10 +3,7 @@ using System;
 using System.Numerics;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Dalamud.Game.Text;
-using XivCommon.Functions;
-using Dalamud.Game.Text.SeStringHandling;
+using System.Linq;
 using Dalamud.Interface;
 
 namespace EurekaTrackerAutoPopper
@@ -26,12 +23,16 @@ namespace EurekaTrackerAutoPopper
         private bool playSoundEffect = true;
         private int soundEffect = 36;
         private bool showPopToast = true;
+        private bool copyChatFormat = true;
+        private bool useShortNames = true;
 
         public bool EchoNMPop => echoNMPop;
         public bool PlaySoundEffect => playSoundEffect;
         public uint SoundEffect => (uint)soundEffect;
 
         public bool ShowPopToast => showPopToast;
+        public bool CopyChatFormat => copyChatFormat;
+        public bool UseShortNames => useShortNames;
 
         public bool SettingsVisible
         {
@@ -84,10 +85,55 @@ namespace EurekaTrackerAutoPopper
             ImGui.SetNextWindowSizeConstraints(new Vector2(375, 330), new Vector2(float.MaxValue, float.MaxValue));
             if (ImGui.Begin("Eureka Tracker Auto Popper", ref settingsVisible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoCollapse))
             {
+                if (ImGui.BeginTabBar("##setting-tabs"))
+                {
+                    // Renders General Settings Tab
+                    TabGeneral();
+
+                    // Renders Chat Tab
+                    TabChat();
+
+#if DEBUG
+                    //Renders Debug Tab
+                    TabDebug();
+#endif
+                    
+                    ImGui.EndTabBar();
+                }
+#if DEBUG
+                //ImGui.InputInt("Sound Effect Number", ref soundEffect);
+                //if (ImGui.Button("Test Sound"))
+                //{
+                //    Plugin.PlaySoundEffect((uint)soundEffect);
+                //}
+                //if (Library.TerritoryToFateDictionary.ContainsKey(Plugin.ClientState.TerritoryType))
+                //{
+                //    List<Library.EurekaFate> fates = Library.TerritoryToFateDictionary[Plugin.ClientState.TerritoryType];
+                //    foreach (Library.EurekaFate fate in fates)
+                //    {
+                //        if (ImGui.Button($"Test Pop Echo for {fate.name}"))
+                //        {
+                //            Plugin.EchoNMPop(fate);
+                //        }
+                //    }
+                //}
+#endif
+                ImGui.End();
+            }
+        }
+
+        public void TabGeneral()
+        {
+            if (ImGui.BeginTabItem("General###general-tab"))
+            {
                 ImGui.Checkbox("Echo NM pops", ref echoNMPop);
                 ImGui.Checkbox("Play Sound when NM pops", ref playSoundEffect);
                 ImGui.Checkbox("Show Toast when NM pops", ref showPopToast);
-                
+                if (echoNMPop || showPopToast)
+                {
+                    ImGui.Checkbox("Show Short Names", ref useShortNames);
+                }
+
                 ImGuiHelpers.ScaledDummy(10);
                 ImGui.Separator();
                 ImGuiHelpers.ScaledDummy(5);
@@ -132,7 +178,8 @@ namespace EurekaTrackerAutoPopper
                 }
                 if (Instance.Length > 0)
                 {
-                    if (Dalamud.Interface.Components.ImGuiComponents.IconButton(Dalamud.Interface.FontAwesomeIcon.Globe))
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    if (ImGui.Button($"{FontAwesomeIcon.Globe.ToIconString()}##globe_btn"))
                     {
                         _ = Process.Start(new ProcessStartInfo()
                         {
@@ -140,30 +187,90 @@ namespace EurekaTrackerAutoPopper
                             UseShellExecute = true
                         });
                     }
+                    ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.SetTooltip("Open Tracker in Browser");
                     }
                 }
-#if DEBUG
-                //ImGui.InputInt("Sound Effect Number", ref soundEffect);
-                //if (ImGui.Button("Test Sound"))
-                //{
-                //    Plugin.PlaySoundEffect((uint)soundEffect);
-                //}
-                //if (Library.TerritoryToFateDictionary.ContainsKey(Plugin.ClientState.TerritoryType))
-                //{
-                //    List<Library.EurekaFate> fates = Library.TerritoryToFateDictionary[Plugin.ClientState.TerritoryType];
-                //    foreach (Library.EurekaFate fate in fates)
-                //    {
-                //        if (ImGui.Button($"Test Pop Echo for {fate.name}"))
-                //        {
-                //            Plugin.EchoNMPop(fate);
-                //        }
-                //    }
-                //}
-#endif
-                ImGui.End();
+                
+                ImGui.EndTabItem();
+            }
+        }
+
+        public void TabChat()
+        {
+            if (ImGui.BeginTabItem("Chat###chat-tab"))
+            {
+                ImGui.Checkbox("Copy when NM pops", ref copyChatFormat);
+                
+                ImGuiHelpers.ScaledDummy(5);
+                ImGui.TextUnformatted("Format:");
+                ImGuiHelpers.ScaledDummy(10);
+                
+                var chatFormat = Configuration.ChatFormat;
+                ImGui.InputText("##input-chatformat", ref chatFormat, 30);
+                if (chatFormat != Configuration.ChatFormat)
+                {
+                    Configuration.ChatFormat = chatFormat;
+                    Configuration.Save();
+                }
+                
+                ImGuiHelpers.ScaledDummy(5);
+                
+                ImGui.TextUnformatted("$n = Full Name");
+                ImGui.TextUnformatted("$sN = Short Name");
+                ImGui.TextDisabled("$p = MapFlag (disabled)");
+                
+                ImGuiHelpers.ScaledDummy(10);
+                
+                if (Plugin.LastSeenFate != null)
+                {
+                    ImGui.TextUnformatted("Last seen fate:");
+                    ImGui.TextUnformatted(Plugin.LastSeenFate.name);
+                    ImGui.SameLine();
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    if (ImGui.Button($"{FontAwesomeIcon.Clipboard.ToIconString()}##chat_copy"))
+                    {
+                        ImGui.SetClipboardText(Plugin.BuildChatString());
+                    }
+                    ImGui.PopFont();
+                }
+                
+                ImGui.EndTabItem();
+            }
+        }
+        
+        public void TabDebug()
+        {
+            if (ImGui.BeginTabItem("Debug###debug-tab"))
+            {
+                if (Plugin.LastSeenFate == null)
+                {
+                    if (ImGui.Button($"Populate last seen fate"))
+                    {
+                        Plugin.LastSeenFate = Library.AnemosFates.Last();
+                    }
+                }
+                else
+                {
+                    if (ImGui.Button($"Test EchoNMPop"))
+                    {
+                        Plugin.EchoNMPop();
+                    }
+                    
+                    if (ImGui.Button($"Test PlaySoundEffect"))
+                    {
+                        Plugin.PlaySoundEffect();
+                    }
+                    
+                    if (ImGui.Button($"Test CopyNMPop"))
+                    {
+                        Plugin.CopyNMPop();
+                    }
+                }
+                
+                ImGui.EndTabItem();
             }
         }
     }

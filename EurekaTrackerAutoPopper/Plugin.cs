@@ -4,7 +4,6 @@ using Dalamud.Plugin;
 using System.Reflection;
 using Dalamud.Game.Gui;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Fates;
@@ -27,7 +26,8 @@ namespace EurekaTrackerAutoPopper
 
         private List<Fate> lastPolledFates = new();
         public bool PlayerInEureka { get; set; } = false;
-
+        public Library.EurekaFate LastSeenFate = null;
+        
         [PluginService] public static ChatGui Chat { get; private set; } = null!;
         [PluginService] public static GameGui GameGui { get; private set; } = null!;
         [PluginService] public static ToastGui Toast { get; private set; } = null!;
@@ -123,6 +123,7 @@ namespace EurekaTrackerAutoPopper
             List<Library.EurekaFate> newRelevantFates = relevantFates.Where(i => newFates.Select(i => i.FateId).Contains(i.fateId)).ToList();
             foreach (Library.EurekaFate fate in newRelevantFates)
             {
+                LastSeenFate = fate;
                 ProcessNewFate(fate);
             }
         }
@@ -143,27 +144,28 @@ namespace EurekaTrackerAutoPopper
 
         public void ProcessNewFate(Library.EurekaFate fate)
         {
-            EchoNMPop(fate);
-            PlaySoundEffect(PluginUi.SoundEffect);
+            EchoNMPop();
+            CopyNMPop();
+            PlaySoundEffect();
             if (fate.trackerId != null && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
             {
                 EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.trackerId, PluginUi.Instance, PluginUi.Password);
             }
         }
 
-        public void PlaySoundEffect(uint soundEffect)
+        public void PlaySoundEffect()
         {
             if (PluginUi.PlaySoundEffect)
             {
-                Sound.PlayEffect(soundEffect);
+                Sound.PlayEffect(PluginUi.SoundEffect);
             }
         }
 
-        public void EchoNMPop(Library.EurekaFate fate)
+        public void EchoNMPop()
         {
             SeString payload = new();
-            _ = payload.Append($"{fate.name} pop: ");
-            _ = payload.Append(fate.mapLinkPayload);
+            _ = payload.Append($"{(PluginUi.UseShortNames ? LastSeenFate.shortName : LastSeenFate.name)} pop: ");
+            _ = payload.Append(LastSeenFate.mapLinkPayload);
             
             if (PluginUi.EchoNMPop)
             {
@@ -175,6 +177,22 @@ namespace EurekaTrackerAutoPopper
                 Toast.ShowQuest(payload);
             }
         }
+
+        public void CopyNMPop()
+        {
+            if (PluginUi.CopyChatFormat)
+            {
+                ImGui.SetClipboardText(BuildChatString()); 
+            }
+        }
+
+        public string BuildChatString()
+        {
+            return Configuration.ChatFormat
+                .Replace("$n", LastSeenFate.name)
+                .Replace("$sN", LastSeenFate.shortName);
+        }
+        
 
         // not going to set data center until I can figure some things out
         //private async void SetDataCenter()
