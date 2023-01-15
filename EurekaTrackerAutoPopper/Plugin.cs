@@ -18,6 +18,7 @@ using Dalamud.Game.Text;
 using Dalamud.Logging;
 using XivCommon;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using Dalamud.Game.Text.SeStringHandling.Payloads;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -31,9 +32,9 @@ namespace EurekaTrackerAutoPopper
         private List<Fate> lastPolledFates = new();
         public bool PlayerInEureka { get; set; } = false;
         public Library.EurekaFate LastSeenFate = null;
-        
+
         private static XivCommonBase xivCommon;
-        
+
         [PluginService] public static ChatGui Chat { get; private set; } = null!;
         [PluginService] public static GameGui GameGui { get; private set; } = null!;
         [PluginService] public static ToastGui Toast { get; private set; } = null!;
@@ -57,13 +58,13 @@ namespace EurekaTrackerAutoPopper
                 HelpMessage = "Opens the config window",
                 ShowInHelp = true
             });
-            
+
             DalamudPluginInterface.UiBuilder.Draw += DrawUI;
             DalamudPluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
 
             ClientState.TerritoryChanged += TerritoryChangePoll;
             xivCommon = new XivCommonBase();
-            
+
             if (PlayerInRelevantTerritory())
             {
                 PlayerInEureka = true;
@@ -75,7 +76,7 @@ namespace EurekaTrackerAutoPopper
         {
             DrawConfigUI();
         }
-        
+
         private void TerritoryChangePoll(object? sender, ushort territoryId)
         {
             if (PlayerInRelevantTerritory())
@@ -115,7 +116,7 @@ namespace EurekaTrackerAutoPopper
 
         private static bool PlayerInRelevantTerritory()
         {
-            return Library.TerritoryToFateDictionary.Keys.Contains(ClientState.TerritoryType);
+            return Library.TerritoryToFateDictionary.ContainsKey(ClientState.TerritoryType);
         }
 
         private bool NoFatesHaveChangedSinceLastChecked()
@@ -158,7 +159,7 @@ namespace EurekaTrackerAutoPopper
             {
                 PluginUi.PopVisible = true;
             }
-            
+
             if (fate.trackerId != null && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
             {
                 EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.trackerId, PluginUi.Instance, PluginUi.Password);
@@ -178,7 +179,7 @@ namespace EurekaTrackerAutoPopper
             SeString payload = new();
             _ = payload.Append($"{(Configuration.UseShortNames ? LastSeenFate.shortName : LastSeenFate.name)} pop: ");
             _ = payload.Append(LastSeenFate.mapLink);
-            
+
             if (Configuration.EchoNMPop)
             {
                 Chat.PrintChat(new XivChatEntry { Message = payload });
@@ -189,11 +190,11 @@ namespace EurekaTrackerAutoPopper
                 Toast.ShowQuest(payload);
             }
         }
-        
+
         public string BuildChatString()
         {
-            var time = !Configuration.UseEorzeaTimer ? $"PT {PluginUi.PullTime}" : $"ET {PluginUi.CurrentTimePullTime()}";
-            var output = Configuration.ChatFormat
+            string time = !Configuration.UseEorzeaTimer ? $"PT {PluginUi.PullTime}" : $"ET {PluginUi.CurrentTimePullTime()}";
+            string output = Configuration.ChatFormat
                 .Replace("$n", LastSeenFate.name)
                 .Replace("$sN", LastSeenFate.shortName)
                 .Replace("$t", time)
@@ -207,7 +208,7 @@ namespace EurekaTrackerAutoPopper
             SetFlagMarker();
             xivCommon.Functions.Chat.SendMessage(BuildChatString());
         }
-        
+
 
         // not going to set data center until I can figure some things out
         //private async void SetDataCenter()
@@ -257,7 +258,7 @@ namespace EurekaTrackerAutoPopper
         {
             PluginUi.SettingsVisible = true;
         }
-        
+
         public unsafe void SetFlagMarker()
         {
             try
@@ -267,11 +268,11 @@ namespace EurekaTrackerAutoPopper
                 AgentMap.Instance()->IsFlagMarkerSet = 0;
                 // divide by 1000 as raw is too long for CS SetFlagMapMarker
                 AgentMap.Instance()->SetFlagMapMarker(
-                    LastSeenFate.mapLink.territoryId, 
-                    LastSeenFate.mapLink.mapId,
-                    LastSeenFate.mapLink.payload.RawX / 1000.0f, 
-                    LastSeenFate.mapLink.payload.RawY / 1000.0f);
-            } 
+                    ((MapLinkPayload)LastSeenFate.mapLink.Payloads.First()).Map.TerritoryType.Row,
+                    ((MapLinkPayload)LastSeenFate.mapLink.Payloads.First()).Map.RowId,
+                    ((MapLinkPayload)LastSeenFate.mapLink.Payloads.First()).RawX / 1000.0f,
+                    ((MapLinkPayload)LastSeenFate.mapLink.Payloads.First()).RawY / 1000.0f);
+            }
             catch (Exception)
             {
                 PluginLog.Error("Exception during SetFlagMarker");
