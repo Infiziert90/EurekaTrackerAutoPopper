@@ -154,7 +154,7 @@ namespace EurekaTrackerAutoPopper
         {
             EchoNMPop();
             PlaySoundEffect();
-            if (PluginUi.ShowPopWindow)
+            if (Configuration.ShowPopWindow)
             {
                 PluginUi.PopVisible = true;
             }
@@ -167,7 +167,7 @@ namespace EurekaTrackerAutoPopper
 
         public void PlaySoundEffect()
         {
-            if (PluginUi.PlaySoundEffect)
+            if (Configuration.PlaySoundEffect)
             {
                 Sound.PlayEffect(PluginUi.SoundEffect);
             }
@@ -176,15 +176,15 @@ namespace EurekaTrackerAutoPopper
         public void EchoNMPop()
         {
             SeString payload = new();
-            _ = payload.Append($"{(PluginUi.UseShortNames ? LastSeenFate.shortName : LastSeenFate.name)} pop: ");
+            _ = payload.Append($"{(Configuration.UseShortNames ? LastSeenFate.shortName : LastSeenFate.name)} pop: ");
             _ = payload.Append(LastSeenFate.mapLink);
             
-            if (PluginUi.EchoNMPop)
+            if (Configuration.EchoNMPop)
             {
                 Chat.PrintChat(new XivChatEntry { Message = payload });
             }
 
-            if (PluginUi.ShowPopToast)
+            if (Configuration.ShowPopToast)
             {
                 Toast.ShowQuest(payload);
             }
@@ -192,7 +192,7 @@ namespace EurekaTrackerAutoPopper
         
         public string BuildChatString()
         {
-            var time = !PluginUi.UseEorzeaTimer ? $"PT {PluginUi.PullTime}" : $"ET {PluginUi.CurrentTimePullTime()}";
+            var time = !Configuration.UseEorzeaTimer ? $"PT {PluginUi.PullTime}" : $"ET {PluginUi.CurrentTimePullTime()}";
             var output = Configuration.ChatFormat
                 .Replace("$n", LastSeenFate.name)
                 .Replace("$sN", LastSeenFate.shortName)

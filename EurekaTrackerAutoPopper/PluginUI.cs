@@ -25,32 +25,12 @@ namespace EurekaTrackerAutoPopper
         
         private string instance = "";
         private string password = "";
-        private bool echoNMPop = true;
-        private bool playSoundEffect = true;
         private int soundEffect = 36;
-        private bool showPopToast = true;
-        private bool showPullTimer = true;
-        private bool useEorzeaTimer = false;
-        private bool useTwelveHourFormat = false;
         private int pullTime = 27;
         private int eorzeaTime = 720;
-        private bool useShortNames = true;
 
-        private bool showPopWindow = true;
-        public bool ShowPopWindow => showPopWindow;
-
-        public bool EchoNMPop => echoNMPop;
-        public bool PlaySoundEffect => playSoundEffect;
         public uint SoundEffect => (uint)soundEffect;
-
-        public bool ShowPopToast => showPopToast;
-        public bool ShowPullTimer => showPullTimer;
-        public bool UseEorzeaTimer => useEorzeaTimer;
-        public bool UseTwelveHourFormat => useTwelveHourFormat;
         public int PullTime => pullTime;
-        public int EorzeaTime => eorzeaTime;
-        public bool UseShortNames => useShortNames;
-        
         public int DebugFate = 0;
         
         public bool SettingsVisible
@@ -85,8 +65,9 @@ namespace EurekaTrackerAutoPopper
 
         public void Dispose()
         {
+            Configuration.Save();
         }
-
+        
         public void Draw()
         {
             // This is our only draw handler attached to UIBuilder, so it needs to be
@@ -120,9 +101,9 @@ namespace EurekaTrackerAutoPopper
                 
                 ImGui.TextUnformatted(fate);
 
-                if (showPullTimer)
+                if (Configuration.ShowPullTimer)
                 {
-                    if (!useEorzeaTimer)
+                    if (!Configuration.UseEorzeaTimer)
                     {
                         ImGui.SameLine(size + 35);
                         ImGui.TextUnformatted("PT");
@@ -224,14 +205,14 @@ namespace EurekaTrackerAutoPopper
         {
             if (ImGui.BeginTabItem("General###general-tab"))
             {
-                ImGui.Checkbox("Echo NM pops", ref echoNMPop);
-                ImGui.Checkbox("Play Sound when NM pops", ref playSoundEffect);
-                ImGui.Checkbox("Show Toast when NM pops", ref showPopToast);
-                if (echoNMPop || showPopToast)
+                ImGui.Checkbox("Echo NM pops", ref Configuration.EchoNMPop);
+                ImGui.Checkbox("Play Sound when NM pops", ref Configuration.PlaySoundEffect);
+                ImGui.Checkbox("Show Toast when NM pops", ref Configuration.ShowPopToast);
+                if (Configuration.EchoNMPop || Configuration.ShowPopToast)
                 {
                     ImGuiHelpers.ScaledDummy(20,0);
                     ImGui.SameLine();
-                    ImGui.Checkbox("Use Short Names", ref useShortNames);
+                    ImGui.Checkbox("Use Short Names", ref Configuration.UseShortNames);
                 }
 
                 ImGuiHelpers.ScaledDummy(10);
@@ -262,14 +243,8 @@ namespace EurekaTrackerAutoPopper
                 {
                     Task.Run(async () =>
                     {
-                        bool previousSoundEffectSetting = playSoundEffect;
-                        bool previousEchoNMPopSetting = echoNMPop;
                         (instance, password) = await EurekaTrackerWrapper.WebRequests.CreateNewTracker(Library.TerritoryToTrackerDictionary[Plugin.ClientState.TerritoryType]);
-                        playSoundEffect = false;
-                        echoNMPop = false;
                         Plugin.ProcessCurrentFates(Plugin.ClientState.TerritoryType);
-                        playSoundEffect = previousSoundEffectSetting;
-                        echoNMPop = previousEchoNMPopSetting;
                     });
                 }
                 if (Instance.Length > 0)
@@ -296,18 +271,19 @@ namespace EurekaTrackerAutoPopper
         {
             if (ImGui.BeginTabItem("Chat###chat-tab"))
             {
-                ImGui.Checkbox("Show Post Window", ref showPopWindow);
-                ImGui.Checkbox("Show PT in Post Window", ref showPullTimer);
-                if (showPullTimer)
+                ImGui.Checkbox("Show Post Window", ref Configuration.ShowPopWindow);
+                ImGui.Checkbox("Show PT in Post Window", ref Configuration.ShowPullTimer);
+                
+                if (Configuration.ShowPullTimer)
                 {
                     ImGuiHelpers.ScaledDummy(20,0);
                     ImGui.SameLine();
-                    ImGui.Checkbox("Use Eorzea Time instead", ref useEorzeaTimer);
-                    if (useEorzeaTimer)
+                    ImGui.Checkbox("Use Eorzea Time instead", ref Configuration.UseEorzeaTimer);
+                    if (Configuration.UseEorzeaTimer)
                     {
                         ImGuiHelpers.ScaledDummy(20,0);
                         ImGui.SameLine();
-                        ImGui.Checkbox("Use 12-hour Format", ref useTwelveHourFormat); 
+                        ImGui.Checkbox("Use 12-hour Format", ref Configuration.UseTwelveHourFormat);
                     }
                 }
                 
@@ -400,7 +376,7 @@ namespace EurekaTrackerAutoPopper
         {
             var time = new DateTime().AddMinutes(eorzeaTime);
 
-            return !useTwelveHourFormat ? $"{time:HH:mm}" : $"{time:hh:mm tt}";
+            return !Configuration.UseTwelveHourFormat ? $"{time:HH:mm}" : $"{time:hh:mm tt}";
         }
 
         public void SetEorzeaTimeWithPullOffset()
