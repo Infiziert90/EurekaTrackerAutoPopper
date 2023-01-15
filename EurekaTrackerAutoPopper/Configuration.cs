@@ -8,8 +8,17 @@ namespace EurekaTrackerAutoPopper
     public class Configuration : IPluginConfiguration
     {
         public int Version { get; set; } = 0;
-        public string ChatFormat = "/sh $sN --- PT 27";
+        public string ChatFormat = "/sh $sN pop: $p - $t";
+
+        public bool EchoNMPop = true;
+        public bool PlaySoundEffect = true;
+        public bool ShowPopToast = true;
+        public bool UseShortNames = true;
         
+        public bool ShowPopWindow = true;
+        public bool ShowPullTimer = true;
+        public bool UseEorzeaTimer = false;
+        public bool UseTwelveHourFormat = false;
         
         // the below exist just to make saving less cumbersome
 
