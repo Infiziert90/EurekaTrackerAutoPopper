@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.Command;
+﻿using System;
+using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using System.Reflection;
@@ -14,6 +15,9 @@ using Dalamud.Game.Gui.Toast;
 using ImGuiNET;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text;
+using Dalamud.Logging;
+using XivCommon;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -27,6 +31,8 @@ namespace EurekaTrackerAutoPopper
         private List<Fate> lastPolledFates = new();
         public bool PlayerInEureka { get; set; } = false;
         public Library.EurekaFate LastSeenFate = null;
+        
+        private static XivCommonBase xivCommon;
         
         [PluginService] public static ChatGui Chat { get; private set; } = null!;
         [PluginService] public static GameGui GameGui { get; private set; } = null!;
@@ -56,7 +62,8 @@ namespace EurekaTrackerAutoPopper
             DalamudPluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
 
             ClientState.TerritoryChanged += TerritoryChangePoll;
-
+            xivCommon = new XivCommonBase();
+            
             if (PlayerInRelevantTerritory())
             {
                 PlayerInEureka = true;
@@ -124,6 +131,7 @@ namespace EurekaTrackerAutoPopper
             foreach (Library.EurekaFate fate in newRelevantFates)
             {
                 LastSeenFate = fate;
+                PluginUi.SetEorzeaTimeWithPullOffset();
                 ProcessNewFate(fate);
             }
         }
@@ -145,8 +153,12 @@ namespace EurekaTrackerAutoPopper
         public void ProcessNewFate(Library.EurekaFate fate)
         {
             EchoNMPop();
-            CopyNMPop();
             PlaySoundEffect();
+            if (PluginUi.ShowPopWindow)
+            {
+                PluginUi.PopVisible = true;
+            }
+            
             if (fate.trackerId != null && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
             {
                 EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.trackerId, PluginUi.Instance, PluginUi.Password);
@@ -165,7 +177,7 @@ namespace EurekaTrackerAutoPopper
         {
             SeString payload = new();
             _ = payload.Append($"{(PluginUi.UseShortNames ? LastSeenFate.shortName : LastSeenFate.name)} pop: ");
-            _ = payload.Append(LastSeenFate.mapLinkPayload);
+            _ = payload.Append(LastSeenFate.mapLink);
             
             if (PluginUi.EchoNMPop)
             {
@@ -177,20 +189,23 @@ namespace EurekaTrackerAutoPopper
                 Toast.ShowQuest(payload);
             }
         }
-
-        public void CopyNMPop()
-        {
-            if (PluginUi.CopyChatFormat)
-            {
-                ImGui.SetClipboardText(BuildChatString()); 
-            }
-        }
-
+        
         public string BuildChatString()
         {
-            return Configuration.ChatFormat
+            var time = !PluginUi.UseEorzeaTimer ? $"PT {PluginUi.PullTime}" : $"ET {PluginUi.CurrentTimePullTime()}";
+            var output = Configuration.ChatFormat
                 .Replace("$n", LastSeenFate.name)
-                .Replace("$sN", LastSeenFate.shortName);
+                .Replace("$sN", LastSeenFate.shortName)
+                .Replace("$t", time)
+                .Replace("$p", "<flag>");
+
+            return output;
+        }
+
+        public void PostChatMessage()
+        {
+            SetFlagMarker();
+            xivCommon.Functions.Chat.SendMessage(BuildChatString());
         }
         
 
@@ -229,6 +244,7 @@ namespace EurekaTrackerAutoPopper
             PluginUi.Dispose();
             Framework.Update -= PollForFateChange;
             ClientState.TerritoryChanged -= TerritoryChangePoll;
+            xivCommon.Dispose();
             _ = CommandManager.RemoveHandler("/xleureka");
         }
 
@@ -240,6 +256,26 @@ namespace EurekaTrackerAutoPopper
         private void DrawConfigUI()
         {
             PluginUi.SettingsVisible = true;
+        }
+        
+        public unsafe void SetFlagMarker()
+        {
+            try
+            {
+                PluginLog.Debug("SetFlagMarker");
+                // removes current flag marker from map
+                AgentMap.Instance()->IsFlagMarkerSet = 0;
+                // divide by 1000 as raw is too long for CS SetFlagMapMarker
+                AgentMap.Instance()->SetFlagMapMarker(
+                    LastSeenFate.mapLink.territoryId, 
+                    LastSeenFate.mapLink.mapId,
+                    LastSeenFate.mapLink.payload.RawX / 1000.0f, 
+                    LastSeenFate.mapLink.payload.RawY / 1000.0f);
+            } 
+            catch (Exception)
+            {
+                PluginLog.Error("Exception during SetFlagMarker");
+            }
         }
     }
 }
