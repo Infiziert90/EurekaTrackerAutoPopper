@@ -3,12 +3,12 @@
 	<PropertyGroup>
 		<Authors>electr0sheep</Authors>
 		<Company></Company>
-		<Version>0.0.0.4</Version>
-		<Description>XIV Launcher plugin for item vendors</Description>
+		<Version>0.0.0.5</Version>
+		<Description>Automatically pops NMs in the Eureka Tracker</Description>
 		<Copyright></Copyright>
 		<PackageProjectUrl></PackageProjectUrl>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<Configurations>Debug;Release;DebugUI</Configurations>
+		<Configurations>Debug;Release</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup>
