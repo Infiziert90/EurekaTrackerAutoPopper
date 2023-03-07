@@ -123,9 +123,9 @@ namespace EurekaTrackerAutoPopper
                 
                         ImGui.SameLine(size + 55);
                         ImGui.SetNextItemWidth(80 + extraSize);
-                        if (ImGui.SliderInt("##eorzeatime_input", ref eorzeaTime, 1, 1440, CurrentTimePullTime()))
+                        if (ImGui.SliderInt("##eorzeatime_input", ref eorzeaTime, 1, 1440, CurrentEorzeanPullTime()))
                         {
-                            eorzeaTime = Math.Clamp(eorzeaTime, 1, 1440);
+                            eorzeaTime = RoundOff(Math.Clamp(eorzeaTime, 1, 1440));
                         }
                     }
                 }
@@ -372,7 +372,7 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        public string CurrentTimePullTime()
+        public string CurrentEorzeanPullTime()
         {
             var time = new DateTime().AddMinutes(eorzeaTime);
 
@@ -385,11 +385,15 @@ namespace EurekaTrackerAutoPopper
             {
                 var et = DateTimeOffset.FromUnixTimeSeconds(FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance()->EorzeaTime);
                 eorzeaTime = et.Hour * 60 + et.Minute + 60; // 60 min ET = 3 min our time
+                eorzeaTime = RoundOff(eorzeaTime); // Round it to X0
+                
                 if (eorzeaTime > 1440)
                 {
                     eorzeaTime -= 1440;
                 }
             }
         }
+        
+        private static int RoundOff (int i) => (int) Math.Round(i / 10.0) * 10;
     }
 }
