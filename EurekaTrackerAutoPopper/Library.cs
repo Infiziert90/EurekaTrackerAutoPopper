@@ -4,8 +4,15 @@ using System.Collections.Generic;
 
 namespace EurekaTrackerAutoPopper
 {
-    public static class Library
+    public class Library
     {
+        private Configuration Configuration { get; init; }
+
+        public Library(Configuration configuration)
+        {
+            Configuration = configuration;
+        }
+        
         public class EurekaFate
         {
             public ushort fateId;
@@ -33,16 +40,18 @@ namespace EurekaTrackerAutoPopper
             return (float) (coord + (rand.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE));
         }
 
-        private static SeString CreateMapLink(uint territoryId, uint mapId, float xCoord, float yCoord)
+        private SeString CreateMapLink(uint territoryId, uint mapId, float xCoord, float yCoord)
         {
-            return SeString.CreateMapLink(territoryId, mapId, Randomize(xCoord), Randomize(yCoord));
+            xCoord = Configuration.RandomizeMapCoords ? Randomize(xCoord) : xCoord;
+            yCoord = Configuration.RandomizeMapCoords ? Randomize(yCoord) : yCoord;
+            return SeString.CreateMapLink(territoryId, mapId, xCoord, yCoord);
         }
         
-        private static List<EurekaFate>? anemosFates = null;
-        private static List<EurekaFate>? pagosFates = null;
-        private static List<EurekaFate>? pyrosFates = null;
-        private static List<EurekaFate>? hydatosFates = null;
-        private static Dictionary<ushort, List<EurekaFate>>? territoryToFateDictionary = null;
+        private List<EurekaFate> anemosFates = null!;
+        private List<EurekaFate> pagosFates = null!;
+        private List<EurekaFate> pyrosFates = null!;
+        private List<EurekaFate> hydatosFates = null!;
+        private Dictionary<ushort, List<EurekaFate>>? territoryToFateDictionary = null;
 
         public static readonly Dictionary<ushort, short> TerritoryToTrackerDictionary = new()
         {
@@ -52,20 +61,28 @@ namespace EurekaTrackerAutoPopper
             { 732, 1 },
         };
 
-        public static Dictionary<ushort, List<EurekaFate>> TerritoryToFateDictionary => territoryToFateDictionary ??= new()
+        public Dictionary<ushort, List<EurekaFate>> TerritoryToFateDictionary => territoryToFateDictionary ??= new()
         {
             { 827, HydatosFates },
             { 795, PyrosFates },
             { 763, PagosFates },
             { 732, AnemosFates },
         };
+        
+        public List<EurekaFate> AnemosFates => anemosFates;
+        public List<EurekaFate> PagosFates => pagosFates;
+        public List<EurekaFate> PyrosFates => pyrosFates;
+        public List<EurekaFate> HydatosFates => hydatosFates;
 
-        public static List<EurekaFate> AnemosFates => anemosFates ??= InitializeAnemosFates();
-        public static List<EurekaFate> PagosFates => pagosFates ??= InitializePagosFates();
-        public static List<EurekaFate> PyrosFates => pyrosFates ??= InitializePyrosFates();
-        public static List<EurekaFate> HydatosFates => hydatosFates ??= InitializeHydatosFates();
-
-        private static List<EurekaFate> InitializeAnemosFates()
+        public void Initialize()
+        {
+            anemosFates = InitializeAnemosFates();
+            pagosFates = InitializePagosFates();
+            pyrosFates = InitializePyrosFates();
+            hydatosFates = InitializeHydatosFates();
+        }
+        
+        private List<EurekaFate> InitializeAnemosFates()
         {
 #pragma warning disable format
             return new()
@@ -93,7 +110,7 @@ namespace EurekaTrackerAutoPopper
             };
 #pragma warning restore format
         }
-        private static List<EurekaFate> InitializePagosFates()
+        private List<EurekaFate> InitializePagosFates()
         {
 #pragma warning disable format
             return new()
@@ -118,7 +135,7 @@ namespace EurekaTrackerAutoPopper
             };
 #pragma warning restore format
         }
-        private static List<EurekaFate> InitializePyrosFates()
+        private List<EurekaFate> InitializePyrosFates()
         {
 #pragma warning disable format
             return new()
@@ -143,7 +160,7 @@ namespace EurekaTrackerAutoPopper
             };
 #pragma warning restore format
         }
-        private static List<EurekaFate> InitializeHydatosFates()
+        private List<EurekaFate> InitializeHydatosFates()
         {
 #pragma warning disable format
             return new()

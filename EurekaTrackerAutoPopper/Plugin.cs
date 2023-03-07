@@ -29,6 +29,7 @@ namespace EurekaTrackerAutoPopper
         private Configuration Configuration { get; init; }
         private PluginUI PluginUi { get; init; }
 
+        public Library Library;
         private List<Fate> lastPolledFates = new();
         public bool PlayerInEureka { get; set; } = false;
         public Library.EurekaFate LastSeenFate = null;
@@ -48,10 +49,13 @@ namespace EurekaTrackerAutoPopper
         {
             Configuration = DalamudPluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Configuration.Initialize(DalamudPluginInterface);
-
+            
+            Library = new Library(Configuration);
+            Library.Initialize();
+            
             // you might normally want to embed resources and load them from the manifest stream
             string? assemblyLocation = Assembly.GetExecutingAssembly().Location;
-            PluginUi = new PluginUI(Configuration, this);
+            PluginUi = new PluginUI(Configuration, this, Library);
 
             _ = CommandManager.AddHandler("/xleureka", new CommandInfo(OnEurekaCommand)
             {
@@ -114,7 +118,7 @@ namespace EurekaTrackerAutoPopper
             return ClientState.LocalPlayer?.CurrentWorld.GameData?.DataCenter.Row ?? GetDataCenterId();
         }
 
-        private static bool PlayerInRelevantTerritory()
+        private bool PlayerInRelevantTerritory()
         {
             return Library.TerritoryToFateDictionary.ContainsKey(ClientState.TerritoryType);
         }

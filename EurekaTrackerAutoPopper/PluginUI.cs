@@ -19,6 +19,7 @@ namespace EurekaTrackerAutoPopper
         
         private Configuration Configuration { get; init; }
         private Plugin Plugin { get; init; }
+        private Library Library { get; init; }
 
         private bool settingsVisible = false;
         private bool popVisible = false;
@@ -57,10 +58,11 @@ namespace EurekaTrackerAutoPopper
             set => password = value;
         }
 
-        public PluginUI(Configuration configuration, Plugin plugin)
+        public PluginUI(Configuration configuration, Plugin plugin, Library library)
         {
             Configuration = configuration;
             Plugin = plugin;
+            Library = library;
         }
 
         public void Dispose()
@@ -160,8 +162,8 @@ namespace EurekaTrackerAutoPopper
                 return;
             }
 
-            ImGui.SetNextWindowSize(new Vector2(375, 360), ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSizeConstraints(new Vector2(375, 360), new Vector2(float.MaxValue, float.MaxValue));
+            ImGui.SetNextWindowSize(new Vector2(375, 385), ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSizeConstraints(new Vector2(375, 385), new Vector2(float.MaxValue, float.MaxValue));
             if (ImGui.Begin("Eureka Tracker Auto Popper", ref settingsVisible, flags))
             {
                 if (ImGui.BeginTabBar("##setting-tabs"))
@@ -272,6 +274,14 @@ namespace EurekaTrackerAutoPopper
             if (ImGui.BeginTabItem("Chat###chat-tab"))
             {
                 ImGui.Checkbox("Show Post Window", ref Configuration.ShowPopWindow);
+                var randomize = Configuration.RandomizeMapCoords;
+                if (ImGui.Checkbox("Randomize Map Coords", ref randomize))
+                {
+                    Configuration.RandomizeMapCoords = randomize;
+                    Configuration.Save();
+                    
+                    Library.Initialize();
+                }
                 ImGui.Checkbox("Show PT in Post Window", ref Configuration.ShowPullTimer);
                 
                 if (Configuration.ShowPullTimer)

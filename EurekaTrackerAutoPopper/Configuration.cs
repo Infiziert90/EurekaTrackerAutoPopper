@@ -19,6 +19,8 @@ namespace EurekaTrackerAutoPopper
         public bool ShowPullTimer = true;
         public bool UseEorzeaTimer = false;
         public bool UseTwelveHourFormat = false;
+
+        public bool RandomizeMapCoords = true;
         
         // the below exist just to make saving less cumbersome
 
