@@ -223,7 +223,7 @@ namespace EurekaTrackerAutoPopper
 
         public string BuildChatString()
         {
-            string time = !Configuration.UseEorzeaTimer ? $"PT {PluginUi.PullTime}" : $"ET {PluginUi.CurrentTimePullTime()}";
+            string time = !Configuration.UseEorzeaTimer ? $"PT {PluginUi.PullTime}" : $"ET {PluginUi.CurrentEorzeanPullTime()}";
             string output = Configuration.ChatFormat
                 .Replace("$n", LastSeenFate.name)
                 .Replace("$sN", LastSeenFate.shortName)
