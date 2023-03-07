@@ -1,8 +1,8 @@
 {
   "Author": "electr0sheep",
-  "Description": "Automatically pops NMs in the Eureka Tracker",
+  "Description": "Automatically notifies about and pops NMs in the Eureka Tracker",
   "InternalName": "eurekaTrackerAutoPopper",
-  "Punchline":  "",
+  "Punchline":  "Notify and Pop",
   "Name": "Eureka Tracker Auto Popper",
   "RepoUrl": "https://github.com/electr0sheep/EurekaTrackerAutoPopper",
   "Tags": [
