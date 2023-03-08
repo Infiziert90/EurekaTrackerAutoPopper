@@ -37,9 +37,10 @@ namespace EurekaTrackerAutoPopper
         {
             public SeString MapLink;
 
-            public Fairy(float x, float y)
+            public Fairy(uint fairy, float x, float y)
             {
-                MapLink = SeString.CreateMapLink(732, 414, (int) x * 1000, (int) y * 1000);
+                Map map = FairyToTerritory[fairy];
+                MapLink = SeString.CreateMapLink(map.TerritoryId, map.MapId, (int) x * 1000, (int) y * 1000);
             }
         }
 
@@ -52,7 +53,16 @@ namespace EurekaTrackerAutoPopper
             7764, // Pyros
             8131, // Hydatos
         };
-        
+
+        private record Map(uint TerritoryId, uint MapId);
+        private static readonly Dictionary<uint, Map> FairyToTerritory = new()
+        {
+            { 7184, new Map(732, 414) },
+            { 7567, new Map(763, 467) },
+            { 7764, new Map(795, 484) },
+            { 8131, new Map(827, 515) }
+        };
+
         // randomize flag X and Y in a range of +1 and -1, the exact size of the fate circle
         private static Random rand = new();
         private static double MAX_VALUE = 1;

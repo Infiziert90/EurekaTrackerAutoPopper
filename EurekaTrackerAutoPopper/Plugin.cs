@@ -295,7 +295,7 @@ namespace EurekaTrackerAutoPopper
                          .Where(battleNpc => Library.Fairies.Contains(battleNpc.NameId))
                          .Where(battleNpc => !Library.ExistingFairies.ContainsKey(battleNpc.ObjectId)))
             {
-                Library.Fairy fairy = new Library.Fairy(actor.Position.X, actor.Position.Z); // directX Z = Y
+                Library.Fairy fairy = new Library.Fairy(actor.NameId, actor.Position.X, actor.Position.Z); // directX Z = Y
                 Library.ExistingFairies.Add(actor.ObjectId, fairy);
                 EchoFairy(fairy);
             }
