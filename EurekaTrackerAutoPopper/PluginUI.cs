@@ -326,8 +326,8 @@ namespace EurekaTrackerAutoPopper
             if (ImGui.BeginTabItem("Fairy###fairy-tab"))
             {
                 ImGui.TextUnformatted("Fairy / Elemental");
-                ImGui.Checkbox("Echo Fairies", ref Configuration.EchoFairies);
-                ImGui.Checkbox("Show Toast for Fairies", ref Configuration.ShowFairyToast);
+                _ = ImGui.Checkbox("Echo Fairies", ref Configuration.EchoFairies);
+                _ = ImGui.Checkbox("Show Toast for Fairies", ref Configuration.ShowFairyToast);
                 
                 ImGuiHelpers.ScaledDummy(5);
                 ImGui.Separator();

@@ -252,7 +252,7 @@ namespace EurekaTrackerAutoPopper
 
         public void EchoFairy(Library.Fairy fairy)
         {
-            var payload = new SeStringBuilder()
+            SeString payload = new SeStringBuilder()
                 .AddUiForeground(570)
                 .AddText("Fairy: ")
                 .AddUiGlowOff()
@@ -291,11 +291,11 @@ namespace EurekaTrackerAutoPopper
 
         public void FairyCheck(Framework framework)
         {
-            foreach (var actor in ObjectTable.OfType<BattleNpc>()
+            foreach (BattleNpc actor in ObjectTable.OfType<BattleNpc>()
                          .Where(battleNpc => Library.Fairies.Contains(battleNpc.NameId))
                          .Where(battleNpc => !Library.ExistingFairies.ContainsKey(battleNpc.ObjectId)))
             {
-                var fairy = new Library.Fairy(actor.Position.X, actor.Position.Z); // directX Z = Y
+                Library.Fairy fairy = new Library.Fairy(actor.Position.X, actor.Position.Z); // directX Z = Y
                 Library.ExistingFairies.Add(actor.ObjectId, fairy);
                 EchoFairy(fairy);
             }

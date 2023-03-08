@@ -90,7 +90,7 @@ namespace EurekaTrackerAutoPopper
             { 763, PagosFates },
             { 732, AnemosFates },
         };
-        
+
         public List<EurekaFate> AnemosFates => anemosFates;
         public List<EurekaFate> PagosFates => pagosFates;
         public List<EurekaFate> PyrosFates => pyrosFates;
