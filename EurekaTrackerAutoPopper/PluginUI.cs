@@ -173,6 +173,9 @@ namespace EurekaTrackerAutoPopper
 
                     // Renders Chat Tab
                     TabChat();
+                    
+                    // Renders Fairy Tab
+                    TabFairy();
 
 #if DEBUG
                     //Renders Debug Tab
@@ -317,6 +320,30 @@ namespace EurekaTrackerAutoPopper
                 ImGui.TextUnformatted("$sN = Short Name");
                 ImGui.TextUnformatted("$p = MapFlag");
                 ImGui.TextUnformatted("$t = Pull Timer - e.g. PT 27 / ET 13:37");
+                
+                ImGui.EndTabItem();
+            }
+        }
+        
+        public void TabFairy()
+        {
+            if (ImGui.BeginTabItem("Fairy###fairy-tab"))
+            {
+                ImGui.TextUnformatted("Fairy / Elemental");
+                ImGui.Checkbox("Echo Fairies", ref Configuration.EchoFairies);
+                ImGui.Checkbox("Show Toast for Fairies", ref Configuration.ShowFairyToast);
+                
+                ImGuiHelpers.ScaledDummy(5);
+                ImGui.Separator();
+                ImGuiHelpers.ScaledDummy(5);
+                
+                if (ImGui.Button("Echo All"))
+                {
+                    foreach (var fairy in Library.ExistingFairies.Values)
+                    {
+                        Plugin.EchoFairy(fairy);
+                    }
+                }
                 
                 ImGui.EndTabItem();
             }

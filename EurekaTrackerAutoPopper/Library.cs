@@ -31,6 +31,28 @@ namespace EurekaTrackerAutoPopper
             }
         }
         
+        
+        // represents a elemental/fairy seen by the user 
+        public class Fairy
+        {
+            public SeString MapLink;
+
+            public Fairy(float x, float y)
+            {
+                MapLink = SeString.CreateMapLink(732, 414, (int) x * 1000, (int) y * 1000);
+            }
+        }
+
+        public Dictionary<uint, Fairy> ExistingFairies = new();
+
+        public static readonly List<uint> Fairies = new()
+        {
+            7184, // Anemos
+            7567, // Pagos
+            7764, // Pyros
+            8131, // Hydatos
+        };
+        
         // randomize flag X and Y in a range of +1 and -1, the exact size of the fate circle
         private static Random rand = new();
         private static double MAX_VALUE = 1;

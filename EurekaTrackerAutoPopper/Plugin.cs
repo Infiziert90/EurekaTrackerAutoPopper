@@ -11,6 +11,9 @@ using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState;
 using Dalamud.Game;
 using System.Threading;
+using Dalamud.Game.ClientState.Objects;
+using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Gui.Toast;
 using ImGuiNET;
 using Dalamud.Game.Text.SeStringHandling;
@@ -40,6 +43,7 @@ namespace EurekaTrackerAutoPopper
         [PluginService] public static GameGui GameGui { get; private set; } = null!;
         [PluginService] public static ToastGui Toast { get; private set; } = null!;
         [PluginService] public static Dalamud.Data.DataManager DataManager { get; private set; } = null!;
+        [PluginService] public static ObjectTable ObjectTable { get; private set; } = null!;
         [PluginService] public static FateTable FateTable { get; private set; } = null!;
         [PluginService] public static Framework Framework { get; private set; } = null!;
         [PluginService] public static ClientState ClientState { get; private set; } = null!;
@@ -73,6 +77,7 @@ namespace EurekaTrackerAutoPopper
             {
                 PlayerInEureka = true;
                 Framework.Update += PollForFateChange;
+                Framework.Update += FairyCheck;
             }
         }
 
@@ -100,13 +105,16 @@ namespace EurekaTrackerAutoPopper
                       }
                   });
                 Framework.Update += PollForFateChange;
+                Framework.Update += FairyCheck;
             }
             else
             {
                 PlayerInEureka = false;
                 PluginUi.Instance = "";
                 PluginUi.Password = "";
+                Library.ExistingFairies.Clear();
                 Framework.Update -= PollForFateChange;
+                Framework.Update -= FairyCheck;
             }
         }
 
@@ -177,7 +185,7 @@ namespace EurekaTrackerAutoPopper
                 Sound.PlayEffect(PluginUi.SoundEffect);
             }
         }
-
+        
         public void EchoNMPop()
         {
             SeString payload = new();
@@ -213,7 +221,27 @@ namespace EurekaTrackerAutoPopper
             xivCommon.Functions.Chat.SendMessage(BuildChatString());
         }
 
+        public void EchoFairy(Library.Fairy fairy)
+        {
+            var payload = new SeStringBuilder()
+                .AddUiForeground(570)
+                .AddText("Fairy: ")
+                .AddUiGlowOff()
+                .AddUiForegroundOff()
+                .BuiltString
+                .Append(fairy.MapLink);
 
+            if (Configuration.EchoFairies)
+            {
+                Chat.PrintChat(new XivChatEntry { Message = payload });
+            }
+
+            if (Configuration.ShowFairyToast)
+            {
+                Toast.ShowQuest(payload);
+            }
+        }
+        
         // not going to set data center until I can figure some things out
         //private async void SetDataCenter()
         //{
@@ -232,6 +260,18 @@ namespace EurekaTrackerAutoPopper
         //    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
         //}
 
+        public void FairyCheck(Framework framework)
+        {
+            foreach (var actor in ObjectTable.OfType<BattleNpc>()
+                         .Where(battleNpc => Library.Fairies.Contains(battleNpc.NameId))
+                         .Where(battleNpc => !Library.ExistingFairies.ContainsKey(battleNpc.ObjectId)))
+            {
+                var fairy = new Library.Fairy(actor.Position.X, actor.Position.Z); // directX Z = Y
+                Library.ExistingFairies.Add(actor.ObjectId, fairy);
+                EchoFairy(fairy);
+            }
+        }
+        
         public void PollForFateChange(Framework framework)
         {
             if (NoFatesHaveChangedSinceLastChecked())
@@ -248,6 +288,7 @@ namespace EurekaTrackerAutoPopper
         {
             PluginUi.Dispose();
             Framework.Update -= PollForFateChange;
+            Framework.Update -= FairyCheck;
             ClientState.TerritoryChanged -= TerritoryChangePoll;
             xivCommon.Dispose();
             _ = CommandManager.RemoveHandler("/xleureka");

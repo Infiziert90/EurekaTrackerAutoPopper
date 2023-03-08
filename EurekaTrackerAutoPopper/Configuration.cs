@@ -21,6 +21,9 @@ namespace EurekaTrackerAutoPopper
         public bool UseTwelveHourFormat = false;
 
         public bool RandomizeMapCoords = true;
+
+        public bool EchoFairies = true;
+        public bool ShowFairyToast = true;
         
         // the below exist just to make saving less cumbersome
 
