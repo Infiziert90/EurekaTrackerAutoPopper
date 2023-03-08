@@ -12,7 +12,6 @@ using Dalamud.Game.ClientState;
 using Dalamud.Game;
 using System.Threading;
 using Dalamud.Game.ClientState.Objects;
-using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Gui.Toast;
 using ImGuiNET;
@@ -22,6 +21,7 @@ using Dalamud.Logging;
 using XivCommon;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
+using Dalamud.DrunkenToad;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -99,8 +99,8 @@ namespace EurekaTrackerAutoPopper
 
                       if (!string.IsNullOrEmpty(instance))
                       {
-                          Chat.PrintChat(new XivChatEntry { Message = $"[{Name}] Join existing tracker: https://ffxiv-eureka.com/{instance}" });
-                          PluginUi.Instance = instance;
+                          Chat.PrintChat(new XivChatEntry { Message = $"[{Name}] Possible existing tracker: https://ffxiv-eureka.com/{instance}" });
+                          PluginUi.Instance = $"https://ffxiv-eureka.com/{instance}";
                           ImGui.SetClipboardText($"https://ffxiv-eureka.com/{instance}");
                       }
                   });
@@ -158,7 +158,7 @@ namespace EurekaTrackerAutoPopper
             {
                 if (fate.trackerId != null && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
                 {
-                    EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.trackerId, PluginUi.Instance, PluginUi.Password);
+                    NMPop(fate);
                 }
             }
         }
@@ -174,7 +174,7 @@ namespace EurekaTrackerAutoPopper
 
             if (fate.trackerId != null && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
             {
-                EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.trackerId, PluginUi.Instance, PluginUi.Password);
+                NMPop(fate);
             }
         }
 
@@ -185,7 +185,36 @@ namespace EurekaTrackerAutoPopper
                 Sound.PlayEffect(PluginUi.SoundEffect);
             }
         }
-        
+
+        public void NMPop()
+        {
+#if DEBUG
+            Logger.LogDebug($"Attempting to pop {LastSeenFate.name}");
+#endif
+            NMPop(LastSeenFate);
+        }
+
+        private void NMPop(Library.EurekaFate fate)
+        {
+            string instanceID = PluginUi.Instance.Split("/").Last();
+            if (fate.trackerId != null)
+            {
+#if DEBUG
+                Logger.LogDebug("Calling web request with following data:");
+                Logger.LogDebug($"     NM ID: {fate.trackerId}");
+                Logger.LogDebug($"     Instance ID: {instanceID}");
+                Logger.LogDebug($"     Password: {PluginUi.Password}");
+#endif
+                EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.trackerId, instanceID, PluginUi.Password);
+            }
+#if DEBUG
+            else
+            {
+                Logger.LogDebug("Tracker ID was null, so not attempting web request");
+            }
+#endif
+        }
+
         public void EchoNMPop()
         {
             SeString payload = new();
@@ -283,9 +312,9 @@ namespace EurekaTrackerAutoPopper
             lastPolledFates = FateTable.ToList();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "Won't change")]
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
             PluginUi.Dispose();
             Framework.Update -= PollForFateChange;
             Framework.Update -= FairyCheck;
