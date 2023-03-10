@@ -11,6 +11,8 @@ using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState;
 using Dalamud.Game;
 using System.Threading;
+using Dalamud.Game.ClientState.Objects;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Gui.Toast;
 using ImGuiNET;
 using Dalamud.Game.Text.SeStringHandling;
@@ -30,6 +32,7 @@ namespace EurekaTrackerAutoPopper
         private Configuration Configuration { get; init; }
         private PluginUI PluginUi { get; init; }
 
+        public Library Library;
         private List<Fate> lastPolledFates = new();
         public bool PlayerInEureka { get; set; } = false;
         public Library.EurekaFate LastSeenFate = null;
@@ -40,6 +43,7 @@ namespace EurekaTrackerAutoPopper
         [PluginService] public static GameGui GameGui { get; private set; } = null!;
         [PluginService] public static ToastGui Toast { get; private set; } = null!;
         [PluginService] public static Dalamud.Data.DataManager DataManager { get; private set; } = null!;
+        [PluginService] public static ObjectTable ObjectTable { get; private set; } = null!;
         [PluginService] public static FateTable FateTable { get; private set; } = null!;
         [PluginService] public static Framework Framework { get; private set; } = null!;
         [PluginService] public static ClientState ClientState { get; private set; } = null!;
@@ -49,10 +53,13 @@ namespace EurekaTrackerAutoPopper
         {
             Configuration = DalamudPluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Configuration.Initialize(DalamudPluginInterface);
-
+            
+            Library = new Library(Configuration);
+            Library.Initialize();
+            
             // you might normally want to embed resources and load them from the manifest stream
             string? assemblyLocation = Assembly.GetExecutingAssembly().Location;
-            PluginUi = new PluginUI(Configuration, this);
+            PluginUi = new PluginUI(Configuration, this, Library);
 
             _ = CommandManager.AddHandler("/xleureka", new CommandInfo(OnEurekaCommand)
             {
@@ -70,6 +77,7 @@ namespace EurekaTrackerAutoPopper
             {
                 PlayerInEureka = true;
                 Framework.Update += PollForFateChange;
+                Framework.Update += FairyCheck;
             }
         }
 
@@ -97,13 +105,16 @@ namespace EurekaTrackerAutoPopper
                       }
                   });
                 Framework.Update += PollForFateChange;
+                Framework.Update += FairyCheck;
             }
             else
             {
                 PlayerInEureka = false;
                 PluginUi.Instance = "";
                 PluginUi.Password = "";
+                Library.ExistingFairies.Clear();
                 Framework.Update -= PollForFateChange;
+                Framework.Update -= FairyCheck;
             }
         }
 
@@ -115,7 +126,7 @@ namespace EurekaTrackerAutoPopper
             return ClientState.LocalPlayer?.CurrentWorld.GameData?.DataCenter.Row ?? GetDataCenterId();
         }
 
-        private static bool PlayerInRelevantTerritory()
+        private bool PlayerInRelevantTerritory()
         {
             return Library.TerritoryToFateDictionary.ContainsKey(ClientState.TerritoryType);
         }
@@ -239,7 +250,27 @@ namespace EurekaTrackerAutoPopper
             xivCommon.Functions.Chat.SendMessage(BuildChatString());
         }
 
+        public void EchoFairy(Library.Fairy fairy)
+        {
+            SeString payload = new SeStringBuilder()
+                .AddUiForeground(570)
+                .AddText("Fairy: ")
+                .AddUiGlowOff()
+                .AddUiForegroundOff()
+                .BuiltString
+                .Append(fairy.MapLink);
 
+            if (Configuration.EchoFairies)
+            {
+                Chat.PrintChat(new XivChatEntry { Message = payload });
+            }
+
+            if (Configuration.ShowFairyToast)
+            {
+                Toast.ShowQuest(payload);
+            }
+        }
+        
         // not going to set data center until I can figure some things out
         //private async void SetDataCenter()
         //{
@@ -258,6 +289,18 @@ namespace EurekaTrackerAutoPopper
         //    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
         //}
 
+        public void FairyCheck(Framework framework)
+        {
+            foreach (BattleNpc actor in ObjectTable.OfType<BattleNpc>()
+                         .Where(battleNpc => Library.Fairies.Contains(battleNpc.NameId))
+                         .Where(battleNpc => !Library.ExistingFairies.ContainsKey(battleNpc.ObjectId)))
+            {
+                Library.Fairy fairy = new Library.Fairy(actor.NameId, actor.Position.X, actor.Position.Z); // directX Z = Y
+                Library.ExistingFairies.Add(actor.ObjectId, fairy);
+                EchoFairy(fairy);
+            }
+        }
+        
         public void PollForFateChange(Framework framework)
         {
             if (NoFatesHaveChangedSinceLastChecked())
@@ -274,6 +317,7 @@ namespace EurekaTrackerAutoPopper
             GC.SuppressFinalize(this);
             PluginUi.Dispose();
             Framework.Update -= PollForFateChange;
+            Framework.Update -= FairyCheck;
             ClientState.TerritoryChanged -= TerritoryChangePoll;
             xivCommon.Dispose();
             _ = CommandManager.RemoveHandler("/xleureka");

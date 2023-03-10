@@ -19,6 +19,7 @@ namespace EurekaTrackerAutoPopper
 
         private Configuration Configuration { get; init; }
         private Plugin Plugin { get; init; }
+        private Library Library { get; init; }
 
         private bool settingsVisible = false;
         private string instance = "";
@@ -51,10 +52,11 @@ namespace EurekaTrackerAutoPopper
             set => password = value;
         }
 
-        public PluginUI(Configuration configuration, Plugin plugin)
+        public PluginUI(Configuration configuration, Plugin plugin, Library library)
         {
             Configuration = configuration;
             Plugin = plugin;
+            Library = library;
         }
 
         public void Dispose()
@@ -156,8 +158,8 @@ namespace EurekaTrackerAutoPopper
                 return;
             }
 
-            ImGui.SetNextWindowSize(new Vector2(375, 360), ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSizeConstraints(new Vector2(375, 360), new Vector2(float.MaxValue, float.MaxValue));
+            ImGui.SetNextWindowSize(new Vector2(375, 385), ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSizeConstraints(new Vector2(375, 385), new Vector2(float.MaxValue, float.MaxValue));
             if (ImGui.Begin("Eureka Tracker Auto Popper", ref settingsVisible, flags))
             {
                 if (ImGui.BeginTabBar("##setting-tabs"))
@@ -167,6 +169,9 @@ namespace EurekaTrackerAutoPopper
 
                     // Renders Chat Tab
                     TabChat();
+                    
+                    // Renders Fairy Tab
+                    TabFairy();
 
 #if DEBUG
                     //Renders Debug Tab
@@ -268,6 +273,14 @@ namespace EurekaTrackerAutoPopper
             if (ImGui.BeginTabItem("Chat###chat-tab"))
             {
                 _ = ImGui.Checkbox("Show Post Window", ref Configuration.ShowPopWindow);
+                bool randomize = Configuration.RandomizeMapCoords;
+                if (ImGui.Checkbox("Randomize Map Coords", ref randomize))
+                {
+                    Configuration.RandomizeMapCoords = randomize;
+                    Configuration.Save();
+                    
+                    Library.Initialize();
+                }
                 _ = ImGui.Checkbox("Show PT in Post Window", ref Configuration.ShowPullTimer);
 
                 if (Configuration.ShowPullTimer)
@@ -303,7 +316,31 @@ namespace EurekaTrackerAutoPopper
                 ImGui.TextUnformatted("$sN = Short Name");
                 ImGui.TextUnformatted("$p = MapFlag");
                 ImGui.TextUnformatted("$t = Pull Timer - e.g. PT 27 / ET 13:37");
-
+                
+                ImGui.EndTabItem();
+            }
+        }
+        
+        public void TabFairy()
+        {
+            if (ImGui.BeginTabItem("Fairy###fairy-tab"))
+            {
+                ImGui.TextUnformatted("Fairy / Elemental");
+                _ = ImGui.Checkbox("Echo Fairies", ref Configuration.EchoFairies);
+                _ = ImGui.Checkbox("Show Toast for Fairies", ref Configuration.ShowFairyToast);
+                
+                ImGuiHelpers.ScaledDummy(5);
+                ImGui.Separator();
+                ImGuiHelpers.ScaledDummy(5);
+                
+                if (ImGui.Button("Echo All"))
+                {
+                    foreach (var fairy in Library.ExistingFairies.Values)
+                    {
+                        Plugin.EchoFairy(fairy);
+                    }
+                }
+                
                 ImGui.EndTabItem();
             }
         }

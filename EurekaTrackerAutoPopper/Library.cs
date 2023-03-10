@@ -4,8 +4,15 @@ using System.Collections.Generic;
 
 namespace EurekaTrackerAutoPopper
 {
-    public static class Library
+    public class Library
     {
+        private Configuration Configuration { get; init; }
+
+        public Library(Configuration configuration)
+        {
+            Configuration = configuration;
+        }
+        
         public class EurekaFate
         {
             public ushort fateId;
@@ -24,6 +31,38 @@ namespace EurekaTrackerAutoPopper
             }
         }
         
+        
+        // represents a elemental/fairy seen by the user 
+        public class Fairy
+        {
+            public SeString MapLink;
+
+            public Fairy(uint fairy, float x, float y)
+            {
+                Map map = FairyToTerritory[fairy];
+                MapLink = SeString.CreateMapLink(map.TerritoryId, map.MapId, (int) x * 1000, (int) y * 1000);
+            }
+        }
+
+        public Dictionary<uint, Fairy> ExistingFairies = new();
+
+        public static readonly List<uint> Fairies = new()
+        {
+            7184, // Anemos
+            7567, // Pagos
+            7764, // Pyros
+            8131, // Hydatos
+        };
+
+        private record Map(uint TerritoryId, uint MapId);
+        private static readonly Dictionary<uint, Map> FairyToTerritory = new()
+        {
+            { 7184, new Map(732, 414) },
+            { 7567, new Map(763, 467) },
+            { 7764, new Map(795, 484) },
+            { 8131, new Map(827, 515) }
+        };
+
         // randomize flag X and Y in a range of +1 and -1, the exact size of the fate circle
         private static Random rand = new();
         private static double MAX_VALUE = 1;
@@ -33,16 +72,18 @@ namespace EurekaTrackerAutoPopper
             return (float) (coord + (rand.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE));
         }
 
-        private static SeString CreateMapLink(uint territoryId, uint mapId, float xCoord, float yCoord)
+        private SeString CreateMapLink(uint territoryId, uint mapId, float xCoord, float yCoord)
         {
-            return SeString.CreateMapLink(territoryId, mapId, Randomize(xCoord), Randomize(yCoord));
+            xCoord = Configuration.RandomizeMapCoords ? Randomize(xCoord) : xCoord;
+            yCoord = Configuration.RandomizeMapCoords ? Randomize(yCoord) : yCoord;
+            return SeString.CreateMapLink(territoryId, mapId, xCoord, yCoord);
         }
         
-        private static List<EurekaFate>? anemosFates = null;
-        private static List<EurekaFate>? pagosFates = null;
-        private static List<EurekaFate>? pyrosFates = null;
-        private static List<EurekaFate>? hydatosFates = null;
-        private static Dictionary<ushort, List<EurekaFate>>? territoryToFateDictionary = null;
+        private List<EurekaFate> anemosFates = null!;
+        private List<EurekaFate> pagosFates = null!;
+        private List<EurekaFate> pyrosFates = null!;
+        private List<EurekaFate> hydatosFates = null!;
+        private Dictionary<ushort, List<EurekaFate>>? territoryToFateDictionary = null;
 
         public static readonly Dictionary<ushort, short> TerritoryToTrackerDictionary = new()
         {
@@ -52,7 +93,7 @@ namespace EurekaTrackerAutoPopper
             { 732, 1 },
         };
 
-        public static Dictionary<ushort, List<EurekaFate>> TerritoryToFateDictionary => territoryToFateDictionary ??= new()
+        public Dictionary<ushort, List<EurekaFate>> TerritoryToFateDictionary => territoryToFateDictionary ??= new()
         {
             { 827, HydatosFates },
             { 795, PyrosFates },
@@ -60,12 +101,20 @@ namespace EurekaTrackerAutoPopper
             { 732, AnemosFates },
         };
 
-        public static List<EurekaFate> AnemosFates => anemosFates ??= InitializeAnemosFates();
-        public static List<EurekaFate> PagosFates => pagosFates ??= InitializePagosFates();
-        public static List<EurekaFate> PyrosFates => pyrosFates ??= InitializePyrosFates();
-        public static List<EurekaFate> HydatosFates => hydatosFates ??= InitializeHydatosFates();
+        public List<EurekaFate> AnemosFates => anemosFates;
+        public List<EurekaFate> PagosFates => pagosFates;
+        public List<EurekaFate> PyrosFates => pyrosFates;
+        public List<EurekaFate> HydatosFates => hydatosFates;
 
-        private static List<EurekaFate> InitializeAnemosFates()
+        public void Initialize()
+        {
+            anemosFates = InitializeAnemosFates();
+            pagosFates = InitializePagosFates();
+            pyrosFates = InitializePyrosFates();
+            hydatosFates = InitializeHydatosFates();
+        }
+        
+        private List<EurekaFate> InitializeAnemosFates()
         {
 #pragma warning disable format
             return new()
@@ -93,7 +142,7 @@ namespace EurekaTrackerAutoPopper
             };
 #pragma warning restore format
         }
-        private static List<EurekaFate> InitializePagosFates()
+        private List<EurekaFate> InitializePagosFates()
         {
 #pragma warning disable format
             return new()
@@ -118,7 +167,7 @@ namespace EurekaTrackerAutoPopper
             };
 #pragma warning restore format
         }
-        private static List<EurekaFate> InitializePyrosFates()
+        private List<EurekaFate> InitializePyrosFates()
         {
 #pragma warning disable format
             return new()
@@ -143,7 +192,7 @@ namespace EurekaTrackerAutoPopper
             };
 #pragma warning restore format
         }
-        private static List<EurekaFate> InitializeHydatosFates()
+        private List<EurekaFate> InitializeHydatosFates()
         {
 #pragma warning disable format
             return new()
