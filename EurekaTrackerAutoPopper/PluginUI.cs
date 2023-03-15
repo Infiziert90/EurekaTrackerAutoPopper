@@ -157,7 +157,7 @@ namespace EurekaTrackerAutoPopper
 
                     if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
                     {
-                        ImGui.SetTooltip($"Shout will be available {CountdownForShout}s after spawn.\nPlease don't shout if it was already shouted.");
+                        ImGui.SetTooltip($"Shout will be available {CountdownForShout / 1000}s after spawn.\nPlease don't shout if it was already shouted.");
                     }
                 }
 
