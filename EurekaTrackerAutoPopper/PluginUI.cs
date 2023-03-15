@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Dalamud.Interface;
 using System.Collections.Generic;
+using System.Timers;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -32,6 +33,9 @@ namespace EurekaTrackerAutoPopper
         public int PullTime => pullTime;
         public int DebugFate = 0;
 
+        private readonly Timer ShoutTimer = new();
+        private const int CountdownForShout = 30 * 1000; // Seconds
+
         public bool SettingsVisible
         {
             get => settingsVisible;
@@ -57,6 +61,8 @@ namespace EurekaTrackerAutoPopper
             Configuration = configuration;
             Plugin = plugin;
             Library = library;
+
+            ShoutTimer.AutoReset = false;
         }
 
         public void Dispose()
@@ -135,10 +141,24 @@ namespace EurekaTrackerAutoPopper
                 ImGui.NewLine();
 
                 ImGui.SameLine(size + 30 + extraSize);
-                if (ImGui.Button("Post", new Vector2(50, 0)))
+                if (!ShoutTimer.Enabled)
                 {
-                    Plugin.PostChatMessage();
-                    PopVisible = false;
+                    if (ImGui.Button("Post", new Vector2(50, 0)))
+                    {
+                        Plugin.PostChatMessage();
+                        PopVisible = false;
+                    }
+                }
+                else
+                {
+                    ImGui.BeginDisabled();
+                    _ = ImGui.Button($"Post", new Vector2(50, 0));
+                    ImGui.EndDisabled();
+
+                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                    {
+                        ImGui.SetTooltip($"Shout will be available {CountdownForShout}s after spawn.\nPlease don't shout if it was already shouted.");
+                    }
                 }
 
                 ImGui.SameLine(size + 85 + extraSize);
@@ -169,7 +189,7 @@ namespace EurekaTrackerAutoPopper
 
                     // Renders Chat Tab
                     TabChat();
-                    
+
                     // Renders Fairy Tab
                     TabFairy();
 
@@ -278,7 +298,7 @@ namespace EurekaTrackerAutoPopper
                 {
                     Configuration.RandomizeMapCoords = randomize;
                     Configuration.Save();
-                    
+
                     Library.Initialize();
                 }
                 _ = ImGui.Checkbox("Show PT in Post Window", ref Configuration.ShowPullTimer);
@@ -316,11 +336,11 @@ namespace EurekaTrackerAutoPopper
                 ImGui.TextUnformatted("$sN = Short Name");
                 ImGui.TextUnformatted("$p = MapFlag");
                 ImGui.TextUnformatted("$t = Pull Timer - e.g. PT 27 / ET 13:37");
-                
+
                 ImGui.EndTabItem();
             }
         }
-        
+
         public void TabFairy()
         {
             if (ImGui.BeginTabItem("Fairy###fairy-tab"))
@@ -328,11 +348,11 @@ namespace EurekaTrackerAutoPopper
                 ImGui.TextUnformatted("Fairy / Elemental");
                 _ = ImGui.Checkbox("Echo Fairies", ref Configuration.EchoFairies);
                 _ = ImGui.Checkbox("Show Toast for Fairies", ref Configuration.ShowFairyToast);
-                
+
                 ImGuiHelpers.ScaledDummy(5);
                 ImGui.Separator();
                 ImGuiHelpers.ScaledDummy(5);
-                
+
                 if (ImGui.Button("Echo All"))
                 {
                     foreach (var fairy in Library.ExistingFairies.Values)
@@ -340,7 +360,7 @@ namespace EurekaTrackerAutoPopper
                         Plugin.EchoFairy(fairy);
                     }
                 }
-                
+
                 ImGui.EndTabItem();
             }
         }
@@ -410,6 +430,13 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
+        public void StartShoutCountdown()
+        {
+            ShoutTimer.Stop();
+            ShoutTimer.Interval = CountdownForShout;
+            ShoutTimer.Start();
+        }
+
         public string CurrentEorzeanPullTime()
         {
             DateTime time = new DateTime().AddMinutes(eorzeaTime);
@@ -424,14 +451,14 @@ namespace EurekaTrackerAutoPopper
                 var et = DateTimeOffset.FromUnixTimeSeconds(FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance()->EorzeaTime);
                 eorzeaTime = et.Hour * 60 + et.Minute + 60; // 60 min ET = 3 min our time
                 eorzeaTime = RoundOff(eorzeaTime); // Round it to X0
-                
+
                 if (eorzeaTime > 1440)
                 {
                     eorzeaTime -= 1440;
                 }
             }
         }
-        
+
         private static int RoundOff (int i) => (int) Math.Round(i / 10.0) * 10;
     }
 }

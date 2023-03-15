@@ -12,7 +12,7 @@ namespace EurekaTrackerAutoPopper
         {
             Configuration = configuration;
         }
-        
+
         public class EurekaFate
         {
             public ushort fateId;
@@ -30,9 +30,9 @@ namespace EurekaTrackerAutoPopper
                 this.mapLink = mapLink;
             }
         }
-        
-        
-        // represents a elemental/fairy seen by the user 
+
+
+        // represents a elemental/fairy seen by the user
         public class Fairy
         {
             public SeString MapLink;
@@ -65,8 +65,8 @@ namespace EurekaTrackerAutoPopper
 
         // randomize flag X and Y in a range of +1 and -1, the exact size of the fate circle
         private static Random rand = new();
-        private static double MAX_VALUE = 1;
-        private static double MIN_VALUE = -1;
+        private static double MAX_VALUE = 0.5;
+        private static double MIN_VALUE = -0.5;
         private static float Randomize(float coord)
         {
             return (float) (coord + (rand.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE));
@@ -78,7 +78,7 @@ namespace EurekaTrackerAutoPopper
             yCoord = Configuration.RandomizeMapCoords ? Randomize(yCoord) : yCoord;
             return SeString.CreateMapLink(territoryId, mapId, xCoord, yCoord);
         }
-        
+
         private List<EurekaFate> anemosFates = null!;
         private List<EurekaFate> pagosFates = null!;
         private List<EurekaFate> pyrosFates = null!;
@@ -113,7 +113,7 @@ namespace EurekaTrackerAutoPopper
             pyrosFates = InitializePyrosFates();
             hydatosFates = InitializeHydatosFates();
         }
-        
+
         private List<EurekaFate> InitializeAnemosFates()
         {
 #pragma warning disable format
@@ -155,10 +155,10 @@ namespace EurekaTrackerAutoPopper
                 new EurekaFate(1366, 26, CreateMapLink(763, 467, 29.0f, 22.0f), "Hakutaku", "Haku"),                    // The Wobbler in Darkness
                 new EurekaFate(1357, 27, CreateMapLink(763, 467, 17.0f, 16.0f), "King Igloo", "Igloo"),                 // Does It Have to Be a Snowman
                 new EurekaFate(1356, 28, CreateMapLink(763, 467, 10.0f, 10.0f), "Asag", "Asag"),                        // Disorder in the Court
-                new EurekaFate(1352, 29, CreateMapLink(763, 467, 10.0f, 20.0f), "Surabhi", "Surabhi"),                  // Cows for Concern
+                new EurekaFate(1352, 29, CreateMapLink(763, 467, 9.8f, 19.0f), "Surabhi", "Surabhi"),                  // Cows for Concern
                 new EurekaFate(1360, 30, CreateMapLink(763, 467, 8.7f,  15.4f), "King Arthro", "Arthro"),               // Morte Arthro
                 new EurekaFate(1358, 31, CreateMapLink(763, 467, 13.0f, 18.0f), "Mindertaur/Eldertaur", "Brothers"),    // Brothers
-                new EurekaFate(1361, 32, CreateMapLink(763, 467, 26.0f, 16.0f), "Holy Cow", "Holy Cow"),                // Apocalypse Cow
+                new EurekaFate(1361, 32, CreateMapLink(763, 467, 26.5f, 16.9f), "Holy Cow", "Holy Cow"),                // Apocalypse Cow
                 new EurekaFate(1362, 33, CreateMapLink(763, 467, 31.0f, 18.6f), "Hadhayosh", "Behe"),                   // Third Impact
                 new EurekaFate(1359, 34, CreateMapLink(763, 467, 25.0f, 19.0f), "Horus", "Horus"),                      // Eye of Horus
                 new EurekaFate(1363, 35, CreateMapLink(763, 467, 23.6f, 25.0f), "Arch Angra Mainyu", "Mainyu"),         // Eye Scream for Ice Cream

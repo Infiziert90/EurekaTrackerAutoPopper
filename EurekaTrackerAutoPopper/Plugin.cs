@@ -53,10 +53,10 @@ namespace EurekaTrackerAutoPopper
         {
             Configuration = DalamudPluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Configuration.Initialize(DalamudPluginInterface);
-            
+
             Library = new Library(Configuration);
             Library.Initialize();
-            
+
             // you might normally want to embed resources and load them from the manifest stream
             string? assemblyLocation = Assembly.GetExecutingAssembly().Location;
             PluginUi = new PluginUI(Configuration, this, Library);
@@ -138,13 +138,14 @@ namespace EurekaTrackerAutoPopper
 
         private void CheckForRelevantFates(ushort currentTerritory)
         {
-            List<Fate> newFates = FateTable.Except(lastPolledFates).ToList();
+            List<ushort> newFateIds = FateTable.Except(lastPolledFates).Select(i => i.FateId).ToList();
             List<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary[currentTerritory];
-            List<Library.EurekaFate> newRelevantFates = relevantFates.Where(i => newFates.Select(i => i.FateId).Contains(i.fateId)).ToList();
-            foreach (Library.EurekaFate fate in newRelevantFates)
+            foreach (Library.EurekaFate fate in relevantFates.Where(i => newFateIds.Contains(i.fateId)))
             {
                 LastSeenFate = fate;
+                PluginUi.StartShoutCountdown();
                 PluginUi.SetEorzeaTimeWithPullOffset();
+
                 ProcessNewFate(fate);
             }
         }
@@ -270,7 +271,7 @@ namespace EurekaTrackerAutoPopper
                 Toast.ShowQuest(payload);
             }
         }
-        
+
         // not going to set data center until I can figure some things out
         //private async void SetDataCenter()
         //{
@@ -300,7 +301,7 @@ namespace EurekaTrackerAutoPopper
                 EchoFairy(fairy);
             }
         }
-        
+
         public void PollForFateChange(Framework framework)
         {
             if (NoFatesHaveChangedSinceLastChecked())
