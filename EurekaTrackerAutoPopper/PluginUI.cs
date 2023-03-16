@@ -1,17 +1,16 @@
 ﻿using ImGuiNET;
 using System;
 using System.Numerics;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Linq;
 using Dalamud.Interface;
 using System.Collections.Generic;
 using System.Timers;
 
+using static FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
+
 namespace EurekaTrackerAutoPopper
 {
-    // It is good to have this be disposable in general, in case you ever need it
-    // to do any cleanup
     internal class PluginUI : IDisposable
     {
         private const ImGuiWindowFlags flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse |
@@ -72,12 +71,6 @@ namespace EurekaTrackerAutoPopper
 
         public void Draw()
         {
-            // This is our only draw handler attached to UIBuilder, so it needs to be
-            // able to draw any windows we might have open.
-            // Each method checks its own visibility/state to ensure it only draws when
-            // it actually makes sense.
-            // There are other ways to do this, but it is generally best to keep the number of
-            // draw delegates as low as possible.
             DrawSettingsWindow();
             DrawFatePopWindow();
         }
@@ -180,7 +173,7 @@ namespace EurekaTrackerAutoPopper
 
             ImGui.SetNextWindowSize(new Vector2(375, 385), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSizeConstraints(new Vector2(375, 385), new Vector2(float.MaxValue, float.MaxValue));
-            if (ImGui.Begin("Eureka Tracker Auto Popper", ref settingsVisible, flags))
+            if (ImGui.Begin("Eureka Linker", ref settingsVisible, flags))
             {
                 if (ImGui.BeginTabBar("##setting-tabs"))
                 {
@@ -272,11 +265,7 @@ namespace EurekaTrackerAutoPopper
                 {
                     if (Dalamud.Interface.Components.ImGuiComponents.IconButton(3, FontAwesomeIcon.Globe))
                     {
-                        _ = Process.Start(new ProcessStartInfo()
-                        {
-                            FileName = instance,
-                            UseShellExecute = true
-                        });
+                        Dalamud.Utility.Util.OpenLink(instance);
                     }
                     if (ImGui.IsItemHovered())
                     {
@@ -420,9 +409,11 @@ namespace EurekaTrackerAutoPopper
                         Plugin.SetFlagMarker();
                     }
 
+                    ImGuiHelpers.ScaledDummy(20);
+
                     if (ImGui.Button($"Reset"))
                     {
-                        Plugin.LastSeenFate = null;
+                        Plugin.LastSeenFate = null!;
                     }
                 }
 
@@ -444,18 +435,15 @@ namespace EurekaTrackerAutoPopper
             return !Configuration.UseTwelveHourFormat ? $"{time:HH:mm}" : $"{time:hh:mm tt}";
         }
 
-        public void SetEorzeaTimeWithPullOffset()
+        public unsafe void SetEorzeaTimeWithPullOffset()
         {
-            unsafe
-            {
-                var et = DateTimeOffset.FromUnixTimeSeconds(FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance()->EorzeaTime);
-                eorzeaTime = et.Hour * 60 + et.Minute + 60; // 60 min ET = 3 min our time
-                eorzeaTime = RoundOff(eorzeaTime); // Round it to X0
+            var et = DateTimeOffset.FromUnixTimeSeconds(Instance()->EorzeaTime);
+            eorzeaTime = et.Hour * 60 + et.Minute + 60; // 60 min ET = 3 min our time
+            eorzeaTime = RoundOff(eorzeaTime); // Round it to X0
 
-                if (eorzeaTime > 1440)
-                {
-                    eorzeaTime -= 1440;
-                }
+            if (eorzeaTime > 1440)
+            {
+                eorzeaTime -= 1440;
             }
         }
 

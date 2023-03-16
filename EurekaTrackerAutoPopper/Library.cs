@@ -63,13 +63,13 @@ namespace EurekaTrackerAutoPopper
             { 8131, new Map(827, 515) }
         };
 
-        // randomize flag X and Y in a range of +1 and -1, the exact size of the fate circle
-        private static Random rand = new();
-        private static double MAX_VALUE = 0.5;
-        private static double MIN_VALUE = -0.5;
+        // randomize flag X and Y in a range of +0.5 and -0.5, fitting well into the 1 radius of the fate circle
+        private static readonly Random Rand = new();
+        private const double MaxValue = 0.5;
+        private const double MinValue = -0.5;
         private static float Randomize(float coord)
         {
-            return (float) (coord + (rand.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE));
+            return (float) (coord + (Rand.NextDouble() * (MaxValue - MinValue) + MinValue));
         }
 
         private SeString CreateMapLink(uint territoryId, uint mapId, float xCoord, float yCoord)
@@ -114,9 +114,9 @@ namespace EurekaTrackerAutoPopper
             hydatosFates = InitializeHydatosFates();
         }
 
+#pragma warning disable format
         private List<EurekaFate> InitializeAnemosFates()
         {
-#pragma warning disable format
             return new()
             {
                 new EurekaFate(1332, 1,  CreateMapLink(732, 414, 14.0f, 22.3f), "Sabotender Corrido", "Sabo"),          // Unsafety Dance
@@ -140,11 +140,10 @@ namespace EurekaTrackerAutoPopper
                 new EurekaFate(1338, 19, CreateMapLink(732, 414, 8.0f,  23.0f), "Lamashtu", "Lamashtu"),                // Drama Lamashtu
                 new EurekaFate(1329, 20, CreateMapLink(732, 414, 7.0f,  22.0f), "Pazuzu", "Paz"),                       // Wail in the Willows
             };
-#pragma warning restore format
         }
+
         private List<EurekaFate> InitializePagosFates()
         {
-#pragma warning disable format
             return new()
             {
                 new EurekaFate(1351, 21, CreateMapLink(763, 467, 21.0f, 26.0f), "The Snow Queen", "Queen"),             // Eternity
@@ -165,11 +164,10 @@ namespace EurekaTrackerAutoPopper
                 new EurekaFate(1365, 36, CreateMapLink(763, 467, 22.0f, 14.0f), "Copycat Cassie", "Cassie"),            // Cassie and the Copycats
                 new EurekaFate(1364, 37, CreateMapLink(763, 467, 36.0f, 19.0f), "Louhi", "Louhi"),                      // Louhi on Ice
             };
-#pragma warning restore format
         }
+
         private List<EurekaFate> InitializePyrosFates()
         {
-#pragma warning disable format
             return new()
             {
                 new EurekaFate(1388, 38, CreateMapLink(795, 484, 27.0f, 26.0f), "Leucosia", "Leucosia"),                // Medias Res
@@ -190,11 +188,10 @@ namespace EurekaTrackerAutoPopper
                 new EurekaFate(1403, 53, CreateMapLink(795, 484, 24.0f, 30.0f), "Skoll", "Skoll"),                      // Heavens' Warg
                 new EurekaFate(1404, 54, CreateMapLink(795, 484, 35.0f, 6.0f), "Penthesilea", "Penny"),                 // Lost Epic
             };
-#pragma warning restore format
         }
+
         private List<EurekaFate> InitializeHydatosFates()
         {
-#pragma warning disable format
             return new()
             {
                 new EurekaFate(1412, 55,    CreateMapLink(827, 515, 11.1f, 25.2f), "Khalamari", "Khalamari"),           // I Ink, Therefore I Am
@@ -210,7 +207,7 @@ namespace EurekaTrackerAutoPopper
                 new EurekaFate(1423, 65,    CreateMapLink(827, 515, 32.7f, 19.6f), "Provenance Watcher", "PW"),         // Crystalline Provenance
                 new EurekaFate(1424, null,  CreateMapLink(827, 515, 26.8f, 29.0f), "Ovni", "Ovni"),                     // I Don't Want to Believe
             };
-#pragma warning restore format
         }
+#pragma warning restore format
     }
 }

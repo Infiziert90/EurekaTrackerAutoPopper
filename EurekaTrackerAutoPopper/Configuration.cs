@@ -14,7 +14,7 @@ namespace EurekaTrackerAutoPopper
         public bool PlaySoundEffect = true;
         public bool ShowPopToast = true;
         public bool UseShortNames = true;
-        
+
         public bool ShowPopWindow = true;
         public bool ShowPullTimer = true;
         public bool UseEorzeaTimer = false;
@@ -24,8 +24,6 @@ namespace EurekaTrackerAutoPopper
 
         public bool EchoFairies = true;
         public bool ShowFairyToast = true;
-        
-        // the below exist just to make saving less cumbersome
 
         [NonSerialized]
         private DalamudPluginInterface? pluginInterface;

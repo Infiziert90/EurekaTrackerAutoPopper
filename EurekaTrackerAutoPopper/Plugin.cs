@@ -2,7 +2,6 @@
 using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
-using System.Reflection;
 using Dalamud.Game.Gui;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,34 +20,32 @@ using Dalamud.Logging;
 using XivCommon;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
-using Dalamud.DrunkenToad;
 
 namespace EurekaTrackerAutoPopper
 {
     public class Plugin : IDalamudPlugin
     {
-        public string Name => "Eureka Tracker Auto Popper";
+        public string Name => "Eureka Linker";
 
         private Configuration Configuration { get; init; }
         private PluginUI PluginUi { get; init; }
 
         public Library Library;
+        public bool PlayerInEureka;
+        public Library.EurekaFate LastSeenFate = null!;
         private List<Fate> lastPolledFates = new();
-        public bool PlayerInEureka { get; set; } = false;
-        public Library.EurekaFate LastSeenFate = null;
 
-        private static XivCommonBase xivCommon;
+        private static XivCommonBase xivCommon = null!;
 
         [PluginService] public static ChatGui Chat { get; private set; } = null!;
-        [PluginService] public static GameGui GameGui { get; private set; } = null!;
         [PluginService] public static ToastGui Toast { get; private set; } = null!;
-        [PluginService] public static Dalamud.Data.DataManager DataManager { get; private set; } = null!;
         [PluginService] public static ObjectTable ObjectTable { get; private set; } = null!;
         [PluginService] public static FateTable FateTable { get; private set; } = null!;
         [PluginService] public static Framework Framework { get; private set; } = null!;
         [PluginService] public static ClientState ClientState { get; private set; } = null!;
         [PluginService] public static DalamudPluginInterface DalamudPluginInterface { get; private set; } = null!;
         [PluginService] public static CommandManager CommandManager { get; private set; } = null!;
+
         public Plugin()
         {
             Configuration = DalamudPluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
@@ -57,8 +54,6 @@ namespace EurekaTrackerAutoPopper
             Library = new Library(Configuration);
             Library.Initialize();
 
-            // you might normally want to embed resources and load them from the manifest stream
-            string? assemblyLocation = Assembly.GetExecutingAssembly().Location;
             PluginUi = new PluginUI(Configuration, this, Library);
 
             _ = CommandManager.AddHandler("/xleureka", new CommandInfo(OnEurekaCommand)
@@ -91,8 +86,8 @@ namespace EurekaTrackerAutoPopper
             if (PlayerInRelevantTerritory())
             {
                 PlayerInEureka = true;
-                _ = Task.Run(async () =>
-                  {
+                Task.Run(async () =>
+                    {
                       Task<string?> task = EurekaTrackerWrapper.WebRequests.FindTracker(GetDataCenterId(), Library.TerritoryToTrackerDictionary[ClientState.TerritoryType]);
 
                       string? instance = await task;
@@ -103,7 +98,8 @@ namespace EurekaTrackerAutoPopper
                           PluginUi.Instance = $"https://ffxiv-eureka.com/{instance}";
                           ImGui.SetClipboardText($"https://ffxiv-eureka.com/{instance}");
                       }
-                  });
+                    });
+
                 Framework.Update += PollForFateChange;
                 Framework.Update += FairyCheck;
             }
@@ -113,6 +109,7 @@ namespace EurekaTrackerAutoPopper
                 PluginUi.Instance = "";
                 PluginUi.Password = "";
                 Library.ExistingFairies.Clear();
+
                 Framework.Update -= PollForFateChange;
                 Framework.Update -= FairyCheck;
             }
@@ -143,8 +140,6 @@ namespace EurekaTrackerAutoPopper
             foreach (Library.EurekaFate fate in relevantFates.Where(i => newFateIds.Contains(i.fateId)))
             {
                 LastSeenFate = fate;
-                PluginUi.StartShoutCountdown();
-                PluginUi.SetEorzeaTimeWithPullOffset();
 
                 ProcessNewFate(fate);
             }
@@ -168,8 +163,12 @@ namespace EurekaTrackerAutoPopper
         {
             EchoNMPop();
             PlaySoundEffect();
+
             if (Configuration.ShowPopWindow)
             {
+                PluginUi.StartShoutCountdown();
+                PluginUi.SetEorzeaTimeWithPullOffset();
+
                 PluginUi.PopVisible = true;
             }
 
@@ -189,9 +188,7 @@ namespace EurekaTrackerAutoPopper
 
         public void NMPop()
         {
-#if DEBUG
-            Logger.LogDebug($"Attempting to pop {LastSeenFate.name}");
-#endif
+            PluginLog.Debug($"Attempting to pop {LastSeenFate.name}");
             NMPop(LastSeenFate);
         }
 
@@ -200,27 +197,26 @@ namespace EurekaTrackerAutoPopper
             string instanceID = PluginUi.Instance.Split("/").Last();
             if (fate.trackerId != null)
             {
-#if DEBUG
-                Logger.LogDebug("Calling web request with following data:");
-                Logger.LogDebug($"     NM ID: {fate.trackerId}");
-                Logger.LogDebug($"     Instance ID: {instanceID}");
-                Logger.LogDebug($"     Password: {PluginUi.Password}");
-#endif
+                PluginLog.Debug("Calling web request with following data:");
+                PluginLog.Debug($"     NM ID: {fate.trackerId}");
+                PluginLog.Debug($"     Instance ID: {instanceID}");
+                PluginLog.Debug($"     Password: {PluginUi.Password}");
                 EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.trackerId, instanceID, PluginUi.Password);
             }
-#if DEBUG
             else
             {
-                Logger.LogDebug("Tracker ID was null, so not attempting web request");
+                PluginLog.Debug("Tracker ID was null, so not attempting web request");
             }
-#endif
         }
 
         public void EchoNMPop()
         {
-            SeString payload = new();
-            _ = payload.Append($"{(Configuration.UseShortNames ? LastSeenFate.shortName : LastSeenFate.name)} pop: ");
-            _ = payload.Append(LastSeenFate.mapLink);
+            SeString payload = new SeStringBuilder()
+                .AddUiForeground(540)
+                .AddText($"{(Configuration.UseShortNames ? LastSeenFate.shortName : LastSeenFate.name)} pop: ")
+                .AddUiForegroundOff()
+                .BuiltString
+                .Append(LastSeenFate.mapLink);
 
             if (Configuration.EchoNMPop)
             {
@@ -341,12 +337,14 @@ namespace EurekaTrackerAutoPopper
                 PluginLog.Debug("SetFlagMarker");
                 // removes current flag marker from map
                 AgentMap.Instance()->IsFlagMarkerSet = 0;
+
                 // divide by 1000 as raw is too long for CS SetFlagMapMarker
+                var map = (MapLinkPayload) LastSeenFate.mapLink.Payloads.First();
                 AgentMap.Instance()->SetFlagMapMarker(
-                    ((MapLinkPayload)LastSeenFate.mapLink.Payloads.First()).Map.TerritoryType.Row,
-                    ((MapLinkPayload)LastSeenFate.mapLink.Payloads.First()).Map.RowId,
-                    ((MapLinkPayload)LastSeenFate.mapLink.Payloads.First()).RawX / 1000.0f,
-                    ((MapLinkPayload)LastSeenFate.mapLink.Payloads.First()).RawY / 1000.0f);
+                    map.Map.TerritoryType.Row,
+                    map.Map.RowId,
+                    map.RawX / 1000.0f,
+                    map.RawY / 1000.0f);
             }
             catch (Exception)
             {
