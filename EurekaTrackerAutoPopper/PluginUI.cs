@@ -33,7 +33,7 @@ namespace EurekaTrackerAutoPopper
         public int DebugFate = 0;
 
         private readonly Timer ShoutTimer = new();
-        private const int CountdownForShout = 30 * 1000; // Seconds
+        private const int CountdownForShout = 20 * 1000; // Seconds
 
         public bool SettingsVisible
         {
@@ -90,7 +90,7 @@ namespace EurekaTrackerAutoPopper
 
             if (ImGui.Begin("Eureka NM Pop", popFlags))
             {
-                string fate = $"Fate: {Plugin.LastSeenFate.name}";
+                string fate = $"Fate: {Plugin.LastSeenFate.Name}";
                 float size = ImGui.CalcTextSize(fate).X;
                 float extraSize = 0.0f; // extra spacing for ET time slider
 
@@ -369,7 +369,7 @@ namespace EurekaTrackerAutoPopper
                         _ => Library.AnemosFates
                     };
 
-                    string[] stringList = list.Select(x => x.name).ToArray();
+                    string[] stringList = list.Select(x => x.Name).ToArray();
                     _ = ImGui.Combo("##fateSelector", ref DebugFate, stringList, stringList.Length);
 
                     if (ImGui.Button($"Populate last seen fate"))
@@ -379,7 +379,7 @@ namespace EurekaTrackerAutoPopper
                 }
                 else
                 {
-                    ImGui.TextUnformatted($"Current Fate: {Plugin.LastSeenFate.name}");
+                    ImGui.TextUnformatted($"Current Fate: {Plugin.LastSeenFate.Name}");
 
                     ImGuiHelpers.ScaledDummy(10);
 

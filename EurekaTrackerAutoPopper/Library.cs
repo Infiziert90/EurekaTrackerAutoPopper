@@ -13,29 +13,13 @@ namespace EurekaTrackerAutoPopper
             Configuration = configuration;
         }
 
-        public class EurekaFate
-        {
-            public ushort fateId;
-            public ushort? trackerId;
-            public string name;
-            public string shortName;
-            public SeString mapLink;
-
-            public EurekaFate(ushort fateId, ushort? trackerId, SeString mapLink, string name, string shortName)
-            {
-                this.fateId = fateId;
-                this.trackerId = trackerId;
-                this.name = name;
-                this.shortName = shortName;
-                this.mapLink = mapLink;
-            }
-        }
-
+        public record EurekaFate(ushort FateId, ushort TrackerId, SeString MapLink, string Name, string ShortName);
 
         // represents a elemental/fairy seen by the user
-        public class Fairy
+        public Dictionary<uint, Fairy> ExistingFairies = new();
+        public record Fairy
         {
-            public SeString MapLink;
+            public readonly SeString MapLink;
 
             public Fairy(uint fairy, float x, float y)
             {
@@ -43,8 +27,6 @@ namespace EurekaTrackerAutoPopper
                 MapLink = SeString.CreateMapLink(map.TerritoryId, map.MapId, (int) x * 1000, (int) y * 1000);
             }
         }
-
-        public Dictionary<uint, Fairy> ExistingFairies = new();
 
         public static readonly List<uint> Fairies = new()
         {
@@ -83,7 +65,7 @@ namespace EurekaTrackerAutoPopper
         private List<EurekaFate> pagosFates = null!;
         private List<EurekaFate> pyrosFates = null!;
         private List<EurekaFate> hydatosFates = null!;
-        private Dictionary<ushort, List<EurekaFate>>? territoryToFateDictionary = null;
+        private Dictionary<ushort, List<EurekaFate>>? territoryToFateDictionary;
 
         public static readonly Dictionary<ushort, short> TerritoryToTrackerDictionary = new()
         {
@@ -205,7 +187,7 @@ namespace EurekaTrackerAutoPopper
                 new EurekaFate(1420, 63,    CreateMapLink(827, 515, 32.5f, 24.7f), "Barong", "Barong"),                 // Robber Barong
                 new EurekaFate(1421, 64,    CreateMapLink(827, 515, 36.5f, 13.5f), "Ceto", "Ceto"),                     // Stone-cold Killer
                 new EurekaFate(1423, 65,    CreateMapLink(827, 515, 32.7f, 19.6f), "Provenance Watcher", "PW"),         // Crystalline Provenance
-                new EurekaFate(1424, null,  CreateMapLink(827, 515, 26.8f, 29.0f), "Ovni", "Ovni"),                     // I Don't Want to Believe
+                new EurekaFate(1424, 1337,  CreateMapLink(827, 515, 26.8f, 29.0f), "Ovni", "Ovni"),                     // I Don't Want to Believe
             };
         }
 #pragma warning restore format

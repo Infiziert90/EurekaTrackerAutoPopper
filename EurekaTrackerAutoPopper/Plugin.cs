@@ -5,15 +5,12 @@ using Dalamud.Plugin;
 using Dalamud.Game.Gui;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState;
 using Dalamud.Game;
-using System.Threading;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Gui.Toast;
-using ImGuiNET;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text;
 using Dalamud.Logging;
@@ -56,7 +53,7 @@ namespace EurekaTrackerAutoPopper
 
             PluginUi = new PluginUI(Configuration, this, Library);
 
-            _ = CommandManager.AddHandler("/xleureka", new CommandInfo(OnEurekaCommand)
+            CommandManager.AddHandler("/xleureka", new CommandInfo(OnEurekaCommand)
             {
                 HelpMessage = "Opens the config window",
                 ShowInHelp = true
@@ -86,19 +83,6 @@ namespace EurekaTrackerAutoPopper
             if (PlayerInRelevantTerritory())
             {
                 PlayerInEureka = true;
-                Task.Run(async () =>
-                    {
-                      Task<string?> task = EurekaTrackerWrapper.WebRequests.FindTracker(GetDataCenterId(), Library.TerritoryToTrackerDictionary[ClientState.TerritoryType]);
-
-                      string? instance = await task;
-
-                      if (!string.IsNullOrEmpty(instance))
-                      {
-                          Chat.PrintChat(new XivChatEntry { Message = $"[{Name}] Possible existing tracker: https://ffxiv-eureka.com/{instance}" });
-                          PluginUi.Instance = $"https://ffxiv-eureka.com/{instance}";
-                          ImGui.SetClipboardText($"https://ffxiv-eureka.com/{instance}");
-                      }
-                    });
 
                 Framework.Update += PollForFateChange;
                 Framework.Update += FairyCheck;
@@ -115,14 +99,6 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        private static uint GetDataCenterId()
-        {
-            // keep trying this method until we get the local player
-            // maybe a better way, but *shrug* for now
-            Thread.Sleep(500);
-            return ClientState.LocalPlayer?.CurrentWorld.GameData?.DataCenter.Row ?? GetDataCenterId();
-        }
-
         private bool PlayerInRelevantTerritory()
         {
             return Library.TerritoryToFateDictionary.ContainsKey(ClientState.TerritoryType);
@@ -137,7 +113,7 @@ namespace EurekaTrackerAutoPopper
         {
             List<ushort> newFateIds = FateTable.Except(lastPolledFates).Select(i => i.FateId).ToList();
             List<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary[currentTerritory];
-            foreach (Library.EurekaFate fate in relevantFates.Where(i => newFateIds.Contains(i.fateId)))
+            foreach (Library.EurekaFate fate in relevantFates.Where(i => newFateIds.Contains(i.FateId)))
             {
                 LastSeenFate = fate;
 
@@ -149,17 +125,17 @@ namespace EurekaTrackerAutoPopper
         {
             List<Fate> currentFates = FateTable.ToList();
             List<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary[currentTerritory];
-            List<Library.EurekaFate> relevantCurrentFates = relevantFates.Where(i => currentFates.Select(i => i.FateId).Contains(i.fateId)).ToList();
+            List<Library.EurekaFate> relevantCurrentFates = relevantFates.Where(i => currentFates.Select(i => i.FateId).Contains(i.FateId)).ToList();
             foreach (Library.EurekaFate fate in relevantCurrentFates)
             {
-                if (fate.trackerId != null && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
+                if (fate.TrackerId != 1337 && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
                 {
                     NMPop(fate);
                 }
             }
         }
 
-        public void ProcessNewFate(Library.EurekaFate fate)
+        private void ProcessNewFate(Library.EurekaFate fate)
         {
             EchoNMPop();
             PlaySoundEffect();
@@ -172,7 +148,7 @@ namespace EurekaTrackerAutoPopper
                 PluginUi.PopVisible = true;
             }
 
-            if (fate.trackerId != null && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
+            if (fate.TrackerId != 1337 && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
             {
                 NMPop(fate);
             }
@@ -188,24 +164,24 @@ namespace EurekaTrackerAutoPopper
 
         public void NMPop()
         {
-            PluginLog.Debug($"Attempting to pop {LastSeenFate.name}");
+            PluginLog.Debug($"Attempting to pop {LastSeenFate.Name}");
             NMPop(LastSeenFate);
         }
 
         private void NMPop(Library.EurekaFate fate)
         {
             string instanceID = PluginUi.Instance.Split("/").Last();
-            if (fate.trackerId != null)
+            if (fate.TrackerId != 1337)
             {
                 PluginLog.Debug("Calling web request with following data:");
-                PluginLog.Debug($"     NM ID: {fate.trackerId}");
+                PluginLog.Debug($"     NM ID: {fate.TrackerId}");
                 PluginLog.Debug($"     Instance ID: {instanceID}");
                 PluginLog.Debug($"     Password: {PluginUi.Password}");
-                EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.trackerId, instanceID, PluginUi.Password);
+                EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.TrackerId, instanceID, PluginUi.Password);
             }
             else
             {
-                PluginLog.Debug("Tracker ID was null, so not attempting web request");
+                PluginLog.Debug("Tracker ID was Ovni, so not attempting web request");
             }
         }
 
@@ -213,10 +189,10 @@ namespace EurekaTrackerAutoPopper
         {
             SeString payload = new SeStringBuilder()
                 .AddUiForeground(540)
-                .AddText($"{(Configuration.UseShortNames ? LastSeenFate.shortName : LastSeenFate.name)} pop: ")
+                .AddText($"{(Configuration.UseShortNames ? LastSeenFate.ShortName : LastSeenFate.Name)} pop: ")
                 .AddUiForegroundOff()
                 .BuiltString
-                .Append(LastSeenFate.mapLink);
+                .Append(LastSeenFate.MapLink);
 
             if (Configuration.EchoNMPop)
             {
@@ -233,8 +209,8 @@ namespace EurekaTrackerAutoPopper
         {
             string time = !Configuration.UseEorzeaTimer ? $"PT {PluginUi.PullTime}" : $"ET {PluginUi.CurrentEorzeanPullTime()}";
             string output = Configuration.ChatFormat
-                .Replace("$n", LastSeenFate.name)
-                .Replace("$sN", LastSeenFate.shortName)
+                .Replace("$n", LastSeenFate.Name)
+                .Replace("$sN", LastSeenFate.ShortName)
                 .Replace("$t", time)
                 .Replace("$p", "<flag>");
 
@@ -268,25 +244,7 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        // not going to set data center until I can figure some things out
-        //private async void SetDataCenter()
-        //{
-        //    uint? dataCenterId = ClientState.LocalPlayer?.CurrentWorld.GameData?.DataCenter.Row;
-        //    // keep trying this method until we get the local player
-        //    if (dataCenterId == null)
-        //    {
-        //        Thread.Sleep(500);
-        //        SetDataCenter();
-        //        return;
-        //    }
-        //    ClientWebSocket socket = new();
-        //    await socket.ConnectAsync(new Uri("wss://ffxiv-eureka.com/socket/websocket?vsn=2.0.0"), CancellationToken.None);
-        //    await socket.SendAsync(Encoding.UTF8.GetBytes($"[\"1\",\"1\",\"instance:{PluginUi.Instance}\",\"phx_join\",{{\"password\":\"{PluginUi.Password}\"}}]"), WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
-        //    await socket.SendAsync(Encoding.UTF8.GetBytes($"[\"2\",\"2\",\"instance:{PluginUi.Instance}\",\"set_instance_information\",{{\"data_center_id\":{dataCenterId}}}]"), WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
-        //    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
-        //}
-
-        public void FairyCheck(Framework framework)
+        private void FairyCheck(Framework framework)
         {
             foreach (BattleNpc actor in ObjectTable.OfType<BattleNpc>()
                          .Where(battleNpc => Library.Fairies.Contains(battleNpc.NameId))
@@ -298,7 +256,7 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        public void PollForFateChange(Framework framework)
+        private void PollForFateChange(Framework framework)
         {
             if (NoFatesHaveChangedSinceLastChecked())
             {
@@ -335,11 +293,12 @@ namespace EurekaTrackerAutoPopper
             try
             {
                 PluginLog.Debug("SetFlagMarker");
+
                 // removes current flag marker from map
                 AgentMap.Instance()->IsFlagMarkerSet = 0;
 
                 // divide by 1000 as raw is too long for CS SetFlagMapMarker
-                var map = (MapLinkPayload) LastSeenFate.mapLink.Payloads.First();
+                var map = (MapLinkPayload) LastSeenFate.MapLink.Payloads.First();
                 AgentMap.Instance()->SetFlagMapMarker(
                     map.Map.TerritoryType.Row,
                     map.Map.RowId,
