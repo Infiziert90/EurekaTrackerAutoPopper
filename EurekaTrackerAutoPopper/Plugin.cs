@@ -59,6 +59,12 @@ namespace EurekaTrackerAutoPopper
                 ShowInHelp = true
             });
 
+            CommandManager.AddHandler("/xlposition", new CommandInfo(WritePlayerPosition)
+            {
+                HelpMessage = "Debug",
+                ShowInHelp = false
+            });
+
             DalamudPluginInterface.UiBuilder.Draw += DrawUI;
             DalamudPluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
 
@@ -70,12 +76,19 @@ namespace EurekaTrackerAutoPopper
                 PlayerInEureka = true;
                 Framework.Update += PollForFateChange;
                 Framework.Update += FairyCheck;
+                Framework.Update += BunnyCheck;
             }
         }
 
         private void OnEurekaCommand(string command, string arguments)
         {
             DrawConfigUI();
+        }
+
+        private void WritePlayerPosition(string command, string arguments)
+        {
+            var pos = ClientState.LocalPlayer!.Position;
+            PluginLog.Information($"X {pos.X} Y {pos.Y} Z {pos.Z}");
         }
 
         private void TerritoryChangePoll(object? sender, ushort territoryId)
@@ -86,6 +99,7 @@ namespace EurekaTrackerAutoPopper
 
                 Framework.Update += PollForFateChange;
                 Framework.Update += FairyCheck;
+                Framework.Update += BunnyCheck;
             }
             else
             {
@@ -93,9 +107,11 @@ namespace EurekaTrackerAutoPopper
                 PluginUi.Instance = "";
                 PluginUi.Password = "";
                 Library.ExistingFairies.Clear();
+                Library.ResetBunnies();
 
                 Framework.Update -= PollForFateChange;
                 Framework.Update -= FairyCheck;
+                Framework.Update -= BunnyCheck;
             }
         }
 
@@ -125,7 +141,7 @@ namespace EurekaTrackerAutoPopper
         {
             List<Fate> currentFates = FateTable.ToList();
             List<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary[currentTerritory];
-            List<Library.EurekaFate> relevantCurrentFates = relevantFates.Where(i => currentFates.Select(i => i.FateId).Contains(i.FateId)).ToList();
+            List<Library.EurekaFate> relevantCurrentFates = relevantFates.Where(fate => currentFates.Select(i => i.FateId).Contains(fate.FateId)).ToList();
             foreach (Library.EurekaFate fate in relevantCurrentFates)
             {
                 if (fate.TrackerId != 1337 && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
@@ -244,6 +260,25 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
+        private void BunnyCheck(Framework framework)
+        {
+            if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
+                return;
+
+            var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            foreach (var bnuuy in Library.Bunnies.Where(bunny => FateTable.Any(fate => fate.FateId == bunny.FateId)))
+            {
+                bnuuy.Alive = true;
+                bnuuy.LastSeenAlive = currentTime;
+            }
+
+            foreach (var bnuuy in Library.Bunnies.Where(bunny => bunny.Alive))
+            {
+                if (bnuuy.LastSeenAlive != currentTime)
+                    bnuuy.Alive = false;
+            }
+        }
+
         private void FairyCheck(Framework framework)
         {
             foreach (BattleNpc actor in ObjectTable.OfType<BattleNpc>()
@@ -273,9 +308,12 @@ namespace EurekaTrackerAutoPopper
             PluginUi.Dispose();
             Framework.Update -= PollForFateChange;
             Framework.Update -= FairyCheck;
+            Framework.Update -= BunnyCheck;
             ClientState.TerritoryChanged -= TerritoryChangePoll;
             xivCommon.Dispose();
-            _ = CommandManager.RemoveHandler("/xleureka");
+
+            CommandManager.RemoveHandler("/xleureka");
+            CommandManager.RemoveHandler("/xlposition");
         }
 
         private void DrawUI()

@@ -6,16 +6,18 @@ using System.Linq;
 using Dalamud.Interface;
 using System.Collections.Generic;
 using System.Timers;
+using Dalamud.Interface.Colors;
 
 using static FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
+using static ImGuiNET.ImGuiWindowFlags;
 
 namespace EurekaTrackerAutoPopper
 {
     internal class PluginUI : IDisposable
     {
-        private const ImGuiWindowFlags flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse |
-                                               ImGuiWindowFlags.NoCollapse;
-        private const ImGuiWindowFlags popFlags = ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.AlwaysAutoResize;
+        private const ImGuiWindowFlags ConfigFlags = NoScrollbar | NoScrollWithMouse | NoCollapse;
+        private const ImGuiWindowFlags BunnyFlags = AlwaysAutoResize;
+        private const ImGuiWindowFlags PopFlags = NoDecoration | AlwaysAutoResize;
 
         private Configuration Configuration { get; init; }
         private Plugin Plugin { get; init; }
@@ -34,6 +36,9 @@ namespace EurekaTrackerAutoPopper
 
         private readonly Timer ShoutTimer = new();
         private const int CountdownForShout = 20 * 1000; // Seconds
+
+        private const int MinimalBunnyRespawn = 530;
+        private const int MaximumBunnyRespawn = 930;
 
         public bool SettingsVisible
         {
@@ -64,15 +69,13 @@ namespace EurekaTrackerAutoPopper
             ShoutTimer.AutoReset = false;
         }
 
-        public void Dispose()
-        {
-            Configuration.Save();
-        }
+        public void Dispose() { }
 
         public void Draw()
         {
             DrawSettingsWindow();
             DrawFatePopWindow();
+            DrawBunnyWindow();
         }
 
         public void DrawFatePopWindow()
@@ -88,7 +91,7 @@ namespace EurekaTrackerAutoPopper
                 return;
             }
 
-            if (ImGui.Begin("Eureka NM Pop", popFlags))
+            if (ImGui.Begin("Eureka NM Pop", PopFlags))
             {
                 string fate = $"Fate: {Plugin.LastSeenFate.Name}";
                 float size = ImGui.CalcTextSize(fate).X;
@@ -164,6 +167,69 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
+        public void DrawBunnyWindow()
+        {
+            if (!Configuration.ShowBunnyWindow)
+            {
+                return;
+            }
+
+            if (!Library.BunnyMaps.Contains(Plugin.ClientState.TerritoryType))
+            {
+                return;
+            }
+
+            if (ImGui.Begin("Eureka Bunnies", ref Configuration.ShowBunnyWindow, BunnyFlags))
+            {
+                var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+                var bunnies = Library.Bunnies.Where(bnuuy => bnuuy.TerritoryId == Plugin.ClientState.TerritoryType).ToArray();
+                if (Configuration.OnlyEasyBunny)
+                    bunnies = bunnies[..1];
+
+                foreach (var bunny in bunnies)
+                {
+                    if (bunnies.First() != bunny)
+                        ImGui.Separator();
+
+                    ImGuiHelpers.ScaledDummy(5);
+                    ImGui.TextUnformatted($"Fate: {bunny.Name}");
+                    if (bunny.Alive)
+                    {
+                        ImGui.TextColored(ImGuiColors.HealerGreen, "Alive");
+                    }
+                    else
+                    {
+                        ImGui.TextColored(ImGuiColors.ParsedGold, "Respawning in:");
+                        ImGui.SameLine();
+                        if (bunny.LastSeenAlive != -1)
+                        {
+                            var min = TimeSpan.FromSeconds(bunny.LastSeenAlive + MinimalBunnyRespawn - currentTime);
+                            var max = TimeSpan.FromSeconds(bunny.LastSeenAlive + MaximumBunnyRespawn - currentTime);
+
+                            if (min.TotalSeconds > 0)
+                            {
+                                ImGui.TextUnformatted(min.ToString(min.TotalSeconds > 59 ? "%m" : "%s"));
+                            }
+                            else
+                            {
+                                ImGui.TextColored(ImGuiColors.ParsedGold, " soon ");
+                            }
+
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"(max {max:%m} min)");
+                        }
+                        else
+                        {
+                            ImGui.TextColored(ImGuiColors.ParsedBlue, "Unknown");
+                        }
+                    }
+                    ImGuiHelpers.ScaledDummy(5);
+                }
+
+                ImGui.End();
+            }
+        }
+
         public void DrawSettingsWindow()
         {
             if (!SettingsVisible)
@@ -173,7 +239,7 @@ namespace EurekaTrackerAutoPopper
 
             ImGui.SetNextWindowSize(new Vector2(375, 385), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSizeConstraints(new Vector2(375, 385), new Vector2(float.MaxValue, float.MaxValue));
-            if (ImGui.Begin("Eureka Linker", ref settingsVisible, flags))
+            if (ImGui.Begin("Eureka Linker", ref settingsVisible, ConfigFlags))
             {
                 if (ImGui.BeginTabBar("##setting-tabs"))
                 {
@@ -186,6 +252,8 @@ namespace EurekaTrackerAutoPopper
                     // Renders Fairy Tab
                     TabFairy();
 
+                    // Renders Bunny Tab
+                    TabBunny();
 #if DEBUG
                     //Renders Debug Tab
                     TabDebug();
@@ -219,15 +287,19 @@ namespace EurekaTrackerAutoPopper
         {
             if (ImGui.BeginTabItem("General###general-tab"))
             {
-                _ = ImGui.Checkbox("Echo NM pops", ref Configuration.EchoNMPop);
-                _ = ImGui.Checkbox("Play Sound when NM pops", ref Configuration.PlaySoundEffect);
-                _ = ImGui.Checkbox("Show Toast when NM pops", ref Configuration.ShowPopToast);
+                var changed = false;
+                changed |= ImGui.Checkbox("Echo NM pops", ref Configuration.EchoNMPop);
+                changed |= ImGui.Checkbox("Play Sound when NM pops", ref Configuration.PlaySoundEffect);
+                changed |= ImGui.Checkbox("Show Toast when NM pops", ref Configuration.ShowPopToast);
                 if (Configuration.EchoNMPop || Configuration.ShowPopToast)
                 {
                     ImGuiHelpers.ScaledDummy(20, 0);
                     ImGui.SameLine();
-                    _ = ImGui.Checkbox("Use Short Names", ref Configuration.UseShortNames);
+                    changed |= ImGui.Checkbox("Use Short Names", ref Configuration.UseShortNames);
                 }
+
+                if (changed)
+                    Configuration.Save();
 
                 ImGuiHelpers.ScaledDummy(10);
                 ImGui.Separator();
@@ -281,28 +353,28 @@ namespace EurekaTrackerAutoPopper
         {
             if (ImGui.BeginTabItem("Chat###chat-tab"))
             {
-                _ = ImGui.Checkbox("Show Post Window", ref Configuration.ShowPopWindow);
-                bool randomize = Configuration.RandomizeMapCoords;
-                if (ImGui.Checkbox("Randomize Map Coords", ref randomize))
-                {
-                    Configuration.RandomizeMapCoords = randomize;
-                    Configuration.Save();
-
-                    Library.Initialize();
-                }
-                _ = ImGui.Checkbox("Show PT in Post Window", ref Configuration.ShowPullTimer);
+                var changed = false;
+                changed |= ImGui.Checkbox("Show Post Window", ref Configuration.ShowPopWindow);
+                changed |= ImGui.Checkbox("Randomize Map Coords", ref Configuration.RandomizeMapCoords);
+                changed |= ImGui.Checkbox("Show PT in Post Window", ref Configuration.ShowPullTimer);
 
                 if (Configuration.ShowPullTimer)
                 {
                     ImGuiHelpers.ScaledDummy(20, 0);
                     ImGui.SameLine();
-                    _ = ImGui.Checkbox("Use Eorzea Time instead", ref Configuration.UseEorzeaTimer);
+                    changed |= ImGui.Checkbox("Use Eorzea Time instead", ref Configuration.UseEorzeaTimer);
                     if (Configuration.UseEorzeaTimer)
                     {
                         ImGuiHelpers.ScaledDummy(20, 0);
                         ImGui.SameLine();
-                        _ = ImGui.Checkbox("Use 12-hour Format", ref Configuration.UseTwelveHourFormat);
+                        changed |= ImGui.Checkbox("Use 12-hour Format", ref Configuration.UseTwelveHourFormat);
                     }
+                }
+
+                if (changed)
+                {
+                    Configuration.Save();
+                    Library.Initialize();
                 }
 
                 ImGuiHelpers.ScaledDummy(5);
@@ -349,6 +421,22 @@ namespace EurekaTrackerAutoPopper
                         Plugin.EchoFairy(fairy);
                     }
                 }
+
+                ImGui.EndTabItem();
+            }
+        }
+
+        public void TabBunny()
+        {
+            if (ImGui.BeginTabItem("Bunny###bunny-tab"))
+            {
+                ImGui.TextUnformatted("Bunny");
+                var changed = false;
+                changed |= ImGui.Checkbox("Show Bunny Window", ref Configuration.ShowBunnyWindow);
+                changed |= ImGui.Checkbox("Only Easy Bunny", ref Configuration.OnlyEasyBunny);
+
+                if (changed)
+                    Configuration.Save();
 
                 ImGui.EndTabItem();
             }

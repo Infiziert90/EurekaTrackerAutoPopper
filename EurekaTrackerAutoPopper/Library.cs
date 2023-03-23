@@ -36,6 +36,48 @@ namespace EurekaTrackerAutoPopper
             8131, // Hydatos
         };
 
+        public class Bunny
+        {
+            public uint FateId;
+            public string Name;
+            public uint TerritoryId;
+
+            public bool Alive;
+            public long LastSeenAlive = -1;
+
+            public Bunny(uint id, string name, uint territoryId)
+            {
+                FateId = id;
+                Name = name;
+                TerritoryId = territoryId;
+            }
+        }
+
+        public readonly List<Bunny> Bunnies = new()
+        {
+            new Bunny(1367, "Down the Rabbit Hole", 763), // Pagos
+            new Bunny(1368, "Curiouser and Curiouser", 763), // Pagos
+            new Bunny(1407, "We're All Mad Here", 795), // Pyros
+            new Bunny(1408, "Uncommon Nonsense", 795), // Pyros
+            new Bunny(1425, "Drink Me", 827) // Hydatos
+        };
+
+        public static readonly List<uint> BunnyMaps = new()
+        {
+            763,
+            795,
+            827
+        };
+
+        public void ResetBunnies()
+        {
+            foreach (var bunny in Bunnies)
+            {
+                bunny.Alive = false;
+                bunny.LastSeenAlive = -1;
+            }
+        }
+
         private record Map(uint TerritoryId, uint MapId);
         private static readonly Dictionary<uint, Map> FairyToTerritory = new()
         {

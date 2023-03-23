@@ -25,6 +25,9 @@ namespace EurekaTrackerAutoPopper
         public bool EchoFairies = true;
         public bool ShowFairyToast = true;
 
+        public bool ShowBunnyWindow = false;
+        public bool OnlyEasyBunny = true;
+
         [NonSerialized]
         private DalamudPluginInterface? pluginInterface;
 
