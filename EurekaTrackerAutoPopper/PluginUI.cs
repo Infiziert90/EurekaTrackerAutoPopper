@@ -7,6 +7,7 @@ using Dalamud.Interface;
 using System.Collections.Generic;
 using System.Timers;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Components;
 
 using static FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
 using static ImGuiNET.ImGuiWindowFlags;
@@ -18,15 +19,16 @@ namespace EurekaTrackerAutoPopper
         private const ImGuiWindowFlags ConfigFlags = NoScrollbar | NoScrollWithMouse | NoCollapse;
         private const ImGuiWindowFlags BunnyFlags = AlwaysAutoResize;
         private const ImGuiWindowFlags PopFlags = NoDecoration | AlwaysAutoResize;
+        private const ImGuiWindowFlags CircleFlags = NoBackground | NoMove | NoTitleBar | NoScrollbar | NoResize | NoInputs;
 
         private Configuration Configuration { get; init; }
         private Plugin Plugin { get; init; }
         private Library Library { get; init; }
 
-        private bool settingsVisible = false;
+        private bool settingsVisible;
         private string instance = "";
         private string password = "";
-        private readonly int soundEffect = 36;
+        private int soundEffect = 36;
         private int pullTime = 27;
         private int eorzeaTime = 720;
 
@@ -38,7 +40,11 @@ namespace EurekaTrackerAutoPopper
         private const int CountdownForShout = 20 * 1000; // Seconds
 
         private const int MinimalBunnyRespawn = 530;
-        private const int MaximumBunnyRespawn = 930;
+        private const int MaximumBunnyRespawn = 1000;
+
+        public bool NearToBunnyChest = false;
+        public Vector3 ChestPos = Vector3.Zero;
+        private uint green = ImGui.GetColorU32(ImGui.ColorConvertFloat4ToU32(ImGuiColors.HealerGreen));
 
         public bool SettingsVisible
         {
@@ -46,7 +52,7 @@ namespace EurekaTrackerAutoPopper
             set => settingsVisible = value;
         }
 
-        public bool PopVisible { get; set; } = false;
+        public bool PopVisible { get; set; }
 
         public string Instance
         {
@@ -76,16 +82,41 @@ namespace EurekaTrackerAutoPopper
             DrawSettingsWindow();
             DrawFatePopWindow();
             DrawBunnyWindow();
+
+            DrawCloseBunnyChest();
         }
 
-        public void DrawFatePopWindow()
+        private void DrawCloseBunnyChest()
+        {
+            if (!Configuration.BunnyCircleDraw)
+                return;
+
+            if (!NearToBunnyChest)
+                return;
+
+            if (ChestPos == Vector3.Zero)
+                return;
+
+            Plugin.GameGui.WorldToScreen(ChestPos, out var circlePos);
+
+            var winPos = new Vector2(circlePos.X - 15, circlePos.Y - 15);
+
+            ImGuiHelpers.SetNextWindowPosRelativeMainViewport(winPos);
+            ImGui.SetNextWindowSize(new Vector2(100, 50));
+            if (ImGui.Begin("Pointer##bunny-chest", CircleFlags))
+            {
+                ImGui.GetWindowDrawList().AddCircleFilled(circlePos, 5.0f, green);
+                ImGui.End();
+            }
+        }
+
+        private void DrawFatePopWindow()
         {
             if (!PopVisible)
-            {
                 return;
-            }
 
-            if (Plugin.LastSeenFate == null)
+
+            if (Plugin.LastSeenFate == Library.EurekaFate.Empty)
             {
                 PopVisible = false;
                 return;
@@ -167,18 +198,15 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        public void DrawBunnyWindow()
+        private void DrawBunnyWindow()
         {
             if (!Configuration.ShowBunnyWindow)
-            {
                 return;
-            }
 
             if (!Library.BunnyMaps.Contains(Plugin.ClientState.TerritoryType))
-            {
                 return;
-            }
 
+            ImGui.SetNextWindowSizeConstraints(new Vector2(135, 70), new Vector2(float.MaxValue, float.MaxValue));
             if (ImGui.Begin("Eureka Bunnies", ref Configuration.ShowBunnyWindow, BunnyFlags))
             {
                 var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -189,9 +217,11 @@ namespace EurekaTrackerAutoPopper
                 foreach (var bunny in bunnies)
                 {
                     if (bunnies.First() != bunny)
+                    {
                         ImGui.Separator();
+                        ImGuiHelpers.ScaledDummy(5);
+                    }
 
-                    ImGuiHelpers.ScaledDummy(5);
                     ImGui.TextUnformatted($"Fate: {bunny.Name}");
                     if (bunny.Alive)
                     {
@@ -208,7 +238,7 @@ namespace EurekaTrackerAutoPopper
 
                             if (min.TotalSeconds > 0)
                             {
-                                ImGui.TextUnformatted(min.ToString(min.TotalSeconds > 59 ? "%m" : "%s"));
+                                ImGui.TextUnformatted(TimeToFormatted(min));
                             }
                             else
                             {
@@ -216,7 +246,7 @@ namespace EurekaTrackerAutoPopper
                             }
 
                             ImGui.SameLine();
-                            ImGui.TextUnformatted($"(max {max:%m} min)");
+                            ImGui.TextUnformatted($"(max {TimeToFormatted(max)})");
                         }
                         else
                         {
@@ -230,12 +260,10 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        public void DrawSettingsWindow()
+        private void DrawSettingsWindow()
         {
             if (!SettingsVisible)
-            {
                 return;
-            }
 
             ImGui.SetNextWindowSize(new Vector2(375, 385), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSizeConstraints(new Vector2(375, 385), new Vector2(float.MaxValue, float.MaxValue));
@@ -261,29 +289,11 @@ namespace EurekaTrackerAutoPopper
 
                     ImGui.EndTabBar();
                 }
-#if DEBUG
-                //ImGui.InputInt("Sound Effect Number", ref soundEffect);
-                //if (ImGui.Button("Test Sound"))
-                //{
-                //    Plugin.PlaySoundEffect((uint)soundEffect);
-                //}
-                //if (Library.TerritoryToFateDictionary.ContainsKey(Plugin.ClientState.TerritoryType))
-                //{
-                //    List<Library.EurekaFate> fates = Library.TerritoryToFateDictionary[Plugin.ClientState.TerritoryType];
-                //    foreach (Library.EurekaFate fate in fates)
-                //    {
-                //        if (ImGui.Button($"Test Pop Echo for {fate.name}"))
-                //        {
-                //            Plugin.EchoNMPop(fate);
-                //        }
-                //    }
-                //}
-#endif
                 ImGui.End();
             }
         }
 
-        public void TabGeneral()
+        private void TabGeneral()
         {
             if (ImGui.BeginTabItem("General###general-tab"))
             {
@@ -311,7 +321,7 @@ namespace EurekaTrackerAutoPopper
                 if (!string.IsNullOrEmpty(instance))
                 {
                     ImGui.SameLine();
-                    if (Dalamud.Interface.Components.ImGuiComponents.IconButton(1, FontAwesomeIcon.Clipboard))
+                    if (ImGuiComponents.IconButton(1, FontAwesomeIcon.Clipboard))
                     {
                         ImGui.SetClipboardText(instance);
                     }
@@ -320,7 +330,7 @@ namespace EurekaTrackerAutoPopper
                 if (!string.IsNullOrEmpty(password))
                 {
                     ImGui.SameLine();
-                    if (Dalamud.Interface.Components.ImGuiComponents.IconButton(2, FontAwesomeIcon.Clipboard))
+                    if (ImGuiComponents.IconButton(2, FontAwesomeIcon.Clipboard))
                     {
                         ImGui.SetClipboardText(password);
                     }
@@ -335,7 +345,7 @@ namespace EurekaTrackerAutoPopper
                 }
                 if (Instance.Length > 0)
                 {
-                    if (Dalamud.Interface.Components.ImGuiComponents.IconButton(3, FontAwesomeIcon.Globe))
+                    if (ImGuiComponents.IconButton(3, FontAwesomeIcon.Globe))
                     {
                         Dalamud.Utility.Util.OpenLink(instance);
                     }
@@ -349,7 +359,7 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        public void TabChat()
+        private void TabChat()
         {
             if (ImGui.BeginTabItem("Chat###chat-tab"))
             {
@@ -384,7 +394,7 @@ namespace EurekaTrackerAutoPopper
                 ImGuiHelpers.ScaledDummy(10);
 
                 string chatFormat = Configuration.ChatFormat;
-                _ = ImGui.InputText("##input-chatformat", ref chatFormat, 30);
+                ImGui.InputText("##input-chatformat", ref chatFormat, 30);
                 if (chatFormat != Configuration.ChatFormat)
                 {
                     Configuration.ChatFormat = chatFormat;
@@ -402,13 +412,17 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        public void TabFairy()
+        private void TabFairy()
         {
             if (ImGui.BeginTabItem("Fairy###fairy-tab"))
             {
+                var changed = false;
                 ImGui.TextUnformatted("Fairy / Elemental");
-                _ = ImGui.Checkbox("Echo Fairies", ref Configuration.EchoFairies);
-                _ = ImGui.Checkbox("Show Toast for Fairies", ref Configuration.ShowFairyToast);
+                changed |= ImGui.Checkbox("Echo Fairies", ref Configuration.EchoFairies);
+                changed |= ImGui.Checkbox("Show Toast for Fairies", ref Configuration.ShowFairyToast);
+
+                if (changed)
+                    Configuration.Save();
 
                 ImGuiHelpers.ScaledDummy(5);
                 ImGui.Separator();
@@ -426,7 +440,7 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        public void TabBunny()
+        private void TabBunny()
         {
             if (ImGui.BeginTabItem("Bunny###bunny-tab"))
             {
@@ -434,6 +448,10 @@ namespace EurekaTrackerAutoPopper
                 var changed = false;
                 changed |= ImGui.Checkbox("Show Bunny Window", ref Configuration.ShowBunnyWindow);
                 changed |= ImGui.Checkbox("Only Easy Bunny", ref Configuration.OnlyEasyBunny);
+                ImGuiComponents.HelpMarker("Only shows the low level bunny fate for Pagos and Pyros.");
+                changed |= ImGui.Checkbox("Draw Nearby Circle", ref Configuration.BunnyCircleDraw);
+                ImGuiComponents.HelpMarker("Draws a green circle if the player is near a possible chest location." +
+                                           "\nSupported: Hydatos, bits of low level Pyros");
 
                 if (changed)
                     Configuration.Save();
@@ -442,11 +460,11 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        public void TabDebug()
+        private void TabDebug()
         {
             if (ImGui.BeginTabItem("Debug###debug-tab"))
             {
-                if (Plugin.LastSeenFate == null)
+                if (Plugin.LastSeenFate == Library.EurekaFate.Empty)
                 {
                     List<Library.EurekaFate> list = Plugin.ClientState.TerritoryType switch
                     {
@@ -458,7 +476,7 @@ namespace EurekaTrackerAutoPopper
                     };
 
                     string[] stringList = list.Select(x => x.Name).ToArray();
-                    _ = ImGui.Combo("##fateSelector", ref DebugFate, stringList, stringList.Length);
+                    ImGui.Combo("##fateSelector", ref DebugFate, stringList, stringList.Length);
 
                     if (ImGui.Button($"Populate last seen fate"))
                     {
@@ -497,11 +515,17 @@ namespace EurekaTrackerAutoPopper
                         Plugin.SetFlagMarker();
                     }
 
+                    ImGui.InputInt("Sound Effect Number", ref soundEffect);
+                    if (ImGui.Button("Test Sound"))
+                    {
+                        Sound.PlayEffect((uint) soundEffect);
+                    }
+
                     ImGuiHelpers.ScaledDummy(20);
 
                     if (ImGui.Button($"Reset"))
                     {
-                        Plugin.LastSeenFate = null!;
+                        Plugin.LastSeenFate = Library.EurekaFate.Empty;
                     }
                 }
 
@@ -536,5 +560,10 @@ namespace EurekaTrackerAutoPopper
         }
 
         private static int RoundOff (int i) => (int) Math.Round(i / 10.0) * 10;
+
+        private string TimeToFormatted(TimeSpan span)
+        {
+            return span.ToString(span.TotalSeconds > 59 ? @"%m\ \m\i\n" : @"%s\ \s\e\c");
+        }
     }
 }

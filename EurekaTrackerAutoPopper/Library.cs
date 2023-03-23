@@ -13,7 +13,10 @@ namespace EurekaTrackerAutoPopper
             Configuration = configuration;
         }
 
-        public record EurekaFate(ushort FateId, ushort TrackerId, SeString MapLink, string Name, string ShortName);
+        public record EurekaFate(ushort FateId, ushort TrackerId, SeString MapLink, string Name, string ShortName)
+        {
+            public static EurekaFate Empty => new(0, 0, "", "", "");
+        }
 
         // represents a elemental/fairy seen by the user
         public Dictionary<uint, Fairy> ExistingFairies = new();
@@ -36,6 +39,16 @@ namespace EurekaTrackerAutoPopper
             8131, // Hydatos
         };
 
+        private record Map(uint TerritoryId, uint MapId);
+        private static readonly Dictionary<uint, Map> FairyToTerritory = new()
+        {
+            { 7184, new Map(732, 414) },
+            { 7567, new Map(763, 467) },
+            { 7764, new Map(795, 484) },
+            { 8131, new Map(827, 515) }
+        };
+
+        // Bunnies
         public class Bunny
         {
             public uint FateId;
@@ -77,15 +90,6 @@ namespace EurekaTrackerAutoPopper
                 bunny.LastSeenAlive = -1;
             }
         }
-
-        private record Map(uint TerritoryId, uint MapId);
-        private static readonly Dictionary<uint, Map> FairyToTerritory = new()
-        {
-            { 7184, new Map(732, 414) },
-            { 7567, new Map(763, 467) },
-            { 7764, new Map(795, 484) },
-            { 8131, new Map(827, 515) }
-        };
 
         // randomize flag X and Y in a range of +0.5 and -0.5, fitting well into the 1 radius of the fate circle
         private static readonly Random Rand = new();
@@ -201,7 +205,7 @@ namespace EurekaTrackerAutoPopper
                 new EurekaFate(1392, 42, CreateMapLink(795, 484, 19.2f, 29.2f), "Askalaphos", "Owl"),                   // Quiet, Please
                 new EurekaFate(1393, 43, CreateMapLink(795, 484, 18.0f, 14.0f), "Grand Duke Batym", "Batym"),           // Up and Batym
                 new EurekaFate(1394, 44, CreateMapLink(795, 484, 10.0f, 14.0f), "Aetolus", "Aetolus"),                  // Rondo Aetolus
-                new EurekaFate(1395, 45, CreateMapLink(795, 484, 13.0f, 11.0f), "Lesath", "Lesath"),                    // Scorchpion King
+                new EurekaFate(1395, 45, CreateMapLink(795, 484, 12.6f, 11.0f), "Lesath", "Lesath"),                    // Scorchpion King
                 new EurekaFate(1396, 46, CreateMapLink(795, 484, 15.0f, 6.5f), "Eldthurs", "Eldthurs"),                 // Burning Hunger
                 new EurekaFate(1397, 47, CreateMapLink(795, 484, 21.0f, 11.0f), "Iris", "Iris"),                        // Dry Iris
                 new EurekaFate(1398, 48, CreateMapLink(795, 484, 21.6f, 8.3f), "Lamebrix Strikebocks", "Lamebrix"),     // Thirty Whacks

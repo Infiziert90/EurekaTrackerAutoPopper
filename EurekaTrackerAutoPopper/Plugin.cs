@@ -4,7 +4,9 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Game.Gui;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState;
 using Dalamud.Game;
@@ -29,7 +31,7 @@ namespace EurekaTrackerAutoPopper
 
         public Library Library;
         public bool PlayerInEureka;
-        public Library.EurekaFate LastSeenFate = null!;
+        public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
         private List<Fate> lastPolledFates = new();
 
         private static XivCommonBase xivCommon = null!;
@@ -42,6 +44,7 @@ namespace EurekaTrackerAutoPopper
         [PluginService] public static ClientState ClientState { get; private set; } = null!;
         [PluginService] public static DalamudPluginInterface DalamudPluginInterface { get; private set; } = null!;
         [PluginService] public static CommandManager CommandManager { get; private set; } = null!;
+        [PluginService] public static GameGui GameGui { get; private set; } = null!;
 
         public Plugin()
         {
@@ -88,7 +91,10 @@ namespace EurekaTrackerAutoPopper
         private void WritePlayerPosition(string command, string arguments)
         {
             var pos = ClientState.LocalPlayer!.Position;
-            PluginLog.Information($"X {pos.X} Y {pos.Y} Z {pos.Z}");
+
+            Chat.Print($"XYZ: {pos.X.ToString(new CultureInfo("en-US"))}f," +
+                       $" {pos.Y.ToString(new CultureInfo("en-US"))}f," +
+                       $" {pos.Z.ToString(new CultureInfo("en-US"))}f");
         }
 
         private void TerritoryChangePoll(object? sender, ushort territoryId)
@@ -276,6 +282,32 @@ namespace EurekaTrackerAutoPopper
             {
                 if (bnuuy.LastSeenAlive != currentTime)
                     bnuuy.Alive = false;
+            }
+
+            // check for bunny buff
+            if (!Configuration.BunnyCircleDraw)
+                return;
+
+            var local = ClientState.LocalPlayer;
+            if (local == null)
+                return;
+
+            if (local.StatusList.Any(status => status.StatusId == 1531))
+            {
+                var pos = BunnyChests.CalculateDistance(ClientState.TerritoryType, local.Position);
+                if (pos != Vector3.Zero)
+                {
+                    PluginUi.NearToBunnyChest = true;
+                    PluginUi.ChestPos = pos;
+                }
+                else
+                {
+                    PluginUi.NearToBunnyChest = false;
+                }
+            }
+            else
+            {
+                PluginUi.NearToBunnyChest = false;
             }
         }
 
