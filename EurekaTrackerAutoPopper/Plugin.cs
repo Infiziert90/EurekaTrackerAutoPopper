@@ -19,6 +19,8 @@ using Dalamud.Logging;
 using XivCommon;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
+using Dalamud.Interface.Windowing;
+using EurekaTrackerAutoPopper.Windows;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -28,6 +30,8 @@ namespace EurekaTrackerAutoPopper
 
         private Configuration Configuration { get; init; }
         private PluginUI PluginUi { get; init; }
+        private QuestWindow QuestWindow { get; init; }
+        private WindowSystem WindowSystem { get; init; } = new("Eureka Linker");
 
         public Library Library;
         public bool PlayerInEureka;
@@ -54,15 +58,24 @@ namespace EurekaTrackerAutoPopper
             Library = new Library(Configuration);
             Library.Initialize();
 
+            QuestWindow = new QuestWindow();
+            WindowSystem.AddWindow(QuestWindow);
+
             PluginUi = new PluginUI(Configuration, this, Library);
 
-            CommandManager.AddHandler("/xleureka", new CommandInfo(OnEurekaCommand)
+            CommandManager.AddHandler("/el", new CommandInfo(OnEurekaCommand)
             {
                 HelpMessage = "Opens the config window",
                 ShowInHelp = true
             });
 
-            CommandManager.AddHandler("/xlposition", new CommandInfo(WritePlayerPosition)
+            CommandManager.AddHandler("/elquest", new CommandInfo(OnQuestCommand)
+            {
+                HelpMessage = "Opens the quest guide",
+                ShowInHelp = true
+            });
+
+            CommandManager.AddHandler("/elposition", new CommandInfo(WritePlayerPosition)
             {
                 HelpMessage = "Debug",
                 ShowInHelp = false
@@ -88,13 +101,15 @@ namespace EurekaTrackerAutoPopper
             DrawConfigUI();
         }
 
+        private void OnQuestCommand(string command, string arguments)
+        {
+            QuestWindow.IsOpen = true;
+        }
+
         private void WritePlayerPosition(string command, string arguments)
         {
             var pos = ClientState.LocalPlayer!.Position;
-
-            Chat.Print($"XYZ: {pos.X.ToString(new CultureInfo("en-US"))}f," +
-                       $" {pos.Y.ToString(new CultureInfo("en-US"))}f," +
-                       $" {pos.Z.ToString(new CultureInfo("en-US"))}f");
+            Chat.Print($"XYZ: {pos.X:0.0}f, {pos.Y:0.0}f, {pos.Z:0.0}f");
         }
 
         private void TerritoryChangePoll(object? sender, ushort territoryId)
@@ -102,6 +117,9 @@ namespace EurekaTrackerAutoPopper
             if (PlayerInRelevantTerritory())
             {
                 PlayerInEureka = true;
+
+                if (Configuration.ShowBunnyWindow && Library.BunnyMaps.Contains(ClientState.TerritoryType))
+                    PluginUi.BunnyVisible = true;
 
                 Framework.Update += PollForFateChange;
                 Framework.Update += FairyCheck;
@@ -112,8 +130,13 @@ namespace EurekaTrackerAutoPopper
                 PlayerInEureka = false;
                 PluginUi.Instance = "";
                 PluginUi.Password = "";
+                PluginUi.PopVisible = false;
+                LastSeenFate = Library.EurekaFate.Empty;
                 Library.ExistingFairies.Clear();
                 Library.ResetBunnies();
+
+                if (Configuration.ShowBunnyWindow)
+                    PluginUi.BunnyVisible = false;
 
                 Framework.Update -= PollForFateChange;
                 Framework.Update -= FairyCheck;
@@ -344,13 +367,17 @@ namespace EurekaTrackerAutoPopper
             ClientState.TerritoryChanged -= TerritoryChangePoll;
             xivCommon.Dispose();
 
-            CommandManager.RemoveHandler("/xleureka");
-            CommandManager.RemoveHandler("/xlposition");
+            CommandManager.RemoveHandler("/el");
+            CommandManager.RemoveHandler("/elquest");
+            CommandManager.RemoveHandler("/elposition");
+
+            WindowSystem.RemoveWindow(QuestWindow);
         }
 
         private void DrawUI()
         {
             PluginUi.Draw();
+            WindowSystem.Draw();
         }
 
         private void DrawConfigUI()
@@ -380,5 +407,7 @@ namespace EurekaTrackerAutoPopper
                 PluginLog.Error("Exception during SetFlagMarker");
             }
         }
+
+        public static void OpenMap(MapLinkPayload map) => GameGui.OpenMapWithMapLink(map);
     }
 }

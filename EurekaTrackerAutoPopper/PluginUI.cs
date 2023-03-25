@@ -25,7 +25,6 @@ namespace EurekaTrackerAutoPopper
         private Plugin Plugin { get; init; }
         private Library Library { get; init; }
 
-        private bool settingsVisible;
         private string instance = "";
         private string password = "";
         private int soundEffect = 36;
@@ -46,6 +45,8 @@ namespace EurekaTrackerAutoPopper
         public Vector3 ChestPos = Vector3.Zero;
         private uint green = ImGui.GetColorU32(ImGui.ColorConvertFloat4ToU32(ImGuiColors.HealerGreen));
 
+        private bool settingsVisible;
+
         public bool SettingsVisible
         {
             get => settingsVisible;
@@ -53,6 +54,14 @@ namespace EurekaTrackerAutoPopper
         }
 
         public bool PopVisible { get; set; }
+
+        private bool bunnyVisible;
+
+        public bool BunnyVisible
+        {
+            get => bunnyVisible;
+            set => bunnyVisible = value;
+        }
 
         public string Instance
         {
@@ -72,6 +81,7 @@ namespace EurekaTrackerAutoPopper
             Plugin = plugin;
             Library = library;
 
+            BunnyVisible = Configuration.ShowBunnyWindow;
             ShoutTimer.AutoReset = false;
         }
 
@@ -200,14 +210,14 @@ namespace EurekaTrackerAutoPopper
 
         private void DrawBunnyWindow()
         {
-            if (!Configuration.ShowBunnyWindow)
+            if (!BunnyVisible)
                 return;
 
             if (!Library.BunnyMaps.Contains(Plugin.ClientState.TerritoryType))
                 return;
 
             ImGui.SetNextWindowSizeConstraints(new Vector2(135, 70), new Vector2(float.MaxValue, float.MaxValue));
-            if (ImGui.Begin("Eureka Bunnies", ref Configuration.ShowBunnyWindow, BunnyFlags))
+            if (ImGui.Begin("Eureka Bunnies", ref bunnyVisible, BunnyFlags))
             {
                 var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
                 var bunnies = Library.Bunnies.Where(bnuuy => bnuuy.TerritoryId == Plugin.ClientState.TerritoryType).ToArray();
@@ -364,9 +374,9 @@ namespace EurekaTrackerAutoPopper
             if (ImGui.BeginTabItem("Chat###chat-tab"))
             {
                 var changed = false;
-                changed |= ImGui.Checkbox("Show Post Window", ref Configuration.ShowPopWindow);
+                changed |= ImGui.Checkbox("Show Shout Window", ref Configuration.ShowPopWindow);
                 changed |= ImGui.Checkbox("Randomize Map Coords", ref Configuration.RandomizeMapCoords);
-                changed |= ImGui.Checkbox("Show PT in Post Window", ref Configuration.ShowPullTimer);
+                changed |= ImGui.Checkbox("Show PT in Shout Window", ref Configuration.ShowPullTimer);
 
                 if (Configuration.ShowPullTimer)
                 {
@@ -444,14 +454,20 @@ namespace EurekaTrackerAutoPopper
         {
             if (ImGui.BeginTabItem("Bunny###bunny-tab"))
             {
-                ImGui.TextUnformatted("Bunny");
                 var changed = false;
-                changed |= ImGui.Checkbox("Show Bunny Window", ref Configuration.ShowBunnyWindow);
+                ImGui.TextUnformatted("Bunny");
+                if (ImGui.Checkbox("Show Bunny Window", ref Configuration.ShowBunnyWindow))
+                {
+                    if (Configuration.ShowBunnyWindow)
+                        bunnyVisible = true;
+                    Configuration.Save();
+                }
+
                 changed |= ImGui.Checkbox("Only Easy Bunny", ref Configuration.OnlyEasyBunny);
                 ImGuiComponents.HelpMarker("Only shows the low level bunny fate for Pagos and Pyros.");
                 changed |= ImGui.Checkbox("Draw Nearby Circle", ref Configuration.BunnyCircleDraw);
                 ImGuiComponents.HelpMarker("Draws a green circle if the player is near a possible chest location." +
-                                           "\nSupported: Hydatos, bits of low level Pyros");
+                                           "\nSupports currently: Hydatos, small of of low level Pyros and Pagos");
 
                 if (changed)
                     Configuration.Save();
