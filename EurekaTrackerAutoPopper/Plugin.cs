@@ -4,7 +4,6 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Game.Gui;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Game.ClientState.Fates;
@@ -109,7 +108,7 @@ namespace EurekaTrackerAutoPopper
         private void WritePlayerPosition(string command, string arguments)
         {
             var pos = ClientState.LocalPlayer!.Position;
-            Chat.Print($"XYZ: {pos.X:0.0}f, {pos.Y:0.0}f, {pos.Z:0.0}f");
+            Chat.Print($"XYZ: {pos.X:0.000000}f, {pos.Y:0.#########}f, {pos.Z:0.#########}f");
         }
 
         private void TerritoryChangePoll(object? sender, ushort territoryId)

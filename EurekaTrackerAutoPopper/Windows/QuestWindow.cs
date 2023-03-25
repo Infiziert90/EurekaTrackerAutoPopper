@@ -13,7 +13,7 @@ public class QuestWindow : Window, IDisposable
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(350, 550),
+            MinimumSize = new Vector2(370, 570),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
     }

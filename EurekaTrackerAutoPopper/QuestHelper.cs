@@ -307,9 +307,7 @@ namespace EurekaTrackerAutoPopper
                     TextWithSelectable(
                         "Go in the Board Room and talk again to Krile",
                         BookRoom);
-                    TextWithSelectable(
-                        "Interact with the Scattered Tomes",
-                        ScatteredBooks);
+                    WrappedPoint("Interact with the Scattered Tomes");
                     WrappedPoint("Talk again to Krile (a few lengthy cutscenes will play)");
                     TextWithSelectable(
                         "Choose between Krile's path (sealing) or that of Ejika Tsunjika (destruction)",

@@ -6,7 +6,7 @@ namespace EurekaTrackerAutoPopper
 {
     public static class BunnyChests
     {
-        private const float InRange = 50.0f;
+        private const float InRange = 80.0f;
 
         private static readonly Dictionary<uint, List<Vector3>> Positions = new()
         {
@@ -33,6 +33,7 @@ namespace EurekaTrackerAutoPopper
                 {
                     new(-933.61840f, 523.23627f, -736.6334f),
                     new(-863.59470f, 513.31824f, -440.51706f),
+                    new(-812.44620f, 515.9799f, -936.0333f),
                     new(-799.73020f, 505.52838f, -109.44379f),
                     new(-678.84076f, 504.2658f, -366.4915f),
                     new(-665.98303f, 509.72754f, -589.6073f),
@@ -49,7 +50,7 @@ namespace EurekaTrackerAutoPopper
                     new(172.528400f, 503.0239f, -349.57162f),
                     new(226.805160f, 505.52136f, -886.2001f),
                     new(287.751900f, 505.17682f, -519.0092f),
-                    new(344.529880f, 495.0796f, -212.5871f), // new(341.44162f, 495.0796f, -209.85754f),
+                    new(344.529880f, 495.0796f, -212.5871f),
                     new(368.694950f, 505.93457f, -400.701f),
                     new(467.720280f, 505.08575f, -710.6624f),
                     new(580.401500f, 497.0735f, -80.38016f),
@@ -57,7 +58,7 @@ namespace EurekaTrackerAutoPopper
                     new(671.426450f, 508.26538f, -341.5508f),
                     new(832.605500f, 513.5617f, -520.9632f),
                     new(843.430500f, 494.44394f, -7.3525977f),
-                    new(851.303200f, 517.4547f, -883.74927f), // 27
+                    new(851.303200f, 517.4547f, -883.74927f), // 28
                 }
             }
         };
