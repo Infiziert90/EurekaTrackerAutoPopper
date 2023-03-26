@@ -74,6 +74,12 @@ namespace EurekaTrackerAutoPopper
                 ShowInHelp = true
             });
 
+            CommandManager.AddHandler("/elbunny", new CommandInfo(OnBunnyCommand)
+            {
+                HelpMessage = "Opens the bunny window",
+                ShowInHelp = true
+            });
+
             CommandManager.AddHandler("/elposition", new CommandInfo(WritePlayerPosition)
             {
                 HelpMessage = "Debug",
@@ -86,13 +92,7 @@ namespace EurekaTrackerAutoPopper
             ClientState.TerritoryChanged += TerritoryChangePoll;
             xivCommon = new XivCommonBase();
 
-            if (PlayerInRelevantTerritory())
-            {
-                PlayerInEureka = true;
-                Framework.Update += PollForFateChange;
-                Framework.Update += FairyCheck;
-                Framework.Update += BunnyCheck;
-            }
+            TerritoryChangePoll(null, ClientState.TerritoryType);
         }
 
         private void OnEurekaCommand(string command, string arguments)
@@ -105,13 +105,21 @@ namespace EurekaTrackerAutoPopper
             QuestWindow.IsOpen = true;
         }
 
-        private void WritePlayerPosition(string command, string arguments)
+        private void OnBunnyCommand(string command, string arguments)
+        {
+            if (Library.BunnyMaps.Contains(ClientState.TerritoryType))
+                PluginUi.BunnyVisible = true;
+            else
+                Chat.PrintError("You are not in Eureka, this command is unavailable.");
+        }
+
+        private static void WritePlayerPosition(string command, string arguments)
         {
             var pos = ClientState.LocalPlayer!.Position;
             Chat.Print($"XYZ: {pos.X:0.000000}f, {pos.Y:0.#########}f, {pos.Z:0.#########}f");
         }
 
-        private void TerritoryChangePoll(object? sender, ushort territoryId)
+        private void TerritoryChangePoll(object? _, ushort territoryId)
         {
             if (PlayerInRelevantTerritory())
             {
@@ -127,15 +135,11 @@ namespace EurekaTrackerAutoPopper
             else
             {
                 PlayerInEureka = false;
-                PluginUi.Instance = "";
-                PluginUi.Password = "";
-                PluginUi.PopVisible = false;
+
+                PluginUi.Reset();
                 LastSeenFate = Library.EurekaFate.Empty;
                 Library.ExistingFairies.Clear();
                 Library.ResetBunnies();
-
-                if (Configuration.ShowBunnyWindow)
-                    PluginUi.BunnyVisible = false;
 
                 Framework.Update -= PollForFateChange;
                 Framework.Update -= FairyCheck;
@@ -143,9 +147,9 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        private bool PlayerInRelevantTerritory()
+        public static bool PlayerInRelevantTerritory()
         {
-            return Library.TerritoryToFateDictionary.ContainsKey(ClientState.TerritoryType);
+            return Library.TerritoryToMap.ContainsKey(ClientState.TerritoryType);
         }
 
         private bool NoFatesHaveChangedSinceLastChecked()
@@ -156,7 +160,7 @@ namespace EurekaTrackerAutoPopper
         private void CheckForRelevantFates(ushort currentTerritory)
         {
             List<ushort> newFateIds = FateTable.Except(lastPolledFates).Select(i => i.FateId).ToList();
-            List<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary[currentTerritory];
+            IEnumerable<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary(currentTerritory);
             foreach (Library.EurekaFate fate in relevantFates.Where(i => newFateIds.Contains(i.FateId)))
             {
                 LastSeenFate = fate;
@@ -168,7 +172,7 @@ namespace EurekaTrackerAutoPopper
         public void ProcessCurrentFates(ushort currentTerritory)
         {
             List<Fate> currentFates = FateTable.ToList();
-            List<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary[currentTerritory];
+            IEnumerable<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary(currentTerritory);
             List<Library.EurekaFate> relevantCurrentFates = relevantFates.Where(fate => currentFates.Select(i => i.FateId).Contains(fate.FateId)).ToList();
             foreach (Library.EurekaFate fate in relevantCurrentFates)
             {
@@ -249,13 +253,13 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        public string BuildChatString()
+        private string BuildChatString()
         {
             string time = !Configuration.UseEorzeaTimer ? $"PT {PluginUi.PullTime}" : $"ET {PluginUi.CurrentEorzeanPullTime()}";
             string output = Configuration.ChatFormat
                 .Replace("$n", LastSeenFate.Name)
                 .Replace("$sN", LastSeenFate.ShortName)
-                .Replace("$t", time)
+                .Replace("$t", Configuration.ShowPullTimer ? time: "")
                 .Replace("$p", "<flag>");
 
             return output;
@@ -368,6 +372,7 @@ namespace EurekaTrackerAutoPopper
 
             CommandManager.RemoveHandler("/el");
             CommandManager.RemoveHandler("/elquest");
+            CommandManager.RemoveHandler("/elbunny");
             CommandManager.RemoveHandler("/elposition");
 
             WindowSystem.RemoveWindow(QuestWindow);

@@ -1,6 +1,8 @@
 ﻿using Dalamud.Configuration;
 using Dalamud.Plugin;
 using System;
+using System.Numerics;
+using Dalamud.Interface.Colors;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -28,6 +30,7 @@ namespace EurekaTrackerAutoPopper
         public bool ShowBunnyWindow = true;
         public bool OnlyEasyBunny = true;
         public bool BunnyCircleDraw = true;
+        public Vector4 CircleColor = ImGuiColors.HealerGreen;
 
         [NonSerialized]
         private DalamudPluginInterface? pluginInterface;

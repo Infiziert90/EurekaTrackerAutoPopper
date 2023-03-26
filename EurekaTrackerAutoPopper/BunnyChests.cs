@@ -10,7 +10,7 @@ namespace EurekaTrackerAutoPopper
 
         private static readonly Dictionary<uint, List<Vector3>> Positions = new()
         {
-            { 763, new List<Vector3> // Pagos
+            { 763, new List<Vector3> // Pagos Low Level
                 {
                     new(-606.53420f, -700.6216f, 143.02383f),
                     new(-386.33823f, -677.493f, 468.21628f),
@@ -19,14 +19,25 @@ namespace EurekaTrackerAutoPopper
                     new(543.909000f, -730.7676f, 355.7726f),
                 }
             },
-            { 795, new List<Vector3> // Pyros
+            { 795, new List<Vector3> // Pyros Low Level
                 {
+                    new(-340.102100f, 660.3159f, 384.9267f),
                     new(-189.479080f, 671.6885f, 323.32883f),
+                    new(-150.433500f, 762.666f, 451.7729f),
+                    new(-105.592600f, 762.684f, 686.5082f),
+                    new(-038.891640f, 769.8203f, 504.8099f),
                     new(-038.375523f, 675.38214f, 354.2082f),
                     new(002.4903228f, 764.1788f, 411.15732f),
                     new(032.1309000f, 754.25977f, 689.94055f),
+                    new(092.8179700f, 754.2609f, 825.0632f),
+                    new(146.3309000f, 752.4515f, 756.0107f),
+                    new(248.7603000f, 723.1207f, 118.5381f),
                     new(280.3536700f, 746.5175f, 754.38336f),
+                    new(293.8393000f, 739.3859f, 531.169f),
+                    new(378.1241000f, 724.9152f, 287.1851f),
+                    new(432.9954000f, 731.984f, 568.7686f),
                     new(460.4148000f, 723.1206f, 311.0332f),
+                    new(469.0294000f, 726.3409f, 535.0562f), // 17
                 }
             },
             { 827, new List<Vector3> // Hydatos

@@ -20,6 +20,7 @@ namespace EurekaTrackerAutoPopper
         private const ImGuiWindowFlags BunnyFlags = AlwaysAutoResize;
         private const ImGuiWindowFlags PopFlags = NoDecoration | AlwaysAutoResize;
         private const ImGuiWindowFlags CircleFlags = NoBackground | NoMove | NoTitleBar | NoScrollbar | NoResize | NoInputs;
+        private const ImGuiColorEditFlags ColorFlags = ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.NoAlpha;
 
         private Configuration Configuration { get; init; }
         private Plugin Plugin { get; init; }
@@ -43,7 +44,9 @@ namespace EurekaTrackerAutoPopper
 
         public bool NearToBunnyChest = false;
         public Vector3 ChestPos = Vector3.Zero;
-        private uint green = ImGui.GetColorU32(ImGui.ColorConvertFloat4ToU32(ImGuiColors.HealerGreen));
+        private uint imguiCircleColor;
+        private readonly Timer PreviewTimer = new(5 * 1000);
+
 
         private bool settingsVisible;
 
@@ -81,11 +84,20 @@ namespace EurekaTrackerAutoPopper
             Plugin = plugin;
             Library = library;
 
-            BunnyVisible = Configuration.ShowBunnyWindow;
+            imguiCircleColor = ImGui.GetColorU32(ImGui.ColorConvertFloat4ToU32(Configuration.CircleColor));
             ShoutTimer.AutoReset = false;
+            PreviewTimer.AutoReset = false;
         }
 
         public void Dispose() { }
+
+        public void Reset()
+        {
+            Instance = "";
+            Password = "";
+            PopVisible = false;
+            BunnyVisible = false;
+        }
 
         public void Draw()
         {
@@ -115,7 +127,7 @@ namespace EurekaTrackerAutoPopper
             ImGui.SetNextWindowSize(new Vector2(100, 50));
             if (ImGui.Begin("Pointer##bunny-chest", CircleFlags))
             {
-                ImGui.GetWindowDrawList().AddCircleFilled(circlePos, 5.0f, green);
+                ImGui.GetWindowDrawList().AddCircleFilled(circlePos, 8.0f, imguiCircleColor);
                 ImGui.End();
             }
         }
@@ -377,6 +389,7 @@ namespace EurekaTrackerAutoPopper
                 changed |= ImGui.Checkbox("Show Shout Window", ref Configuration.ShowPopWindow);
                 changed |= ImGui.Checkbox("Randomize Map Coords", ref Configuration.RandomizeMapCoords);
                 changed |= ImGui.Checkbox("Show PT in Shout Window", ref Configuration.ShowPullTimer);
+                ImGuiComponents.HelpMarker("Disabling this option will remove time element from the shout message.");
 
                 if (Configuration.ShowPullTimer)
                 {
@@ -428,8 +441,8 @@ namespace EurekaTrackerAutoPopper
             {
                 var changed = false;
                 ImGui.TextUnformatted("Fairy / Elemental");
-                changed |= ImGui.Checkbox("Echo Fairies", ref Configuration.EchoFairies);
-                changed |= ImGui.Checkbox("Show Toast for Fairies", ref Configuration.ShowFairyToast);
+                changed |= ImGui.Checkbox("Echo Fairy", ref Configuration.EchoFairies);
+                changed |= ImGui.Checkbox("Show Toast for Fairy", ref Configuration.ShowFairyToast);
 
                 if (changed)
                     Configuration.Save();
@@ -454,23 +467,47 @@ namespace EurekaTrackerAutoPopper
         {
             if (ImGui.BeginTabItem("Bunny###bunny-tab"))
             {
+                var circleColor = Configuration.CircleColor;
                 var changed = false;
+
                 ImGui.TextUnformatted("Bunny");
-                if (ImGui.Checkbox("Show Bunny Window", ref Configuration.ShowBunnyWindow))
+                if (ImGui.Checkbox("Show Bunny Window on Entry", ref Configuration.ShowBunnyWindow))
                 {
-                    if (Configuration.ShowBunnyWindow)
-                        bunnyVisible = true;
-                    Configuration.Save();
+                    if (Configuration.ShowBunnyWindow && Plugin.PlayerInRelevantTerritory())
+                        BunnyVisible = true;
+                    changed = true;
                 }
+                ImGuiComponents.HelpMarker("Or use the command '/elbunny'.");
 
                 changed |= ImGui.Checkbox("Only Easy Bunny", ref Configuration.OnlyEasyBunny);
                 ImGuiComponents.HelpMarker("Only shows the low level bunny fate for Pagos and Pyros.");
-                changed |= ImGui.Checkbox("Draw Nearby Circle", ref Configuration.BunnyCircleDraw);
-                ImGuiComponents.HelpMarker("Draws a green circle if the player is near a possible chest location." +
-                                           "\nSupports currently: Hydatos, small of of low level Pyros and Pagos");
+                changed |= ImGui.Checkbox("Draw Nearby Circle##drawCheckbox", ref Configuration.BunnyCircleDraw);
+                ImGui.SameLine();
+                ImGui.ColorEdit4("##circleColorPicker", ref circleColor, ColorFlags);
+
+                if (circleColor != Configuration.CircleColor)
+                {
+                    circleColor.W = 1; // fix alpha
+
+                    Configuration.CircleColor = circleColor;
+                    imguiCircleColor = ImGui.GetColorU32(ImGui.ColorConvertFloat4ToU32(circleColor));
+                    changed = true;
+                }
+                ImGuiComponents.HelpMarker("Draws a circle if the player is near a possible chest location." +
+                                           "\nSupports currently: Hydatos, half of low level Pyros, small bits of low level Pagos");
 
                 if (changed)
                     Configuration.Save();
+
+                ImGuiHelpers.ScaledDummy(5);
+                ImGui.Separator();
+                ImGuiHelpers.ScaledDummy(5);
+
+                if (ImGui.Button("Preview"))
+                    PreviewTimer.Start();
+
+                if (PreviewTimer.Enabled)
+                    PreviewCircle();
 
                 ImGui.EndTabItem();
             }
@@ -546,6 +583,24 @@ namespace EurekaTrackerAutoPopper
                 }
 
                 ImGui.EndTabItem();
+            }
+        }
+
+        private void PreviewCircle()
+        {
+            if (Plugin.ClientState.LocalPlayer == null)
+                return;
+
+            Plugin.GameGui.WorldToScreen(Plugin.ClientState.LocalPlayer.Position, out var circlePos);
+
+            var winPos = new Vector2(circlePos.X - 15, circlePos.Y - 15);
+
+            ImGuiHelpers.SetNextWindowPosRelativeMainViewport(winPos);
+            ImGui.SetNextWindowSize(new Vector2(100, 50));
+            if (ImGui.Begin("PreviewPointer##preview", CircleFlags))
+            {
+                ImGui.GetWindowDrawList().AddCircleFilled(circlePos, 8.0f, imguiCircleColor);
+                ImGui.End();
             }
         }
 
