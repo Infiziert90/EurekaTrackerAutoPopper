@@ -201,7 +201,7 @@ namespace EurekaTrackerAutoPopper
                 else
                 {
                     ImGui.BeginDisabled();
-                    _ = ImGui.Button($"Post", new Vector2(50, 0));
+                    ImGui.Button($"Post", new Vector2(50, 0));
                     ImGui.EndDisabled();
 
                     if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
@@ -304,6 +304,9 @@ namespace EurekaTrackerAutoPopper
 
                     // Renders Bunny Tab
                     TabBunny();
+
+                    // Renders About Tab
+                    TabAbout();
 #if DEBUG
                     //Renders Debug Tab
                     TabDebug();
@@ -508,6 +511,53 @@ namespace EurekaTrackerAutoPopper
 
                 if (PreviewTimer.Enabled)
                     PreviewCircle();
+
+                ImGui.EndTabItem();
+            }
+        }
+
+        private void TabAbout()
+        {
+            if (ImGui.BeginTabItem("About###about-tab"))
+            {
+                if (ImGui.BeginChild("AboutContent", new Vector2(0, -50)))
+                {
+                    ImGuiHelpers.ScaledDummy(10);
+
+                    ImGui.TextUnformatted("Author:");
+                    ImGui.SameLine();
+                    ImGui.TextColored(ImGuiColors.ParsedGold, Plugin.Authors);
+
+                    ImGui.TextUnformatted("Discord:");
+                    ImGui.SameLine();
+                    ImGui.TextColored(ImGuiColors.ParsedGold, "Infi#6958");
+
+                    ImGui.TextUnformatted("Version:");
+                    ImGui.SameLine();
+                    ImGui.TextColored(ImGuiColors.ParsedOrange, Plugin.Version);
+                }
+                ImGui.EndChild();
+
+                ImGuiHelpers.ScaledDummy(5);
+                ImGui.Separator();
+                ImGuiHelpers.ScaledDummy(5);
+
+                if (ImGui.BeginChild("AboutBottomBar", new Vector2(0, 0), false, 0))
+                {
+                    ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
+                    if (ImGui.Button("Discord Thread"))
+                        Dalamud.Utility.Util.OpenLink("https://canary.discord.com/channels/581875019861328007/1085943921160491050");
+                    ImGui.PopStyleColor();
+
+                    ImGui.SameLine();
+
+                    ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
+                    if (ImGui.Button("Issues"))
+                        Dalamud.Utility.Util.OpenLink("https://github.com/Infiziert90/EurekaTrackerAutoPopper/issues");
+                    ImGui.PopStyleColor();
+
+                }
+                ImGui.EndChild();
 
                 ImGui.EndTabItem();
             }

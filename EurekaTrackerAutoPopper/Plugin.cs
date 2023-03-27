@@ -6,6 +6,7 @@ using Dalamud.Game.Gui;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState;
 using Dalamud.Game;
@@ -36,8 +37,11 @@ namespace EurekaTrackerAutoPopper
         public bool PlayerInEureka;
         public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
         private List<Fate> lastPolledFates = new();
-
         private static XivCommonBase xivCommon = null!;
+
+        public static string Authors = "Infi, electr0sheep";
+        public static string Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "Unknown";
+
 
         [PluginService] public static ChatGui Chat { get; private set; } = null!;
         [PluginService] public static ToastGui Toast { get; private set; } = null!;
