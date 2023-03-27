@@ -116,7 +116,7 @@ namespace EurekaTrackerAutoPopper
         private static void WritePlayerPosition(string command, string arguments)
         {
             var pos = ClientState.LocalPlayer!.Position;
-            Chat.Print($"XYZ: {pos.X:0.000000}f, {pos.Y:0.#########}f, {pos.Z:0.#########}f");
+            Chat.Print($"XYZ: {pos.X:000.000000}f, {pos.Y:000.#########}f, {pos.Z:000.#########}f");
         }
 
         private void TerritoryChangePoll(object? _, ushort territoryId)

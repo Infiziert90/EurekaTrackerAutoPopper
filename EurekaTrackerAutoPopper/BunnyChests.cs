@@ -21,23 +21,33 @@ namespace EurekaTrackerAutoPopper
             },
             { 795, new List<Vector3> // Pyros Low Level
                 {
+                    new(-464.448400f, 660.6446f, 419.2033f),
                     new(-340.102100f, 660.3159f, 384.9267f),
+                    new(-197.162200f, 759.5239f, 599.0419f),
                     new(-189.479080f, 671.6885f, 323.32883f),
                     new(-150.433500f, 762.666f, 451.7729f),
                     new(-105.592600f, 762.684f, 686.5082f),
                     new(-038.891640f, 769.8203f, 504.8099f),
                     new(-038.375523f, 675.38214f, 354.2082f),
+                    new(-011.633400f, 773.301f, 601.2862f),
                     new(002.4903228f, 764.1788f, 411.15732f),
                     new(032.1309000f, 754.25977f, 689.94055f),
                     new(092.8179700f, 754.2609f, 825.0632f),
                     new(146.3309000f, 752.4515f, 756.0107f),
+                    new(156.9551000f, 751.1077f, 704.1921f),
+                    new(157.0789000f, 754.6462f, 841.5557f),
+                    new(184.4552000f, 747.6003f, 617.2846f),
                     new(248.7603000f, 723.1207f, 118.5381f),
                     new(280.3536700f, 746.5175f, 754.38336f),
                     new(293.8393000f, 739.3859f, 531.169f),
+                    new(310.4404000f, 742.014f, 567.1605f),
+                    new(367.9469000f, 744.048f, 639.2587f),
+                    new(371.0945000f, 737.926f, 491.7239f),
                     new(378.1241000f, 724.9152f, 287.1851f),
                     new(432.9954000f, 731.984f, 568.7686f),
+                    new(448.9699000f, 725.0576f, 457.0699f),
                     new(460.4148000f, 723.1206f, 311.0332f),
-                    new(469.0294000f, 726.3409f, 535.0562f), // 17
+                    new(469.0294000f, 726.3409f, 535.0562f), // 27
                 }
             },
             { 827, new List<Vector3> // Hydatos
@@ -76,17 +86,19 @@ namespace EurekaTrackerAutoPopper
 
         public static Vector3 CalculateDistance(uint territoryId, Vector3 player)
         {
+            (double Dif, Vector3 Pos) bestPos = (InRange, Vector3.Zero);
             if (!Positions.TryGetValue(territoryId, out var positions))
-                return Vector3.Zero;
+                return bestPos.Pos;
 
             foreach (var pos in positions)
             {
                 var difV = player - pos;
-                if (Math.Sqrt(Math.Pow(difV.X, 2f) + Math.Pow(difV.Y, 2f) + Math.Pow(difV.Z, 2f)) < InRange)
-                    return pos;
+                var dif = Math.Sqrt(Math.Pow(difV.X, 2f) + Math.Pow(difV.Y, 2f) + Math.Pow(difV.Z, 2f));
+                if (dif < bestPos.Dif)
+                    bestPos = (dif, pos);
             }
 
-            return Vector3.Zero;
+            return bestPos.Pos;
         }
     }
 }

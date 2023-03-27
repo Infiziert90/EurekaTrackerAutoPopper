@@ -494,7 +494,7 @@ namespace EurekaTrackerAutoPopper
                     changed = true;
                 }
                 ImGuiComponents.HelpMarker("Draws a circle if the player is near a possible chest location." +
-                                           "\nSupports currently: Hydatos, half of low level Pyros, small bits of low level Pagos");
+                                           "\nSupports currently: Hydatos, low level Pyros, small bits of low level Pagos");
 
                 if (changed)
                     Configuration.Save();
