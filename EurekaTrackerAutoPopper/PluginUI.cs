@@ -39,11 +39,11 @@ namespace EurekaTrackerAutoPopper
         private readonly Timer ShoutTimer = new();
         private const int CountdownForShout = 20 * 1000; // Seconds
 
-        private const int MinimalBunnyRespawn = 530;
+        public const int MinimalBunnyRespawn = 530;
         private const int MaximumBunnyRespawn = 1000;
 
-        public bool NearToBunnyChest = false;
-        public Vector3 ChestPos = Vector3.Zero;
+        public bool NearToCoffer = false;
+        public Vector3 CofferPos = Vector3.Zero;
         private uint imguiCircleColor;
         private readonly Timer PreviewTimer = new(5 * 1000);
 
@@ -113,13 +113,13 @@ namespace EurekaTrackerAutoPopper
             if (!Configuration.BunnyCircleDraw)
                 return;
 
-            if (!NearToBunnyChest)
+            if (!NearToCoffer)
                 return;
 
-            if (ChestPos == Vector3.Zero)
+            if (CofferPos == Vector3.Zero)
                 return;
 
-            Plugin.GameGui.WorldToScreen(ChestPos, out var circlePos);
+            Plugin.GameGui.WorldToScreen(CofferPos, out var circlePos);
 
             var winPos = new Vector2(circlePos.X - 15, circlePos.Y - 15);
 
@@ -305,6 +305,9 @@ namespace EurekaTrackerAutoPopper
                     // Renders Bunny Tab
                     TabBunny();
 
+                    // Renders Stats Tab
+                    TabStats();
+
                     // Renders About Tab
                     TabAbout();
 #if DEBUG
@@ -470,47 +473,129 @@ namespace EurekaTrackerAutoPopper
         {
             if (ImGui.BeginTabItem("Bunny###bunny-tab"))
             {
-                var circleColor = Configuration.CircleColor;
-                var changed = false;
-
-                ImGui.TextUnformatted("Bunny");
-                if (ImGui.Checkbox("Show Bunny Window on Entry", ref Configuration.ShowBunnyWindow))
+                if (ImGui.BeginChild("BunnyContent", new Vector2(0, -50)))
                 {
-                    if (Configuration.ShowBunnyWindow && Plugin.PlayerInRelevantTerritory())
-                        BunnyVisible = true;
-                    changed = true;
+                    var circleColor = Configuration.CircleColor;
+                    var changed = false;
+
+                    ImGui.TextUnformatted("Bunny");
+                    if (ImGui.Checkbox("Show Bunny Window on Entry", ref Configuration.ShowBunnyWindow))
+                    {
+                        if (Configuration.ShowBunnyWindow && Plugin.PlayerInRelevantTerritory())
+                            BunnyVisible = true;
+                        changed = true;
+                    }
+                    ImGuiComponents.HelpMarker("Or use the command '/elbunny'.");
+
+                    changed |= ImGui.Checkbox("Only Easy Bunny", ref Configuration.OnlyEasyBunny);
+                    ImGuiComponents.HelpMarker("Only shows the low level bunny fate for Pagos and Pyros.");
+                    changed |= ImGui.Checkbox("Draw Nearby Circle##drawCheckbox", ref Configuration.BunnyCircleDraw);
+                    ImGui.SameLine();
+                    ImGui.ColorEdit4("##circleColorPicker", ref circleColor, ColorFlags);
+
+                    if (circleColor != Configuration.CircleColor)
+                    {
+                        circleColor.W = 1; // fix alpha
+
+                        Configuration.CircleColor = circleColor;
+                        imguiCircleColor = ImGui.GetColorU32(ImGui.ColorConvertFloat4ToU32(circleColor));
+                        changed = true;
+                    }
+                    ImGuiComponents.HelpMarker("Draws a circle if the player is near a possible chest location." +
+                                               "\nSupports currently: Hydatos, low level Pyros and Pagos");
+
+                    if (changed)
+                        Configuration.Save();
+
+                    ImGuiHelpers.ScaledDummy(5);
+                    ImGui.Separator();
+                    ImGuiHelpers.ScaledDummy(5);
+
+                    if (ImGui.Button("Preview"))
+                        PreviewTimer.Start();
+
+                    if (PreviewTimer.Enabled)
+                        PreviewCircle();
                 }
-                ImGuiComponents.HelpMarker("Or use the command '/elbunny'.");
-
-                changed |= ImGui.Checkbox("Only Easy Bunny", ref Configuration.OnlyEasyBunny);
-                ImGuiComponents.HelpMarker("Only shows the low level bunny fate for Pagos and Pyros.");
-                changed |= ImGui.Checkbox("Draw Nearby Circle##drawCheckbox", ref Configuration.BunnyCircleDraw);
-                ImGui.SameLine();
-                ImGui.ColorEdit4("##circleColorPicker", ref circleColor, ColorFlags);
-
-                if (circleColor != Configuration.CircleColor)
-                {
-                    circleColor.W = 1; // fix alpha
-
-                    Configuration.CircleColor = circleColor;
-                    imguiCircleColor = ImGui.GetColorU32(ImGui.ColorConvertFloat4ToU32(circleColor));
-                    changed = true;
-                }
-                ImGuiComponents.HelpMarker("Draws a circle if the player is near a possible chest location." +
-                                           "\nSupports currently: Hydatos, low level Pyros, small bits of low level Pagos");
-
-                if (changed)
-                    Configuration.Save();
+                ImGui.EndChild();
 
                 ImGuiHelpers.ScaledDummy(5);
                 ImGui.Separator();
                 ImGuiHelpers.ScaledDummy(5);
 
-                if (ImGui.Button("Preview"))
-                    PreviewTimer.Start();
+                if (ImGui.BeginChild("BunnyBottomBar", new Vector2(0, 0), false, 0))
+                {
+                    ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
+                    if (ImGui.Button("Add Markers"))
+                        Plugin.AddChestsLocationsMap();
+                    ImGui.PopStyleColor();
 
-                if (PreviewTimer.Enabled)
-                    PreviewCircle();
+                    ImGui.SameLine();
+
+                    ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
+                    if (ImGui.Button("Remove Markers"))
+                        Plugin.RemoveChestsLocationsMap();
+                    ImGui.PopStyleColor();
+                }
+                ImGui.EndChild();
+
+                ImGui.EndTabItem();
+            }
+        }
+
+        private static readonly float SecondRow = ImGui.CalcTextSize("Killed Bunnies:").X + 80.0f;
+        private static readonly float ThirdRow = SecondRow + 100.0f;
+        private void TabStats()
+        {
+            if (ImGui.BeginTabItem("Stats###stats-tab"))
+            {
+                ImGuiHelpers.ScaledDummy(5.0f);
+                ImGui.TextUnformatted("Total Stats:");
+                ImGui.Indent(10.0f);
+
+                var text = Configuration.KilledBunnies.ToString();
+                ImGui.TextUnformatted("Killed Bunnies:");
+                ImGui.SameLine(SecondRow - ImGui.CalcTextSize(text).X);
+                ImGui.TextColored(ImGuiColors.DalamudOrange, text);
+
+                var total = Configuration.Stats.Values.Sum(v => v.Values.Sum());
+                text = total.ToString();
+                ImGui.TextUnformatted("Coffers Found:");
+                ImGui.SameLine(SecondRow - ImGui.CalcTextSize(text).X);
+                ImGui.TextColored(ImGuiColors.DalamudOrange, text);
+
+                var bronze = Configuration.Stats.Values.Sum(v => v[2009532]);
+                TextWithCalculatedSpacing("Bronze:", bronze, total);
+
+                var silver = Configuration.Stats.Values.Sum(v => v[2009531]);
+                TextWithCalculatedSpacing("Silver:", silver, total);
+
+                var gold = Configuration.Stats.Values.Sum(v => v[2009530]);
+                TextWithCalculatedSpacing("Gold:", gold, total);
+
+                ImGui.Unindent(10.0f);
+                ImGuiHelpers.ScaledDummy(10.0f);
+
+                ImGui.TextUnformatted("Map Stats:");
+                if (ImGui.BeginTabBar("StatsTabBar"))
+                {
+                    foreach (var (key, value) in Configuration.Stats)
+                    {
+                        if (ImGui.BeginTabItem($"{QuestHelper.TerritoryToPlaceName(key)}##area-tab"))
+                        {
+                            ImGui.Indent(10.0f);
+                            total = value.Sum(c => c.Value);
+                            TextWithCalculatedSpacing("Bronze:", value[2009532], total);
+                            TextWithCalculatedSpacing("Silver:", value[2009531], total);
+                            TextWithCalculatedSpacing("Gold:", value[2009530], total);
+                            ImGui.Unindent(10.0f);
+
+                            ImGui.EndTabItem();
+                        }
+                    }
+
+                    ImGui.EndTabBar();
+                }
 
                 ImGui.EndTabItem();
             }
@@ -555,7 +640,6 @@ namespace EurekaTrackerAutoPopper
                     if (ImGui.Button("Issues"))
                         Dalamud.Utility.Util.OpenLink("https://github.com/Infiziert90/EurekaTrackerAutoPopper/issues");
                     ImGui.PopStyleColor();
-
                 }
                 ImGui.EndChild();
 
@@ -652,6 +736,21 @@ namespace EurekaTrackerAutoPopper
                 ImGui.GetWindowDrawList().AddCircleFilled(circlePos, 8.0f, imguiCircleColor);
                 ImGui.End();
             }
+        }
+
+        private void TextWithCalculatedSpacing(string header, int count, int total)
+        {
+            if (total == 0)
+                total = 1;
+
+            var text = count.ToString();
+            var perc = $"{(double) count / total * 100.0:##0.00} %%";
+
+            ImGui.TextUnformatted(header);
+            ImGui.SameLine(SecondRow - ImGui.CalcTextSize(text).X);
+            ImGui.TextColored(ImGuiColors.DalamudOrange, text);
+            ImGui.SameLine(ThirdRow - ImGui.CalcTextSize(perc).X);
+            ImGui.TextColored(ImGuiColors.TankBlue, perc);
         }
 
         public void StartShoutCountdown()

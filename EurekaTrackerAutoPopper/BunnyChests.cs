@@ -1,6 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Numerics;
+
+using static System.Math;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -8,27 +9,51 @@ namespace EurekaTrackerAutoPopper
     {
         private const float InRange = 80.0f;
 
-        private static readonly Dictionary<uint, List<Vector3>> Positions = new()
+        public static List<uint> ExistingCoffers = new();
+        public static List<uint> Coffers = new()
+        {
+            2009530, // Gold
+            2009531, // Silver
+            2009532  // Bronze
+        };
+
+        public static readonly Dictionary<uint, List<Vector3>> Positions = new()
         {
             { 763, new List<Vector3> // Pagos Low Level
                 {
+                    new(-737.83690f, -677.9246f, 143.3176f),
+                    new(-651.98720f, -688.063f, 085.1839f),
                     new(-606.53420f, -700.6216f, 143.02383f),
+                    new(-430.187200f, -680.5923f, 060.50428f),
                     new(-386.33823f, -677.493f, 468.21628f),
+                    new(-298.34700f, -664.6113f, 450.374f),
                     new(-289.46200f, -585.3194f, -178.6195f),
+                    new(-283.38950f, -573.506f, -337.2024f),
                     new(-259.90164f, -602.8868f, -139.11661f),
+                    new(-257.58450f, -627.9702f, -067.44543f),
+                    new(-222.82150f, -557.8751f, -370.6961f),
+                    new(-222.44050f, -628.8225f, -069.52717f),
+                    new(-199.55620f, -594.9023f, -154.88f),
+                    new(-158.79890f, -576.3018f, -200.3996f),
                     new(-147.99794f, -563.5579f, -282.92133f),
                     new(351.901800f, -690.0383f, 115.0498f),
+                    new(398.619700f, -678.8519f, -015.59305f),
                     new(445.425400f, -741.8608f, 188.4324f),
+                    new(476.741000f, -739.2648f, 421.0621f),
+                    new(487.021100f, -756.6284f, 291.6779f),
+                    new(514.979100f, -702.1201f, 139.7072f),
                     new(516.052000f, -679.7125f, -037.79275f),
+                    new(530.784900f, -720.4700f, 230.5152f),
                     new(543.909000f, -730.7676f, 355.7726f),
                     new(631.058800f, -730.9005f, 317.3849f),
-                    new(643.954300f, -702.8303f, 117.7415f), // 11
+                    new(643.954300f, -702.8303f, 117.7415f), // 26
                 }
             },
             { 795, new List<Vector3> // Pyros Low Level
                 {
                     new(-469.810200f, 659.1795f, 441.7094f),
                     new(-464.448400f, 660.6446f, 419.2033f),
+                    new(-438.394400f, 660.7888f, 400.7463f),
                     new(-340.102100f, 660.3159f, 384.9267f),
                     new(-197.162200f, 759.5239f, 599.0419f),
                     new(-189.479080f, 671.6885f, 323.32883f),
@@ -54,7 +79,7 @@ namespace EurekaTrackerAutoPopper
                     new(432.9954000f, 731.984f, 568.7686f),
                     new(448.9699000f, 725.0576f, 457.0699f),
                     new(460.4148000f, 723.1206f, 311.0332f),
-                    new(469.0294000f, 726.3409f, 535.0562f), // 28
+                    new(469.0294000f, 726.3409f, 535.0562f), // 29
                 }
             },
             { 827, new List<Vector3> // Hydatos
@@ -100,12 +125,27 @@ namespace EurekaTrackerAutoPopper
             foreach (var pos in positions)
             {
                 var difV = player - pos;
-                var dif = Math.Sqrt(Math.Pow(difV.X, 2f) + Math.Pow(difV.Y, 2f) + Math.Pow(difV.Z, 2f));
+                var dif = Sqrt(Pow(difV.X, 2f) + Pow(difV.Y, 2f) + Pow(difV.Z, 2f));
                 if (dif < bestPos.Dif)
                     bestPos = (dif, pos);
             }
 
             return bestPos.Pos;
+        }
+
+        public static bool Exists(uint territoryId, Vector3 player)
+        {
+            if (!Positions.TryGetValue(territoryId, out var positions))
+                return false;
+
+            foreach (var pos in positions)
+            {
+                var difV = player - pos;
+                if (Sqrt(Pow(difV.X, 2f) + Pow(difV.Y, 2f) + Pow(difV.Z, 2f)) < 5.0f)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

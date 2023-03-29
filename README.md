@@ -3,9 +3,15 @@ Automatically notifies you about NMs in Eureka, with the ability to pop them on 
 Also includes:  
 - Fairy Finder
 - Bunny Timer Window
-- Bunny Chest Helper
+- Bunny Coffer Helper
+- Stats
 - Quest Guide (clickable coords)
-  
-  
-### Quest Guide  
+
+### Coffer Map Marker
+![pyrosMap](EurekaTrackerAutoPopper/images/pyrosCoffers.png)
+
+### Stats
+![stats](EurekaTrackerAutoPopper/images/stats.png)
+
+### Quest Guide
 ![quest](EurekaTrackerAutoPopper/images/quest.png)

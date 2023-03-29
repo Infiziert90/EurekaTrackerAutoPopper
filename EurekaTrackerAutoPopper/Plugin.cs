@@ -7,10 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Timers;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Text.SeStringHandling;
@@ -42,6 +44,8 @@ namespace EurekaTrackerAutoPopper
         public static string Authors = "Infi, electr0sheep";
         public static string Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "Unknown";
 
+        private static bool gotBunny;
+        private readonly Timer cofferTimer = new(20 * 1000);
 
         [PluginService] public static ChatGui Chat { get; private set; } = null!;
         [PluginService] public static ToastGui Toast { get; private set; } = null!;
@@ -84,10 +88,16 @@ namespace EurekaTrackerAutoPopper
                 ShowInHelp = true
             });
 
-            CommandManager.AddHandler("/elposition", new CommandInfo(WritePlayerPosition)
+            CommandManager.AddHandler("/elmarkers", new CommandInfo(OnAddCommand)
             {
-                HelpMessage = "Debug",
-                ShowInHelp = false
+                HelpMessage = "Adds all known coffer locations to the map and minimap",
+                ShowInHelp = true
+            });
+
+            CommandManager.AddHandler("/elremove", new CommandInfo(OnRemoveCommand)
+            {
+                HelpMessage = "Removes all the placed markers",
+                ShowInHelp = true
             });
 
             DalamudPluginInterface.UiBuilder.Draw += DrawUI;
@@ -95,6 +105,7 @@ namespace EurekaTrackerAutoPopper
 
             ClientState.TerritoryChanged += TerritoryChangePoll;
             xivCommon = new XivCommonBase();
+            cofferTimer.AutoReset = false;
 
             TerritoryChangePoll(null, ClientState.TerritoryType);
         }
@@ -117,10 +128,14 @@ namespace EurekaTrackerAutoPopper
                 Chat.PrintError("You are not in Eureka, this command is unavailable.");
         }
 
-        private static void WritePlayerPosition(string command, string arguments)
+        private void OnAddCommand(string command, string arguments)
         {
-            var pos = ClientState.LocalPlayer!.Position;
-            Chat.Print($"XYZ: {pos.X:000.000000}f, {pos.Y:000.#########}f, {pos.Z:000.#########}f");
+            AddChestsLocationsMap();
+        }
+
+        private void OnRemoveCommand(string command, string arguments)
+        {
+            RemoveChestsLocationsMap();
         }
 
         private void TerritoryChangePoll(object? _, ushort territoryId)
@@ -144,6 +159,9 @@ namespace EurekaTrackerAutoPopper
                 LastSeenFate = Library.EurekaFate.Empty;
                 Library.ExistingFairies.Clear();
                 Library.ResetBunnies();
+
+                gotBunny = false;
+                BunnyChests.ExistingCoffers.Clear();
 
                 Framework.Update -= PollForFateChange;
                 Framework.Update -= FairyCheck;
@@ -301,43 +319,80 @@ namespace EurekaTrackerAutoPopper
             if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
                 return;
 
-            var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            foreach (var bnuuy in Library.Bunnies.Where(bunny => FateTable.Any(fate => fate.FateId == bunny.FateId)))
-            {
-                bnuuy.Alive = true;
-                bnuuy.LastSeenAlive = currentTime;
-            }
-
-            foreach (var bnuuy in Library.Bunnies.Where(bunny => bunny.Alive))
-            {
-                if (bnuuy.LastSeenAlive != currentTime)
-                    bnuuy.Alive = false;
-            }
-
-            // check for bunny buff
-            if (!Configuration.BunnyCircleDraw)
-                return;
-
             var local = ClientState.LocalPlayer;
             if (local == null)
                 return;
 
+            var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            foreach (var bnuuy in Library.Bunnies)
+            {
+                if (FateTable.Any(fate => fate.FateId == bnuuy.FateId))
+                {
+                    bnuuy.Alive = true;
+                    bnuuy.LastSeenAlive = currentTime;
+                }
+
+                if (bnuuy.LastSeenAlive != currentTime)
+                    bnuuy.Alive = false;
+            }
+
             if (local.StatusList.Any(status => status.StatusId == 1531))
             {
+                if (!gotBunny)
+                {
+                    Configuration.KilledBunnies += 1;
+                    Configuration.Save();
+
+                    gotBunny = true;
+                }
+
                 var pos = BunnyChests.CalculateDistance(ClientState.TerritoryType, local.Position);
                 if (pos != Vector3.Zero)
                 {
-                    PluginUi.NearToBunnyChest = true;
-                    PluginUi.ChestPos = pos;
+                    PluginUi.NearToCoffer = true;
+                    PluginUi.CofferPos = pos;
                 }
                 else
                 {
-                    PluginUi.NearToBunnyChest = false;
+                    PluginUi.NearToCoffer = false;
                 }
+
+                // refresh timer until buff is gone
+                cofferTimer.Stop();
+                cofferTimer.Start();
             }
             else
             {
-                PluginUi.NearToBunnyChest = false;
+                PluginUi.NearToCoffer = false;
+                gotBunny = false;
+
+                // return if timer isn't running
+                if (!cofferTimer.Enabled)
+                    return;
+
+                var coffer = ObjectTable.OfType<EventObj>()
+                    .Where(a => BunnyChests.Coffers.Contains(a.DataId))
+                    .FirstOrDefault(a => !BunnyChests.ExistingCoffers.Contains(a.ObjectId));
+                if (coffer == null)
+                    return;
+
+                if (local.TargetObject == null || coffer.ObjectId != local.TargetObject.ObjectId)
+                    return;
+
+                BunnyChests.ExistingCoffers.Add(coffer.ObjectId);
+                cofferTimer.Stop();
+
+                Configuration.Stats[ClientState.TerritoryType][coffer.DataId] += 1;
+                Configuration.KilledBunnies -= 1;
+                Configuration.Save();
+
+                // TODO Remove after all chests found
+                if (!BunnyChests.Exists(ClientState.TerritoryType, coffer.Position))
+                {
+                    Chat.Print("You found a new chest location, please report the following message to the dev:");
+                    Chat.Print($"Terri: {ClientState.TerritoryType} Pos: {coffer.Position.X:000.000000}f, {coffer.Position.Y:000.#########}f, {coffer.Position.Z:000.#########}f");
+                    BunnyChests.Positions[ClientState.TerritoryType].Add(coffer.Position);
+                }
             }
         }
 
@@ -377,7 +432,8 @@ namespace EurekaTrackerAutoPopper
             CommandManager.RemoveHandler("/el");
             CommandManager.RemoveHandler("/elquest");
             CommandManager.RemoveHandler("/elbunny");
-            CommandManager.RemoveHandler("/elposition");
+            CommandManager.RemoveHandler("/elmarkers");
+            CommandManager.RemoveHandler("/elremove");
 
             WindowSystem.RemoveWindow(QuestWindow);
         }
@@ -391,6 +447,42 @@ namespace EurekaTrackerAutoPopper
         private void DrawConfigUI()
         {
             PluginUi.SettingsVisible = true;
+        }
+
+        public static unsafe void AddChestsLocationsMap()
+        {
+            if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
+            {
+                Chat.PrintError("You are not in Eureka, this command is unavailable.");
+                return;
+            }
+
+            AgentMap.Instance()->ResetMapMarkers();
+            AgentMap.Instance()->ResetMiniMapMarkers();
+
+            foreach (var pos in BunnyChests.Positions[ClientState.TerritoryType])
+            {
+                var orgPos = pos;
+                if (ClientState.TerritoryType == 827)
+                    orgPos.Z += 475;
+
+                if(!AgentMap.Instance()->AddMapMarker(orgPos, 60354))
+                    Chat.PrintError("Unable to place all markers on map");
+                if (!AgentMap.Instance()->AddMiniMapMarker(pos, 60354))
+                    Chat.PrintError("Unable to place all markers on minimap");
+            }
+        }
+
+        public static unsafe void RemoveChestsLocationsMap()
+        {
+            if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
+            {
+                Chat.PrintError("You are not in Eureka, this command is unavailable.");
+                return;
+            }
+
+            AgentMap.Instance()->ResetMapMarkers();
+            AgentMap.Instance()->ResetMiniMapMarkers();
         }
 
         public unsafe void SetFlagMarker()

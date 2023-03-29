@@ -1,6 +1,7 @@
 ﻿using Dalamud.Configuration;
 using Dalamud.Plugin;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Interface.Colors;
 
@@ -31,6 +32,32 @@ namespace EurekaTrackerAutoPopper
         public bool OnlyEasyBunny = true;
         public bool BunnyCircleDraw = true;
         public Vector4 CircleColor = ImGuiColors.HealerGreen;
+
+        public int KilledBunnies = 0;
+        public Dictionary<uint, Dictionary<uint, int>> Stats = new()
+        {
+            { 763, new Dictionary<uint, int>
+                {
+                    {2009530, 0},
+                    {2009531, 0},
+                    {2009532, 0}
+                }
+            },
+            { 795, new Dictionary<uint, int>
+                {
+                    {2009530, 0},
+                    {2009531, 0},
+                    {2009532, 0}
+                }
+            },
+            { 827, new Dictionary<uint, int>
+                {
+                    {2009530, 0},
+                    {2009531, 0},
+                    {2009532, 0}
+                }
+            }
+        };
 
         [NonSerialized]
         private DalamudPluginInterface? pluginInterface;
