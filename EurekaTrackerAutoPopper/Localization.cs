@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CheapLoc;
+using Dalamud;
 using Dalamud.Logging;
 
 namespace EurekaTrackerAutoPopper;
@@ -46,5 +47,17 @@ public class Localization
     private string ReadLocData(string langCode)
     {
         return File.ReadAllText(Path.Combine(Plugin.DalamudPluginInterface.AssemblyLocation.DirectoryName!, LocResourceDirectory, $"{langCode}.json"));
+    }
+
+    public static ClientLanguage LangCodeToClientLanguage(string langCode)
+    {
+        return langCode switch
+        {
+            "en" => ClientLanguage.English,
+            "de" => ClientLanguage.German,
+            "fr" => ClientLanguage.French,
+            "ja" => ClientLanguage.Japanese,
+            _ => ClientLanguage.English
+        };
     }
 }

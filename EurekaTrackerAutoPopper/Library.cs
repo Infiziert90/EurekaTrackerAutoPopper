@@ -1,7 +1,7 @@
 ﻿using System;
 using Dalamud.Game.Text.SeStringHandling;
 using System.Collections.Generic;
-using CheapLoc;
+using Lumina.Excel.GeneratedSheets;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -61,27 +61,27 @@ namespace EurekaTrackerAutoPopper
         public class Bunny
         {
             public readonly uint FateId;
-            public readonly string Name;
             public readonly uint TerritoryId;
 
             public bool Alive;
             public long LastSeenAlive = -1;
 
-            public Bunny(uint id, string name, uint territoryId)
+            public Bunny(uint id, uint territoryId)
             {
                 FateId = id;
-                Name = name;
                 TerritoryId = territoryId;
             }
+
+            public string Name => Utils.FromSeString(Utils.GetSheet<Fate>(FateId)!.Name);
         }
 
         public readonly List<Bunny> Bunnies = new()
         {
-            new Bunny(1367, Loc.Localize("Fate Name - Pagos Bunny Level 20", "Down the Rabbit Hole"), 763),
-            new Bunny(1368, Loc.Localize("Fate Name - Pagos Bunny Level 31", "Curiouser and Curiouser"), 763),
-            new Bunny(1407, Loc.Localize("Fate Name - Pyros Bunny Level 35", "We're All Mad Here"), 795),
-            new Bunny(1408, Loc.Localize("Fate Name - Pyros Bunny Level 46", "Uncommon Nonsense"), 795),
-            new Bunny(1425, Loc.Localize("Fate Name - Hydatos Bunny Level 50", "Drink Me"), 827)
+            new Bunny(1367, 763),
+            new Bunny(1368, 763),
+            new Bunny(1407, 795),
+            new Bunny(1408, 795),
+            new Bunny(1425, 827)
         };
 
         public static readonly List<uint> BunnyMaps = new()

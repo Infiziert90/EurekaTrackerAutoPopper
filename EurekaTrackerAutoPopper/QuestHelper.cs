@@ -5,6 +5,7 @@ using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -406,7 +407,17 @@ namespace EurekaTrackerAutoPopper
             return new MapLinkPayload(terri, mapId, x, y);
         }
 
-        private record Aetheryte(string Name, uint Unlock, MapLinkPayload MapFlag);
+        private record Aetheryte(uint Key, uint Unlock, MapLinkPayload MapFlag)
+        {
+            public string Name
+            {
+                get
+                {
+                    var key = Utils.GetSheet<EurekaAethernet>(Key)!;
+                    return Utils.FromSeString(Utils.GetSheet<PlaceName>(key.Location.Row)!.Name);
+                }
+            }
+        }
 
         #region QuestMapFlags
         private static readonly MapLinkPayload Anemos3 = CreateAnemosLink(13.5f, 20.2f);
@@ -451,31 +462,31 @@ namespace EurekaTrackerAutoPopper
             {
                 732, new []
                 {
-                    new Aetheryte("Abandoned Laboratory", 9, CreateAnemosLink(14.0f, 12.3f)),
-                    new Aetheryte("Windtorn Cabin", 9, CreateAnemosLink(30.2f, 20.5f))
+                    new Aetheryte(2, 9, CreateAnemosLink(14.0f, 12.3f)),
+                    new Aetheryte(3, 9, CreateAnemosLink(30.2f, 20.5f))
                 }
             },
             {
                 763, new []
                 {
-                    new Aetheryte("Vlondette's Retreat", 21, CreatePagosLink(23.3f, 27.5f)),
-                    new Aetheryte("Geothermal Studies", 23, CreatePagosLink(7.4f, 15.0f)),
-                    new Aetheryte("Gravitational Studies", 25, CreatePagosLink(28.4f, 15.6f))
+                    new Aetheryte(5, 21, CreatePagosLink(23.3f, 27.5f)),
+                    new Aetheryte(6, 23, CreatePagosLink(7.4f, 15.0f)),
+                    new Aetheryte(7, 25, CreatePagosLink(28.4f, 15.6f))
                 }
             },
             {
                 795, new []
                 {
-                    new Aetheryte("The Dragon Star Observatory", 37, CreatePyrosLink(24.0f, 37.4f)),
-                    new Aetheryte("The Firing Chamber", 39, CreatePyrosLink(24.0f, 17.5f)),
-                    new Aetheryte("Carbonatite Quarry", 41, CreatePyrosLink(12.6f, 9.0f))
+                    new Aetheryte(11, 37, CreatePyrosLink(24.0f, 37.4f)),
+                    new Aetheryte(9, 39, CreatePyrosLink(24.0f, 17.5f)),
+                    new Aetheryte(10, 41, CreatePyrosLink(12.6f, 9.0f))
                 }
             },
             {
                 827, new []
                 {
-                    new Aetheryte("Unverified Research", 51, CreateHydatosLink(14.0f, 12.3f)),
-                    new Aetheryte("Dormitory", 55, CreateHydatosLink(30.2f, 20.5f))
+                    new Aetheryte(13, 51, CreateHydatosLink(14.0f, 12.3f)),
+                    new Aetheryte(14, 55, CreateHydatosLink(30.2f, 20.5f))
                 }
             },
         };

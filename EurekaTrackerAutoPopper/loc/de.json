@@ -1,24 +1,4 @@
 {
-  "Fate Name - Pagos Bunny Level 20": {
-    "message": "Down the Rabbit Hole",
-    "description": "Library..ctor"
-  },
-  "Fate Name - Pagos Bunny Level 31": {
-    "message": "Curiouser and Curiouser",
-    "description": "Library..ctor"
-  },
-  "Fate Name - Pyros Bunny Level 35": {
-    "message": "We're All Mad Here",
-    "description": "Library..ctor"
-  },
-  "Fate Name - Pyros Bunny Level 46": {
-    "message": "Uncommon Nonsense",
-    "description": "Library..ctor"
-  },
-  "Fate Name - Hydatos Bunny Level 50": {
-    "message": "Drink Me",
-    "description": "Library..ctor"
-  },
   "Chat - Error Not In Eureka": {
     "message": "You are not in Eureka, this command is unavailable.",
     "description": "Plugin.OnBunnyCommand"
@@ -29,6 +9,10 @@
   },
   "Chat - New Chest Found Dev Note": {
     "message": "Please consider sending the following information to the developer:",
+    "description": "Plugin.BunnyCheck"
+  },
+  "Chat - New Chest Found Feedback": {
+    "message": "(Please do not use the feedback function to send this)",
     "description": "Plugin.BunnyCheck"
   },
   "Chat - Error Map Markers": {
@@ -209,6 +193,10 @@
   },
   "Config Header - Total Stats": {
     "message": "Total Stats:",
+    "description": "PluginUI.TabStats"
+  },
+  "Stats Entry - Time": {
+    "message": "Time in Eureka:",
     "description": "PluginUI.TabStats"
   },
   "Stats Entry - Killed": {

@@ -10,6 +10,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Timers;
 using CheapLoc;
+using Dalamud.Data;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState;
 using Dalamud.Game;
@@ -64,6 +65,7 @@ namespace EurekaTrackerAutoPopper
         [PluginService] public static DalamudPluginInterface DalamudPluginInterface { get; private set; } = null!;
         [PluginService] public static GameGui GameGui { get; private set; } = null!;
         [PluginService] public static CommandManager CommandManager { get; private set; } = null!;
+        [PluginService] public static DataManager DataManager { get; private set; } = null!;
 
         public Plugin()
         {
@@ -386,6 +388,7 @@ namespace EurekaTrackerAutoPopper
                     {
                         Chat.Print(Loc.Localize("Chat - New Chest Found", "You've found a new chest location"));
                         Chat.Print(Loc.Localize("Chat - New Chest Found Dev Note", "Please consider sending the following information to the developer:"));
+                        Chat.Print(Loc.Localize("Chat - New Chest Found Feedback", "(Please do not use the feedback function to send this)"));
                         Chat.Print($"Terri: {ClientState.TerritoryType} Pos: {coffer.Position.X:000.000000}f, {coffer.Position.Y:000.#########}f, {coffer.Position.Z:000.#########}f");
                         BunnyChests.Positions[ClientState.TerritoryType].Add(coffer.Position);
                     }
