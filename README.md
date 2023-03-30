@@ -6,6 +6,7 @@ Also includes:
 - Bunny Coffer Helper
 - Stats
 - Quest Guide (clickable coords)
+- Localized (DE, FR, JA)
 
 ### Coffer Map Marker
 ![pyrosMap](EurekaTrackerAutoPopper/images/pyrosCoffers.png)

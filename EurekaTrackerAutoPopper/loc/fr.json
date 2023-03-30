@@ -1,26 +1,26 @@
 {
   "Chat - Error Not In Eureka": {
-    "message": "You are not in Eureka, this command is unavailable.",
+    "message": "Vous n'êtes pas dans Eureka, cette commande n'est pas disponible.",
     "description": "Plugin.OnBunnyCommand"
   },
   "Chat - New Chest Found": {
-    "message": "You've found a new chest location",
+    "message": "Vous avez découvert un nouvel emplacement de coffre",
     "description": "Plugin.BunnyCheck"
   },
   "Chat - New Chest Found Dev Note": {
-    "message": "Please consider sending the following information to the developer:",
+    "message": "S'il vous plaît envisager d'envoyer l'information suivante au développeur:",
     "description": "Plugin.BunnyCheck"
   },
   "Chat - New Chest Found Feedback": {
-    "message": "(Please do not use the feedback function to send this)",
+    "message": "(S'il vous plaît ne pas utiliser la fonction commentaire pour envoyer ceci)",
     "description": "Plugin.BunnyCheck"
   },
   "Chat - Error Map Markers": {
-    "message": "Unable to place all markers on map",
+    "message": "Impossible de placer tous les marqueurs sur la carte",
     "description": "Plugin.AddChestsLocationsMap"
   },
   "Chat - Error Minimap Markers": {
-    "message": "Unable to place all markers on minimap",
+    "message": "Impossible de placer tous les marqueurs sur la minicarte",
     "description": "Plugin.AddChestsLocationsMap"
   },
   "Shout Button - Post": {
@@ -32,7 +32,7 @@
     "description": "PluginUI.DrawFatePopWindow"
   },
   "Shout Button - Close": {
-    "message": "Close",
+    "message": "Fermer",
     "description": "PluginUI.DrawFatePopWindow"
   },
   "Bunny Window - Status Alive": {
@@ -52,7 +52,7 @@
     "description": "PluginUI.DrawBunnyWindow"
   },
   "Tab Header - General": {
-    "message": "General",
+    "message": "Général",
     "description": "PluginUI.TabGeneral"
   },
   "Config Option - Echo NM": {
@@ -80,7 +80,7 @@
     "description": "PluginUI.TabGeneral"
   },
   "Config Input - PW": {
-    "message": "Password",
+    "message": "Mot de passe",
     "description": "PluginUI.TabGeneral"
   },
   "Config Button - Start New": {
@@ -124,7 +124,7 @@
     "description": "PluginUI.TabChat"
   },
   "Tab Header - Fairy": {
-    "message": "Fairy",
+    "message": "Fée",
     "description": "PluginUI.TabFairy"
   },
   "Config Header - Fairy": {
@@ -188,15 +188,15 @@
     "description": "PluginUI.TabBunny"
   },
   "Tab Header - Stats": {
-    "message": "Stats",
+    "message": "Statistiques",
     "description": "PluginUI.TabStats"
   },
   "Config Header - Total Stats": {
-    "message": "Total Stats:",
+    "message": "Statistiques totales:",
     "description": "PluginUI.TabStats"
   },
   "Stats Entry - Time": {
-    "message": "Time in Eureka:",
+    "message": "Temps dans Eureka:",
     "description": "PluginUI.TabStats"
   },
   "Stats Entry - Killed": {
@@ -252,7 +252,7 @@
     "description": "QuestHelper.Quests"
   },
   "QuestLog - Anemos 1 Step 1": {
-    "message": "Talk to Krile and Gerolt",
+    "message": "Parler à Krile et Gerolt",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 1 Tip 1": {
@@ -264,7 +264,7 @@
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - TalkToKrile": {
-    "message": "Talk to Krile",
+    "message": "Parler à Krile",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 3 Step 2": {
@@ -272,7 +272,7 @@
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - ReturnToKrile": {
-    "message": "Return to Krile",
+    "message": "Retourner voir Krile",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 3 Tip 1": {
@@ -388,7 +388,7 @@
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - TalkToGerolt": {
-    "message": "Talk to Gerolt",
+    "message": "Parler à Gerolt",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 51 Step 2": {
@@ -448,7 +448,7 @@
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 4": {
-    "message": "Talk again to Krile",
+    "message": "Parler encore à Krile",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 5": {

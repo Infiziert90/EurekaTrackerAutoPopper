@@ -1,6 +1,6 @@
 {
   "Author": "Infi, electr0sheep",
-  "Description": "Automatically notifies you about NMs in Eureka, with the ability to pop them on a tracker.\nOther Features:\n- Fairy Finder\n- Bunny Timer Window\n- Bunny Coffer Helper\n- Stats\n- Quest Guide (clickable coords)",
+  "Description": "Automatically notifies you about NMs in Eureka, with the ability to pop them on a tracker.\nOther Features:\n- Fairy Finder\n- Bunny Timer Window\n- Bunny Coffer Helper\n- Stats\n- Quest Guide (clickable coords)\n- - Localized (DE, FR, JA)",
   "InternalName": "eurekaTrackerAutoPopper",
   "Punchline":  "Notify and Pop",
   "Name": "Eureka Linker",
