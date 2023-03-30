@@ -14,9 +14,12 @@ namespace EurekaTrackerAutoPopper
             Configuration = configuration;
         }
 
-        public record EurekaFate(ushort FateId, ushort TrackerId, SeString MapLink, string Name, string ShortName)
+        public sealed record EurekaFate(ushort FateId, ushort TrackerId, SeString MapLink, string Name, string ShortName)
         {
             public static EurekaFate Empty => new(0, 0, "", "", "");
+
+            public bool Equals(EurekaFate? other) => other != null && FateId == other.FateId;
+            public override int GetHashCode() => HashCode.Combine(FateId, TrackerId, MapLink, Name, ShortName);
         }
 
         // represents a elemental/fairy seen by the user
@@ -102,19 +105,21 @@ namespace EurekaTrackerAutoPopper
 
         // randomize flag X and Y in a range of +0.5 and -0.5, fitting well into the 1 radius of the fate circle
         private static readonly Random Rand = new();
-        private const double MaxValue = 0.5;
-        private const double MinValue = -0.5;
-        private static float Randomize(float coord)
+        private const double MaxValue = 50.0;
+        private const double MinValue = -50.0;
+        private static double Randomize(double coord) => coord + (Rand.NextDouble() * (MaxValue - MinValue) + MinValue);
+
+        private SeString CreateMapLink(uint territoryId, uint mapId, double xRaw, double yRaw)
         {
-            return (float) (coord + (Rand.NextDouble() * (MaxValue - MinValue) + MinValue));
+            xRaw = Configuration.RandomizeMapCoords ? Randomize(xRaw) : xRaw;
+            yRaw = Configuration.RandomizeMapCoords ? Randomize(yRaw) : yRaw;
+            return SeString.CreateMapLink(territoryId, mapId, (int) xRaw * 1000, (int) yRaw * 1000);
         }
 
-        private SeString CreateMapLink(uint territoryId, uint mapId, float xCoord, float yCoord)
-        {
-            xCoord = Configuration.RandomizeMapCoords ? Randomize(xCoord) : xCoord;
-            yCoord = Configuration.RandomizeMapCoords ? Randomize(yCoord) : yCoord;
-            return SeString.CreateMapLink(territoryId, mapId, xCoord, yCoord);
-        }
+        private SeString CreateAnemosLink(double x, double y) => CreateMapLink(732, 414, x, y);
+        private SeString CreatePagosLink(double x, double y) => CreateMapLink(763, 467, x, y);
+        private SeString CreatePyrosLink(double x, double y) => CreateMapLink(795, 484, x, y);
+        private SeString CreateHydatosLink(double x, double y) => CreateMapLink(827, 515, x, y);
 
         public static readonly Dictionary<ushort, short> TerritoryToTrackerDictionary = new()
         {
@@ -154,26 +159,26 @@ namespace EurekaTrackerAutoPopper
         {
             return new List<EurekaFate>
             {
-                new(1332, 1,  CreateMapLink(732, 414, 14.0f, 22.3f), "Sabotender Corrido", "Sabo"),          // Unsafety Dance
-                new(1348, 2,  CreateMapLink(732, 414, 29.8f, 27.3f), "The Lord of Anemos", "Lord"),          // The Shadow over Anemos
-                new(1333, 3,  CreateMapLink(732, 414, 26.0f, 28.0f), "Teles", "Teles"),                      // Teles House
-                new(1328, 4,  CreateMapLink(732, 414, 17.1f, 22.2f), "The Emperor of Anemos", "Emperor"),    // The Swarm Never Sets
-                new(1344, 5,  CreateMapLink(732, 414, 26.0f, 22.0f), "Callisto", "Callisto"),                // One Missed Callisto
-                new(1347, 6,  CreateMapLink(732, 414, 23.2f, 22.2f), "Number", "Number"),                    // By Numbers
-                new(1345, 7,  CreateMapLink(732, 414, 19.1f, 19.6f), "Jahannam", "Jaha"),                    // Disinherit the Wind
-                new(1334, 8,  CreateMapLink(732, 414, 14.7f, 15.3f), "Amemet", "Amemet"),                    // Prove Your Amemettle
-                new(1335, 9,  CreateMapLink(732, 414, 12.9f, 13.2f), "Caym", "Caym"),                        // Caym What May
-                new(1336, 10, CreateMapLink(732, 414, 28.2f, 20.3f), "Bombadeel", "Bomba"),                  // The Killing of a Sacred Bombardier
-                new(1339, 11, CreateMapLink(732, 414, 24.9f, 18.2f), "Serket", "Serket"),                    // Short Serket 2
-                new(1346, 12, CreateMapLink(732, 414, 21.9f, 14.5f), "Judgmental Julika", "Julika"),         // Don't Judge Me, Morbol
-                new(1343, 13, CreateMapLink(732, 414, 20.0f, 13.0f), "The White Rider", "Rider"),            // When You Ride Alone
-                new(1337, 14, CreateMapLink(732, 414, 26.5f, 14.7f), "Polyphemus", "Poly"),                  // Sing, Muse
-                new(1342, 15, CreateMapLink(732, 414, 29.1f, 13.0f), "Simurgh's Strider", "Strider"),        // Simurghasbord
-                new(1341, 16, CreateMapLink(732, 414, 34.9f, 19.1f), "King Hazmat", "Hazmat"),               // To the Mat
-                new(1331, 17, CreateMapLink(732, 414, 35.2f, 22.0f), "Fafnir", "Fafnir"),                    // Wine and Honey
-                new(1340, 18, CreateMapLink(732, 414, 8.0f,  18.0f), "Amarok", "Amarok"),                    // I Amarok
-                new(1338, 19, CreateMapLink(732, 414, 8.0f,  23.0f), "Lamashtu", "Lamashtu"),                // Drama Lamashtu
-                new(1329, 20, CreateMapLink(732, 414, 7.0f,  22.0f), "Pazuzu", "Paz"),                       // Wail in the Willows
+                new(1332, 1,  CreateAnemosLink(-374.272, 046.065), "Sabotender Corrido", "Sabo"),        // Unsafety Dance
+                new(1348, 2,  CreateAnemosLink(422.198, 295.295), "The Lord of Anemos", "Lord"),         // The Shadow over Anemos
+                new(1333, 3,  CreateAnemosLink(219.879, 278.616), "Teles", "Teles"),                     // Teles House
+                new(1328, 4,  CreateAnemosLink(-216.584, 036.581), "The Emperor of Anemos", "Emperor"),  // The Swarm Never Sets
+                new(1344, 5,  CreateAnemosLink(217.419, 069.252), "Callisto", "Callisto"),               // One Missed Callisto
+                new(1347, 6,  CreateAnemosLink(092.410, 042.252), "Number", "Number"),                   // By Numbers
+                new(1345, 7,  CreateAnemosLink(-116.856, -092.852), "Jahannam", "Jaha"),                 // Disinherit the Wind
+                new(1334, 8,  CreateAnemosLink(-339.417, -304.344), "Amemet", "Amemet"),                 // Prove Your Amemettle
+                new(1335, 9,  CreateAnemosLink(-425.393, -409.680), "Caym", "Caym"),                     // Caym What May
+                new(1336, 10, CreateAnemosLink(339.000, -059.000), "Bombadeel", "Bomba"),                // The Killing of a Sacred Bombardier
+                new(1339, 11, CreateAnemosLink(174.274, -161.008), "Serket", "Serket"),                  // Short Serket 2
+                new(1346, 12, CreateAnemosLink(022.311, -346.764), "Judgmental Julika", "Julika"),       // Don't Judge Me, Morbol
+                new(1343, 13, CreateAnemosLink(-082.823, -410.886), "The White Rider", "Rider"),         // When You Ride Alone
+                new(1337, 14, CreateAnemosLink(254.101, -336.717), "Polyphemus", "Poly"),                // Sing, Muse
+                new(1342, 15, CreateAnemosLink(381.183, -420.454), "Simurgh's Strider", "Strider"),      // Simurghasbord
+                new(1341, 16, CreateAnemosLink(672.856, -118.538), "King Hazmat", "Hazmat"),             // To the Mat
+                new(1331, 17, CreateAnemosLink(695.816, -002.495), "Fafnir", "Fafnir"),                  // Wine and Honey
+                new(1340, 18, CreateAnemosLink(-685.638, -179.588), "Amarok", "Amarok"),                 // I Amarok
+                new(1338, 19, CreateAnemosLink(-693.540, 256.086), "Lamashtu", "Lamashtu"),              // Drama Lamashtu
+                new(1329, 20, CreateAnemosLink(-703.714, 008.446), "Pazuzu", "Paz"),                     // Wail in the Willows
             };
         }
 
@@ -181,23 +186,23 @@ namespace EurekaTrackerAutoPopper
         {
             return new List<EurekaFate>
             {
-                new(1351, 21, CreateMapLink(763, 467, 21.0f, 26.0f), "The Snow Queen", "Queen"),             // Eternity
-                new(1369, 22, CreateMapLink(763, 467, 25.0f, 28.0f), "Taxim", "Taxim"),                      // Cairn Blight 451
-                new(1353, 23, CreateMapLink(763, 467, 29.0f, 30.0f), "Ash Dragon", "Dragon"),                // Ash the Magic Dragon
-                new(1354, 24, CreateMapLink(763, 467, 32.0f, 26.0f), "Glavoid", "Glavoid"),                  // Conqueror Worm
-                new(1355, 25, CreateMapLink(763, 467, 34.0f, 21.0f), "Anapos", "Anapos"),                    // Melting Point
-                new(1366, 26, CreateMapLink(763, 467, 29.0f, 22.0f), "Hakutaku", "Haku"),                    // The Wobbler in Darkness
-                new(1357, 27, CreateMapLink(763, 467, 17.0f, 16.0f), "King Igloo", "Igloo"),                 // Does It Have to Be a Snowman
-                new(1356, 28, CreateMapLink(763, 467, 10.0f, 10.0f), "Asag", "Asag"),                        // Disorder in the Court
-                new(1352, 29, CreateMapLink(763, 467, 9.8f, 19.0f), "Surabhi", "Surabhi"),                  // Cows for Concern
-                new(1360, 30, CreateMapLink(763, 467, 8.7f,  15.4f), "King Arthro", "Arthro"),               // Morte Arthro
-                new(1358, 31, CreateMapLink(763, 467, 13.0f, 18.0f), "Mindertaur/Eldertaur", "Brothers"),    // Brothers
-                new(1361, 32, CreateMapLink(763, 467, 26.5f, 16.9f), "Holy Cow", "Holy Cow"),                // Apocalypse Cow
-                new(1362, 33, CreateMapLink(763, 467, 31.0f, 18.6f), "Hadhayosh", "Behe"),                   // Third Impact
-                new(1359, 34, CreateMapLink(763, 467, 25.0f, 19.0f), "Horus", "Horus"),                      // Eye of Horus
-                new(1363, 35, CreateMapLink(763, 467, 23.6f, 25.0f), "Arch Angra Mainyu", "Mainyu"),         // Eye Scream for Ice Cream
-                new(1365, 36, CreateMapLink(763, 467, 22.0f, 14.0f), "Copycat Cassie", "Cassie"),            // Cassie and the Copycats
-                new(1364, 37, CreateMapLink(763, 467, 36.0f, 19.0f), "Louhi", "Louhi"),                      // Louhi on Ice
+                new(1351, 21, CreatePagosLink(011.382, 241.963), "The Snow Queen", "Queen"),             // Eternity
+                new(1369, 22, CreatePagosLink(225.633, 296.361), "Taxim", "Taxim"),                      // Cairn Blight 451
+                new(1353, 23, CreatePagosLink(430.406, 417.229), "Ash Dragon", "Dragon"),                // Ash the Magic Dragon
+                new(1354, 24, CreatePagosLink(569.550, 290.306), "Glavoid", "Glavoid"),                  // Conqueror Worm
+                new(1355, 25, CreatePagosLink(574.972, 003.143), "Anapos", "Anapos"),                    // Melting Point
+                new(1366, 26, CreatePagosLink(374.767, 043.833), "Hakutaku", "Haku"),                    // The Wobbler in Darkness
+                new(1357, 27, CreatePagosLink(-213.825, -266.344), "King Igloo", "Igloo"),               // Does It Have to Be a Snowman
+                new(1356, 28, CreatePagosLink(-548.321, -521.281), "Asag", "Asag"),                      // Disorder in the Court
+                new(1352, 29, CreatePagosLink(-580.272, -122.945), "Surabhi", "Surabhi"),                // Cows for Concern
+                new(1360, 30, CreatePagosLink(-634.173, -301.533), "King Arthro", "Arthro"),             // Morte Arthro
+                new(1358, 31, CreatePagosLink(-379.075, -136.462), "Mindertaur/Eldertaur", "Brothers"),  // Brothers
+                new(1361, 32, CreatePagosLink(251.451, -225.843), "Holy Cow", "Holy Cow"),               // Apocalypse Cow
+                new(1362, 33, CreatePagosLink(478.674, -149.159), "Hadhayosh", "Behe"),                  // Third Impact
+                new(1359, 34, CreatePagosLink(226.311, -063.235), "Horus", "Horus"),                     // Eye of Horus
+                new(1363, 35, CreatePagosLink(112.608, 178.729), "Arch Angra Mainyu", "Mainyu"),         // Eye Scream for Ice Cream
+                new(1365, 36, CreatePagosLink(039.758, -359.487), "Copycat Cassie", "Cassie"),           // Cassie and the Copycats
+                new(1364, 37, CreatePagosLink(722.135, -136.944), "Louhi", "Louhi"),                     // Louhi on Ice
             };
         }
 
@@ -205,23 +210,23 @@ namespace EurekaTrackerAutoPopper
         {
             return new List<EurekaFate>
             {
-                new(1388, 38, CreateMapLink(795, 484, 27.0f, 26.0f), "Leucosia", "Leucosia"),                // Medias Res
-                new(1389, 39, CreateMapLink(795, 484, 29.0f, 29.0f), "Flauros", "Flauros"),                  // High Voltage
-                new(1390, 40, CreateMapLink(795, 484, 31.0f, 31.0f), "The Sophist", "Sophist"),              // On the Nonexistent
-                new(1391, 41, CreateMapLink(795, 484, 23.0f, 37.0f), "Graffiacane", "Doll"),                 // Creepy Doll
-                new(1392, 42, CreateMapLink(795, 484, 19.2f, 29.2f), "Askalaphos", "Owl"),                   // Quiet, Please
-                new(1393, 43, CreateMapLink(795, 484, 18.0f, 14.0f), "Grand Duke Batym", "Batym"),           // Up and Batym
-                new(1394, 44, CreateMapLink(795, 484, 10.0f, 14.0f), "Aetolus", "Aetolus"),                  // Rondo Aetolus
-                new(1395, 45, CreateMapLink(795, 484, 12.6f, 11.0f), "Lesath", "Lesath"),                    // Scorchpion King
-                new(1396, 46, CreateMapLink(795, 484, 15.0f, 6.5f), "Eldthurs", "Eldthurs"),                 // Burning Hunger
-                new(1397, 47, CreateMapLink(795, 484, 21.0f, 11.0f), "Iris", "Iris"),                        // Dry Iris
-                new(1398, 48, CreateMapLink(795, 484, 21.6f, 8.3f), "Lamebrix Strikebocks", "Lamebrix"),     // Thirty Whacks
-                new(1399, 49, CreateMapLink(795, 484, 27.0f, 9.0f), "Dux", "Dux"),                           // Put Up Your Dux
-                new(1400, 50, CreateMapLink(795, 484, 29.0f, 11.0f), "Lumber Jack", "Jack"),                 // You Do Know Jack
-                new(1401, 51, CreateMapLink(795, 484, 31.0f, 15.0f), "Glaukopis", "Glaukopis"),              // Mister Bright-eyes
-                new(1402, 52, CreateMapLink(795, 484, 11.5f, 34.2f), "Ying-Yang", "YY"),                     // Haunter of the Dark
-                new(1403, 53, CreateMapLink(795, 484, 24.0f, 30.0f), "Skoll", "Skoll"),                      // Heavens' Warg
-                new(1404, 54, CreateMapLink(795, 484, 35.0f, 6.0f), "Penthesilea", "Penny"),                 // Lost Epic
+                new(1388, 38, CreatePyrosLink(289.079, 229.340), "Leucosia", "Leucosia"),               // Medias Res
+                new(1389, 39, CreatePyrosLink(371.929, 398.315), "Flauros", "Flauros"),                 // High Voltage
+                new(1390, 40, CreatePyrosLink(532.646, 501.803), "The Sophist", "Sophist"),             // On the Nonexistent
+                new(1391, 41, CreatePyrosLink(078.030, 788.137), "Graffiacane", "Doll"),                // Creepy Doll
+                new(1392, 42, CreatePyrosLink(-110.167, 388.126), "Askalaphos", "Owl"),                 // Quiet, Please
+                new(1393, 43, CreatePyrosLink(-180.768, -369.788), "Grand Duke Batym", "Batym"),        // Up and Batym
+                new(1394, 44, CreatePyrosLink(-567.044, -363.884), "Aetolus", "Aetolus"),               // Rondo Aetolus
+                new(1395, 45, CreatePyrosLink(-442.154, -519.942), "Lesath", "Lesath"),                 // Scorchpion King
+                new(1396, 46, CreatePyrosLink(-312.680, -751.977), "Eldthurs", "Eldthurs"),             // Burning Hunger
+                new(1397, 47, CreatePyrosLink(-008.461, -463.125), "Iris", "Iris"),                     // Dry Iris
+                new(1398, 48, CreatePyrosLink(017.849, -655.973), "Lamebrix Strikebocks", "Lamebrix"),  // Thirty Whacks
+                new(1399, 49, CreatePyrosLink(298.700, -627.158), "Dux", "Dux"),                        // Put Up Your Dux
+                new(1400, 50, CreatePyrosLink(442.155, -503.844), "Lumber Jack", "Jack"),               // You Do Know Jack
+                new(1401, 51, CreatePyrosLink(528.319, -314.761), "Glaukopis", "Glaukopis"),            // Mister Bright-eyes
+                new(1402, 52, CreatePyrosLink(-499.806, 641.563), "Ying-Yang", "YY"),                   // Haunter of the Dark
+                new(1403, 53, CreatePyrosLink(128.825, 431.166), "Skoll", "Skoll"),                     // Heavens' Warg
+                new(1404, 54, CreatePyrosLink(722.758, -776.778), "Penthesilea", "Penny"),              // Lost Epic
             };
         }
 
@@ -229,18 +234,19 @@ namespace EurekaTrackerAutoPopper
         {
             return new List<EurekaFate>
             {
-                new(1412, 55,    CreateMapLink(827, 515, 11.1f, 25.2f), "Khalamari", "Khalamari"),           // I Ink, Therefore I Am
-                new(1413, 56,    CreateMapLink(827, 515, 10.0f, 17.8f), "Stegodon", "Stegodon"),             // From Tusk till Dawn
-                new(1414, 57,    CreateMapLink(827, 515, 7.9f,  22.1f), "Molech", "Molech"),                 // Bullheaded Berserker
-                new(1415, 58,    CreateMapLink(827, 515, 6.7f,  14.4f), "Piasa", "Piasa"),                   // Mad, Bad, and Fabulous to Know
-                new(1416, 59,    CreateMapLink(827, 515, 7.8f,  26.1f), "Frostmane", "Frostmane"),           // Fearful Symmetry
-                new(1417, 60,    CreateMapLink(827, 515, 25.4f, 16.3f), "Daphne", "Daphne"),                 // Crawling Chaos
-                new(1418, 61,    CreateMapLink(827, 515, 28.9f, 23.6f), "King Goldemar", "Golde"),           // Duty-free
-                new(1419, 62,    CreateMapLink(827, 515, 37.0f, 26.0f), "Leuke", "Leuke"),                   // Leukewarm Reception
-                new(1420, 63,    CreateMapLink(827, 515, 32.5f, 24.7f), "Barong", "Barong"),                 // Robber Barong
-                new(1421, 64,    CreateMapLink(827, 515, 36.5f, 13.5f), "Ceto", "Ceto"),                     // Stone-cold Killer
-                new(1423, 65,    CreateMapLink(827, 515, 32.7f, 19.6f), "Provenance Watcher", "PW"),         // Crystalline Provenance
-                new(1424, 1337,  CreateMapLink(827, 515, 26.8f, 29.0f), "Ovni", "Ovni"),                     // I Don't Want to Believe
+                new(1412, 55, CreateHydatosLink(-518.110, -288.121), "Khalamari", "Khalamari"),   // I Ink, Therefore I Am
+                new(1413, 56, CreateHydatosLink(-570.634, -656.247), "Stegodon", "Stegodon"),     // From Tusk till Dawn
+                new(1414, 57, CreateHydatosLink(-676.863, -441.800), "Molech", "Molech"),         // Bullheaded Berserker
+                new(1415, 58, CreateHydatosLink(-737.209, -829.455), "Piasa", "Piasa"),           // Mad, Bad, and Fabulous to Know
+                new(1416, 59, CreateHydatosLink(-681.433, -243.361), "Frostmane", "Frostmane"),   // Fearful Symmetry
+                new(1417, 60, CreateHydatosLink(207.847, -736.817), "Daphne", "Daphne"),          // Crawling Chaos
+                new(1418, 61, CreateHydatosLink(371.037, -366.978), "King Goldemar", "Golde"),    // Duty-free
+                new(1419, 62, CreateHydatosLink(792.925, -194.505), "Leuke", "Leuke"),            // Leukewarm Reception
+                new(1420, 63, CreateHydatosLink(554.145, -309.968), "Barong", "Barong"),          // Robber Barong
+                new(1421, 64, CreateHydatosLink(747.895, -878.876), "Ceto", "Ceto"),              // Stone-cold Killer
+                new(1423, 65, CreateHydatosLink(564.046, -568.686), "Provenance Watcher", "PW"),  // Crystalline Provenance
+                new(1424, 0,  CreateHydatosLink(266.106, -097.0941), "Ovni", "Ovni"),             // I Don't Want to Believe
+                new(1422, 0,  CreateHydatosLink(-125.776, -111.181), "Tristitia", "Support"),     // The Baldesion Arsenal: Expedition Support
             };
         }
 #pragma warning restore format

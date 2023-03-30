@@ -201,7 +201,7 @@ namespace EurekaTrackerAutoPopper
             List<Library.EurekaFate> relevantCurrentFates = relevantFates.Where(fate => currentFates.Select(i => i.FateId).Contains(fate.FateId)).ToList();
             foreach (Library.EurekaFate fate in relevantCurrentFates)
             {
-                if (fate.TrackerId != 1337 && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
+                if (fate.TrackerId != 0 && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
                 {
                     NMPop(fate);
                 }
@@ -221,7 +221,7 @@ namespace EurekaTrackerAutoPopper
                 PluginUi.PopVisible = true;
             }
 
-            if (fate.TrackerId != 1337 && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
+            if (fate.TrackerId != 0 && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
             {
                 NMPop(fate);
             }
@@ -244,7 +244,7 @@ namespace EurekaTrackerAutoPopper
         private void NMPop(Library.EurekaFate fate)
         {
             string instanceID = PluginUi.Instance.Split("/").Last();
-            if (fate.TrackerId != 1337)
+            if (fate.TrackerId != 0)
             {
                 PluginLog.Debug("Calling web request with following data:");
                 PluginLog.Debug($"     NM ID: {fate.TrackerId}");
