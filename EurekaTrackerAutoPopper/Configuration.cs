@@ -33,6 +33,7 @@ namespace EurekaTrackerAutoPopper
         public bool BunnyCircleDraw = true;
         public Vector4 CircleColor = ImGuiColors.HealerGreen;
 
+        public long TimeInEureka = 0;  // in milliseconds
         public int KilledBunnies = 0;
         public Dictionary<uint, Dictionary<uint, int>> Stats = new()
         {

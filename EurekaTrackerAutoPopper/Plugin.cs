@@ -4,6 +4,7 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Game.Gui;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -37,7 +38,7 @@ namespace EurekaTrackerAutoPopper
         private QuestWindow QuestWindow { get; init; }
         private WindowSystem WindowSystem { get; init; } = new("Eureka Linker");
 
-        public Library Library;
+        public readonly Library Library;
         public bool PlayerInEureka;
         public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
         private List<Fate> lastPolledFates = new();
@@ -48,6 +49,8 @@ namespace EurekaTrackerAutoPopper
 
         private static bool gotBunny;
         private readonly Timer cofferTimer = new(20 * 1000);
+
+        public readonly Stopwatch EurekaWatch = new();
 
         private Localization Localization = new();
         private readonly PluginCommandManager<Plugin> commandManager;
@@ -136,6 +139,8 @@ namespace EurekaTrackerAutoPopper
                 if (Configuration.ShowBunnyWindow && Library.BunnyMaps.Contains(ClientState.TerritoryType))
                     PluginUi.BunnyVisible = true;
 
+                EurekaWatch.Restart();
+
                 Framework.Update += PollForFateChange;
                 Framework.Update += FairyCheck;
                 Framework.Update += BunnyCheck;
@@ -151,6 +156,13 @@ namespace EurekaTrackerAutoPopper
 
                 gotBunny = false;
                 BunnyChests.ExistingCoffers.Clear();
+
+                if (EurekaWatch.IsRunning)
+                {
+                    Configuration.TimeInEureka += EurekaWatch.ElapsedMilliseconds;
+                    Configuration.Save();
+                    EurekaWatch.Reset();
+                }
 
                 Framework.Update -= PollForFateChange;
                 Framework.Update -= FairyCheck;
@@ -340,6 +352,7 @@ namespace EurekaTrackerAutoPopper
 
                 // refresh timer until buff is gone
                 cofferTimer.Stop();
+                cofferTimer.Interval = 20 * 1000;
                 cofferTimer.Start();
             }
             else
@@ -351,29 +364,31 @@ namespace EurekaTrackerAutoPopper
                 if (!cofferTimer.Enabled)
                     return;
 
-                var coffer = ObjectTable.OfType<EventObj>()
-                    .Where(a => BunnyChests.Coffers.Contains(a.DataId))
-                    .FirstOrDefault(a => !BunnyChests.ExistingCoffers.Contains(a.ObjectId));
-                if (coffer == null)
+                if (local.TargetObject == null)
                     return;
 
-                if (local.TargetObject == null || coffer.ObjectId != local.TargetObject.ObjectId)
-                    return;
-
-                BunnyChests.ExistingCoffers.Add(coffer.ObjectId);
-                cofferTimer.Stop();
-
-                Configuration.Stats[ClientState.TerritoryType][coffer.DataId] += 1;
-                Configuration.KilledBunnies -= 1;
-                Configuration.Save();
-
-                // TODO Remove after all chests found
-                if (!BunnyChests.Exists(ClientState.TerritoryType, coffer.Position))
+                foreach (var coffer in ObjectTable.OfType<EventObj>()
+                             .Where(a => BunnyChests.Coffers.Contains(a.DataId))
+                             .Where(a => !BunnyChests.ExistingCoffers.Contains(a.ObjectId)))
                 {
-                    Chat.Print(Loc.Localize("Chat - New Chest Found", "You've found a new chest location"));
-                    Chat.Print(Loc.Localize("Chat - New Chest Found Dev Note", "Please consider sending the following information to the developer:"));
-                    Chat.Print($"Terri: {ClientState.TerritoryType} Pos: {coffer.Position.X:000.000000}f, {coffer.Position.Y:000.#########}f, {coffer.Position.Z:000.#########}f");
-                    BunnyChests.Positions[ClientState.TerritoryType].Add(coffer.Position);
+                    if (coffer.ObjectId != local.TargetObject.ObjectId)
+                        continue;
+
+                    BunnyChests.ExistingCoffers.Add(coffer.ObjectId);
+                    cofferTimer.Stop();
+
+                    Configuration.Stats[ClientState.TerritoryType][coffer.DataId] += 1;
+                    Configuration.KilledBunnies -= 1;
+                    Configuration.Save();
+
+                    // TODO Remove after all chests found
+                    if (!BunnyChests.Exists(ClientState.TerritoryType, coffer.Position))
+                    {
+                        Chat.Print(Loc.Localize("Chat - New Chest Found", "You've found a new chest location"));
+                        Chat.Print(Loc.Localize("Chat - New Chest Found Dev Note", "Please consider sending the following information to the developer:"));
+                        Chat.Print($"Terri: {ClientState.TerritoryType} Pos: {coffer.Position.X:000.000000}f, {coffer.Position.Y:000.#########}f, {coffer.Position.Z:000.#########}f");
+                        BunnyChests.Positions[ClientState.TerritoryType].Add(coffer.Position);
+                    }
                 }
             }
         }
@@ -411,6 +426,13 @@ namespace EurekaTrackerAutoPopper
             DalamudPluginInterface.UiBuilder.Draw -= DrawUI;
             DalamudPluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
             DalamudPluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
+
+            if (EurekaWatch.IsRunning)
+            {
+                Configuration.TimeInEureka += EurekaWatch.ElapsedMilliseconds;
+                Configuration.Save();
+                EurekaWatch.Reset();
+            }
 
             xivCommon.Dispose();
             commandManager.Dispose();

@@ -545,7 +545,7 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        private static readonly float SecondRow = ImGui.CalcTextSize("Killed Bunnies:").X + 80.0f;
+        private static readonly float SecondRow = ImGui.CalcTextSize("Killed Bunnies:").X + 100.0f;
         private static readonly float ThirdRow = SecondRow + 100.0f;
         private void TabStats()
         {
@@ -555,7 +555,13 @@ namespace EurekaTrackerAutoPopper
                 ImGui.TextUnformatted(Loc.Localize("Config Header - Total Stats", "Total Stats:"));
                 ImGui.Indent(10.0f);
 
-                var text = Configuration.KilledBunnies.ToString();
+                var span = TimeSpan.FromMilliseconds(Configuration.TimeInEureka + Plugin.EurekaWatch.ElapsedMilliseconds);
+                var text = $"{(int) span.TotalHours:###00}:{span:mm} h";
+                ImGui.TextUnformatted(Loc.Localize("Stats Entry - Time", "Time in Eureka:"));
+                ImGui.SameLine(SecondRow - ImGui.CalcTextSize(text).X);
+                ImGui.TextColored(ImGuiColors.DalamudOrange, text);
+
+                text = $"{Configuration.KilledBunnies}";
                 ImGui.TextUnformatted(Loc.Localize("Stats Entry - Killed", "Killed Bunnies:"));
                 ImGui.SameLine(SecondRow - ImGui.CalcTextSize(text).X);
                 ImGui.TextColored(ImGuiColors.DalamudOrange, text);
