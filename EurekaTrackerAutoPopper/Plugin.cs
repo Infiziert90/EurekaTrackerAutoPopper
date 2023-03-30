@@ -8,6 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Timers;
+using CheapLoc;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState;
 using Dalamud.Game;
@@ -22,6 +23,7 @@ using XivCommon;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Windowing;
+using EurekaTrackerAutoPopper.Attributes;
 using EurekaTrackerAutoPopper.Windows;
 
 namespace EurekaTrackerAutoPopper
@@ -47,6 +49,9 @@ namespace EurekaTrackerAutoPopper
         private static bool gotBunny;
         private readonly Timer cofferTimer = new(20 * 1000);
 
+        private Localization Localization = new();
+        private readonly PluginCommandManager<Plugin> commandManager;
+
         [PluginService] public static ChatGui Chat { get; private set; } = null!;
         [PluginService] public static ToastGui Toast { get; private set; } = null!;
         [PluginService] public static ObjectTable ObjectTable { get; private set; } = null!;
@@ -54,8 +59,8 @@ namespace EurekaTrackerAutoPopper
         [PluginService] public static Framework Framework { get; private set; } = null!;
         [PluginService] public static ClientState ClientState { get; private set; } = null!;
         [PluginService] public static DalamudPluginInterface DalamudPluginInterface { get; private set; } = null!;
-        [PluginService] public static CommandManager CommandManager { get; private set; } = null!;
         [PluginService] public static GameGui GameGui { get; private set; } = null!;
+        [PluginService] public static CommandManager CommandManager { get; private set; } = null!;
 
         public Plugin()
         {
@@ -70,38 +75,12 @@ namespace EurekaTrackerAutoPopper
 
             PluginUi = new PluginUI(Configuration, this, Library);
 
-            CommandManager.AddHandler("/el", new CommandInfo(OnEurekaCommand)
-            {
-                HelpMessage = "Opens the config window",
-                ShowInHelp = true
-            });
-
-            CommandManager.AddHandler("/elquest", new CommandInfo(OnQuestCommand)
-            {
-                HelpMessage = "Opens the quest guide",
-                ShowInHelp = true
-            });
-
-            CommandManager.AddHandler("/elbunny", new CommandInfo(OnBunnyCommand)
-            {
-                HelpMessage = "Opens the bunny window",
-                ShowInHelp = true
-            });
-
-            CommandManager.AddHandler("/elmarkers", new CommandInfo(OnAddCommand)
-            {
-                HelpMessage = "Adds all known coffer locations to the map and minimap",
-                ShowInHelp = true
-            });
-
-            CommandManager.AddHandler("/elremove", new CommandInfo(OnRemoveCommand)
-            {
-                HelpMessage = "Removes all the placed markers",
-                ShowInHelp = true
-            });
+            commandManager = new PluginCommandManager<Plugin>(this, CommandManager);
+            Localization.SetupWithLangCode(DalamudPluginInterface.UiLanguage);
 
             DalamudPluginInterface.UiBuilder.Draw += DrawUI;
             DalamudPluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+            DalamudPluginInterface.LanguageChanged += Localization.SetupWithLangCode;
 
             ClientState.TerritoryChanged += TerritoryChangePoll;
             xivCommon = new XivCommonBase();
@@ -110,30 +89,40 @@ namespace EurekaTrackerAutoPopper
             TerritoryChangePoll(null, ClientState.TerritoryType);
         }
 
-        private void OnEurekaCommand(string command, string arguments)
+        [Command("/el")]
+        [HelpMessage("Opens the config window")]
+        private void OnEurekaCommand(string command, string args)
         {
             DrawConfigUI();
         }
 
-        private void OnQuestCommand(string command, string arguments)
+        [Command("/elquest")]
+        [HelpMessage("Opens the quest guide")]
+        private void OnQuestCommand(string command, string args)
         {
             QuestWindow.IsOpen = true;
         }
 
-        private void OnBunnyCommand(string command, string arguments)
+        [Command("/elbunny")]
+        [HelpMessage("Opens the bunny window")]
+        private void OnBunnyCommand(string command, string args)
         {
             if (Library.BunnyMaps.Contains(ClientState.TerritoryType))
                 PluginUi.BunnyVisible = true;
             else
-                Chat.PrintError("You are not in Eureka, this command is unavailable.");
+                Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
         }
 
-        private void OnAddCommand(string command, string arguments)
+        [Command("/elmarkers")]
+        [HelpMessage("Adds all known coffer locations to the map and minimap")]
+        private void OnAddCommand(string command, string args)
         {
             AddChestsLocationsMap();
         }
 
-        private void OnRemoveCommand(string command, string arguments)
+        [Command("/elremove")]
+        [HelpMessage("Removes all the placed markers")]
+        private void OnRemoveCommand(string command, string args)
         {
             RemoveChestsLocationsMap();
         }
@@ -265,14 +254,10 @@ namespace EurekaTrackerAutoPopper
                 .Append(LastSeenFate.MapLink);
 
             if (Configuration.EchoNMPop)
-            {
                 Chat.PrintChat(new XivChatEntry { Message = payload });
-            }
 
             if (Configuration.ShowPopToast)
-            {
                 Toast.ShowQuest(payload);
-            }
         }
 
         private string BuildChatString()
@@ -281,7 +266,7 @@ namespace EurekaTrackerAutoPopper
             string output = Configuration.ChatFormat
                 .Replace("$n", LastSeenFate.Name)
                 .Replace("$sN", LastSeenFate.ShortName)
-                .Replace("$t", Configuration.ShowPullTimer ? time: "")
+                .Replace("$t", Configuration.ShowPullTimer ? time : "")
                 .Replace("$p", "<flag>");
 
             return output;
@@ -304,14 +289,10 @@ namespace EurekaTrackerAutoPopper
                 .Append(fairy.MapLink);
 
             if (Configuration.EchoFairies)
-            {
                 Chat.PrintChat(new XivChatEntry { Message = payload });
-            }
 
             if (Configuration.ShowFairyToast)
-            {
                 Toast.ShowQuest(payload);
-            }
         }
 
         private void BunnyCheck(Framework framework)
@@ -389,7 +370,8 @@ namespace EurekaTrackerAutoPopper
                 // TODO Remove after all chests found
                 if (!BunnyChests.Exists(ClientState.TerritoryType, coffer.Position))
                 {
-                    Chat.Print("You found a new chest location, please report the following message to the dev:");
+                    Chat.Print(Loc.Localize("Chat - New Chest Found", "You've found a new chest location"));
+                    Chat.Print(Loc.Localize("Chat - New Chest Found Dev Note", "Please consider sending the following information to the developer:"));
                     Chat.Print($"Terri: {ClientState.TerritoryType} Pos: {coffer.Position.X:000.000000}f, {coffer.Position.Y:000.#########}f, {coffer.Position.Z:000.#########}f");
                     BunnyChests.Positions[ClientState.TerritoryType].Add(coffer.Position);
                 }
@@ -402,7 +384,7 @@ namespace EurekaTrackerAutoPopper
                          .Where(battleNpc => Library.Fairies.Contains(battleNpc.NameId))
                          .Where(battleNpc => !Library.ExistingFairies.ContainsKey(battleNpc.ObjectId)))
             {
-                Library.Fairy fairy = new Library.Fairy(actor.NameId, actor.Position.X, actor.Position.Z); // directX Z = Y
+                var fairy = new Library.Fairy(actor.NameId, actor.Position.X, actor.Position.Z); // directX Z = Y
                 Library.ExistingFairies.Add(actor.ObjectId, fairy);
                 EchoFairy(fairy);
             }
@@ -411,9 +393,7 @@ namespace EurekaTrackerAutoPopper
         private void PollForFateChange(Framework framework)
         {
             if (NoFatesHaveChangedSinceLastChecked())
-            {
                 return;
-            }
 
             CheckForRelevantFates(ClientState.TerritoryType);
             lastPolledFates = FateTable.ToList();
@@ -427,14 +407,13 @@ namespace EurekaTrackerAutoPopper
             Framework.Update -= FairyCheck;
             Framework.Update -= BunnyCheck;
             ClientState.TerritoryChanged -= TerritoryChangePoll;
+
+            DalamudPluginInterface.UiBuilder.Draw -= DrawUI;
+            DalamudPluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
+            DalamudPluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
+
             xivCommon.Dispose();
-
-            CommandManager.RemoveHandler("/el");
-            CommandManager.RemoveHandler("/elquest");
-            CommandManager.RemoveHandler("/elbunny");
-            CommandManager.RemoveHandler("/elmarkers");
-            CommandManager.RemoveHandler("/elremove");
-
+            commandManager.Dispose();
             WindowSystem.RemoveWindow(QuestWindow);
         }
 
@@ -453,7 +432,7 @@ namespace EurekaTrackerAutoPopper
         {
             if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
             {
-                Chat.PrintError("You are not in Eureka, this command is unavailable.");
+                Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
                 return;
             }
 
@@ -467,9 +446,9 @@ namespace EurekaTrackerAutoPopper
                     orgPos.Z += 475;
 
                 if(!AgentMap.Instance()->AddMapMarker(orgPos, 60354))
-                    Chat.PrintError("Unable to place all markers on map");
+                    Chat.PrintError(Loc.Localize("Chat - Error Map Markers", "Unable to place all markers on map"));
                 if (!AgentMap.Instance()->AddMiniMapMarker(pos, 60354))
-                    Chat.PrintError("Unable to place all markers on minimap");
+                    Chat.PrintError(Loc.Localize("Chat - Error Minimap Markers", "Unable to place all markers on minimap"));
             }
         }
 
@@ -477,7 +456,7 @@ namespace EurekaTrackerAutoPopper
         {
             if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
             {
-                Chat.PrintError("You are not in Eureka, this command is unavailable.");
+                Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
                 return;
             }
 
@@ -489,8 +468,6 @@ namespace EurekaTrackerAutoPopper
         {
             try
             {
-                PluginLog.Debug("SetFlagMarker");
-
                 // removes current flag marker from map
                 AgentMap.Instance()->IsFlagMarkerSet = 0;
 

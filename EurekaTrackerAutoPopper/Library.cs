@@ -1,6 +1,7 @@
 ﻿using System;
 using Dalamud.Game.Text.SeStringHandling;
 using System.Collections.Generic;
+using CheapLoc;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -76,11 +77,11 @@ namespace EurekaTrackerAutoPopper
 
         public readonly List<Bunny> Bunnies = new()
         {
-            new Bunny(1367, "Down the Rabbit Hole", 763), // Pagos
-            new Bunny(1368, "Curiouser and Curiouser", 763), // Pagos
-            new Bunny(1407, "We're All Mad Here", 795), // Pyros
-            new Bunny(1408, "Uncommon Nonsense", 795), // Pyros
-            new Bunny(1425, "Drink Me", 827) // Hydatos
+            new Bunny(1367, Loc.Localize("Fate Name - Pagos Bunny Level 20", "Down the Rabbit Hole"), 763),
+            new Bunny(1368, Loc.Localize("Fate Name - Pagos Bunny Level 31", "Curiouser and Curiouser"), 763),
+            new Bunny(1407, Loc.Localize("Fate Name - Pyros Bunny Level 35", "We're All Mad Here"), 795),
+            new Bunny(1408, Loc.Localize("Fate Name - Pyros Bunny Level 46", "Uncommon Nonsense"), 795),
+            new Bunny(1425, Loc.Localize("Fate Name - Hydatos Bunny Level 50", "Drink Me"), 827)
         };
 
         public static readonly List<uint> BunnyMaps = new()
