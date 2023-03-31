@@ -15,6 +15,10 @@
     "message": "(Bitte nutze nicht die Feedback-Funktion um dies mitzuteilen)",
     "description": "Plugin.BunnyCheck"
   },
+  "Chat - Dead Fairy Note": {
+    "message": "Entferne inaktive Feen aus dem Tracking.",
+    "description": "Plugin.FairyCheck"
+  },
   "Chat - Error Map Markers": {
     "message": "Es konnten nicht alle Marker auf der Karte platziert werden",
     "description": "Plugin.AddChestsLocationsMap"
@@ -22,6 +26,18 @@
   "Chat - Error Minimap Markers": {
     "message": "Es konnten nicht alle Marker auf der Minimap platziert werden",
     "description": "Plugin.AddChestsLocationsMap"
+  },
+  "Chat - Error Fairy Markers": {
+    "message": "Die Liste der lebenden Feen muss aktualisiert werden, bitte gehe alle bekannten Standorte ab.",
+    "description": "Plugin.AddFairyLocationsMap"
+  },
+  "Chat - Error Fairy Map Markers": {
+    "message": "Es konnten nicht alle Feen Marker auf der Karte platziert werden",
+    "description": "Plugin.AddFairyLocationsMap"
+  },
+  "Chat - Error Fairy Minimap Markers": {
+    "message": "Es konnten nicht alle Feen Marker auf der Minimap platziert werden",
+    "description": "Plugin.AddFairyLocationsMap"
   },
   "Shout Button - Post": {
     "message": "Senden",
@@ -204,7 +220,7 @@
     "description": "PluginUI.TabStats"
   },
   "Stats Entry - Found": {
-    "message": "Schatztruhen gefunden:",
+    "message": "Truhen gefunden:",
     "description": "PluginUI.TabStats"
   },
   "Stats Entry - Bronze": {
@@ -494,5 +510,13 @@
   "Area Name - Hydatos": {
     "message": "Hydatos",
     "description": "QuestHelper.TerritoryToPlaceName"
+  },
+  "QuestLog - Header": {
+    "message": "Aktuelles Gebiet",
+    "description": "QuestWindow.Draw"
+  },
+  "QuestLog - Tab Item Quest Level": {
+    "message": "Level",
+    "description": "QuestWindow.TabItem"
   }
 }

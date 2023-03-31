@@ -129,7 +129,7 @@ namespace EurekaTrackerAutoPopper
         [HelpMessage("Removes all the placed markers")]
         private void OnRemoveCommand(string command, string args)
         {
-            RemoveChestsLocationsMap();
+            RemoveMarkerMap();
         }
 
         private void TerritoryChangePoll(object? _, ushort territoryId)
@@ -400,11 +400,25 @@ namespace EurekaTrackerAutoPopper
         {
             foreach (BattleNpc actor in ObjectTable.OfType<BattleNpc>()
                          .Where(battleNpc => Library.Fairies.Contains(battleNpc.NameId))
-                         .Where(battleNpc => !Library.ExistingFairies.ContainsKey(battleNpc.ObjectId)))
+                         .Where(battleNpc => Library.ExistingFairies.All(f => f.ObjectId != battleNpc.ObjectId)))
             {
-                var fairy = new Library.Fairy(actor.NameId, actor.Position.X, actor.Position.Z); // directX Z = Y
-                Library.ExistingFairies.Add(actor.ObjectId, fairy);
+                var fairy = new Library.Fairy(actor.ObjectId, actor.NameId, actor.Position);
+                Library.ExistingFairies.Add(fairy);
                 EchoFairy(fairy);
+            }
+
+            var local = ClientState.LocalPlayer;
+            if (local == null)
+                return;
+
+            foreach (var fairy in Library.ExistingFairies.ToArray())
+            {
+                if (!(Utils.GetDistance(local.Position, fairy.Pos) < 80.0)
+                    || ObjectTable.Any(obj => fairy.ObjectId == obj.ObjectId))
+                    continue;
+
+                Library.ExistingFairies.Remove(fairy);
+                Chat.Print(Loc.Localize("Chat - Dead Fairy Note", "Removing inactive fairies from tracking."));
             }
         }
 
@@ -477,7 +491,34 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        public static unsafe void RemoveChestsLocationsMap()
+        public unsafe void AddFairyLocationsMap()
+        {
+            if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
+            {
+                Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
+                return;
+            }
+
+            AgentMap.Instance()->ResetMapMarkers();
+            AgentMap.Instance()->ResetMiniMapMarkers();
+
+            foreach (var (fairy, idx) in Library.ExistingFairies.Select((val, i) => (val, (uint) i)))
+            {
+                if (idx == 3)
+                    Chat.PrintError(Loc.Localize("Chat - Error Fairy Markers", "Tracking for fairies needs to be reset, please go to all listed locations to update."));
+
+                var orgPos = fairy.Pos;
+                if (ClientState.TerritoryType == 827)
+                    orgPos.Z += 475;
+
+                if(!AgentMap.Instance()->AddMapMarker(orgPos, 60474 + idx))
+                    Chat.PrintError(Loc.Localize("Chat - Error Fairy Map Markers", "Unable to place fairy markers on map"));
+                if (!AgentMap.Instance()->AddMiniMapMarker(fairy.Pos, 60474 + idx))
+                    Chat.PrintError(Loc.Localize("Chat - Error Fairy Minimap Markers", "Unable to place fairy markers on minimap"));
+            }
+        }
+
+        public static unsafe void RemoveMarkerMap()
         {
             if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
             {

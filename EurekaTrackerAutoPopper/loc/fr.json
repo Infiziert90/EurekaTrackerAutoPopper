@@ -15,6 +15,10 @@
     "message": "(S'il vous plaît ne pas utiliser la fonction commentaire pour envoyer ceci)",
     "description": "Plugin.BunnyCheck"
   },
+  "Chat - Dead Fairy Note": {
+    "message": "Suppression des fées inactives du suivi.",
+    "description": "Plugin.FairyCheck"
+  },
   "Chat - Error Map Markers": {
     "message": "Impossible de placer tous les marqueurs sur la carte",
     "description": "Plugin.AddChestsLocationsMap"
@@ -23,12 +27,24 @@
     "message": "Impossible de placer tous les marqueurs sur la minicarte",
     "description": "Plugin.AddChestsLocationsMap"
   },
+  "Chat - Error Fairy Markers": {
+    "message": "Le suivi des fées a besoin d'être réinitialisé, s'il vous plaît allez à tous les emplacements listés pour une mise à jour.",
+    "description": "Plugin.AddFairyLocationsMap"
+  },
+  "Chat - Error Fairy Map Markers": {
+    "message": "Impossible de placer les marqueurs de fée sur la carte",
+    "description": "Plugin.AddFairyLocationsMap"
+  },
+  "Chat - Error Fairy Minimap Markers": {
+    "message": "Impossible de placer les marqueurs de fée sur la minicarte",
+    "description": "Plugin.AddFairyLocationsMap"
+  },
   "Shout Button - Post": {
-    "message": "Post",
+    "message": "Publier",
     "description": "PluginUI.DrawFatePopWindow"
   },
   "Shout Window - Limit": {
-    "message": "Shout will be available 20s after spawn.",
+    "message": "Le hurlement sera disponible 20 secondes après l'apparition.",
     "description": "PluginUI.DrawFatePopWindow"
   },
   "Shout Button - Close": {
@@ -36,19 +52,19 @@
     "description": "PluginUI.DrawFatePopWindow"
   },
   "Bunny Window - Status Alive": {
-    "message": "Alive",
+    "message": "Vivant",
     "description": "PluginUI.DrawBunnyWindow"
   },
   "Bunny Window - Respawning": {
-    "message": "Respawning in:",
+    "message": "Réapparition dans:",
     "description": "PluginUI.DrawBunnyWindow"
   },
   "Bunny Window - Respawning soon": {
-    "message": " soon ",
+    "message": " bientôt ",
     "description": "PluginUI.DrawBunnyWindow"
   },
   "Bunny Window - Status Unknown": {
-    "message": "Unknown",
+    "message": "Inconnu",
     "description": "PluginUI.DrawBunnyWindow"
   },
   "Tab Header - General": {
@@ -56,27 +72,27 @@
     "description": "PluginUI.TabGeneral"
   },
   "Config Option - Echo NM": {
-    "message": "Echo NM pops",
+    "message": "Écho quand un MC apparaît",
     "description": "PluginUI.TabGeneral"
   },
   "Config Option - Sound NM": {
-    "message": "Play Sound when NM pops",
+    "message": "Jouer un son quand un MC apparaît",
     "description": "PluginUI.TabGeneral"
   },
   "Config Option - Toast NM": {
-    "message": "Show Toast when NM pops",
+    "message": "Afficher un message d'alerte quand un MC apparaît",
     "description": "PluginUI.TabGeneral"
   },
   "Config Option - Short Names": {
-    "message": "Use Short Names",
+    "message": "Utiliser des noms courts",
     "description": "PluginUI.TabGeneral"
   },
   "Config Header - Tracker": {
-    "message": "Tracker:",
+    "message": "Traqueur:",
     "description": "PluginUI.TabGeneral"
   },
   "Config Input - URL": {
-    "message": "Instance URL",
+    "message": "URL de l'instance",
     "description": "PluginUI.TabGeneral"
   },
   "Config Input - PW": {
@@ -84,39 +100,39 @@
     "description": "PluginUI.TabGeneral"
   },
   "Config Button - Start New": {
-    "message": "Start New Tracker",
+    "message": "Démarrer un nouveau traqueur",
     "description": "PluginUI.TabGeneral"
   },
   "Config Tooltip - Open Tracker": {
-    "message": "Open Tracker in Browser",
+    "message": "Ouvrir le traqueur dans un navigateur web",
     "description": "PluginUI.TabGeneral"
   },
   "Tab Header - Chat": {
-    "message": "Chat",
+    "message": "Fenêtre de log",
     "description": "PluginUI.TabChat"
   },
   "Config Option - Open Shout Window": {
-    "message": "Show Shout Window",
+    "message": "Afficher la fenêtre pour les hurlements",
     "description": "PluginUI.TabChat"
   },
   "Config Option - Randomize Coords": {
-    "message": "Randomize Map Coords",
+    "message": "Randomiser les coordonnées de la carte",
     "description": "PluginUI.TabChat"
   },
   "Config Option - Show PT": {
-    "message": "Show PT in Shout Window",
+    "message": "Afficher l'HL dans la fenêtre de hurlement",
     "description": "PluginUI.TabChat"
   },
   "Config Tooltip - Show PT": {
-    "message": "Disabling this option will remove time element from the shout message.",
+    "message": "Désactiver cette option va enlever l'horodatage des éléments de la fenêtre de hurlement.",
     "description": "PluginUI.TabChat"
   },
   "Config Option - Use ET": {
-    "message": "Use Eorzea Time instead",
+    "message": "Utiliser l'heure éorzéenne à la place",
     "description": "PluginUI.TabChat"
   },
   "Config Option - Use 12h": {
-    "message": "Use 12-hour Format",
+    "message": "Utiliser le format 12-heures",
     "description": "PluginUI.TabChat"
   },
   "Config Header - Format": {
@@ -128,63 +144,63 @@
     "description": "PluginUI.TabFairy"
   },
   "Config Header - Fairy": {
-    "message": "Fairy / Elemental",
+    "message": "Fée / Élémentaire",
     "description": "PluginUI.TabFairy"
   },
   "Config Option - Echo Fairy": {
-    "message": "Echo Fairy",
+    "message": "Écho pour fée",
     "description": "PluginUI.TabFairy"
   },
   "Config Option - Toast Fairy": {
-    "message": "Show Toast for Fairy",
+    "message": "Afficher une fenêtre de notification pour les fées",
     "description": "PluginUI.TabFairy"
   },
   "Config Button - Fairy All": {
-    "message": "Echo All",
+    "message": "Écho pour tout",
     "description": "PluginUI.TabFairy"
   },
   "Tab Header - Bunny": {
-    "message": "Bunny",
+    "message": "Lapin",
     "description": "PluginUI.TabBunny"
   },
   "Config Header - Bunny": {
-    "message": "Bunny",
+    "message": "Lapin",
     "description": "PluginUI.TabBunny"
   },
   "Config Option - Bunny Window": {
-    "message": "Show Bunny Window on Entry",
+    "message": "Afficher la fenêtre des lapins lors de l'entrée",
     "description": "PluginUI.TabBunny"
   },
   "Config Tooltip - Bunny Window": {
-    "message": "Or use the command '/elbunny'.",
+    "message": "Ou utiliser la commande '/elbunny'.",
     "description": "PluginUI.TabBunny"
   },
   "Config Option - Bunny Low Level Fates": {
-    "message": "Only show low level Bunny",
+    "message": "Afficher seulement les lapins de bas niveau",
     "description": "PluginUI.TabBunny"
   },
   "Config Tooltip - Bunny Low Level Fates": {
-    "message": "Only shows the low level bunny fate for Pagos and Pyros.",
+    "message": "Afficher seulement les lapins de bas niveau pour Pagos et Pyros.",
     "description": "PluginUI.TabBunny"
   },
   "Config Option - Draw Circle": {
-    "message": "Draw Nearby Circle",
+    "message": "Dessiner un cercle à proximité",
     "description": "PluginUI.TabBunny"
   },
   "Config Tooltip - Draw Circle": {
-    "message": "Draws a circle if the player is near a possible chest location.\nSupports currently: Hydatos, low level Pyros and Pagos",
+    "message": "Dessine un cercle si le joueur est proche d'un emplacement possible d'un coffre.\nSupporte seulement: Hydatos, bas niveau de Pyros et Pagos",
     "description": "PluginUI.TabBunny"
   },
   "Config Button - Circle Preview": {
-    "message": "Preview",
+    "message": "Prévisualiser",
     "description": "PluginUI.TabBunny"
   },
   "Config Button - Add Map Markers": {
-    "message": "Add Markers",
+    "message": "Ajouter des marqueurs",
     "description": "PluginUI.TabBunny"
   },
   "Config Button - Remove Map Markers": {
-    "message": "Remove Markers",
+    "message": "Enlever les marqueurs",
     "description": "PluginUI.TabBunny"
   },
   "Tab Header - Stats": {
@@ -200,11 +216,11 @@
     "description": "PluginUI.TabStats"
   },
   "Stats Entry - Killed": {
-    "message": "Killed Bunnies:",
+    "message": "Lapins tués:",
     "description": "PluginUI.TabStats"
   },
   "Stats Entry - Found": {
-    "message": "Coffers Found:",
+    "message": "Coffres trouvés:",
     "description": "PluginUI.TabStats"
   },
   "Stats Entry - Bronze": {
@@ -212,23 +228,23 @@
     "description": "PluginUI.TabStats"
   },
   "Stats Entry - Silver": {
-    "message": "Silver:",
+    "message": "Argent:",
     "description": "PluginUI.TabStats"
   },
   "Stats Entry - Gold": {
-    "message": "Gold:",
+    "message": "Or:",
     "description": "PluginUI.TabStats"
   },
   "Config Header - Map Stats": {
-    "message": "Map Stats:",
+    "message": "Statistiques par emplacement:",
     "description": "PluginUI.TabStats"
   },
   "Tab Header - About": {
-    "message": "About",
+    "message": "À propos de",
     "description": "PluginUI.TabAbout"
   },
   "About Entry - Author": {
-    "message": "Author:",
+    "message": "Auteurs:",
     "description": "PluginUI.TabAbout"
   },
   "About Entry - Discord": {
@@ -240,15 +256,15 @@
     "description": "PluginUI.TabAbout"
   },
   "Config Button - Discord Forum Thread": {
-    "message": "Discord Thread",
+    "message": "Fil de discussion Discord",
     "description": "PluginUI.TabAbout"
   },
   "Config Button - Github Issues": {
-    "message": "Issues",
+    "message": "Anomalies",
     "description": "PluginUI.TabAbout"
   },
   "QuestLog - Aetheryte Text": {
-    "message": "Aetheryte Unlocks:",
+    "message": "Éthérites à harmoniser:",
     "description": "QuestHelper.Quests"
   },
   "QuestLog - Anemos 1 Step 1": {
@@ -256,227 +272,227 @@
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 1 Tip 1": {
-    "message": "You must obtain a Protean Crystal from a normal monster.",
+    "message": "Vous devez obtenir un cristal instable d'un monstre normal.",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 1 Tip 2": {
-    "message": "You cannot exchange Anemos Crystals for Protean Crystals until you finish this quest.",
+    "message": "Vous ne pouvez pas échanger des cristaux Anemos pour des cristaux instables tant que vous n'avez pas fini cette quête.",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - TalkToKrile": {
-    "message": "Parler à Krile",
+    "message": "Parlez à Krile",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 3 Step 2": {
-    "message": "Proceed inside the Early Natural History Society Observatory and interact with the Confluence",
+    "message": "Procédez à l'intérieur de l'observatoire de la société d'histoire naturelle ancienne et interagissez avec la confluence",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - ReturnToKrile": {
-    "message": "Retourner voir Krile",
+    "message": "Retournez voir Krile",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 3 Tip 1": {
-    "message": "Mobs will spawn around and inside the building during nighttime and as such it is recommended to do this during daytime (6am to 6pm ET).",
+    "message": "Des monstres vont apparaître autour et à l'intérieur du bâtiment pendant la nuit donc il est recommandé de faire cette quête pendant la journée (6 am à 6 pm HE).",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 5 Step 2": {
-    "message": "Proceed to the The Orchard below the cliff and interact with the Confluence",
+    "message": "Allez au verger sous la falaise et interagissez avec la confluence",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 13 Step 2": {
-    "message": "Proceed to the The Val River Swale near the waterfall and interact with the Confluence",
+    "message": "Procédez à l'orée près de la chute d'eau et interagissez avec la confluence",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 17 Step 2": {
-    "message": "Proceed to the Uncanny Valley and interact with the Confluence",
+    "message": "Procédez à la vallée de l'étrange et interagissez avec la confluence",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 17 Step 4": {
-    "message": "Proceed to the Aethernet Control and interact with the Aethernet Relay",
+    "message": "Procédez à la salle de contrôle des éthérites et interagissez avec le relais du réseau de transport urbain éthéré",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Anemos 17 Step 5": {
-    "message": "Interact with the Aethernet Relay again and trade in 99 Anemos Crystals.",
+    "message": "Interagissez avec le relais du réseau de transport urbain éthéré une autre fois et échangez 99 cristaux Anemos.",
     "description": "QuestHelper.Anemos"
   },
   "QuestLog - Pagos 21 Step 2": {
-    "message": "Locate the Depleted Aetherial Stream at The Cones (upper level on a raised grassy hill)",
+    "message": "Localisez le ruisseau éthérial appauvri dans la vallée des pins (niveau supérieur sur une colline herbeuse élevée)",
     "description": "QuestHelper.Pagos"
   },
   "QuestLog - Pagos 23 Step 2": {
-    "message": "Locate the Depleted Aetherial Stream at The Val River Belly",
+    "message": "Localisez le ruisseau éthérial appauvri au cours moyen de la Val",
     "description": "QuestHelper.Pagos"
   },
   "QuestLog - Pagos 25 Step 2": {
-    "message": "Locate the magicite at The Eastern Edge",
+    "message": "Localisez la magicite à la paroi de l'est",
     "description": "QuestHelper.Pagos"
   },
   "QuestLog - Pagos 25 Step 3": {
-    "message": "Interact with it again in almost the same location",
+    "message": "Interagissez de nouveau avec elle à presque le même emplacement",
     "description": "QuestHelper.Pagos"
   },
   "QuestLog - Pagos 25 Tip 1": {
-    "message": "You can also speak with Gerolt any time after first speaking to Krile to unlock Eureka Pagos weapon enhancement.",
+    "message": "Vous pouvez aussi parler avec Gerolt n'importe quand après avoir parlé à Krile pour débloquer l'amélioration des armes Eureka Pagos.",
     "description": "QuestHelper.Pagos"
   },
   "QuestLog - Pagos 29 Step 2": {
-    "message": "Drop down here",
+    "message": "Laissez-vous tomber en bas ici",
     "description": "QuestHelper.Pagos"
   },
   "QuestLog - Pagos 29 Step 3": {
-    "message": "Talk to Ejika Tsunjika",
+    "message": "Parlez à Ejika Tsunjika",
     "description": "QuestHelper.Pagos"
   },
   "QuestLog - Pagos 35 Step 2": {
-    "message": "Locate the aether column at The Fumarole",
+    "message": "Localisez le geyser d'éther",
     "description": "QuestHelper.Pagos"
   },
   "QuestLog - Pyros 35 Step 2": {
-    "message": "Proceed to The Living Foundry and talk to Krile",
+    "message": "Procédez à l'atelier de prototypage et parlez à Krile",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - ReturnToGerolt": {
-    "message": "Return to Gerolt",
+    "message": "Retournez à Gerolt",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - TalkToDrake": {
-    "message": "Talk to Drake",
+    "message": "Parlez à Drake",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - Pyros 35 Step 5": {
-    "message": "Use the Logos Manipulator and select the Paralyze L logogram and extract the mneme",
+    "message": "Utilisez le mélangeur Logos et sélectionnez l'Évocation Logos Paralysie et extrayez l'éclat Logos",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - Pyros 35 Step 7": {
-    "message": "Proceed to Northeastern Ice Needles and interact with the confluence",
+    "message": "Allez au nord-est des aiguilles de givre et interagissez avec la confluence",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - Pyros 38 Step 2": {
-    "message": "Proceed to The Surgate Town House and interact with the Promising Scrap",
+    "message": "Allez à la résidence secondaire de Surgate et interagissez avec la ferraille prometteuse",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - ReturnToDrake": {
-    "message": "Return to Drake",
+    "message": "Retournez à Drake",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - Pyros 38 Step 4": {
-    "message": "Proceed to The Firing Chamber and interact with the confluence",
+    "message": "Allez au site d'expérimentations calorifuges et interagissez avec la confluence",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - Pyros 38 Tip 1": {
-    "message": "This quest unlocks additional capacity for the logos manipulator.",
+    "message": "Cette quête débloque de la capacité supplémentaire pour le mélangeur logos.",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - Pyros 40 Step 2": {
-    "message": "Proceed to West Flamerock and interact with the confluence",
+    "message": "Allez à l'ouest de rocheflamme et interagissez avec la confluence",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - Pyros 45 Step 1": {
-    "message": "Talk to Krile (a few cutscenes will play)",
+    "message": "Parlez à Krile (quelques scènes cinématiques vont jouer)",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - Pyros 45 Step 2": {
-    "message": "Proceed to The Living Foundry and talk to Krile",
+    "message": "Allez à l'atelier de prototypage et parlez à Krile",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - Pyros 50 Step 2": {
-    "message": "Proceed to East Flamerock and interact with the confluence",
+    "message": "Allez à l'est de rocheflamme et interagissez avec la confluence",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - Pyros 50 Step 4": {
-    "message": "Proceed to The Cavern of the Second Cant and interact with the confluence",
+    "message": "Allez à la caverne mélodieuse et interagissez avec la confluence",
     "description": "QuestHelper.Pyros"
   },
   "QuestLog - TalkToGerolt": {
-    "message": "Parler à Gerolt",
+    "message": "Parlez à Gerolt",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 51 Step 2": {
-    "message": "Proceed to The Central Columns and talk again to Krile",
+    "message": "Procédez à l'éthéroduc central et parlez encore à Krile",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 51 Step 3": {
-    "message": "Proceed south to The Val River Source and find the Pooled Aether",
+    "message": "Procédez au sud au socle du pont éthéré et trouvez l'éther consolidé",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 51 Step 4": {
-    "message": "Return to the The Central Columns and talk to Krile",
+    "message": "Retournez à l'éthéroduc central et parlez à Krile",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 54 Step 2": {
-    "message": "Proceed to The Western Columns and talk again to Krile",
+    "message": "Procédez à l'éthéroduc ouest et parlez encore à Krile",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 54 Step 3": {
-    "message": "Proceed to The West Val River Bank",
+    "message": "Procédez à la rive ouest",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 54 Step 4": {
-    "message": "Walk up the large column to find the Pooled Aether",
+    "message": "Montez sur la grosse colonne pour trouver l'éther consolidé",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 54 Step 5": {
-    "message": "Return to The Western Columns and talk to Krile",
+    "message": "Retournez à l'éthéroduc ouest et parlez à Krile",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 57 Step 1": {
-    "message": "Talk to Krile at the The Western Columns",
+    "message": "Parlez à Krile à l'éthéroduc ouest",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 57 Step 2": {
-    "message": "Proceed east to The Eastern Columns and talk to Krile again",
+    "message": "Procédez à l'éthéroduc est et parlez à Krile encore",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 57 Step 3": {
-    "message": "Head north to The East Val River Bank to find the Pooled Aether",
+    "message": "Allez au nord vers la rive est pour trouver l'éther consolidé",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 57 Step 4": {
-    "message": "Return to The Eastern Columns and talk to Krile",
+    "message": "Retournez à l'éthéroduc est et parlez à Krile",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 1": {
-    "message": "Head to The Eastern Columns and talk to Krile",
+    "message": "Allez à l'éthéroduc est et parlez à Krile",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 2": {
-    "message": "Head to The Aetherbridge Foundation and talk again to Krile",
+    "message": "Procédez au socle du pont éthéré et parlez encore à Krile",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 3": {
-    "message": "Proceed into the Headquarters Entrance (Teleport next to you)",
+    "message": "Allez à l'entrée du quartier général (le téléporteur à côté de vous)",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 4": {
-    "message": "Parler encore à Krile",
+    "message": "Parlez encore à Krile",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 5": {
-    "message": "Go in the Board Room and talk again to Krile",
+    "message": "Allez dans le bureau du doyen et parlez encore à Krile",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 6": {
-    "message": "Interact with the Scattered Tomes",
+    "message": "Interagissez avec les tomes éparpillés",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 7": {
-    "message": "Talk again to Krile (a few cutscenes will play)",
+    "message": "Parlez encore à Krile (quelque scènes cinématiques vont jouer)",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 8": {
-    "message": "Choose between Krile's path (sealing) or that of Ejika Tsunjika (destruction)",
+    "message": "Choisissez entre la volonté de Krile (sceller) ou celle de Ejika Tsunjika (détruire)",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Step 9": {
-    "message": "Return to Central Point and talk to Ejika Tsunjika or Krile (opposite you picked)",
+    "message": "Retournez au mitan et parlez à Ejika Tsunjika ou Krile (l'opposé de votre sélection précédente)",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Tip 1": {
-    "message": "This quest unlocks The Baldesion Arsenal.",
+    "message": "Cette quête débloque l'arsenal de Baldesion.",
     "description": "QuestHelper.Hydatos"
   },
   "QuestLog - Hydatos 60 Tip 2": {
-    "message": "Speak with the Expedition Scholar after finishing this quest.",
+    "message": "Parler avec l'érudit de l'expédition après avoir terminé cette quête.",
     "description": "QuestHelper.Hydatos"
   },
   "Area Name - Anemos": {
@@ -494,5 +510,13 @@
   "Area Name - Hydatos": {
     "message": "Hydatos",
     "description": "QuestHelper.TerritoryToPlaceName"
+  },
+  "QuestLog - Header": {
+    "message": "Zone actuelle",
+    "description": "QuestWindow.Draw"
+  },
+  "QuestLog - Tab Item Quest Level": {
+    "message": "Niveau",
+    "description": "QuestWindow.TabItem"
   }
 }

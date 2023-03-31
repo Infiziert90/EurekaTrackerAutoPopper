@@ -1,7 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
-
-using static System.Math;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -129,8 +128,7 @@ namespace EurekaTrackerAutoPopper
 
             foreach (var pos in positions)
             {
-                var difV = player - pos;
-                var dif = Sqrt(Pow(difV.X, 2f) + Pow(difV.Y, 2f) + Pow(difV.Z, 2f));
+                var dif = Utils.GetDistance(player, pos);
                 if (dif < bestPos.Dif)
                     bestPos = (dif, pos);
             }
@@ -140,17 +138,8 @@ namespace EurekaTrackerAutoPopper
 
         public static bool Exists(uint territoryId, Vector3 player)
         {
-            if (!Positions.TryGetValue(territoryId, out var positions))
-                return false;
-
-            foreach (var pos in positions)
-            {
-                var difV = player - pos;
-                if (Sqrt(Pow(difV.X, 2f) + Pow(difV.Y, 2f) + Pow(difV.Z, 2f)) < 5.0f)
-                    return true;
-            }
-
-            return false;
+            return Positions.TryGetValue(territoryId, out var positions) &&
+                   positions.Any(pos => Utils.GetDistance(player, pos) < 5.0);
         }
     }
 }

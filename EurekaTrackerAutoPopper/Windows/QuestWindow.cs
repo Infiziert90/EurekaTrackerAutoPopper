@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using CheapLoc;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Windowing;
@@ -27,7 +28,7 @@ public class QuestWindow : Window, IDisposable
         if (!Library.TerritoryToMap.ContainsKey(territoryId))
             territoryId = 732;
 
-        ImGui.TextColored(ImGuiColors.ParsedGold, $"Current Area: ");
+        ImGui.TextColored(ImGuiColors.ParsedGold, $"{Loc.Localize("QuestLog - Header", "Current Area")}: ");
         ImGui.SameLine();
         ImGui.TextColored(ImGuiColors.ParsedOrange, QuestHelper.TerritoryToPlaceName(territoryId));
 
@@ -48,7 +49,7 @@ public class QuestWindow : Window, IDisposable
 
     private void TabItem(uint territoryId, uint quest)
     {
-        if (ImGui.BeginTabItem($"Level {quest}"))
+        if (ImGui.BeginTabItem($"{Loc.Localize("QuestLog - Tab Item Quest Level", "Level")} {quest}"))
         {
             QuestHelper.Quests(territoryId, quest);
             ImGui.EndTabItem();

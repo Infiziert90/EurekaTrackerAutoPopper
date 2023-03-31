@@ -1,6 +1,7 @@
 ﻿using System;
 using Dalamud.Game.Text.SeStringHandling;
 using System.Collections.Generic;
+using System.Numerics;
 using Lumina.Excel.GeneratedSheets;
 
 namespace EurekaTrackerAutoPopper
@@ -23,15 +24,19 @@ namespace EurekaTrackerAutoPopper
         }
 
         // represents a elemental/fairy seen by the user
-        public readonly Dictionary<uint, Fairy> ExistingFairies = new();
+        public readonly List<Fairy> ExistingFairies = new();
         public record Fairy
         {
+            public readonly uint ObjectId;
+            public readonly Vector3 Pos;
             public readonly SeString MapLink;
 
-            public Fairy(uint fairy, float x, float y)
+            public Fairy(uint objectId, uint fairy, Vector3 pos)
             {
+                ObjectId = objectId;
+                Pos = pos;
                 Map map = FairyToTerritory[fairy];
-                MapLink = SeString.CreateMapLink(map.TerritoryId, map.MapId, (int) x * 1000, (int) y * 1000);
+                MapLink = SeString.CreateMapLink(map.TerritoryId, map.MapId, (int) pos.X * 1000, (int) pos.Z * 1000);  // directX Z = Y
             }
         }
 

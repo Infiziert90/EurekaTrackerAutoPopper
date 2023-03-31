@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Timers;
 using CheapLoc;
+using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 
@@ -312,10 +313,10 @@ namespace EurekaTrackerAutoPopper
 
                     // Renders About Tab
                     TabAbout();
-#if DEBUG
-                    //Renders Debug Tab
-                    TabDebug();
-#endif
+// #if DEBUG
+//                     //Renders Debug Tab
+//                     TabDebug();
+// #endif
 
                     ImGui.EndTabBar();
                 }
@@ -447,25 +448,77 @@ namespace EurekaTrackerAutoPopper
         {
             if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Fairy", "Fairy")}##fairy-tab"))
             {
-                var changed = false;
-                ImGui.TextUnformatted(Loc.Localize("Config Header - Fairy", "Fairy / Elemental"));
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Echo Fairy", "Echo Fairy"), ref Configuration.EchoFairies);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Toast Fairy", "Show Toast for Fairy"), ref Configuration.ShowFairyToast);
+                var deletion = -1;
+                if (ImGui.BeginChild("FairyContent", new Vector2(0, -50)))
+                {
+                    var changed = false;
+                    ImGui.TextUnformatted(Loc.Localize("Config Header - Fairy", "Fairy / Elemental"));
+                    changed |= ImGui.Checkbox(Loc.Localize("Config Option - Echo Fairy", "Echo Fairy"), ref Configuration.EchoFairies);
+                    changed |= ImGui.Checkbox(Loc.Localize("Config Option - Toast Fairy", "Show Toast for Fairy"), ref Configuration.ShowFairyToast);
 
-                if (changed)
-                    Configuration.Save();
+                    if (changed)
+                        Configuration.Save();
+
+                    ImGuiHelpers.ScaledDummy(5);
+                    ImGui.Separator();
+                    ImGuiHelpers.ScaledDummy(5);
+
+                    if (ImGui.Button(Loc.Localize("Config Button - Fairy All", "Echo All")))
+                    {
+                        foreach (var fairy in Library.ExistingFairies)
+                        {
+                            Plugin.EchoFairy(fairy);
+                        }
+                    }
+
+                    if (ImGui.BeginChild("FairyTable"))
+                    {
+                        if (ImGui.BeginTable("##ExistingFairiesTable", 2))
+                        {
+                            ImGui.TableSetupColumn("##location");
+                            ImGui.TableSetupColumn("##trash", 0, 0.1f);
+
+                            foreach (var (fairy, idx) in Library.ExistingFairies.Select((val, i) => (val, i)))
+                            {
+                                var map = (MapLinkPayload) fairy.MapLink.Payloads.First();
+
+                                ImGui.TableNextColumn();
+                                if (ImGui.Selectable($"Fairy ({map.XCoord:0.0},  {map.YCoord:0.0})##{idx}"))
+                                    Plugin.OpenMap(map);
+
+                                ImGui.TableNextColumn();
+                                if (ImGuiComponents.IconButton(idx, FontAwesomeIcon.Trash))
+                                    deletion = idx;
+                            }
+                        }
+                        ImGui.EndTable();
+                    }
+                    ImGui.EndChild();
+                }
+                ImGui.EndChild();
+
+                if (deletion != -1)
+                    Library.ExistingFairies.RemoveAt(deletion);
 
                 ImGuiHelpers.ScaledDummy(5);
                 ImGui.Separator();
                 ImGuiHelpers.ScaledDummy(5);
 
-                if (ImGui.Button(Loc.Localize("Config Button - Fairy All", "Echo All")))
+                if (ImGui.BeginChild("FairyBottomBar", new Vector2(0, 0), false, 0))
                 {
-                    foreach (var fairy in Library.ExistingFairies.Values)
-                    {
-                        Plugin.EchoFairy(fairy);
-                    }
+                    ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
+                    if (ImGui.Button(Loc.Localize("Config Button - Add Map Markers", "Add Markers")))
+                        Plugin.AddFairyLocationsMap();
+                    ImGui.PopStyleColor();
+
+                    ImGui.SameLine();
+
+                    ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
+                    if (ImGui.Button(Loc.Localize("Config Button - Remove Map Markers", "Remove Markers")))
+                        Plugin.RemoveMarkerMap();
+                    ImGui.PopStyleColor();
                 }
+                ImGui.EndChild();
 
                 ImGui.EndTabItem();
             }
@@ -536,7 +589,7 @@ namespace EurekaTrackerAutoPopper
 
                     ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
                     if (ImGui.Button(Loc.Localize("Config Button - Remove Map Markers", "Remove Markers")))
-                        Plugin.RemoveChestsLocationsMap();
+                        Plugin.RemoveMarkerMap();
                     ImGui.PopStyleColor();
                 }
                 ImGui.EndChild();
@@ -545,7 +598,7 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        private static readonly float SecondRow = ImGui.CalcTextSize("Killed Bunnies:").X + 100.0f;
+        private static readonly float SecondRow = ImGui.CalcTextSize("Killed Bunnies: ").X + 120.0f;
         private static readonly float ThirdRow = SecondRow + 100.0f;
         private void TabStats()
         {

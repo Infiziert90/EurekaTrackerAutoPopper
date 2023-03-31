@@ -15,6 +15,10 @@
     "message": "(Please do not use the feedback function to send this)",
     "description": "Plugin.BunnyCheck"
   },
+  "Chat - Dead Fairy Note": {
+    "message": "Removing inactive fairies from tracking.",
+    "description": "Plugin.FairyCheck"
+  },
   "Chat - Error Map Markers": {
     "message": "Unable to place all markers on map",
     "description": "Plugin.AddChestsLocationsMap"
@@ -22,6 +26,18 @@
   "Chat - Error Minimap Markers": {
     "message": "Unable to place all markers on minimap",
     "description": "Plugin.AddChestsLocationsMap"
+  },
+  "Chat - Error Fairy Markers": {
+    "message": "Tracking for fairies needs to be reset, please go to all listed locations to update.",
+    "description": "Plugin.AddFairyLocationsMap"
+  },
+  "Chat - Error Fairy Map Markers": {
+    "message": "Unable to place fairy markers on map",
+    "description": "Plugin.AddFairyLocationsMap"
+  },
+  "Chat - Error Fairy Minimap Markers": {
+    "message": "Unable to place fairy markers on minimap",
+    "description": "Plugin.AddFairyLocationsMap"
   },
   "Shout Button - Post": {
     "message": "Post",
@@ -494,5 +510,13 @@
   "Area Name - Hydatos": {
     "message": "Hydatos",
     "description": "QuestHelper.TerritoryToPlaceName"
+  },
+  "QuestLog - Header": {
+    "message": "Current Area",
+    "description": "QuestWindow.Draw"
+  },
+  "QuestLog - Tab Item Quest Level": {
+    "message": "Level",
+    "description": "QuestWindow.TabItem"
   }
 }

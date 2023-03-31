@@ -1,6 +1,9 @@
+using System.Numerics;
 using Dalamud.Utility;
 using Lumina.Excel;
 using Lumina.Text;
+
+using static System.Math;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -14,5 +17,11 @@ namespace EurekaTrackerAutoPopper
         }
 
         public static string FromSeString(SeString text) => text.ToDalamudString().ToString();
+
+        public static double GetDistance(Vector3 player, Vector3 target)
+        {
+            var difV = player - target;
+            return Sqrt(Pow(difV.X, 2f) + Pow(difV.Y, 2f) + Pow(difV.Z, 2f));
+        }
     }
 }
