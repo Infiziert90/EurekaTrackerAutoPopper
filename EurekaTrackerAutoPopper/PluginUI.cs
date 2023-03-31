@@ -314,10 +314,10 @@ namespace EurekaTrackerAutoPopper
 
                     // Renders About Tab
                     TabAbout();
-// #if DEBUG
-//                     //Renders Debug Tab
-//                     TabDebug();
-// #endif
+#if DEBUG
+                    //Renders Debug Tab
+                    TabDebug();
+#endif
 
                     ImGui.EndTabBar();
                 }
