@@ -19,7 +19,7 @@ namespace EurekaTrackerAutoPopper
 {
     internal class PluginUI : IDisposable
     {
-        private const ImGuiWindowFlags ConfigFlags = NoScrollbar | NoScrollWithMouse | NoCollapse;
+        private const ImGuiWindowFlags ConfigFlags = NoScrollbar | NoScrollWithMouse;
         private const ImGuiWindowFlags BunnyFlags = AlwaysAutoResize;
         private const ImGuiWindowFlags PopFlags = NoDecoration | AlwaysAutoResize;
         private const ImGuiWindowFlags CircleFlags = NoBackground | NoMove | NoTitleBar | NoScrollbar | NoResize | NoInputs;
@@ -126,6 +126,7 @@ namespace EurekaTrackerAutoPopper
 
             var winPos = new Vector2(circlePos.X - 15, circlePos.Y - 15);
 
+            ImGuiHelpers.ForceNextWindowMainViewport();
             ImGuiHelpers.SetNextWindowPosRelativeMainViewport(winPos);
             ImGui.SetNextWindowSize(new Vector2(100, 50));
             if (ImGui.Begin("Pointer##bunny-chest", CircleFlags))
@@ -426,7 +427,7 @@ namespace EurekaTrackerAutoPopper
                 ImGuiHelpers.ScaledDummy(10);
 
                 string chatFormat = Configuration.ChatFormat;
-                ImGui.InputText("##input-chatformat", ref chatFormat, 30);
+                ImGui.InputText("##input-chatformat", ref chatFormat, 64);
                 if (chatFormat != Configuration.ChatFormat)
                 {
                     Configuration.ChatFormat = chatFormat;
