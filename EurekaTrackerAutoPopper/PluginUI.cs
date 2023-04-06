@@ -349,7 +349,12 @@ namespace EurekaTrackerAutoPopper
                 ImGui.TextUnformatted(Loc.Localize("Config Header - Tracker", "Tracker:"));
                 ImGuiHelpers.ScaledDummy(10);
 
-                _ = ImGui.InputText(Loc.Localize("Config Input - URL", "Instance URL"), ref instance, 31);
+                var ins = instance;
+                ImGui.InputText(Loc.Localize("Config Input - URL", "Instance URL"), ref ins, 31);
+                if (ins != instance)
+                    instance = ins.Length == 6 ? $"https://ffxiv-eureka.com/{ins}" : ins;
+
+
                 if (!string.IsNullOrEmpty(instance))
                 {
                     ImGui.SameLine();
@@ -358,6 +363,7 @@ namespace EurekaTrackerAutoPopper
                         ImGui.SetClipboardText(instance);
                     }
                 }
+
                 _ = ImGui.InputText(Loc.Localize("Config Input - PW", "Password"), ref password, 50);
                 if (!string.IsNullOrEmpty(password))
                 {
@@ -367,6 +373,7 @@ namespace EurekaTrackerAutoPopper
                         ImGui.SetClipboardText(password);
                     }
                 }
+
                 if (Plugin.PlayerInEureka && string.IsNullOrEmpty(instance) && ImGui.Button(Loc.Localize("Config Button - Start New", "Start New Tracker")))
                 {
                     _ = Task.Run(async () =>
@@ -375,6 +382,7 @@ namespace EurekaTrackerAutoPopper
                         Plugin.ProcessCurrentFates(Plugin.ClientState.TerritoryType);
                     });
                 }
+
                 if (Instance.Length > 0)
                 {
                     if (ImGuiComponents.IconButton(3, FontAwesomeIcon.Globe))
