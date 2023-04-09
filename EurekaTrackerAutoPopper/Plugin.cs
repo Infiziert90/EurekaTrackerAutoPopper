@@ -98,14 +98,14 @@ namespace EurekaTrackerAutoPopper
         [HelpMessage("Opens the config window")]
         private void OnEurekaCommand(string command, string args)
         {
-            DrawConfigUI();
+            PluginUi.SettingsVisible ^= true;
         }
 
         [Command("/elquest")]
         [HelpMessage("Opens the quest guide")]
         private void OnQuestCommand(string command, string args)
         {
-            QuestWindow.IsOpen = true;
+            QuestWindow.IsOpen ^= true;
         }
 
         [Command("/elbunny")]
@@ -113,7 +113,7 @@ namespace EurekaTrackerAutoPopper
         private void OnBunnyCommand(string command, string args)
         {
             if (Library.BunnyMaps.Contains(ClientState.TerritoryType))
-                PluginUi.BunnyVisible = true;
+                PluginUi.BunnyVisible ^= true;
             else
                 Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
         }
