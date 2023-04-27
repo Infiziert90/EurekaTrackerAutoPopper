@@ -16,3 +16,6 @@ Also includes:
 
 ### Quest Guide
 ![quest](EurekaTrackerAutoPopper/images/quest.png)
+
+### Log
+![log](EurekaTrackerAutoPopper/images/log.png)

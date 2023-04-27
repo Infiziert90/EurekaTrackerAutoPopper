@@ -37,13 +37,14 @@ namespace EurekaTrackerAutoPopper
         private Configuration Configuration { get; init; }
         private PluginUI PluginUi { get; init; }
         private QuestWindow QuestWindow { get; init; }
+        private LogWindow LogWindow { get; init; }
         private WindowSystem WindowSystem { get; init; } = new("Eureka Linker");
 
         public readonly Library Library;
         public bool PlayerInEureka;
         public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
         private List<Fate> lastPolledFates = new();
-        private static XivCommonBase xivCommon = null!;
+        public static XivCommonBase XivCommon = null!;
 
         public static string Authors = "Infi, electr0sheep";
         public static string Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "Unknown";
@@ -76,7 +77,9 @@ namespace EurekaTrackerAutoPopper
             Library.Initialize();
 
             QuestWindow = new QuestWindow();
+            LogWindow = new LogWindow(this);
             WindowSystem.AddWindow(QuestWindow);
+            WindowSystem.AddWindow(LogWindow);
 
             PluginUi = new PluginUI(Configuration, this, Library);
 
@@ -88,7 +91,7 @@ namespace EurekaTrackerAutoPopper
             DalamudPluginInterface.LanguageChanged += Localization.SetupWithLangCode;
 
             ClientState.TerritoryChanged += TerritoryChangePoll;
-            xivCommon = new XivCommonBase();
+            XivCommon = new XivCommonBase();
             cofferTimer.AutoReset = false;
 
             TerritoryChangePoll(null, ClientState.TerritoryType);
@@ -116,6 +119,13 @@ namespace EurekaTrackerAutoPopper
                 PluginUi.BunnyVisible ^= true;
             else
                 Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
+        }
+
+        [Command("/ellog")]
+        [HelpMessage("Opens the log window")]
+        private void OnLogCommand(string command, string args)
+        {
+            LogWindow.IsOpen ^= true;
         }
 
         [Command("/elmarkers")]
@@ -289,7 +299,7 @@ namespace EurekaTrackerAutoPopper
         public void PostChatMessage()
         {
             SetFlagMarker();
-            xivCommon.Functions.Chat.SendMessage(BuildChatString());
+            XivCommon.Functions.Chat.SendMessage(BuildChatString());
         }
 
         public void EchoFairy(Library.Fairy fairy)
@@ -451,7 +461,7 @@ namespace EurekaTrackerAutoPopper
                 EurekaWatch.Reset();
             }
 
-            xivCommon.Dispose();
+            XivCommon.Dispose();
             commandManager.Dispose();
             WindowSystem.RemoveWindow(QuestWindow);
         }
