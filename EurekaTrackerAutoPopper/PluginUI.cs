@@ -607,10 +607,10 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        private static readonly float SecondRow = ImGui.CalcTextSize("Killed Bunnies: ").X + 120.0f;
-        private static readonly float ThirdRow = SecondRow + 100.0f;
         private void TabStats()
         {
+            var secondRow = ImGui.CalcTextSize("Killed Bunnies: ").X + 120.0f;
+
             if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Stats", "Stats")}##stats-tab"))
             {
                 ImGuiHelpers.ScaledDummy(5.0f);
@@ -620,18 +620,18 @@ namespace EurekaTrackerAutoPopper
                 var span = TimeSpan.FromMilliseconds(Configuration.TimeInEureka + Plugin.EurekaWatch.ElapsedMilliseconds);
                 var text = $"{(int) span.TotalHours:###00}:{span:mm} h";
                 ImGui.TextUnformatted(Loc.Localize("Stats Entry - Time", "Time in Eureka:"));
-                ImGui.SameLine(SecondRow - ImGui.CalcTextSize(text).X);
+                ImGui.SameLine(secondRow - ImGui.CalcTextSize(text).X);
                 ImGui.TextColored(ImGuiColors.DalamudOrange, text);
 
                 text = $"{Configuration.KilledBunnies}";
                 ImGui.TextUnformatted(Loc.Localize("Stats Entry - Killed", "Killed Bunnies:"));
-                ImGui.SameLine(SecondRow - ImGui.CalcTextSize(text).X);
+                ImGui.SameLine(secondRow - ImGui.CalcTextSize(text).X);
                 ImGui.TextColored(ImGuiColors.DalamudOrange, text);
 
                 var total = Configuration.Stats.Values.Sum(v => v.Values.Sum());
                 text = total.ToString();
                 ImGui.TextUnformatted(Loc.Localize("Stats Entry - Found", "Coffers Found:"));
-                ImGui.SameLine(SecondRow - ImGui.CalcTextSize(text).X);
+                ImGui.SameLine(secondRow - ImGui.CalcTextSize(text).X);
                 ImGui.TextColored(ImGuiColors.DalamudOrange, text);
 
                 var bronze = Configuration.Stats.Values.Sum(v => v[2009532]);
@@ -685,7 +685,7 @@ namespace EurekaTrackerAutoPopper
 
                     ImGui.TextUnformatted(Loc.Localize("About Entry - Discord", "Discord:"));
                     ImGui.SameLine();
-                    ImGui.TextColored(ImGuiColors.ParsedGold, "Infi#6958");
+                    ImGui.TextColored(ImGuiColors.ParsedGold, "@infi");
 
                     ImGui.TextUnformatted(Loc.Localize("About Entry - Version", "Version:"));
                     ImGui.SameLine();
@@ -824,10 +824,13 @@ namespace EurekaTrackerAutoPopper
             var text = count.ToString();
             var perc = $"{(double) count / total * 100.0:##0.00} %%";
 
+            var secondRow = ImGui.CalcTextSize("Killed Bunnies: ").X + 120.0f;
+            var thirdRow = secondRow + 100.0f;
+
             ImGui.TextUnformatted(header);
-            ImGui.SameLine(SecondRow - ImGui.CalcTextSize(text).X);
+            ImGui.SameLine(secondRow - ImGui.CalcTextSize(text).X);
             ImGui.TextColored(ImGuiColors.DalamudOrange, text);
-            ImGui.SameLine(ThirdRow - ImGui.CalcTextSize(perc).X);
+            ImGui.SameLine(thirdRow - ImGui.CalcTextSize(perc).X);
             ImGui.TextColored(ImGuiColors.TankBlue, perc);
         }
 
