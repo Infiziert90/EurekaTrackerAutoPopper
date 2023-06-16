@@ -96,7 +96,7 @@ public class LogWindow : Window, IDisposable
                 }
 
                 ImGui.TableNextColumn();
-                var elementalLevel = ((BattleChara*) local.Address)->Foray.ElementalLevel;
+                var elementalLevel = ((BattleChara*) local.Address)->GetForayInfo->ElementalLevel;
                 ImGui.TextUnformatted($"{elementalLevel + IndexToRequirement(i)}");
 
                 ImGui.TableNextRow();
