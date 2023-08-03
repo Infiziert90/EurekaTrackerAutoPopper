@@ -565,8 +565,7 @@ namespace EurekaTrackerAutoPopper
                         imguiCircleColor = ImGui.GetColorU32(ImGui.ColorConvertFloat4ToU32(circleColor));
                         changed = true;
                     }
-                    ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Draw Circle",
-                        "Draws a circle if the player is near a possible chest location.\nSupports currently: Hydatos, low level Pyros and Pagos"));
+                    ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Draw Circle", "Draws a circle if the player is near a possible chest location."));
 
                     if (changed)
                         Configuration.Save();
