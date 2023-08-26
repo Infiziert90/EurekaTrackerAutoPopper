@@ -291,8 +291,8 @@ namespace EurekaTrackerAutoPopper
             if (!SettingsVisible)
                 return;
 
-            ImGui.SetNextWindowSize(new Vector2(375, 385), ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSizeConstraints(new Vector2(375, 385), new Vector2(float.MaxValue, float.MaxValue));
+            ImGui.SetNextWindowSize(new Vector2(375, 400), ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSizeConstraints(new Vector2(375, 400), new Vector2(float.MaxValue, float.MaxValue));
             if (ImGui.Begin("Eureka Linker", ref settingsVisible, ConfigFlags))
             {
                 if (ImGui.BeginTabBar("##setting-tabs"))
@@ -666,6 +666,10 @@ namespace EurekaTrackerAutoPopper
                     ImGui.EndTabBar();
                 }
 
+                ImGuiHelpers.ScaledDummy(20.0f);
+                ImGui.TextColored(ImGuiColors.DalamudOrange, "Hover Me");
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip("For more detailed loot tracking take a look at the plugin TrackyTack~");
                 ImGui.EndTabItem();
             }
         }
