@@ -16,14 +16,12 @@ namespace EurekaTrackerAutoPopper
 
     public class Sound
     {
+        public static readonly int[] SoundEffects = { 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52 };
         private static readonly SoundImplementation _impl = new();
 
-        public static void PlayEffect(uint soundEffectId)
+        public static unsafe void PlayEffect(int soundEffectId)
         {
-            unsafe
-            {
-                _impl.PlaySoundEffect(soundEffectId, IntPtr.Zero, IntPtr.Zero, 0);
-            }
+            _impl.PlaySoundEffect((uint) soundEffectId, IntPtr.Zero, IntPtr.Zero, 0);
         }
     }
 }

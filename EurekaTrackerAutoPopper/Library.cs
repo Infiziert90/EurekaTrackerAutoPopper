@@ -70,14 +70,17 @@ namespace EurekaTrackerAutoPopper
         {
             public readonly uint FateId;
             public readonly uint TerritoryId;
+            public readonly bool Easy;
 
             public bool Alive;
             public long LastSeenAlive = -1;
+            public bool PlayedSound = false;
 
-            public Bunny(uint id, uint territoryId)
+            public Bunny(uint id, uint territoryId, bool easy)
             {
                 FateId = id;
                 TerritoryId = territoryId;
+                Easy = easy;
             }
 
             public string Name => Utils.FromSeString(Utils.GetSheet<Fate>(FateId)!.Name);
@@ -85,11 +88,11 @@ namespace EurekaTrackerAutoPopper
 
         public readonly List<Bunny> Bunnies = new()
         {
-            new Bunny(1367, 763),
-            new Bunny(1368, 763),
-            new Bunny(1407, 795),
-            new Bunny(1408, 795),
-            new Bunny(1425, 827)
+            new Bunny(1367, 763, true),
+            new Bunny(1368, 763, false),
+            new Bunny(1407, 795, true),
+            new Bunny(1408, 795, false),
+            new Bunny(1425, 827, true)
         };
 
         public static readonly List<uint> BunnyMaps = new()

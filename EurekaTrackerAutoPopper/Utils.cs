@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using Dalamud.Utility;
 using Lumina.Excel;
@@ -22,6 +23,11 @@ namespace EurekaTrackerAutoPopper
         {
             var difV = player - target;
             return Sqrt(Pow(difV.X, 2f) + Pow(difV.Y, 2f) + Pow(difV.Z, 2f));
+        }
+
+        public static string TimeToFormatted(TimeSpan span)
+        {
+            return span.ToString(span.TotalSeconds > 59 ? @"%m\ \m\i\n" : @"%s\ \s\e\c");
         }
     }
 }

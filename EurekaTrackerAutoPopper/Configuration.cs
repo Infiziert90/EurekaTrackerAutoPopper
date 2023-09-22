@@ -15,6 +15,7 @@ namespace EurekaTrackerAutoPopper
 
         public bool EchoNMPop = true;
         public bool PlaySoundEffect = true;
+        public int PopSoundEffect = 36;
         public bool ShowPopToast = true;
         public bool UseShortNames = true;
 
@@ -29,6 +30,8 @@ namespace EurekaTrackerAutoPopper
         public bool ShowFairyToast = true;
 
         public bool ShowBunnyWindow = true;
+        public bool PlayBunnyEffect = true;
+        public int BunnySoundEffect = 36;
         public bool OnlyEasyBunny = true;
         public bool BunnyCircleDraw = true;
         public Vector4 CircleColor = ImGuiColors.HealerGreen;

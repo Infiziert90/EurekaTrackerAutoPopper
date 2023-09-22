@@ -32,12 +32,27 @@ namespace EurekaTrackerAutoPopper
 {
     public class Plugin : IDalamudPlugin
     {
+        [PluginService] public static ChatGui Chat { get; private set; } = null!;
+        [PluginService] public static ToastGui Toast { get; private set; } = null!;
+        [PluginService] public static ObjectTable ObjectTable { get; private set; } = null!;
+        [PluginService] public static FateTable FateTable { get; private set; } = null!;
+        [PluginService] public static Framework Framework { get; private set; } = null!;
+        [PluginService] public static ClientState ClientState { get; private set; } = null!;
+        [PluginService] public static DalamudPluginInterface DalamudPluginInterface { get; private set; } = null!;
+        [PluginService] public static GameGui GameGui { get; private set; } = null!;
+        [PluginService] public static CommandManager CommandManager { get; private set; } = null!;
+        [PluginService] public static DataManager DataManager { get; private set; } = null!;
+
         public string Name => "Eureka Linker";
 
-        private Configuration Configuration { get; init; }
-        private PluginUI PluginUi { get; init; }
+        public Configuration Configuration { get; init; }
+
+        private MainWindow MainWindow { get; init; }
         private QuestWindow QuestWindow { get; init; }
         private LogWindow LogWindow { get; init; }
+        public BunnyWindow BunnyWindow { get; init; }
+        public ShoutWindow ShoutWindow { get; init; }
+        public CircleOverlay CircleOverlay { get; init; }
         private WindowSystem WindowSystem { get; init; } = new("Eureka Linker");
 
         public readonly Library Library;
@@ -57,17 +72,6 @@ namespace EurekaTrackerAutoPopper
         private Localization Localization = new();
         private readonly PluginCommandManager<Plugin> commandManager;
 
-        [PluginService] public static ChatGui Chat { get; private set; } = null!;
-        [PluginService] public static ToastGui Toast { get; private set; } = null!;
-        [PluginService] public static ObjectTable ObjectTable { get; private set; } = null!;
-        [PluginService] public static FateTable FateTable { get; private set; } = null!;
-        [PluginService] public static Framework Framework { get; private set; } = null!;
-        [PluginService] public static ClientState ClientState { get; private set; } = null!;
-        [PluginService] public static DalamudPluginInterface DalamudPluginInterface { get; private set; } = null!;
-        [PluginService] public static GameGui GameGui { get; private set; } = null!;
-        [PluginService] public static CommandManager CommandManager { get; private set; } = null!;
-        [PluginService] public static DataManager DataManager { get; private set; } = null!;
-
         public Plugin()
         {
             Configuration = DalamudPluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
@@ -76,12 +80,18 @@ namespace EurekaTrackerAutoPopper
             Library = new Library(Configuration);
             Library.Initialize();
 
+            MainWindow = new MainWindow(this);
             QuestWindow = new QuestWindow();
             LogWindow = new LogWindow(this);
+            BunnyWindow = new BunnyWindow(this);
+            ShoutWindow = new ShoutWindow(this);
+            CircleOverlay = new CircleOverlay(this);
+            WindowSystem.AddWindow(MainWindow);
             WindowSystem.AddWindow(QuestWindow);
             WindowSystem.AddWindow(LogWindow);
-
-            PluginUi = new PluginUI(Configuration, this, Library);
+            WindowSystem.AddWindow(BunnyWindow);
+            WindowSystem.AddWindow(ShoutWindow);
+            WindowSystem.AddWindow(CircleOverlay);
 
             commandManager = new PluginCommandManager<Plugin>(this, CommandManager);
             Localization.SetupWithLangCode(DalamudPluginInterface.UiLanguage);
@@ -101,7 +111,7 @@ namespace EurekaTrackerAutoPopper
         [HelpMessage("Opens the config window")]
         private void OnEurekaCommand(string command, string args)
         {
-            PluginUi.SettingsVisible ^= true;
+            MainWindow.IsOpen ^= true;
         }
 
         [Command("/elquest")]
@@ -116,7 +126,7 @@ namespace EurekaTrackerAutoPopper
         private void OnBunnyCommand(string command, string args)
         {
             if (Library.BunnyMaps.Contains(ClientState.TerritoryType))
-                PluginUi.BunnyVisible ^= true;
+                BunnyWindow.IsOpen ^= true;
             else
                 Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
         }
@@ -149,7 +159,7 @@ namespace EurekaTrackerAutoPopper
                 PlayerInEureka = true;
 
                 if (Configuration.ShowBunnyWindow && Library.BunnyMaps.Contains(ClientState.TerritoryType))
-                    PluginUi.BunnyVisible = true;
+                    BunnyWindow.IsOpen = true;
 
                 EurekaWatch.Restart();
 
@@ -161,7 +171,7 @@ namespace EurekaTrackerAutoPopper
             {
                 PlayerInEureka = false;
 
-                PluginUi.Reset();
+                MainWindow.Reset();
                 LastSeenFate = Library.EurekaFate.Empty;
                 Library.ExistingFairies.Clear();
                 Library.ResetBunnies();
@@ -211,7 +221,7 @@ namespace EurekaTrackerAutoPopper
             List<Library.EurekaFate> relevantCurrentFates = relevantFates.Where(fate => currentFates.Select(i => i.FateId).Contains(fate.FateId)).ToList();
             foreach (Library.EurekaFate fate in relevantCurrentFates)
             {
-                if (fate.TrackerId != 0 && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
+                if (fate.TrackerId != 0 && !string.IsNullOrEmpty(MainWindow.Instance) && !string.IsNullOrEmpty(MainWindow.Password))
                 {
                     NMPop(fate);
                 }
@@ -221,27 +231,21 @@ namespace EurekaTrackerAutoPopper
         private void ProcessNewFate(Library.EurekaFate fate)
         {
             EchoNMPop();
-            PlaySoundEffect();
+
+            if (Configuration.PlaySoundEffect)
+                Sound.PlayEffect(Configuration.PopSoundEffect);
 
             if (Configuration.ShowPopWindow)
             {
-                PluginUi.StartShoutCountdown();
-                PluginUi.SetEorzeaTimeWithPullOffset();
+                ShoutWindow.StartShoutCountdown();
+                ShoutWindow.SetEorzeaTimeWithPullOffset();
 
-                PluginUi.PopVisible = true;
+                ShoutWindow.IsOpen = true;
             }
 
-            if (fate.TrackerId != 0 && !string.IsNullOrEmpty(PluginUi.Instance) && !string.IsNullOrEmpty(PluginUi.Password))
+            if (fate.TrackerId != 0 && !string.IsNullOrEmpty(MainWindow.Instance) && !string.IsNullOrEmpty(MainWindow.Password))
             {
                 NMPop(fate);
-            }
-        }
-
-        public void PlaySoundEffect()
-        {
-            if (Configuration.PlaySoundEffect)
-            {
-                Sound.PlayEffect(PluginUi.SoundEffect);
             }
         }
 
@@ -253,14 +257,14 @@ namespace EurekaTrackerAutoPopper
 
         private void NMPop(Library.EurekaFate fate)
         {
-            string instanceID = PluginUi.Instance.Split("/").Last();
+            var instanceID = MainWindow.Instance.Split("/").Last();
             if (fate.TrackerId != 0)
             {
                 PluginLog.Debug("Calling web request with following data:");
                 PluginLog.Debug($"     NM ID: {fate.TrackerId}");
                 PluginLog.Debug($"     Instance ID: {instanceID}");
-                PluginLog.Debug($"     Password: {PluginUi.Password}");
-                EurekaTrackerWrapper.WebRequests.PopNM((ushort)fate.TrackerId, instanceID, PluginUi.Password);
+                PluginLog.Debug($"     Password: {MainWindow.Password}");
+                EurekaTrackerWrapper.WebRequests.PopNM(fate.TrackerId, instanceID, MainWindow.Password);
             }
             else
             {
@@ -286,7 +290,7 @@ namespace EurekaTrackerAutoPopper
 
         private string BuildChatString()
         {
-            string time = !Configuration.UseEorzeaTimer ? $"PT {PluginUi.PullTime}" : $"ET {PluginUi.CurrentEorzeanPullTime()}";
+            string time = !Configuration.UseEorzeaTimer ? $"PT {ShoutWindow.PullTime}" : $"ET {ShoutWindow.CurrentEorzeanPullTime()}";
             string output = Configuration.ChatFormat
                 .Replace("$n", LastSeenFate.Name)
                 .Replace("$sN", LastSeenFate.ShortName)
@@ -335,10 +339,22 @@ namespace EurekaTrackerAutoPopper
                 {
                     bnuuy.Alive = true;
                     bnuuy.LastSeenAlive = currentTime;
+
+                    if (!bnuuy.PlayedSound && Configuration.PlayBunnyEffect)
+                    {
+                        if (!Configuration.OnlyEasyBunny || bnuuy.Easy)
+                        {
+                            bnuuy.PlayedSound = true;
+                            Sound.PlayEffect(Configuration.BunnySoundEffect);
+                        }
+                    }
                 }
 
                 if (bnuuy.LastSeenAlive != currentTime)
+                {
                     bnuuy.Alive = false;
+                    bnuuy.PlayedSound = false;
+                }
             }
 
             if (local.StatusList.Any(status => status.StatusId == 1531))
@@ -354,12 +370,12 @@ namespace EurekaTrackerAutoPopper
                 var pos = BunnyChests.CalculateDistance(ClientState.TerritoryType, local.Position);
                 if (pos != Vector3.Zero)
                 {
-                    PluginUi.NearToCoffer = true;
-                    PluginUi.CofferPos = pos;
+                    CircleOverlay.NearToCoffer = true;
+                    CircleOverlay.CofferPos = pos;
                 }
                 else
                 {
-                    PluginUi.NearToCoffer = false;
+                    CircleOverlay.NearToCoffer = false;
                 }
 
                 // refresh timer until buff is gone
@@ -369,7 +385,7 @@ namespace EurekaTrackerAutoPopper
             }
             else
             {
-                PluginUi.NearToCoffer = false;
+                CircleOverlay.NearToCoffer = false;
                 gotBunny = false;
 
                 // return if timer isn't running
@@ -444,7 +460,6 @@ namespace EurekaTrackerAutoPopper
         public void Dispose()
         {
             GC.SuppressFinalize(this);
-            PluginUi.Dispose();
             Framework.Update -= PollForFateChange;
             Framework.Update -= FairyCheck;
             Framework.Update -= BunnyCheck;
@@ -468,13 +483,12 @@ namespace EurekaTrackerAutoPopper
 
         private void DrawUI()
         {
-            PluginUi.Draw();
             WindowSystem.Draw();
         }
 
         private void DrawConfigUI()
         {
-            PluginUi.SettingsVisible = true;
+            MainWindow.IsOpen = true;
         }
 
         public static unsafe void AddChestsLocationsMap()

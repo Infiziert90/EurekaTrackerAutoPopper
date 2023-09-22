@@ -24,9 +24,14 @@ public class QuestWindow : Window, IDisposable
     public override void Draw()
     {
         var territoryId = Plugin.ClientState.TerritoryType;
-        // If territoryId not in eureka, set anemos for preview
+
         if (!Library.TerritoryToMap.ContainsKey(territoryId))
-            territoryId = 732;
+        {
+            ImGui.TextColored(ImGuiColors.ParsedGold, $"{Loc.Localize("QuestLog - Header", "Current Area")}: ");
+            ImGui.SameLine();
+            ImGui.TextColored(ImGuiColors.ParsedOrange, $"{Loc.Localize("QuestLog - Outside", "Not Eureka...")}");
+            return;
+        }
 
         ImGui.TextColored(ImGuiColors.ParsedGold, $"{Loc.Localize("QuestLog - Header", "Current Area")}: ");
         ImGui.SameLine();
