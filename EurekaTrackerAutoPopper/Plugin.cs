@@ -172,6 +172,8 @@ namespace EurekaTrackerAutoPopper
                 PlayerInEureka = false;
 
                 MainWindow.Reset();
+                BunnyWindow.IsOpen = false;
+                ShoutWindow.IsOpen = false;
                 LastSeenFate = Library.EurekaFate.Empty;
                 Library.ExistingFairies.Clear();
                 Library.ResetBunnies();
