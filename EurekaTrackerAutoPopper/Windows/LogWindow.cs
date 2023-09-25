@@ -10,6 +10,7 @@ using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using Lumina.Excel;
@@ -18,25 +19,20 @@ namespace EurekaTrackerAutoPopper.Windows;
 
 public class LogWindow : Window, IDisposable
 {
-    private Plugin Plugin;
+    private readonly ExcelSheet<Lumina.Excel.GeneratedSheets.ContentsNote> ContentsSheet;
 
-    private ExcelSheet<Lumina.Excel.GeneratedSheets.ContentsNote> ContentsSheet = null!;
+    private readonly Timer Cooldown = new(5 * 1000);
+    private bool OnCooldown;
 
-    private Timer Cooldown = null!;
-    private bool OnCooldown = false;
-
-    public LogWindow(Plugin plugin) : base("Log")
+    public LogWindow() : base("Log")
     {
         Flags = ImGuiWindowFlags.NoResize;
         Size = new Vector2(370, 220);
 
-        Plugin = plugin;
         ContentsSheet = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.ContentsNote>()!;
 
-        Cooldown = new Timer();
         Cooldown.AutoReset = false;
-        Cooldown.Interval = 5 * 1000;
-        Cooldown.Elapsed += (_, __) => OnCooldown = false;
+        Cooldown.Elapsed += (_, _) => OnCooldown = false;
     }
 
     public void Dispose() { }
@@ -50,7 +46,8 @@ public class LogWindow : Window, IDisposable
         ImGuiHelpers.ScaledDummy(5.0f);
         if (!IsCorrectTab())
         {
-            ImGui.TextColored(ImGuiColors.ParsedOrange, Loc.Localize("Log - Wrong Tab","Please open your challenge log in the 'Other' tab for a second."));
+            ImGui.TextColored(ImGuiColors.ParsedOrange, Loc.Localize("Log - Wrong Tab Note","Unable to detect eureka progress."));
+            ImGui.TextColored(ImGuiColors.ParsedOrange, Loc.Localize("Log - Wrong Tab","Please open your challenge log in the 'Other' category."));
             return;
         }
 
@@ -66,8 +63,8 @@ public class LogWindow : Window, IDisposable
             ImGui.TableSetupColumn(Loc.Localize("Table Label: Monster", "Monster"));
             ImGui.TableSetupColumn(Loc.Localize("Table Label: Done", "Done"), ImGuiTableColumnFlags.None, 0.4f);
             ImGui.TableSetupColumn(Loc.Localize("Table Label: Enemy Lvl", "Enemy Level"), ImGuiTableColumnFlags.None, 0.4f);
-            ImGui.TableHeadersRow();
 
+            ImGui.TableHeadersRow();
             for (var i = 0; i < log.Count; i += 2)
             {
                 ImGui.TableNextColumn();
@@ -105,6 +102,7 @@ public class LogWindow : Window, IDisposable
         ImGui.EndTable();
 
         ImGuiHelpers.ScaledDummy(5.0f);
+
         var buttonText = "Refresh";
         var textSize = ImGui.CalcTextSize(buttonText);
         var buttonSize = new Vector2(textSize.X + 20.0f, textSize.Y + 7.0f);
@@ -121,13 +119,15 @@ public class LogWindow : Window, IDisposable
             if (ImGui.Button(buttonText, buttonSize))
             {
                 // closing if it is already open
-                var ptr = Plugin.GameGui.GetAddonByName("ContentsNote", 1);
+                var ptr = Plugin.GameGui.GetAddonByName("ContentsNote");
                 if (ptr != nint.Zero)
                     ((AtkUnitBase*) ptr)->Close(true);
 
-                Plugin.XivCommon.Functions.Chat.SendMessage("/challengelog");
+                var ui = (UIModule*) Plugin.GameGui.GetUIModule();
+                if (ui != null && ui->IsMainCommandUnlocked(60))
+                    ui->ExecuteMainCommand(60);
 
-                ptr = Plugin.GameGui.GetAddonByName("ContentsNote", 1);
+                ptr = Plugin.GameGui.GetAddonByName("ContentsNote");
                 if (ptr != nint.Zero)
                     ((AtkUnitBase*) ptr)->Close(true);
 
@@ -141,35 +141,36 @@ public class LogWindow : Window, IDisposable
 
     private static unsafe bool IsCorrectTab()
     {
-        try
-        {
-            return ContentsNote.Instance()->SelectedTab == 11;
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
-
-        return false;
+        var instance = ContentsNote.Instance();
+        if (instance == null)
+            return false;
+        return instance->SelectedTab == 11;
     }
 
     private static unsafe List<(int Id, int Killed)> GetContentProgress()
     {
+        var list = new List<(int Id, int Killed)>();
+        var note = ContentsNote.Instance();
+        if (note == null)
+            return list;
+
         try
         {
-            var note = ContentsNote.Instance();
-            var list = new List<(int Id, int Killed)>();
             for (var i = 0; i < ContentsNote.Instance()->DisplayCount; i++)
-                list.Add((note->DisplayID[i], note->DisplayStatus[i]));
+            {
+                var (id, progress) = (note->DisplayID[i], note->DisplayStatus[i]);
+                if (id is < 56 or > 65)
+                    continue;
 
-            return list;
+                list.Add((id, progress));
+            }
         }
         catch (Exception)
         {
             // ignored
         }
 
-        return new List<(int Id, int Killed)>();
+        return list;
     }
 
     private static string IndexToName(int index)

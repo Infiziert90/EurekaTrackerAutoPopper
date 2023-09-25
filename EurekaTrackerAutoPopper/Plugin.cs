@@ -82,7 +82,7 @@ namespace EurekaTrackerAutoPopper
 
             MainWindow = new MainWindow(this);
             QuestWindow = new QuestWindow();
-            LogWindow = new LogWindow(this);
+            LogWindow = new LogWindow();
             BunnyWindow = new BunnyWindow(this);
             ShoutWindow = new ShoutWindow(this);
             CircleOverlay = new CircleOverlay(this);
