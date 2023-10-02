@@ -13,7 +13,7 @@ namespace EurekaTrackerAutoPopper
         public static T? GetSheet<T>(uint row) where T : ExcelRow
         {
             return Plugin.DataManager
-                .GetExcelSheet<T>(Localization.LangCodeToClientLanguage(Plugin.DalamudPluginInterface.UiLanguage))!
+                .GetExcelSheet<T>(Localization.LangCodeToClientLanguage(Plugin.PluginInterface.UiLanguage))!
                 .GetRow(row);
         }
 

@@ -5,7 +5,6 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Logging;
 
 namespace EurekaTrackerAutoPopper.EurekaTrackerWrapper
 {
@@ -23,8 +22,8 @@ namespace EurekaTrackerAutoPopper.EurekaTrackerWrapper
             }
             catch (Exception e)
             {
-                PluginLog.Error("Error while popping NM.");
-                PluginLog.Error(e.Message);
+                Plugin.Log.Error("Error while popping NM.");
+                Plugin.Log.Error(e.Message);
             }
         }
 
@@ -52,8 +51,8 @@ namespace EurekaTrackerAutoPopper.EurekaTrackerWrapper
             }
             catch (Exception e)
             {
-                PluginLog.Error("Error while creating new tracker.");
-                PluginLog.Error(e.Message);
+                Plugin.Log.Error("Error while creating new tracker.");
+                Plugin.Log.Error(e.Message);
             }
 
             return ("", "");

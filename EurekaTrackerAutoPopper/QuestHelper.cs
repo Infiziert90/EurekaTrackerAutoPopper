@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Numerics;
 using CheapLoc;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
-using Dalamud.Interface;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 

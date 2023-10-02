@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Numerics;
 using CheapLoc;
-using Dalamud.Interface;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
@@ -13,12 +13,12 @@ namespace EurekaTrackerAutoPopper.Windows;
 
 public class BunnyWindow : Window, IDisposable
 {
-    private const int MinimalBunnyRespawn = 530;
-    private const int MaximumBunnyRespawn = 1000;
+    private const int MinRespawn = 530;
+    private const int MaxRespawn = 1000;
 
     private readonly Plugin Plugin;
 
-    public BunnyWindow(Plugin plugin) : base("Bunny")
+    public BunnyWindow(Plugin plugin) : base("Bunny###EurekaLinker")
     {
         Flags = AlwaysAutoResize;
         SizeConstraints = new WindowSizeConstraints()
@@ -61,8 +61,8 @@ public class BunnyWindow : Window, IDisposable
                 ImGui.SameLine();
                 if (bunny.LastSeenAlive != -1)
                 {
-                    var min = TimeSpan.FromSeconds(bunny.LastSeenAlive + MinimalBunnyRespawn - currentTime);
-                    var max = TimeSpan.FromSeconds(bunny.LastSeenAlive + MaximumBunnyRespawn - currentTime);
+                    var min = TimeSpan.FromSeconds(bunny.LastSeenAlive + MinRespawn - currentTime);
+                    var max = TimeSpan.FromSeconds(bunny.LastSeenAlive + MaxRespawn - currentTime);
 
                     if (min.TotalSeconds > 0)
                     {

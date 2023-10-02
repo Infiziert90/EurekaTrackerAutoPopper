@@ -10,18 +10,18 @@ namespace EurekaTrackerAutoPopper
 
         internal SoundImplementation()
         {
-            SignatureHelper.Initialise(this);
+            Plugin.Hook.InitializeFromAttributes(this);
         }
     }
 
-    public class Sound
+    public static class Sound
     {
         public static readonly int[] SoundEffects = { 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52 };
-        private static readonly SoundImplementation _impl = new();
+        private static readonly SoundImplementation Impl = new();
 
         public static unsafe void PlayEffect(int soundEffectId)
         {
-            _impl.PlaySoundEffect((uint) soundEffectId, IntPtr.Zero, IntPtr.Zero, 0);
+            Impl.PlaySoundEffect((uint) soundEffectId, IntPtr.Zero, IntPtr.Zero, 0);
         }
     }
 }

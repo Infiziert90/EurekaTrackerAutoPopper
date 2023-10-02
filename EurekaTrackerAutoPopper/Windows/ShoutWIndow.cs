@@ -20,7 +20,7 @@ public class ShoutWindow : Window, IDisposable
     private readonly Timer ShoutTimer = new();
     private const int CountdownForShout = 20 * 1000; // Seconds
 
-    public ShoutWindow(Plugin plugin) : base("Shout")
+    public ShoutWindow(Plugin plugin) : base("Shout###EurekaLinker")
     {
         Flags = NoDecoration | AlwaysAutoResize;
 

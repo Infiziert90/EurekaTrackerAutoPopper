@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Numerics;
 using CheapLoc;
-using Dalamud.Interface;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
@@ -10,7 +10,7 @@ namespace EurekaTrackerAutoPopper.Windows;
 
 public class QuestWindow : Window, IDisposable
 {
-    public QuestWindow() : base("Quest Guide")
+    public QuestWindow() : base("Quest Guide###EurekaLinker")
     {
         SizeConstraints = new WindowSizeConstraints
         {

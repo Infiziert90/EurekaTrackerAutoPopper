@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Authors>Infi, electr0sheep</Authors>
-		<Version>1.5.0.1</Version>
+		<Version>1.5.0.2</Version>
 		<Description>Easy helper for Eureka</Description>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<Configurations>Debug;Release</Configurations>
@@ -37,7 +37,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DalamudPackager" Version="2.1.11" />
+		<PackageReference Include="DalamudPackager" Version="2.1.12" />
 		<PackageReference Include="XivCommon" Version="7.0.2" />
 		<Reference Include="FFXIVClientStructs">
 			<HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>

@@ -7,6 +7,7 @@ using CheapLoc;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
@@ -24,7 +25,7 @@ public class LogWindow : Window, IDisposable
     private readonly Timer Cooldown = new(5 * 1000);
     private bool OnCooldown;
 
-    public LogWindow() : base("Log")
+    public LogWindow() : base("Log###EurekaLinker")
     {
         Flags = ImGuiWindowFlags.NoResize;
         Size = new Vector2(370, 220);

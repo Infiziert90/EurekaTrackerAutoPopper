@@ -8,6 +8,7 @@ using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
@@ -25,7 +26,7 @@ public class MainWindow : Window, IDisposable
     public string Instance = string.Empty;
     public string Password = string.Empty;
 
-    public MainWindow(Plugin plugin) : base("Eureka Linker")
+    public MainWindow(Plugin plugin) : base("Eureka Linker###EurekaLinker")
     {
         Flags = NoScrollbar | NoScrollWithMouse;
         SizeConstraints = new WindowSizeConstraints()
@@ -501,7 +502,7 @@ public class MainWindow : Window, IDisposable
                 if(ImGui.Button("Export Loc"))
                 {
                     var pwd = Directory.GetCurrentDirectory();
-                    Directory.SetCurrentDirectory(Plugin.DalamudPluginInterface.AssemblyLocation.DirectoryName!);
+                    Directory.SetCurrentDirectory(Plugin.PluginInterface.AssemblyLocation.DirectoryName!);
                     Loc.ExportLocalizable();
                     Directory.SetCurrentDirectory(pwd);
                 }

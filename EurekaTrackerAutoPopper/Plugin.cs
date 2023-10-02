@@ -1,8 +1,6 @@
 ﻿using System;
-using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
-using Dalamud.Game.Gui;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,21 +8,16 @@ using System.Numerics;
 using System.Reflection;
 using System.Timers;
 using CheapLoc;
-using Dalamud.Data;
 using Dalamud.Game.ClientState.Fates;
-using Dalamud.Game.ClientState;
-using Dalamud.Game;
-using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text;
-using Dalamud.Logging;
 using XivCommon;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Windowing;
+using Dalamud.Plugin.Services;
 using EurekaTrackerAutoPopper.Attributes;
 using EurekaTrackerAutoPopper.Windows;
 
@@ -32,18 +25,18 @@ namespace EurekaTrackerAutoPopper
 {
     public class Plugin : IDalamudPlugin
     {
-        [PluginService] public static ChatGui Chat { get; private set; } = null!;
-        [PluginService] public static ToastGui Toast { get; private set; } = null!;
-        [PluginService] public static ObjectTable ObjectTable { get; private set; } = null!;
-        [PluginService] public static FateTable FateTable { get; private set; } = null!;
-        [PluginService] public static Framework Framework { get; private set; } = null!;
-        [PluginService] public static ClientState ClientState { get; private set; } = null!;
-        [PluginService] public static DalamudPluginInterface DalamudPluginInterface { get; private set; } = null!;
-        [PluginService] public static GameGui GameGui { get; private set; } = null!;
-        [PluginService] public static CommandManager CommandManager { get; private set; } = null!;
-        [PluginService] public static DataManager DataManager { get; private set; } = null!;
-
-        public string Name => "Eureka Linker";
+        [PluginService] public static IChatGui Chat { get; private set; } = null!;
+        [PluginService] public static IToastGui Toast { get; private set; } = null!;
+        [PluginService] public static IObjectTable ObjectTable { get; private set; } = null!;
+        [PluginService] public static IFateTable FateTable { get; private set; } = null!;
+        [PluginService] public static IFramework Framework { get; private set; } = null!;
+        [PluginService] public static IClientState ClientState { get; private set; } = null!;
+        [PluginService] public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
+        [PluginService] public static IGameGui GameGui { get; private set; } = null!;
+        [PluginService] public static ICommandManager CommandManager { get; private set; } = null!;
+        [PluginService] public static IDataManager DataManager { get; private set; } = null!;
+        [PluginService] public static IGameInteropProvider Hook { get; private set; } = null!;
+        [PluginService] public static IPluginLog Log { get; private set; } = null!;
 
         public Configuration Configuration { get; init; }
 
@@ -74,8 +67,8 @@ namespace EurekaTrackerAutoPopper
 
         public Plugin()
         {
-            Configuration = DalamudPluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            Configuration.Initialize(DalamudPluginInterface);
+            Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            Configuration.Initialize(PluginInterface);
 
             Library = new Library(Configuration);
             Library.Initialize();
@@ -94,17 +87,17 @@ namespace EurekaTrackerAutoPopper
             WindowSystem.AddWindow(CircleOverlay);
 
             commandManager = new PluginCommandManager<Plugin>(this, CommandManager);
-            Localization.SetupWithLangCode(DalamudPluginInterface.UiLanguage);
+            Localization.SetupWithLangCode(PluginInterface.UiLanguage);
 
-            DalamudPluginInterface.UiBuilder.Draw += DrawUI;
-            DalamudPluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
-            DalamudPluginInterface.LanguageChanged += Localization.SetupWithLangCode;
+            PluginInterface.UiBuilder.Draw += DrawUI;
+            PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+            PluginInterface.LanguageChanged += Localization.SetupWithLangCode;
 
             ClientState.TerritoryChanged += TerritoryChangePoll;
             XivCommon = new XivCommonBase();
             cofferTimer.AutoReset = false;
 
-            TerritoryChangePoll(null, ClientState.TerritoryType);
+            TerritoryChangePoll(ClientState.TerritoryType);
         }
 
         [Command("/el")]
@@ -152,7 +145,7 @@ namespace EurekaTrackerAutoPopper
             RemoveMarkerMap();
         }
 
-        private void TerritoryChangePoll(object? _, ushort territoryId)
+        private void TerritoryChangePoll(ushort territoryId)
         {
             if (PlayerInRelevantTerritory())
             {
@@ -253,7 +246,7 @@ namespace EurekaTrackerAutoPopper
 
         public void NMPop()
         {
-            PluginLog.Debug($"Attempting to pop {LastSeenFate.Name}");
+            Log.Debug($"Attempting to pop {LastSeenFate.Name}");
             NMPop(LastSeenFate);
         }
 
@@ -262,15 +255,15 @@ namespace EurekaTrackerAutoPopper
             var instanceID = MainWindow.Instance.Split("/").Last();
             if (fate.TrackerId != 0)
             {
-                PluginLog.Debug("Calling web request with following data:");
-                PluginLog.Debug($"     NM ID: {fate.TrackerId}");
-                PluginLog.Debug($"     Instance ID: {instanceID}");
-                PluginLog.Debug($"     Password: {MainWindow.Password}");
+                Log.Debug("Calling web request with following data:");
+                Log.Debug($"     NM ID: {fate.TrackerId}");
+                Log.Debug($"     Instance ID: {instanceID}");
+                Log.Debug($"     Password: {MainWindow.Password}");
                 EurekaTrackerWrapper.WebRequests.PopNM(fate.TrackerId, instanceID, MainWindow.Password);
             }
             else
             {
-                PluginLog.Debug("Tracker ID was Ovni, so not attempting web request");
+                Log.Debug("Tracker ID was Ovni, so not attempting web request");
             }
         }
 
@@ -284,7 +277,7 @@ namespace EurekaTrackerAutoPopper
                 .Append(LastSeenFate.MapLink);
 
             if (Configuration.EchoNMPop)
-                Chat.PrintChat(new XivChatEntry { Message = payload });
+                Chat.Print(new XivChatEntry { Message = payload });
 
             if (Configuration.ShowPopToast)
                 Toast.ShowQuest(payload);
@@ -319,13 +312,13 @@ namespace EurekaTrackerAutoPopper
                 .Append(fairy.MapLink);
 
             if (Configuration.EchoFairies)
-                Chat.PrintChat(new XivChatEntry { Message = payload });
+                Chat.Print(new XivChatEntry { Message = payload });
 
             if (Configuration.ShowFairyToast)
                 Toast.ShowQuest(payload);
         }
 
-        private void BunnyCheck(Framework framework)
+        private void BunnyCheck(IFramework framework)
         {
             if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
                 return;
@@ -424,7 +417,7 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        private void FairyCheck(Framework framework)
+        private void FairyCheck(IFramework framework)
         {
             foreach (BattleNpc actor in ObjectTable.OfType<BattleNpc>()
                          .Where(battleNpc => Library.Fairies.Contains(battleNpc.NameId))
@@ -450,7 +443,7 @@ namespace EurekaTrackerAutoPopper
             }
         }
 
-        private void PollForFateChange(Framework framework)
+        private void PollForFateChange(IFramework framework)
         {
             if (NoFatesHaveChangedSinceLastChecked())
                 return;
@@ -467,9 +460,9 @@ namespace EurekaTrackerAutoPopper
             Framework.Update -= BunnyCheck;
             ClientState.TerritoryChanged -= TerritoryChangePoll;
 
-            DalamudPluginInterface.UiBuilder.Draw -= DrawUI;
-            DalamudPluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
-            DalamudPluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
+            PluginInterface.UiBuilder.Draw -= DrawUI;
+            PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
+            PluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
 
             if (EurekaWatch.IsRunning)
             {
@@ -573,7 +566,7 @@ namespace EurekaTrackerAutoPopper
             }
             catch (Exception)
             {
-                PluginLog.Error("Exception during SetFlagMarker");
+                Log.Error("Exception during SetFlagMarker");
             }
         }
 

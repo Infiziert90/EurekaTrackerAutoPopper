@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using CheapLoc;
 using Dalamud;
-using Dalamud.Logging;
 
 namespace EurekaTrackerAutoPopper;
 
@@ -39,14 +38,14 @@ public class Localization
         }
         catch (Exception)
         {
-            PluginLog.Warning($"Could not load loc {langCode}. Setting up fallbacks.");
+            Plugin.Log.Warning($"Could not load loc {langCode}. Setting up fallbacks.");
             SetupWithFallbacks();
         }
     }
 
     private string ReadLocData(string langCode)
     {
-        return File.ReadAllText(Path.Combine(Plugin.DalamudPluginInterface.AssemblyLocation.DirectoryName!, LocResourceDirectory, $"{langCode}.json"));
+        return File.ReadAllText(Path.Combine(Plugin.PluginInterface.AssemblyLocation.DirectoryName!, LocResourceDirectory, $"{langCode}.json"));
     }
 
     public static ClientLanguage LangCodeToClientLanguage(string langCode)

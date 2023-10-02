@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 using System.Timers;
-using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
@@ -17,7 +17,7 @@ public class CircleOverlay : Window, IDisposable
     public Vector3 CofferPos = Vector3.Zero;
     private readonly Timer PreviewTimer = new(5 * 1000);
 
-    public CircleOverlay(Plugin plugin) : base("Circle")
+    public CircleOverlay(Plugin plugin) : base("Circle###EurekaLinker")
     {
         Flags = NoBackground | NoMove | NoTitleBar | NoScrollbar | NoResize | NoInputs;
         Size = new Vector2(100, 50);
