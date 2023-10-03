@@ -94,7 +94,7 @@ namespace EurekaTrackerAutoPopper
             PluginInterface.LanguageChanged += Localization.SetupWithLangCode;
 
             ClientState.TerritoryChanged += TerritoryChangePoll;
-            XivCommon = new XivCommonBase();
+            XivCommon = new XivCommonBase(PluginInterface);
             cofferTimer.AutoReset = false;
 
             TerritoryChangePoll(ClientState.TerritoryType);

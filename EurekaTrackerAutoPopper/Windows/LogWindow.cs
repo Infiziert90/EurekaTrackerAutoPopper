@@ -25,7 +25,7 @@ public class LogWindow : Window, IDisposable
     private readonly Timer Cooldown = new(5 * 1000);
     private bool OnCooldown;
 
-    public LogWindow() : base("Log###EurekaLinker")
+    public LogWindow() : base("Log##EurekaLinker")
     {
         Flags = ImGuiWindowFlags.NoResize;
         Size = new Vector2(370, 220);

@@ -26,7 +26,7 @@ public class MainWindow : Window, IDisposable
     public string Instance = string.Empty;
     public string Password = string.Empty;
 
-    public MainWindow(Plugin plugin) : base("Eureka Linker###EurekaLinker")
+    public MainWindow(Plugin plugin) : base("Eureka Linker##EurekaLinker")
     {
         Flags = NoScrollbar | NoScrollWithMouse;
         SizeConstraints = new WindowSizeConstraints()

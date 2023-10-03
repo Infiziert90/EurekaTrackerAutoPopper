@@ -10,7 +10,7 @@ namespace EurekaTrackerAutoPopper.Windows;
 
 public class QuestWindow : Window, IDisposable
 {
-    public QuestWindow() : base("Quest Guide###EurekaLinker")
+    public QuestWindow() : base("Quest Guide##EurekaLinker")
     {
         SizeConstraints = new WindowSizeConstraints
         {

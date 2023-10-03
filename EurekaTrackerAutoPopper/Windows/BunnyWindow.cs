@@ -18,7 +18,7 @@ public class BunnyWindow : Window, IDisposable
 
     private readonly Plugin Plugin;
 
-    public BunnyWindow(Plugin plugin) : base("Bunny###EurekaLinker")
+    public BunnyWindow(Plugin plugin) : base("Bunny##EurekaLinker")
     {
         Flags = AlwaysAutoResize;
         SizeConstraints = new WindowSizeConstraints()
