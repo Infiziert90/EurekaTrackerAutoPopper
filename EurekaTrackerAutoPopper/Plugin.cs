@@ -20,6 +20,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using EurekaTrackerAutoPopper.Attributes;
 using EurekaTrackerAutoPopper.Windows;
+using FFXIVClientStructs.FFXIV.Client.UI;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -40,13 +41,13 @@ namespace EurekaTrackerAutoPopper
 
         public Configuration Configuration { get; init; }
 
+        private WindowSystem WindowSystem { get; init; } = new("Eureka Linker");
         private MainWindow MainWindow { get; init; }
         private QuestWindow QuestWindow { get; init; }
         private LogWindow LogWindow { get; init; }
         public BunnyWindow BunnyWindow { get; init; }
         public ShoutWindow ShoutWindow { get; init; }
         public CircleOverlay CircleOverlay { get; init; }
-        private WindowSystem WindowSystem { get; init; } = new("Eureka Linker");
 
         public readonly Library Library;
         public bool PlayerInEureka;
@@ -228,7 +229,7 @@ namespace EurekaTrackerAutoPopper
             EchoNMPop();
 
             if (Configuration.PlaySoundEffect)
-                Sound.PlayEffect(Configuration.PopSoundEffect);
+                UIModule.PlaySound((uint) Configuration.PopSoundEffect);
 
             if (Configuration.ShowPopWindow)
             {
@@ -340,7 +341,7 @@ namespace EurekaTrackerAutoPopper
                         if (!Configuration.OnlyEasyBunny || bnuuy.Easy)
                         {
                             bnuuy.PlayedSound = true;
-                            Sound.PlayEffect(Configuration.BunnySoundEffect);
+                            UIModule.PlaySound((uint) Configuration.BunnySoundEffect);
                         }
                     }
                 }
