@@ -30,6 +30,7 @@ namespace EurekaTrackerAutoPopper
         public bool ShowFairyToast = true;
 
         public bool ShowBunnyWindow = true;
+        public bool AddIconsOnEntry = true;
         public bool PlayBunnyEffect = true;
         public int BunnySoundEffect = 36;
         public bool OnlyEasyBunny = true;

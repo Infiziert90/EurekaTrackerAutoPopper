@@ -10,6 +10,7 @@ using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
 
 using static ImGuiNET.ImGuiWindowFlags;
@@ -19,6 +20,7 @@ namespace EurekaTrackerAutoPopper.Windows;
 public class MainWindow : Window, IDisposable
 {
     private const ImGuiColorEditFlags ColorFlags = ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.NoAlpha;
+    private static readonly int[] SoundEffects = { 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52 };
 
     private readonly Plugin Plugin;
 
@@ -66,7 +68,7 @@ public class MainWindow : Window, IDisposable
 
     private void TabGeneral()
     {
-        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - General", "General")}###general-tab"))
+        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - General", "General")}##general-tab"))
         {
             ImGuiHelpers.ScaledDummy(5);
 
@@ -138,7 +140,7 @@ public class MainWindow : Window, IDisposable
 
     private void TabChat()
     {
-        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Chat", "Chat")}###chat-tab"))
+        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Chat", "Chat")}##chat-tab"))
         {
             ImGuiHelpers.ScaledDummy(5);
 
@@ -206,6 +208,11 @@ public class MainWindow : Window, IDisposable
                 if (changed)
                     Plugin.Configuration.Save();
 
+                ImGuiHelpers.ScaledDummy(5);
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Known Locations", "Known Locations"));
+                ImGui.Separator();
+                ImGuiHelpers.ScaledDummy(5);
+
                 if (ImGui.BeginChild("FairyTable"))
                 {
                     if (ImGui.BeginTable("##ExistingFairiesTable", 2))
@@ -242,6 +249,8 @@ public class MainWindow : Window, IDisposable
                 if (ImGui.Button(Loc.Localize("Config Button - Fairy All", "Echo All")))
                     foreach (var fairy in Plugin.Library.ExistingFairies)
                         Plugin.EchoFairy(fairy);
+
+                ImGui.SameLine();
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
                 if (ImGui.Button(Loc.Localize("Config Button - Add Map Markers", "Add Markers")))
@@ -281,6 +290,8 @@ public class MainWindow : Window, IDisposable
                     changed = true;
                 }
                 ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Bunny Window", "Or use the command '/elbunny'."));
+                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Coffer Icons", "Add Coffer Icons on Entry"), ref Plugin.Configuration.AddIconsOnEntry);
+                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Coffer Icons", "Adds the coffer locations on entry of eureka."));
 
                 changed |= AddSoundOption(ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
                 changed |= ImGui.Checkbox(Loc.Localize("Config Option - Bunny Low Level Fates", "Show Only Low Level"), ref Plugin.Configuration.OnlyEasyBunny);
@@ -548,7 +559,7 @@ public class MainWindow : Window, IDisposable
         ImGui.SetNextItemWidth(50.0f * ImGuiHelpers.GlobalScale);
         if (ImGui.BeginCombo("##SoundEffectCombo", soundEffect.ToString()))
         {
-            foreach (var value in Sound.SoundEffects)
+            foreach (var value in SoundEffects)
             {
                 if (!ImGui.Selectable(value.ToString()))
                     continue;
@@ -563,7 +574,7 @@ public class MainWindow : Window, IDisposable
         ImGui.SameLine();
 
         if (ImGuiComponents.IconButton(FontAwesomeIcon.Play))
-            Sound.PlayEffect(soundEffect);
+            UIModule.PlaySound((uint) soundEffect);
 
         return changed;
     }

@@ -39,230 +39,6 @@
     "message": "Es konnten nicht alle Feen Marker auf der Minimap platziert werden",
     "description": "Plugin.AddFairyLocationsMap"
   },
-  "Shout Button - Post": {
-    "message": "Senden",
-    "description": "PluginUI.DrawFatePopWindow"
-  },
-  "Shout Window - Limit": {
-    "message": "Schreien wird 20s nachdem erscheinen verfügbar sein.",
-    "description": "PluginUI.DrawFatePopWindow"
-  },
-  "Shout Button - Close": {
-    "message": "Schließen",
-    "description": "PluginUI.DrawFatePopWindow"
-  },
-  "Bunny Window - Status Alive": {
-    "message": "Am Leben",
-    "description": "PluginUI.DrawBunnyWindow"
-  },
-  "Bunny Window - Respawning": {
-    "message": "Erscheint in:",
-    "description": "PluginUI.DrawBunnyWindow"
-  },
-  "Bunny Window - Respawning soon": {
-    "message": " bald ",
-    "description": "PluginUI.DrawBunnyWindow"
-  },
-  "Bunny Window - Status Unknown": {
-    "message": "Unbekannt",
-    "description": "PluginUI.DrawBunnyWindow"
-  },
-  "Tab Header - General": {
-    "message": "Allgemein",
-    "description": "PluginUI.TabGeneral"
-  },
-  "Config Option - Echo NM": {
-    "message": "Echo wenn NM erscheint",
-    "description": "PluginUI.TabGeneral"
-  },
-  "Config Option - Sound NM": {
-    "message": "Ton abspielen, wenn NM erscheint",
-    "description": "PluginUI.TabGeneral"
-  },
-  "Config Option - Toast NM": {
-    "message": "Zeige Toast wenn NM erscheint",
-    "description": "PluginUI.TabGeneral"
-  },
-  "Config Option - Short Names": {
-    "message": "Kurznamen verwenden",
-    "description": "PluginUI.TabGeneral"
-  },
-  "Config Header - Tracker": {
-    "message": "Tracker:",
-    "description": "PluginUI.TabGeneral"
-  },
-  "Config Input - URL": {
-    "message": "Instanz-URL",
-    "description": "PluginUI.TabGeneral"
-  },
-  "Config Input - PW": {
-    "message": "Passwort",
-    "description": "PluginUI.TabGeneral"
-  },
-  "Config Button - Start New": {
-    "message": "Neuen Tracker starten",
-    "description": "PluginUI.TabGeneral"
-  },
-  "Config Tooltip - Open Tracker": {
-    "message": "Tracker im Browser öffnen",
-    "description": "PluginUI.TabGeneral"
-  },
-  "Tab Header - Chat": {
-    "message": "Chat",
-    "description": "PluginUI.TabChat"
-  },
-  "Config Option - Open Shout Window": {
-    "message": "Schreien-Fenster anzeigen",
-    "description": "PluginUI.TabChat"
-  },
-  "Config Option - Randomize Coords": {
-    "message": "Zufällige Karten-Koordinaten",
-    "description": "PluginUI.TabChat"
-  },
-  "Config Option - Show PT": {
-    "message": "Zeige PT im Schreien-Fenster",
-    "description": "PluginUI.TabChat"
-  },
-  "Config Tooltip - Show PT": {
-    "message": "Durch die Deaktivierung dieser Option wird das zeitliche Element aus der Schreien-Nachricht entfernt.",
-    "description": "PluginUI.TabChat"
-  },
-  "Config Option - Use ET": {
-    "message": "Eorzea-Zeit verwenden",
-    "description": "PluginUI.TabChat"
-  },
-  "Config Option - Use 12h": {
-    "message": "12-Stunden-Zählung verwenden",
-    "description": "PluginUI.TabChat"
-  },
-  "Config Header - Format": {
-    "message": "Formatierung:",
-    "description": "PluginUI.TabChat"
-  },
-  "Tab Header - Fairy": {
-    "message": "Fee",
-    "description": "PluginUI.TabFairy"
-  },
-  "Config Header - Fairy": {
-    "message": "Fee / Elementar",
-    "description": "PluginUI.TabFairy"
-  },
-  "Config Option - Echo Fairy": {
-    "message": "Echo Fee",
-    "description": "PluginUI.TabFairy"
-  },
-  "Config Option - Toast Fairy": {
-    "message": "Zeige Toast für Fee",
-    "description": "PluginUI.TabFairy"
-  },
-  "Config Button - Fairy All": {
-    "message": "Echo Alle",
-    "description": "PluginUI.TabFairy"
-  },
-  "Tab Header - Bunny": {
-    "message": "Hase",
-    "description": "PluginUI.TabBunny"
-  },
-  "Config Header - Bunny": {
-    "message": "Glückshase",
-    "description": "PluginUI.TabBunny"
-  },
-  "Config Option - Bunny Window": {
-    "message": "Zeige Hasen-Fenster beim Betreten",
-    "description": "PluginUI.TabBunny"
-  },
-  "Config Tooltip - Bunny Window": {
-    "message": "Oder verwende den '/elbunny' Befehl.",
-    "description": "PluginUI.TabBunny"
-  },
-  "Config Option - Bunny Low Level Fates": {
-    "message": "Zeige nur niedrig stufige Hasen",
-    "description": "PluginUI.TabBunny"
-  },
-  "Config Tooltip - Bunny Low Level Fates": {
-    "message": "Zeigt nur die niedrig stufigen Hasen-FATEs in Pagos und Pyros.",
-    "description": "PluginUI.TabBunny"
-  },
-  "Config Option - Draw Circle": {
-    "message": "Zeichne Kreis wenn Nahe",
-    "description": "PluginUI.TabBunny"
-  },
-  "Config Tooltip - Draw Circle": {
-    "message": "Zeichnet einen Kreis, wenn der Spieler sich in der Nähe einer möglichen Schatztruhe befindet.\nUnterstützt aktuell: Hydatos, niedrig stufig Pyros und Pagos",
-    "description": "PluginUI.TabBunny"
-  },
-  "Config Button - Circle Preview": {
-    "message": "Vorschau",
-    "description": "PluginUI.TabBunny"
-  },
-  "Config Button - Add Map Markers": {
-    "message": "Symbole einzeichnen",
-    "description": "PluginUI.TabBunny"
-  },
-  "Config Button - Remove Map Markers": {
-    "message": "Symbole entfernen",
-    "description": "PluginUI.TabBunny"
-  },
-  "Tab Header - Stats": {
-    "message": "Statistik",
-    "description": "PluginUI.TabStats"
-  },
-  "Config Header - Total Stats": {
-    "message": "Gesamt-Statistik:",
-    "description": "PluginUI.TabStats"
-  },
-  "Stats Entry - Time": {
-    "message": "Zeit in Eureka:",
-    "description": "PluginUI.TabStats"
-  },
-  "Stats Entry - Killed": {
-    "message": "Getötete Häschen:",
-    "description": "PluginUI.TabStats"
-  },
-  "Stats Entry - Found": {
-    "message": "Truhen gefunden:",
-    "description": "PluginUI.TabStats"
-  },
-  "Stats Entry - Bronze": {
-    "message": "Bronze:",
-    "description": "PluginUI.TabStats"
-  },
-  "Stats Entry - Silver": {
-    "message": "Silber:",
-    "description": "PluginUI.TabStats"
-  },
-  "Stats Entry - Gold": {
-    "message": "Gold:",
-    "description": "PluginUI.TabStats"
-  },
-  "Config Header - Map Stats": {
-    "message": "Karten Statistik:",
-    "description": "PluginUI.TabStats"
-  },
-  "Tab Header - About": {
-    "message": "Über uns",
-    "description": "PluginUI.TabAbout"
-  },
-  "About Entry - Author": {
-    "message": "Ersteller:",
-    "description": "PluginUI.TabAbout"
-  },
-  "About Entry - Discord": {
-    "message": "Discord:",
-    "description": "PluginUI.TabAbout"
-  },
-  "About Entry - Version": {
-    "message": "Version:",
-    "description": "PluginUI.TabAbout"
-  },
-  "Config Button - Discord Forum Thread": {
-    "message": "Discord-Thread",
-    "description": "PluginUI.TabAbout"
-  },
-  "Config Button - Github Issues": {
-    "message": "Probleme",
-    "description": "PluginUI.TabAbout"
-  },
   "QuestLog - Aetheryte Text": {
     "message": "Freischaltung der Ätheryt:",
     "description": "QuestHelper.Quests"
@@ -511,12 +287,300 @@
     "message": "Hydatos",
     "description": "QuestHelper.TerritoryToPlaceName"
   },
+  "Bunny Window - Status Alive": {
+    "message": "Am Leben",
+    "description": "BunnyWindow.Draw"
+  },
+  "Bunny Window - Respawning": {
+    "message": "Erscheint in:",
+    "description": "BunnyWindow.Draw"
+  },
+  "Bunny Window - Respawning soon": {
+    "message": " bald ",
+    "description": "BunnyWindow.Draw"
+  },
+  "Bunny Window - Status Unknown": {
+    "message": "Unbekannt",
+    "description": "BunnyWindow.Draw"
+  },
+  "Log - Wrong Tab Note": {
+    "message": "Der Fortschritt konnte nicht festgestellt werden.",
+    "description": "LogWindow.Draw"
+  },
+  "Log - Wrong Tab": {
+    "message": "Bitte öffne dein Challenge-Log in der Kategorie 'Andere'.",
+    "description": "LogWindow.Draw"
+  },
+  "Log - Error": {
+    "message": "Log konnte nicht gelesen werden.",
+    "description": "LogWindow.Draw"
+  },
+  "Table Label: Monster": {
+    "message": "Monster",
+    "description": "LogWindow.Draw"
+  },
+  "Table Label: Done": {
+    "message": "Fertig",
+    "description": "LogWindow.Draw"
+  },
+  "Table Label: Enemy Lvl": {
+    "message": "Level des Gegners",
+    "description": "LogWindow.Draw"
+  },
+  "Log - Category IL": {
+    "message": "Eis und Donner",
+    "description": "LogWindow.IndexToName"
+  },
+  "Log - Category FE": {
+    "message": "Feuer und Erde",
+    "description": "LogWindow.IndexToName"
+  },
+  "Log - Category WW": {
+    "message": "Wasser und Wind",
+    "description": "LogWindow.IndexToName"
+  },
+  "Log - Category Night": {
+    "message": "Nacht",
+    "description": "LogWindow.IndexToName"
+  },
+  "Log - Category Sprites": {
+    "message": "Elemente",
+    "description": "LogWindow.IndexToName"
+  },
+  "Tab Header - General": {
+    "message": "Allgemein",
+    "description": "MainWindow.TabGeneral"
+  },
+  "Config Header - Pop": {
+    "message": "Pop",
+    "description": "MainWindow.TabGeneral"
+  },
+  "Config Option - Echo NM": {
+    "message": "Echo",
+    "description": "MainWindow.TabGeneral"
+  },
+  "Config Option - Toast NM": {
+    "message": "Toast-Benachrichtigungen anzeigen",
+    "description": "MainWindow.TabGeneral"
+  },
+  "Config Option - Short Names": {
+    "message": "Kurznamen verwenden",
+    "description": "MainWindow.TabGeneral"
+  },
+  "Config Header - Tracker": {
+    "message": "Tracker:",
+    "description": "MainWindow.TabGeneral"
+  },
+  "Config Input - URL": {
+    "message": "Instanz-URL",
+    "description": "MainWindow.TabGeneral"
+  },
+  "Config Input - PW": {
+    "message": "Passwort",
+    "description": "MainWindow.TabGeneral"
+  },
+  "Config Button - Start New": {
+    "message": "Neuen Tracker starten",
+    "description": "MainWindow.TabGeneral"
+  },
+  "Config Tooltip - Open Tracker": {
+    "message": "Tracker im Browser öffnen",
+    "description": "MainWindow.TabGeneral"
+  },
+  "Tab Header - Chat": {
+    "message": "Chat",
+    "description": "MainWindow.TabChat"
+  },
+  "Config Option - Open Shout Window": {
+    "message": "Schreien-Fenster anzeigen",
+    "description": "MainWindow.TabChat"
+  },
+  "Config Option - Randomize Coords": {
+    "message": "Zufällige Karten-Koordinaten",
+    "description": "MainWindow.TabChat"
+  },
+  "Config Option - Show PT": {
+    "message": "Zeige PT im Schreien-Fenster",
+    "description": "MainWindow.TabChat"
+  },
+  "Config Tooltip - Show PT": {
+    "message": "Durch die Deaktivierung dieser Option wird das zeitliche Element aus der Schreien-Nachricht entfernt.",
+    "description": "MainWindow.TabChat"
+  },
+  "Config Option - Use ET": {
+    "message": "Eorzea-Zeit verwenden",
+    "description": "MainWindow.TabChat"
+  },
+  "Config Option - Use 12h": {
+    "message": "12-Stunden-Zählung verwenden",
+    "description": "MainWindow.TabChat"
+  },
+  "Config Header - Format": {
+    "message": "Formatierung:",
+    "description": "MainWindow.TabChat"
+  },
+  "Tab Header - Fairy": {
+    "message": "Fee",
+    "description": "MainWindow.TabFairy"
+  },
+  "Config Header - Fairy": {
+    "message": "Fee / Elementar",
+    "description": "MainWindow.TabFairy"
+  },
+  "Config Option - Echo Fairy": {
+    "message": "Echo",
+    "description": "MainWindow.TabFairy"
+  },
+  "Config Option - Toast Fairy": {
+    "message": "Toast-Benachrichtigungen anzeigen",
+    "description": "MainWindow.TabFairy"
+  },
+  "Config Header - Known Locations": {
+    "message": "Bekannte Standorte",
+    "description": "MainWindow.TabFairy"
+  },
+  "Config Button - Fairy All": {
+    "message": "Echo Alle",
+    "description": "MainWindow.TabFairy"
+  },
+  "Config Button - Add Map Markers": {
+    "message": "Symbole einzeichnen",
+    "description": "MainWindow.TabFairy"
+  },
+  "Config Button - Remove Map Markers": {
+    "message": "Symbole entfernen",
+    "description": "MainWindow.TabFairy"
+  },
+  "Tab Header - Bunny": {
+    "message": "Hase",
+    "description": "MainWindow.TabBunny"
+  },
+  "Config Header - Bunny": {
+    "message": "Glückshase",
+    "description": "MainWindow.TabBunny"
+  },
+  "Config Option - Bunny Window": {
+    "message": "Zeig Fenster beim Betreten",
+    "description": "MainWindow.TabBunny"
+  },
+  "Config Tooltip - Bunny Window": {
+    "message": "Oder verwende den '/elbunny' Befehl.",
+    "description": "MainWindow.TabBunny"
+  },
+  "Config Option - Coffer Icons": {
+    "message": "Schatzkisten-Icons beim Eintreten hinzufügen",
+    "description": "MainWindow.TabBunny"
+  },
+  "Config Tooltip - Coffer Icons": {
+    "message": "Fügt die Schatzkisten Standorte beim Eintreten in Eureka hinzu.",
+    "description": "MainWindow.TabBunny"
+  },
+  "Config Option - Bunny Low Level Fates": {
+    "message": "Nur niedriges Level anzeigen",
+    "description": "MainWindow.TabBunny"
+  },
+  "Config Tooltip - Bunny Low Level Fates": {
+    "message": "Zeigt nur die niedrig stufigen Hasen-FATEs in Pagos und Pyros.",
+    "description": "MainWindow.TabBunny"
+  },
+  "Config Option - Draw Circle": {
+    "message": "Zeichne Kreis wenn Nahe",
+    "description": "MainWindow.TabBunny"
+  },
+  "Config Tooltip - Draw Circle": {
+    "message": "Zeichnet einen Kreis, wenn sich der Spieler in der Nähe einer Schatzkiste befindet.",
+    "description": "MainWindow.TabBunny"
+  },
+  "Config Button - Circle Preview": {
+    "message": "Vorschau",
+    "description": "MainWindow.TabBunny"
+  },
+  "Tab Header - Stats": {
+    "message": "Statistik",
+    "description": "MainWindow.TabStats"
+  },
+  "Config Header - Total Stats": {
+    "message": "Gesamt-Statistik:",
+    "description": "MainWindow.TabStats"
+  },
+  "Stats Entry - Time": {
+    "message": "Zeit in Eureka:",
+    "description": "MainWindow.TabStats"
+  },
+  "Stats Entry - Killed": {
+    "message": "Getötete Häschen:",
+    "description": "MainWindow.TabStats"
+  },
+  "Stats Entry - Found": {
+    "message": "Truhen gefunden:",
+    "description": "MainWindow.TabStats"
+  },
+  "Stats Entry - Bronze": {
+    "message": "Bronze:",
+    "description": "MainWindow.TabStats"
+  },
+  "Stats Entry - Silver": {
+    "message": "Silber:",
+    "description": "MainWindow.TabStats"
+  },
+  "Stats Entry - Gold": {
+    "message": "Gold:",
+    "description": "MainWindow.TabStats"
+  },
+  "Config Header - Map Stats": {
+    "message": "Karten Statistik:",
+    "description": "MainWindow.TabStats"
+  },
+  "Tab Header - About": {
+    "message": "Über uns",
+    "description": "MainWindow.TabAbout"
+  },
+  "About Entry - Author": {
+    "message": "Ersteller:",
+    "description": "MainWindow.TabAbout"
+  },
+  "About Entry - Discord": {
+    "message": "Discord:",
+    "description": "MainWindow.TabAbout"
+  },
+  "About Entry - Version": {
+    "message": "Version:",
+    "description": "MainWindow.TabAbout"
+  },
+  "Config Button - Discord Forum Thread": {
+    "message": "Discord-Thread",
+    "description": "MainWindow.TabAbout"
+  },
+  "Config Button - Github Issues": {
+    "message": "Probleme",
+    "description": "MainWindow.TabAbout"
+  },
+  "Config Option - Sound NM": {
+    "message": "Ton abspielen",
+    "description": "MainWindow.AddSoundOption"
+  },
   "QuestLog - Header": {
     "message": "Aktuelles Gebiet",
+    "description": "QuestWindow.Draw"
+  },
+  "QuestLog - Outside": {
+    "message": "Nicht in Eureka...",
     "description": "QuestWindow.Draw"
   },
   "QuestLog - Tab Item Quest Level": {
     "message": "Level",
     "description": "QuestWindow.TabItem"
+  },
+  "Shout Button - Post": {
+    "message": "Senden",
+    "description": "ShoutWindow.Draw"
+  },
+  "Shout Window - Limit": {
+    "message": "Schreien wird 20s nachdem erscheinen verfügbar sein.",
+    "description": "ShoutWindow.Draw"
+  },
+  "Shout Button - Close": {
+    "message": "Schließen",
+    "description": "ShoutWindow.Draw"
   }
 }

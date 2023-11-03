@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Timers;
 using CheapLoc;
 using Dalamud.Game.ClientState.Fates;
@@ -154,6 +155,14 @@ namespace EurekaTrackerAutoPopper
 
                 if (Configuration.ShowBunnyWindow && Library.BunnyMaps.Contains(ClientState.TerritoryType))
                     BunnyWindow.IsOpen = true;
+
+                if (Configuration.AddIconsOnEntry && Library.BunnyMaps.Contains(ClientState.TerritoryType))
+                    Task.Run(async () =>
+                    {
+                        // Delay it by 10s so that map had a chance to fully load
+                        await Task.Delay(new TimeSpan(0, 0, 10));
+                        await Framework.RunOnFrameworkThread(AddChestsLocationsMap);
+                    });
 
                 EurekaWatch.Restart();
 
