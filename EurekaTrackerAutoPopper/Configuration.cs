@@ -20,6 +20,7 @@ namespace EurekaTrackerAutoPopper
         public bool UseShortNames = true;
 
         public bool ShowPopWindow = true;
+        public bool CopyShoutMessage = true;
         public bool ShowPullTimer = true;
         public bool UseEorzeaTimer = false;
         public bool UseTwelveHourFormat = false;

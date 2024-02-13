@@ -30,7 +30,7 @@ public class LogWindow : Window, IDisposable
         Flags = ImGuiWindowFlags.NoResize;
         Size = new Vector2(370, 220);
 
-        ContentsSheet = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.ContentsNote>()!;
+        ContentsSheet = Plugin.Data.GetExcelSheet<Lumina.Excel.GeneratedSheets.ContentsNote>()!;
 
         Cooldown.AutoReset = false;
         Cooldown.Elapsed += (_, _) => OnCooldown = false;
@@ -137,7 +137,7 @@ public class LogWindow : Window, IDisposable
             }
             ImGui.PopStyleColor();
         }
-        ImGuiComponents.HelpMarker("Refreshing is necessary as the game has to request updated progress from the server.\nCooldown of 5s is applied after each usage.");
+        ImGuiComponents.HelpMarker("Refreshing is necessary as the game has to request updated progress from the server.\nCooldown of 5s applies after each use.");
     }
 
     private static unsafe bool IsCorrectTab()

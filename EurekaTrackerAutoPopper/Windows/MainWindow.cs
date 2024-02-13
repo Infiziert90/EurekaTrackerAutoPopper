@@ -103,9 +103,7 @@ public class MainWindow : Window, IDisposable
             {
                 ImGui.SameLine();
                 if (ImGuiComponents.IconButton(1, FontAwesomeIcon.Clipboard))
-                {
                     ImGui.SetClipboardText(Instance);
-                }
             }
 
             ImGui.InputText(Loc.Localize("Config Input - PW", "Password"), ref Password, 50);
@@ -123,6 +121,15 @@ public class MainWindow : Window, IDisposable
                     (Instance, Password) = EurekaTrackerWrapper.WebRequests.CreateNewTracker(Library.TerritoryToTrackerDictionary[Plugin.ClientState.TerritoryType]).Result;
                     Plugin.ProcessCurrentFates(Plugin.ClientState.TerritoryType);
                 });
+            }
+            else
+            {
+                ImGui.BeginDisabled();
+                ImGui.Button(Loc.Localize("Config Button - Start New", "Start New Tracker"));
+                ImGui.EndDisabled();
+
+                if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                    ImGui.SetTooltip(Loc.Localize("Config Tooltip - Start New", "Only available while in eureka"));
             }
 
             if (Instance.Length > 0)
@@ -146,6 +153,7 @@ public class MainWindow : Window, IDisposable
 
             var changed = false;
             changed |= ImGui.Checkbox(Loc.Localize("Config Option - Open Shout Window", "Show Shout Window"), ref Plugin.Configuration.ShowPopWindow);
+            changed |= ImGui.Checkbox(Loc.Localize("Config Option - Copy Shout Message", "Copy Shout Message"), ref Plugin.Configuration.CopyShoutMessage);
             changed |= ImGui.Checkbox(Loc.Localize("Config Option - Randomize Coords", "Randomize Map Coords"), ref Plugin.Configuration.RandomizeMapCoords);
             changed |= ImGui.Checkbox(Loc.Localize("Config Option - Show PT", "Show PT in Shout Window"), ref Plugin.Configuration.ShowPullTimer);
             ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Show PT", "Disabling this option will remove time element from the shout message."));

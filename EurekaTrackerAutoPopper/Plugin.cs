@@ -22,22 +22,22 @@ using Dalamud.Plugin.Services;
 using EurekaTrackerAutoPopper.Attributes;
 using EurekaTrackerAutoPopper.Windows;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using ImGuiNET;
 
 namespace EurekaTrackerAutoPopper
 {
     public class Plugin : IDalamudPlugin
     {
+        [PluginService] public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
+        [PluginService] public static ICommandManager CommandManager { get; private set; } = null!;
         [PluginService] public static IChatGui Chat { get; private set; } = null!;
         [PluginService] public static IToastGui Toast { get; private set; } = null!;
         [PluginService] public static IObjectTable ObjectTable { get; private set; } = null!;
         [PluginService] public static IFateTable FateTable { get; private set; } = null!;
         [PluginService] public static IFramework Framework { get; private set; } = null!;
         [PluginService] public static IClientState ClientState { get; private set; } = null!;
-        [PluginService] public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
         [PluginService] public static IGameGui GameGui { get; private set; } = null!;
-        [PluginService] public static ICommandManager CommandManager { get; private set; } = null!;
-        [PluginService] public static IDataManager DataManager { get; private set; } = null!;
-        [PluginService] public static IGameInteropProvider Hook { get; private set; } = null!;
+        [PluginService] public static IDataManager Data { get; private set; } = null!;
         [PluginService] public static IPluginLog Log { get; private set; } = null!;
 
         public Configuration Configuration { get; init; }
@@ -50,22 +50,22 @@ namespace EurekaTrackerAutoPopper
         public ShoutWindow ShoutWindow { get; init; }
         public CircleOverlay CircleOverlay { get; init; }
 
-        public readonly Library Library;
-        public bool PlayerInEureka;
-        public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
-        private List<Fate> lastPolledFates = new();
-        public static XivCommonBase XivCommon = null!;
-
         public static string Authors = "Infi, electr0sheep";
         public static string Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "Unknown";
 
-        private static bool gotBunny;
-        private readonly Timer cofferTimer = new(20 * 1000);
+        public readonly Library Library;
+        public bool PlayerInEureka;
+        public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
+        private List<Fate> LastPolledFates = new();
+        private static XivCommonBase XivCommon = null!;
+
+        private static bool GotBunny;
+        private readonly Timer CofferTimer = new(20 * 1000);
 
         public readonly Stopwatch EurekaWatch = new();
 
-        private Localization Localization = new();
-        private readonly PluginCommandManager<Plugin> commandManager;
+        private readonly Localization Localization = new();
+        private readonly PluginCommandManager<Plugin> Commands;
 
         public Plugin()
         {
@@ -88,7 +88,7 @@ namespace EurekaTrackerAutoPopper
             WindowSystem.AddWindow(ShoutWindow);
             WindowSystem.AddWindow(CircleOverlay);
 
-            commandManager = new PluginCommandManager<Plugin>(this, CommandManager);
+            Commands = new PluginCommandManager<Plugin>(this, CommandManager);
             Localization.SetupWithLangCode(PluginInterface.UiLanguage);
 
             PluginInterface.UiBuilder.Draw += DrawUI;
@@ -97,7 +97,7 @@ namespace EurekaTrackerAutoPopper
 
             ClientState.TerritoryChanged += TerritoryChangePoll;
             XivCommon = new XivCommonBase(PluginInterface);
-            cofferTimer.AutoReset = false;
+            CofferTimer.AutoReset = false;
 
             TerritoryChangePoll(ClientState.TerritoryType);
         }
@@ -181,7 +181,7 @@ namespace EurekaTrackerAutoPopper
                 Library.ExistingFairies.Clear();
                 Library.ResetBunnies();
 
-                gotBunny = false;
+                GotBunny = false;
                 BunnyChests.ExistingCoffers.Clear();
 
                 if (EurekaWatch.IsRunning)
@@ -204,12 +204,12 @@ namespace EurekaTrackerAutoPopper
 
         private bool NoFatesHaveChangedSinceLastChecked()
         {
-            return FateTable.SequenceEqual(lastPolledFates);
+            return FateTable.SequenceEqual(LastPolledFates);
         }
 
         private void CheckForRelevantFates(ushort currentTerritory)
         {
-            List<ushort> newFateIds = FateTable.Except(lastPolledFates).Select(i => i.FateId).ToList();
+            List<ushort> newFateIds = FateTable.Except(LastPolledFates).Select(i => i.FateId).ToList();
             IEnumerable<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary(currentTerritory);
             foreach (Library.EurekaFate fate in relevantFates.Where(i => newFateIds.Contains(i.FateId)))
             {
@@ -248,10 +248,11 @@ namespace EurekaTrackerAutoPopper
                 ShoutWindow.IsOpen = true;
             }
 
+            if (Configuration.CopyShoutMessage)
+                CopyChatMessage();
+
             if (fate.TrackerId != 0 && !string.IsNullOrEmpty(MainWindow.Instance) && !string.IsNullOrEmpty(MainWindow.Password))
-            {
                 NMPop(fate);
-            }
         }
 
         public void NMPop()
@@ -279,7 +280,7 @@ namespace EurekaTrackerAutoPopper
 
         public void EchoNMPop()
         {
-            SeString payload = new SeStringBuilder()
+            var payload = new SeStringBuilder()
                 .AddUiForeground(540)
                 .AddText($"{(Configuration.UseShortNames ? LastSeenFate.ShortName : LastSeenFate.Name)} pop: ")
                 .AddUiForegroundOff()
@@ -295,14 +296,20 @@ namespace EurekaTrackerAutoPopper
 
         private string BuildChatString()
         {
-            string time = !Configuration.UseEorzeaTimer ? $"PT {ShoutWindow.PullTime}" : $"ET {ShoutWindow.CurrentEorzeanPullTime()}";
-            string output = Configuration.ChatFormat
+            var time = !Configuration.UseEorzeaTimer ? $"PT {ShoutWindow.PullTime}" : $"ET {ShoutWindow.CurrentEorzeanPullTime()}";
+            var output = Configuration.ChatFormat
                 .Replace("$n", LastSeenFate.Name)
                 .Replace("$sN", LastSeenFate.ShortName)
                 .Replace("$t", Configuration.ShowPullTimer ? time : "")
                 .Replace("$p", "<flag>");
 
             return output;
+        }
+
+        public void CopyChatMessage()
+        {
+            SetFlagMarker();
+            ImGui.SetClipboardText(BuildChatString());
         }
 
         public void PostChatMessage()
@@ -313,7 +320,7 @@ namespace EurekaTrackerAutoPopper
 
         public void EchoFairy(Library.Fairy fairy)
         {
-            SeString payload = new SeStringBuilder()
+            var payload = new SeStringBuilder()
                 .AddUiForeground(570)
                 .AddText("Fairy: ")
                 .AddUiGlowOff()
@@ -364,12 +371,12 @@ namespace EurekaTrackerAutoPopper
 
             if (local.StatusList.Any(status => status.StatusId == 1531))
             {
-                if (!gotBunny)
+                if (!GotBunny)
                 {
                     Configuration.KilledBunnies += 1;
                     Configuration.Save();
 
-                    gotBunny = true;
+                    GotBunny = true;
                 }
 
                 var pos = BunnyChests.CalculateDistance(ClientState.TerritoryType, local.Position);
@@ -384,17 +391,17 @@ namespace EurekaTrackerAutoPopper
                 }
 
                 // refresh timer until buff is gone
-                cofferTimer.Stop();
-                cofferTimer.Interval = 20 * 1000;
-                cofferTimer.Start();
+                CofferTimer.Stop();
+                CofferTimer.Interval = 20 * 1000;
+                CofferTimer.Start();
             }
             else
             {
                 CircleOverlay.NearToCoffer = false;
-                gotBunny = false;
+                GotBunny = false;
 
                 // return if timer isn't running
-                if (!cofferTimer.Enabled)
+                if (!CofferTimer.Enabled)
                     return;
 
                 if (local.TargetObject == null)
@@ -408,7 +415,7 @@ namespace EurekaTrackerAutoPopper
                         continue;
 
                     BunnyChests.ExistingCoffers.Add(coffer.ObjectId);
-                    cofferTimer.Stop();
+                    CofferTimer.Stop();
 
                     Configuration.Stats[ClientState.TerritoryType][coffer.DataId] += 1;
                     Configuration.KilledBunnies -= 1;
@@ -459,7 +466,7 @@ namespace EurekaTrackerAutoPopper
                 return;
 
             CheckForRelevantFates(ClientState.TerritoryType);
-            lastPolledFates = FateTable.ToList();
+            LastPolledFates = FateTable.ToList();
         }
 
         public void Dispose()
@@ -482,7 +489,7 @@ namespace EurekaTrackerAutoPopper
             }
 
             XivCommon.Dispose();
-            commandManager.Dispose();
+            Commands.Dispose();
             WindowSystem.RemoveWindow(QuestWindow);
         }
 
