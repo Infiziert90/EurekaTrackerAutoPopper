@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CheapLoc;
-using Dalamud;
+using Dalamud.Game;
 
 namespace EurekaTrackerAutoPopper;
 

@@ -94,7 +94,7 @@ public class LogWindow : Window, IDisposable
                 }
 
                 ImGui.TableNextColumn();
-                var elementalLevel = ((BattleChara*) local.Address)->GetForayInfo->ElementalLevel;
+                var elementalLevel = ((BattleChara*) local.Address)->GetForayInfo()->Level;
                 ImGui.TextUnformatted($"{elementalLevel + IndexToRequirement(i)}");
 
                 ImGui.TableNextRow();
@@ -159,7 +159,7 @@ public class LogWindow : Window, IDisposable
         {
             for (var i = 0; i < ContentsNote.Instance()->DisplayCount; i++)
             {
-                var (id, progress) = (note->DisplayID[i], note->DisplayStatus[i]);
+                var (id, progress) = (note->DisplayIds[i], note->DisplayStatuses[i]);
                 if (id is < 56 or > 65)
                     continue;
 

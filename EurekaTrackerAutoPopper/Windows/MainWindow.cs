@@ -20,7 +20,7 @@ namespace EurekaTrackerAutoPopper.Windows;
 public class MainWindow : Window, IDisposable
 {
     private const ImGuiColorEditFlags ColorFlags = ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.NoAlpha;
-    private static readonly int[] SoundEffects = { 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52 };
+    private static readonly int[] SoundEffects = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52];
 
     private readonly Plugin Plugin;
 
@@ -431,7 +431,7 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.TextUnformatted(Loc.Localize("About Entry - Author", "Author:"));
                 ImGui.SameLine();
-                ImGui.TextColored(ImGuiColors.ParsedGold, Plugin.Authors);
+                ImGui.TextColored(ImGuiColors.ParsedGold, Plugin.PluginInterface.Manifest.Author);
 
                 ImGui.TextUnformatted(Loc.Localize("About Entry - Discord", "Discord:"));
                 ImGui.SameLine();
@@ -439,7 +439,7 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.TextUnformatted(Loc.Localize("About Entry - Version", "Version:"));
                 ImGui.SameLine();
-                ImGui.TextColored(ImGuiColors.ParsedOrange, Plugin.Version);
+                ImGui.TextColored(ImGuiColors.ParsedOrange, Plugin.PluginInterface.Manifest.AssemblyVersion.ToString());
             }
             ImGui.EndChild();
 

@@ -17,8 +17,8 @@ public class ShoutWindow : Window, IDisposable
     public int PullTime = 27;
     public int EorzeaTime = 720;
 
-    private readonly Timer ShoutTimer = new();
     private const int CountdownForShout = 20 * 1000; // Seconds
+    private readonly Timer ShoutTimer = new(CountdownForShout);
 
     public ShoutWindow(Plugin plugin) : base("Shout##EurekaLinker")
     {
@@ -123,7 +123,7 @@ public class ShoutWindow : Window, IDisposable
 
     public unsafe void SetEorzeaTimeWithPullOffset()
     {
-        var et = DateTimeOffset.FromUnixTimeSeconds(Instance()->EorzeaTime);
+        var et = DateTimeOffset.FromUnixTimeSeconds(Instance()->ClientTime.EorzeaTime);
         EorzeaTime = et.Hour * 60 + et.Minute + 60; // 60 min ET = 3 min our time
         EorzeaTime = RoundOff(EorzeaTime); // Round it to X0
 

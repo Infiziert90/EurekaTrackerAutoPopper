@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
 using CheapLoc;
@@ -14,7 +13,6 @@ using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text;
-using XivCommon;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Windowing;
@@ -28,7 +26,7 @@ namespace EurekaTrackerAutoPopper
 {
     public class Plugin : IDalamudPlugin
     {
-        [PluginService] public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
+        [PluginService] public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
         [PluginService] public static ICommandManager CommandManager { get; private set; } = null!;
         [PluginService] public static IChatGui Chat { get; private set; } = null!;
         [PluginService] public static IToastGui Toast { get; private set; } = null!;
@@ -39,6 +37,7 @@ namespace EurekaTrackerAutoPopper
         [PluginService] public static IGameGui GameGui { get; private set; } = null!;
         [PluginService] public static IDataManager Data { get; private set; } = null!;
         [PluginService] public static IPluginLog Log { get; private set; } = null!;
+        [PluginService] public static IGameInteropProvider Hook { get; private set; } = null!;
 
         public Configuration Configuration { get; init; }
 
@@ -50,14 +49,11 @@ namespace EurekaTrackerAutoPopper
         public ShoutWindow ShoutWindow { get; init; }
         public CircleOverlay CircleOverlay { get; init; }
 
-        public static string Authors = "Infi, electr0sheep";
-        public static string Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "Unknown";
-
         public readonly Library Library;
         public bool PlayerInEureka;
         public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
-        private List<Fate> LastPolledFates = new();
-        private static XivCommonBase XivCommon = null!;
+        private List<IFate> LastPolledFates = [];
+        private static ChatCommon Common = null!;
 
         private static bool GotBunny;
         private readonly Timer CofferTimer = new(20 * 1000);
@@ -70,7 +66,6 @@ namespace EurekaTrackerAutoPopper
         public Plugin()
         {
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            Configuration.Initialize(PluginInterface);
 
             Library = new Library(Configuration);
             Library.Initialize();
@@ -96,7 +91,7 @@ namespace EurekaTrackerAutoPopper
             PluginInterface.LanguageChanged += Localization.SetupWithLangCode;
 
             ClientState.TerritoryChanged += TerritoryChangePoll;
-            XivCommon = new XivCommonBase(PluginInterface);
+            Common = new ChatCommon();
             CofferTimer.AutoReset = false;
 
             TerritoryChangePoll(ClientState.TerritoryType);
@@ -221,15 +216,13 @@ namespace EurekaTrackerAutoPopper
 
         public void ProcessCurrentFates(ushort currentTerritory)
         {
-            List<Fate> currentFates = FateTable.ToList();
-            IEnumerable<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary(currentTerritory);
-            List<Library.EurekaFate> relevantCurrentFates = relevantFates.Where(fate => currentFates.Select(i => i.FateId).Contains(fate.FateId)).ToList();
-            foreach (Library.EurekaFate fate in relevantCurrentFates)
+            var currentFates = FateTable.ToList();
+            var relevantFates = Library.TerritoryToFateDictionary(currentTerritory);
+            var relevantCurrentFates = relevantFates.Where(fate => currentFates.Select(i => i.FateId).Contains(fate.FateId)).ToList();
+            foreach (var fate in relevantCurrentFates)
             {
                 if (fate.TrackerId != 0 && !string.IsNullOrEmpty(MainWindow.Instance) && !string.IsNullOrEmpty(MainWindow.Password))
-                {
                     NMPop(fate);
-                }
             }
         }
 
@@ -315,7 +308,7 @@ namespace EurekaTrackerAutoPopper
         public void PostChatMessage()
         {
             SetFlagMarker();
-            XivCommon.Functions.Chat.SendMessage(BuildChatString());
+            Common.SendMessage(BuildChatString());
         }
 
         public void EchoFairy(Library.Fairy fairy)
@@ -407,14 +400,14 @@ namespace EurekaTrackerAutoPopper
                 if (local.TargetObject == null)
                     return;
 
-                foreach (var coffer in ObjectTable.OfType<EventObj>()
+                foreach (var coffer in ObjectTable.OfType<IEventObj>()
                              .Where(a => BunnyChests.Coffers.Contains(a.DataId))
-                             .Where(a => !BunnyChests.ExistingCoffers.Contains(a.ObjectId)))
+                             .Where(a => !BunnyChests.ExistingCoffers.Contains(a.EntityId)))
                 {
-                    if (coffer.ObjectId != local.TargetObject.ObjectId)
+                    if (coffer.EntityId != local.TargetObject.EntityId)
                         continue;
 
-                    BunnyChests.ExistingCoffers.Add(coffer.ObjectId);
+                    BunnyChests.ExistingCoffers.Add(coffer.EntityId);
                     CofferTimer.Stop();
 
                     Configuration.Stats[ClientState.TerritoryType][coffer.DataId] += 1;
@@ -436,11 +429,11 @@ namespace EurekaTrackerAutoPopper
 
         private void FairyCheck(IFramework framework)
         {
-            foreach (BattleNpc actor in ObjectTable.OfType<BattleNpc>()
+            foreach (var actor in ObjectTable.OfType<IBattleNpc>()
                          .Where(battleNpc => Library.Fairies.Contains(battleNpc.NameId))
-                         .Where(battleNpc => Library.ExistingFairies.All(f => f.ObjectId != battleNpc.ObjectId)))
+                         .Where(battleNpc => Library.ExistingFairies.All(f => f.ObjectId != battleNpc.EntityId)))
             {
-                var fairy = new Library.Fairy(actor.ObjectId, actor.NameId, actor.Position);
+                var fairy = new Library.Fairy(actor.EntityId, actor.NameId, actor.Position);
                 Library.ExistingFairies.Add(fairy);
                 EchoFairy(fairy);
             }
@@ -452,7 +445,7 @@ namespace EurekaTrackerAutoPopper
             foreach (var fairy in Library.ExistingFairies.ToArray())
             {
                 if (!(Utils.GetDistance(local.Position, fairy.Pos) < 80.0)
-                    || ObjectTable.Any(obj => fairy.ObjectId == obj.ObjectId))
+                    || ObjectTable.Any(obj => fairy.ObjectId == obj.EntityId))
                     continue;
 
                 Library.ExistingFairies.Remove(fairy);
@@ -488,7 +481,6 @@ namespace EurekaTrackerAutoPopper
                 EurekaWatch.Reset();
             }
 
-            XivCommon.Dispose();
             Commands.Dispose();
             WindowSystem.RemoveWindow(QuestWindow);
         }
