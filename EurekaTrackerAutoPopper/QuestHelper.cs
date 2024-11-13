@@ -5,7 +5,7 @@ using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace EurekaTrackerAutoPopper
 {
@@ -414,7 +414,7 @@ namespace EurekaTrackerAutoPopper
                 get
                 {
                     var key = Utils.GetSheet<EurekaAethernet>(Key)!;
-                    return Utils.FromSeString(Utils.GetSheet<PlaceName>(key.Location.Row)!.Name);
+                    return Utils.FromSeString(Utils.GetSheet<PlaceName>(key.Location.RowId).Name);
                 }
             }
         }

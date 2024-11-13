@@ -568,7 +568,7 @@ namespace EurekaTrackerAutoPopper
                 // divide by 1000 as raw is too long for CS SetFlagMapMarker
                 var map = (MapLinkPayload) LastSeenFate.MapLink.Payloads.First();
                 AgentMap.Instance()->SetFlagMapMarker(
-                    map.Map.TerritoryType.Row,
+                    map.Map.Value.TerritoryType.RowId,
                     map.Map.RowId,
                     map.RawX / 1000.0f,
                     map.RawY / 1000.0f);

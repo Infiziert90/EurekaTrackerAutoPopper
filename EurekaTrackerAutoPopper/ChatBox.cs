@@ -6,11 +6,11 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 
 namespace EurekaTrackerAutoPopper;
 
-// Shared Across all my plugin from:
+// Shared Across all my plugins from:
 // https://github.com/Infiziert90/ChatTwo/blob/main/ChatTwo/GameFunctions/ChatBox.cs
 public unsafe class ChatCommon
 {
-    [Signature("48 89 5C 24 ?? 57 48 83 EC 20 48 8B FA 48 8B D9 45 84 C9")]
+    [Signature("48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 48 8B F2 48 8B F9 45 84 C9")]
     private readonly delegate* unmanaged<UIModule*, Utf8String*, nint, byte, void> ProcessChatBox = null!;
 
     internal ChatCommon()

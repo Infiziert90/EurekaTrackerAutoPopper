@@ -20,7 +20,7 @@ namespace EurekaTrackerAutoPopper.Windows;
 
 public class LogWindow : Window, IDisposable
 {
-    private readonly ExcelSheet<Lumina.Excel.GeneratedSheets.ContentsNote> ContentsSheet;
+    private readonly ExcelSheet<Lumina.Excel.Sheets.ContentsNote> ContentsSheet;
 
     private readonly Timer Cooldown = new(5 * 1000);
     private bool OnCooldown;
@@ -30,7 +30,7 @@ public class LogWindow : Window, IDisposable
         Flags = ImGuiWindowFlags.NoResize;
         Size = new Vector2(370, 220);
 
-        ContentsSheet = Plugin.Data.GetExcelSheet<Lumina.Excel.GeneratedSheets.ContentsNote>()!;
+        ContentsSheet = Plugin.Data.GetExcelSheet<Lumina.Excel.Sheets.ContentsNote>()!;
 
         Cooldown.AutoReset = false;
         Cooldown.Elapsed += (_, _) => OnCooldown = false;
