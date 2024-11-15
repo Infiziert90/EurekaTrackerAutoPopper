@@ -521,7 +521,7 @@ namespace EurekaTrackerAutoPopper
 
         public unsafe void AddFairyLocationsMap()
         {
-            if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
+            if (!PlayerInEureka)
             {
                 Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
                 return;
