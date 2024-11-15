@@ -48,11 +48,12 @@ public class CircleOverlay : Window, IDisposable
         if (!Plugin.Configuration.BunnyCircleDraw)
             return;
 
-        if (!NearToCoffer || CofferPos == Vector3.Zero)
+        if ((!NearToCoffer && !PreviewTimer.Enabled) || CofferPos == Vector3.Zero)
             return;
 
-        Plugin.GameGui.WorldToScreen(CofferPos, out var circlePos);
-        ImGui.GetWindowDrawList().AddCircleFilled(circlePos, 8.0f, ImGui.GetColorU32(ImGui.ColorConvertFloat4ToU32(Plugin.Configuration.CircleColor)));
+        // Only draw if the returned pos is valid
+        if (Plugin.GameGui.WorldToScreen(CofferPos, out var circlePos))
+            ImGui.GetWindowDrawList().AddCircleFilled(circlePos, 8.0f, ImGui.GetColorU32(ImGui.ColorConvertFloat4ToU32(Plugin.Configuration.CircleColor)));
     }
 
     public void EnablePreview()

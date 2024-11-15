@@ -114,13 +114,16 @@ public class MainWindow : Window, IDisposable
                     ImGui.SetClipboardText(Password);
             }
 
-            if (Plugin.PlayerInEureka && string.IsNullOrEmpty(Instance) && ImGui.Button(Loc.Localize("Config Button - Start New", "Start New Tracker")))
+            if (Plugin.PlayerInEureka && string.IsNullOrEmpty(Instance))
             {
-                Task.Run(() =>
+                if (ImGui.Button(Loc.Localize("Config Button - Start New", "Start New Tracker")))
                 {
-                    (Instance, Password) = EurekaTrackerWrapper.WebRequests.CreateNewTracker(Library.TerritoryToTrackerDictionary[Plugin.ClientState.TerritoryType]).Result;
-                    Plugin.ProcessCurrentFates(Plugin.ClientState.TerritoryType);
-                });
+                    Task.Run(() =>
+                    {
+                        (Instance, Password) = EurekaTrackerWrapper.WebRequests.CreateNewTracker(Library.TerritoryToTrackerDictionary[Plugin.ClientState.TerritoryType]).Result;
+                        Plugin.ProcessCurrentFates(Plugin.ClientState.TerritoryType);
+                    });
+                }
             }
             else
             {
