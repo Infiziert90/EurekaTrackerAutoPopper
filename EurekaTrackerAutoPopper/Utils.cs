@@ -5,28 +5,27 @@ using Lumina.Excel;
 using Lumina.Text.ReadOnly;
 using static System.Math;
 
-namespace EurekaTrackerAutoPopper
+namespace EurekaTrackerAutoPopper;
+
+public static class Utils
 {
-    public static class Utils
+    public static T GetSheet<T>(uint row) where T : struct, IExcelRow<T>
     {
-        public static T GetSheet<T>(uint row) where T : struct, IExcelRow<T>
-        {
-            return Plugin.Data
-                .GetExcelSheet<T>(Localization.LangCodeToClientLanguage(Plugin.PluginInterface.UiLanguage))
-                .GetRow(row);
-        }
+        return Plugin.Data
+            .GetExcelSheet<T>(Localization.LangCodeToClientLanguage(Plugin.PluginInterface.UiLanguage))
+            .GetRow(row);
+    }
 
-        public static string FromSeString(ReadOnlySeString text) => text.ToDalamudString().ToString();
+    public static string FromSeString(ReadOnlySeString text) => text.ToDalamudString().ToString();
 
-        public static double GetDistance(Vector3 player, Vector3 target)
-        {
-            var difV = player - target;
-            return Sqrt(Pow(difV.X, 2f) + Pow(difV.Y, 2f) + Pow(difV.Z, 2f));
-        }
+    public static double GetDistance(Vector3 player, Vector3 target)
+    {
+        var difV = player - target;
+        return Sqrt(Pow(difV.X, 2f) + Pow(difV.Y, 2f) + Pow(difV.Z, 2f));
+    }
 
-        public static string TimeToFormatted(TimeSpan span)
-        {
-            return span.ToString(span.TotalSeconds > 59 ? @"%m\ \m\i\n" : @"%s\ \s\e\c");
-        }
+    public static string TimeToFormatted(TimeSpan span)
+    {
+        return span.ToString(span.TotalSeconds > 59 ? @"%m\ \m\i\n" : @"%s\ \s\e\c");
     }
 }

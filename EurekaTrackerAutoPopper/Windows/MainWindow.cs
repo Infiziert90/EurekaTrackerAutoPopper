@@ -333,7 +333,7 @@ public class MainWindow : Window, IDisposable
             if (ImGui.BeginChild("BunnyBottomBar", new Vector2(0, 0), false, 0))
             {
                 if (ImGui.Button(Loc.Localize("Config Button - Circle Preview", "Preview")))
-                    Plugin.CircleOverlay.EnablePreview();
+                    Plugin.EnablePreview();
 
                 ImGui.SameLine();
 
@@ -585,7 +585,7 @@ public class MainWindow : Window, IDisposable
         ImGui.SameLine();
 
         if (ImGuiComponents.IconButton(FontAwesomeIcon.Play))
-            UIModule.PlaySound((uint) soundEffect);
+            UIGlobals.PlaySoundEffect((uint) soundEffect);
 
         return changed;
     }

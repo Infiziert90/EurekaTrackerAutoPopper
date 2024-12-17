@@ -6,20 +6,19 @@ namespace EurekaTrackerAutoPopper
 {
     public static class BunnyChests
     {
-        private const float InRange = 80.0f;
+        private const double InRange = 80.0f;
 
-        public static List<uint> ExistingCoffers = new();
-        public static List<uint> Coffers = new()
-        {
+        public static readonly List<uint> ExistingCoffers = [];
+        public static readonly List<uint> Coffers =
+        [
             2009530, // Gold
             2009531, // Silver
-            2009532  // Bronze
-        };
+            2009532
+        ];
 
         public static readonly Dictionary<uint, List<Vector3>> Positions = new()
         {
-            { 763, new List<Vector3> // Pagos Low Level
-                {
+            { 763, [
                     new(-737.83690f, -677.9246f, 143.3176f),
                     new(-651.98720f, -688.063f, 085.1839f),
                     new(-606.53420f, -700.6216f, 143.02383f),
@@ -81,11 +80,10 @@ namespace EurekaTrackerAutoPopper
                     new(671.0728000f, -629.6361f, -242.9718f),
                     new(713.2711000f, -630.6937f, -326.9075f),
                     new(734.8610000f, -630.5897f, -284.3216f),
-                    new(817.1915000f, -629.0625f, -276.2072f),  // 29
-                }
+                    new(817.1915000f, -629.0625f, -276.2072f) // 29
+                ]
             },
-            { 795, new List<Vector3> // Pyros Low Level
-                {
+            { 795, [
                     new(-469.810200f, 659.1795f, 441.7094f),
                     new(-464.448400f, 660.6446f, 419.2033f),
                     new(-438.394400f, 660.7888f, 400.7463f),
@@ -147,11 +145,10 @@ namespace EurekaTrackerAutoPopper
                     new(543.4789000f, 668.9618f, -559.8126f),
                     new(549.6398000f, 675.0362f, -671.2271f),
                     new(664.5829000f, 676.4869f, -104.6262f),
-                    new(836.0986000f, 656.5436f, -396.1939f), // 30
-                }
+                    new(836.0986000f, 656.5436f, -396.1939f) // 30
+                ]
             },
-            { 827, new List<Vector3> // Hydatos
-                {
+            { 827, [
                     new(-933.61840f, 523.23627f, -736.6334f),
                     new(-920.34970f, 505.9977f, -172.3633f),
                     new(-863.59470f, 513.31824f, -440.51706f),
@@ -181,14 +178,14 @@ namespace EurekaTrackerAutoPopper
                     new(832.605500f, 513.5617f, -520.9632f),
                     new(843.430500f, 494.44394f, -7.3525977f),
                     new(851.303200f, 517.4547f, -883.74927f),
-                    new(872.144700f, 518.4930f, -237.8645f), // 30
-                }
+                    new(872.144700f, 518.4930f, -237.8645f) // 30
+                ]
             }
         };
 
         public static Vector3 CalculateDistance(uint territoryId, Vector3 player)
         {
-            (double Dif, Vector3 Pos) bestPos = (InRange, Vector3.Zero);
+            var bestPos = (Dif: InRange, Pos: Vector3.Zero);
             if (!Positions.TryGetValue(territoryId, out var positions))
                 return bestPos.Pos;
 
