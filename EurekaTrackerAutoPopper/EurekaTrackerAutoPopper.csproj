@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Authors>Infi, electr0sheep</Authors>
-		<Version>1.5.2.0</Version>
+		<Version>1.5.2.1</Version>
 		<Description>Easy helper for Eureka</Description>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<Configurations>Debug;Release</Configurations>

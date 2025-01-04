@@ -34,7 +34,7 @@ public class BunnyWindow : Window, IDisposable
 
     public override void Draw()
     {
-        if (!Library.BunnyMaps.Contains(Plugin.ClientState.TerritoryType))
+        if (!Library.BunnyTerritories.Contains(Plugin.ClientState.TerritoryType))
             return;
 
         var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();

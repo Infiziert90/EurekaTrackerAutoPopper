@@ -8,6 +8,8 @@ using System.Numerics;
 using System.Threading.Tasks;
 using System.Timers;
 using CheapLoc;
+using Dalamud.Game.Addon.Lifecycle;
+using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -38,6 +40,7 @@ public class Plugin : IDalamudPlugin
     [PluginService] public static IDataManager Data { get; private set; } = null!;
     [PluginService] public static IPluginLog Log { get; private set; } = null!;
     [PluginService] public static IGameInteropProvider Hook { get; private set; } = null!;
+    [PluginService] public static IAddonLifecycle AddonLifecycle { get; private set; } = null!;
 
     public Configuration Configuration { get; init; }
 
@@ -65,6 +68,9 @@ public class Plugin : IDalamudPlugin
     public bool NearToCoffer;
     public Vector3 CofferPos = Vector3.Zero;
     private readonly Timer PreviewTimer = new(5 * 1000);
+
+    // Bunny Chest Markers
+    public bool ShouldPlaceMarkers;
 
     public Plugin()
     {
@@ -102,6 +108,51 @@ public class Plugin : IDalamudPlugin
             NearToCoffer = false;
             CofferPos = Vector3.Zero;
         };
+
+        AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarker);
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        Framework.Update -= PollForFateChange;
+        Framework.Update -= FairyCheck;
+        Framework.Update -= BunnyCheck;
+        ClientState.TerritoryChanged -= TerritoryChangePoll;
+
+        PluginInterface.UiBuilder.Draw -= DrawUI;
+        PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
+        PluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
+
+        AddonLifecycle.UnregisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarker);
+
+        if (EurekaWatch.IsRunning)
+        {
+            Configuration.TimeInEureka += EurekaWatch.ElapsedMilliseconds;
+            Configuration.Save();
+            EurekaWatch.Reset();
+        }
+
+        Commands.Dispose();
+        WindowSystem.RemoveWindow(QuestWindow);
+    }
+
+    private unsafe void RefreshMapMarker(AddonEvent type, AddonArgs args)
+    {
+        if (!ShouldPlaceMarkers)
+            return;
+
+        // Check the players current territory type
+        if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
+            return;
+
+        // Check the map selection, important for Hydatos as it has different map IDs with BA
+        if (Library.BunnyMapIds.Contains(AgentMap.Instance()->SelectedMapId))
+        {
+            RemoveMarkerMap();
+            AddChestsLocationsMap();
+            AddFairyLocationsMap();
+        }
     }
 
     [Command("/el")]
@@ -122,7 +173,7 @@ public class Plugin : IDalamudPlugin
     [HelpMessage("Opens the bunny window")]
     private void OnBunnyCommand(string command, string args)
     {
-        if (Library.BunnyMaps.Contains(ClientState.TerritoryType))
+        if (Library.BunnyTerritories.Contains(ClientState.TerritoryType))
             BunnyWindow.IsOpen ^= true;
         else
             Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka",
@@ -156,10 +207,10 @@ public class Plugin : IDalamudPlugin
         {
             PlayerInEureka = true;
 
-            if (Configuration.ShowBunnyWindow && Library.BunnyMaps.Contains(ClientState.TerritoryType))
+            if (Configuration.ShowBunnyWindow && Library.BunnyTerritories.Contains(ClientState.TerritoryType))
                 BunnyWindow.IsOpen = true;
 
-            if (Configuration.AddIconsOnEntry && Library.BunnyMaps.Contains(ClientState.TerritoryType))
+            if (Configuration.AddIconsOnEntry && Library.BunnyTerritories.Contains(ClientState.TerritoryType))
                 Task.Run(async () =>
                 {
                     // Delay it by 10s so that map had a chance to fully load
@@ -343,7 +394,7 @@ public class Plugin : IDalamudPlugin
 
     private void BunnyCheck(IFramework framework)
     {
-        if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
+        if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
             return;
 
         var local = ClientState.LocalPlayer;
@@ -478,29 +529,6 @@ public class Plugin : IDalamudPlugin
         LastPolledFates = FateTable.ToList();
     }
 
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        Framework.Update -= PollForFateChange;
-        Framework.Update -= FairyCheck;
-        Framework.Update -= BunnyCheck;
-        ClientState.TerritoryChanged -= TerritoryChangePoll;
-
-        PluginInterface.UiBuilder.Draw -= DrawUI;
-        PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
-        PluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
-
-        if (EurekaWatch.IsRunning)
-        {
-            Configuration.TimeInEureka += EurekaWatch.ElapsedMilliseconds;
-            Configuration.Save();
-            EurekaWatch.Reset();
-        }
-
-        Commands.Dispose();
-        WindowSystem.RemoveWindow(QuestWindow);
-    }
-
     private void DrawUI()
     {
         WindowSystem.Draw();
@@ -522,18 +550,16 @@ public class Plugin : IDalamudPlugin
         MainWindow.IsOpen = true;
     }
 
-    public static unsafe void AddChestsLocationsMap()
+    public unsafe void AddChestsLocationsMap()
     {
-        if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
+        if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
         {
             Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka",
                 "You are not in Eureka, this command is unavailable."));
             return;
         }
 
-        AgentMap.Instance()->ResetMapMarkers();
-        AgentMap.Instance()->ResetMiniMapMarkers();
-
+        ShouldPlaceMarkers = true;
         foreach (var pos in BunnyChests.Positions[ClientState.TerritoryType])
         {
             var orgPos = pos;
@@ -552,42 +578,36 @@ public class Plugin : IDalamudPlugin
     {
         if (!PlayerInEureka)
         {
-            Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka",
-                "You are not in Eureka, this command is unavailable."));
+            Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
             return;
         }
 
-        AgentMap.Instance()->ResetMapMarkers();
-        AgentMap.Instance()->ResetMiniMapMarkers();
-
+        ShouldPlaceMarkers = true;
         foreach (var (fairy, idx) in Library.ExistingFairies.Select((val, i) => (val, (uint)i)))
         {
             if (idx == 3)
-                Chat.PrintError(Loc.Localize("Chat - Error Fairy Markers",
-                    "Tracking for fairies needs to be reset, please go to all listed locations to update."));
+                Chat.PrintError(Loc.Localize("Chat - Error Fairy Markers", "Tracking for fairies needs to be reset, please go to all listed locations to update."));
 
             var orgPos = fairy.Pos;
             if (ClientState.TerritoryType == 827)
                 orgPos.Z += 475;
 
             if (!AgentMap.Instance()->AddMapMarker(orgPos, 60474 + idx))
-                Chat.PrintError(Loc.Localize("Chat - Error Fairy Map Markers",
-                    "Unable to place fairy markers on map"));
+                Chat.PrintError(Loc.Localize("Chat - Error Fairy Map Markers", "Unable to place fairy markers on map"));
             if (!AgentMap.Instance()->AddMiniMapMarker(fairy.Pos, 60474 + idx))
-                Chat.PrintError(Loc.Localize("Chat - Error Fairy Minimap Markers",
-                    "Unable to place fairy markers on minimap"));
+                Chat.PrintError(Loc.Localize("Chat - Error Fairy Minimap Markers", "Unable to place fairy markers on minimap"));
         }
     }
 
-    public static unsafe void RemoveMarkerMap()
+    public unsafe void RemoveMarkerMap()
     {
-        if (!Library.BunnyMaps.Contains(ClientState.TerritoryType))
+        if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
         {
-            Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka",
-                "You are not in Eureka, this command is unavailable."));
+            Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
             return;
         }
 
+        ShouldPlaceMarkers = false;
         AgentMap.Instance()->ResetMapMarkers();
         AgentMap.Instance()->ResetMiniMapMarkers();
     }

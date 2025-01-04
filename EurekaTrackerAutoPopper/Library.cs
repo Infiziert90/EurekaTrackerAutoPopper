@@ -96,11 +96,18 @@ public class Library
         new(1425, 827, true)
     ];
 
-    public static readonly List<uint> BunnyMaps =
+    public static readonly List<uint> BunnyTerritories =
     [
         763,
         795,
         827
+    ];
+
+    public static readonly List<uint> BunnyMapIds =
+    [
+        467,
+        484,
+        515
     ];
 
     public void ResetBunnies()
