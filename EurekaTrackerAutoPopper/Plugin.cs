@@ -617,7 +617,7 @@ public class Plugin : IDalamudPlugin
         try
         {
             // removes current flag marker from map
-            AgentMap.Instance()->IsFlagMarkerSet = 0;
+            AgentMap.Instance()->IsFlagMarkerSet = false;
 
             // divide by 1000 as raw is too long for CS SetFlagMapMarker
             var map = (MapLinkPayload)LastSeenFate.MapLink.Payloads.First();

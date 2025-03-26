@@ -145,7 +145,8 @@ public class LogWindow : Window, IDisposable
         var instance = ContentsNote.Instance();
         if (instance == null)
             return false;
-        return instance->SelectedTab == 11;
+
+        return instance->SelectedTab == 13;
     }
 
     private static unsafe List<(int Id, int Killed)> GetContentProgress()
@@ -166,9 +167,9 @@ public class LogWindow : Window, IDisposable
                 list.Add((id, progress));
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // ignored
+            Plugin.Log.Error(ex, "Unable to read ContentNote progress.");
         }
 
         return list;
