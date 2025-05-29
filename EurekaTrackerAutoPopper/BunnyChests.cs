@@ -13,7 +13,7 @@ namespace EurekaTrackerAutoPopper
         [
             2009530, // Gold
             2009531, // Silver
-            2009532
+            2009532  // Bronze
         ];
 
         public static readonly Dictionary<uint, List<Vector3>> Positions = new()

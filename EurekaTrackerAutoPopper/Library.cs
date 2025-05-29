@@ -24,7 +24,7 @@ public class Library
     }
 
     // represents a elemental/fairy seen by the user
-    public readonly List<Fairy> ExistingFairies = new();
+    public readonly List<Fairy> ExistingFairies = [];
     public record Fairy
     {
         public readonly uint ObjectId;
@@ -38,6 +38,30 @@ public class Library
 
             var map = FairyToTerritory[fairy];
             MapLink = SeString.CreateMapLink(map.TerritoryId, map.MapId, (int) pos.X * 1000, (int) pos.Z * 1000);  // directX Z = Y
+        }
+    }
+
+    // represents a random coffer the user has already spotted
+    public readonly HashSet<uint> ExistingTreasure = [];
+    public record Treasure
+    {
+        public readonly uint ObjectId;
+        public readonly Vector3 Pos;
+        public readonly SeString MapLink;
+
+        public readonly string Type;
+
+        public Treasure(uint objectId, Vector3 pos, Lumina.Excel.Sheets.Treasure treasureRow)
+        {
+            ObjectId = objectId;
+            Pos = pos;
+
+            if (treasureRow.SGB.RowId == 1597)
+                Type = "Silver";
+            else
+                Type = "Bronze";
+
+            MapLink = SeString.CreateMapLink(Plugin.ClientState.TerritoryType, Plugin.ClientState.MapId, (int) pos.X * 1000, (int) pos.Z * 1000);  // directX Z = Y
         }
     }
 

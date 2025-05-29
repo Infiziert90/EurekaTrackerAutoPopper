@@ -33,7 +33,7 @@ public class MainWindow : Window, IDisposable
         Flags = NoScrollbar | NoScrollWithMouse;
         SizeConstraints = new WindowSizeConstraints()
         {
-            MinimumSize = new Vector2(375, 400),
+            MinimumSize = new Vector2(450, 400),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
@@ -53,6 +53,8 @@ public class MainWindow : Window, IDisposable
             TabFairy();
 
             TabBunny();
+
+            TabOccult();
 
             TabStats();
 
@@ -340,6 +342,61 @@ public class MainWindow : Window, IDisposable
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
                 if (ImGui.Button(Loc.Localize("Config Button - Add Map Markers", "Add Markers")))
                     Plugin.AddChestsLocationsMap();
+                ImGui.PopStyleColor();
+
+                ImGui.SameLine();
+
+                ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
+                if (ImGui.Button(Loc.Localize("Config Button - Remove Map Markers", "Remove Markers")))
+                    Plugin.RemoveMarkerMap();
+                ImGui.PopStyleColor();
+
+                ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
+                if (ImGui.Button("Add Occult Markers"))
+                    Plugin.AddOccultTreasureLocations();
+                ImGui.PopStyleColor();
+            }
+            ImGui.EndChild();
+
+            ImGui.EndTabItem();
+        }
+    }
+
+    private void TabOccult()
+    {
+        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Occult", "Occult")}##occult-tab"))
+        {
+            if (ImGui.BeginChild("OccultContent", new Vector2(0, -50 * ImGuiHelpers.GlobalScale)))
+            {
+                ImGuiHelpers.ScaledDummy(5);
+
+                ImGui.TextUnformatted($"Options will be added later :)");
+            }
+            ImGui.EndChild();
+
+            ImGuiHelpers.ScaledDummy(5);
+            ImGui.Separator();
+            ImGuiHelpers.ScaledDummy(5);
+
+            if (ImGui.BeginChild("OccultBottomBar", new Vector2(0, 0), false, 0))
+            {
+                ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
+                if (ImGui.Button(Loc.Localize("Config Button - Add Treasure", "Add Treasure")))
+                    Plugin.AddOccultTreasureLocations();
+                ImGui.PopStyleColor();
+
+                ImGui.SameLine();
+
+                ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
+                if (ImGui.Button(Loc.Localize("Config Button - Add Pot", "Add Pot")))
+                    Plugin.AddOccultPotLocations();
+                ImGui.PopStyleColor();
+
+                ImGui.SameLine();
+
+                ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
+                if (ImGui.Button(Loc.Localize("Config Button - Add Bunny", "Add Bunny")))
+                    Plugin.AddOccultBunnyPositions();
                 ImGui.PopStyleColor();
 
                 ImGui.SameLine();

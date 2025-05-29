@@ -21,8 +21,10 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using EurekaTrackerAutoPopper.Attributes;
 using EurekaTrackerAutoPopper.Windows;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
+using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
 namespace EurekaTrackerAutoPopper;
 
@@ -110,6 +112,7 @@ public class Plugin : IDalamudPlugin
         };
 
         AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarker);
+        AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarkerOccult);
     }
 
     public void Dispose()
@@ -125,6 +128,7 @@ public class Plugin : IDalamudPlugin
         PluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
 
         AddonLifecycle.UnregisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarker);
+        AddonLifecycle.UnregisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarkerOccult);
 
         if (EurekaWatch.IsRunning)
         {
@@ -152,6 +156,22 @@ public class Plugin : IDalamudPlugin
             RemoveMarkerMap();
             AddChestsLocationsMap();
             AddFairyLocationsMap();
+        }
+    }
+
+    private unsafe void RefreshMapMarkerOccult(AddonEvent type, AddonArgs args)
+    {
+        if (!ShouldPlaceMarkers)
+            return;
+
+        // Check the players current territory type
+        if (ClientState.TerritoryType != 1252)
+            return;
+
+        if (AgentMap.Instance()->SelectedMapId == 967)
+        {
+            RemoveMarkerMap();
+            AddOccultTreasureLocations();
         }
     }
 
@@ -224,6 +244,18 @@ public class Plugin : IDalamudPlugin
             Framework.Update += FairyCheck;
             Framework.Update += BunnyCheck;
         }
+        else if (ClientState.TerritoryType == 1252)
+        {
+            if (Configuration.AddIconsOnEntry)
+                Task.Run(async () =>
+                {
+                    // Delay it by 10s so that map had a chance to fully load
+                    await Task.Delay(new TimeSpan(0, 0, 10));
+                    await Framework.RunOnFrameworkThread(AddOccultTreasureLocations);
+                });
+
+            Framework.Update += TreasureCheck;
+        }
         else
         {
             PlayerInEureka = false;
@@ -248,6 +280,7 @@ public class Plugin : IDalamudPlugin
             Framework.Update -= PollForFateChange;
             Framework.Update -= FairyCheck;
             Framework.Update -= BunnyCheck;
+            Framework.Update -= TreasureCheck;
         }
     }
 
@@ -392,6 +425,23 @@ public class Plugin : IDalamudPlugin
             Toast.ShowQuest(payload);
     }
 
+    public void EchoTreasure(Library.Treasure treasure)
+    {
+        var payload = new SeStringBuilder()
+            .AddUiForeground(570)
+            .AddText($"Treasure ({treasure.Type}): ")
+            .AddUiGlowOff()
+            .AddUiForegroundOff()
+            .BuiltString
+            .Append(treasure.MapLink);
+
+        if (Configuration.EchoFairies)
+            Chat.Print(new XivChatEntry { Message = payload });
+
+        if (Configuration.ShowFairyToast)
+            Toast.ShowQuest(payload);
+    }
+
     private void BunnyCheck(IFramework framework)
     {
         if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
@@ -520,6 +570,28 @@ public class Plugin : IDalamudPlugin
         }
     }
 
+    private unsafe void TreasureCheck(IFramework _)
+    {
+        foreach (var actor in ObjectTable.Where(gameObject => gameObject.ObjectKind == ObjectKind.Treasure))
+        {
+            if (!Library.ExistingTreasure.Add(actor.EntityId))
+                continue;
+
+            var treasureObject = ((Treasure*)actor.Address);
+
+            // This range should include all random coffer
+            var baseId = treasureObject->BaseId;
+            if (baseId is > 1856 or < 1789)
+                return;
+
+            if (!Sheets.TreasureSheet.TryGetRow(baseId, out var treasureRow))
+                return;
+
+            var treasure = new Library.Treasure(treasureObject->EntityId, treasureObject->Position, treasureRow);
+            EchoTreasure(treasure);
+        }
+    }
+
     private void PollForFateChange(IFramework framework)
     {
         if (NoFatesHaveChangedSinceLastChecked())
@@ -550,7 +622,7 @@ public class Plugin : IDalamudPlugin
         MainWindow.IsOpen = true;
     }
 
-    public unsafe void AddChestsLocationsMap()
+    public void AddChestsLocationsMap()
     {
         if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
         {
@@ -559,22 +631,20 @@ public class Plugin : IDalamudPlugin
             return;
         }
 
-        ShouldPlaceMarkers = true;
-        foreach (var pos in BunnyChests.Positions[ClientState.TerritoryType])
-        {
-            var orgPos = pos;
-            if (ClientState.TerritoryType == 827)
-                orgPos.Z += 475;
+        RemoveMarkerMap();
 
-            if (!AgentMap.Instance()->AddMapMarker(orgPos, 60354))
-                Chat.PrintError(Loc.Localize("Chat - Error Map Markers", "Unable to place all markers on map"));
-            if (!AgentMap.Instance()->AddMiniMapMarker(pos, 60354))
-                Chat.PrintError(Loc.Localize("Chat - Error Minimap Markers",
-                    "Unable to place all markers on minimap"));
+        ShouldPlaceMarkers = true;
+        foreach (var worldPos in BunnyChests.Positions[ClientState.TerritoryType])
+        {
+            var mapPos = worldPos;
+            if (ClientState.TerritoryType == 827)
+                mapPos.Z += 475;
+
+            SetMarkers(worldPos, mapPos, 60354);
         }
     }
 
-    public unsafe void AddFairyLocationsMap()
+    public void AddFairyLocationsMap()
     {
         if (!PlayerInEureka)
         {
@@ -582,31 +652,80 @@ public class Plugin : IDalamudPlugin
             return;
         }
 
+        RemoveMarkerMap();
+
         ShouldPlaceMarkers = true;
         foreach (var (fairy, idx) in Library.ExistingFairies.Select((val, i) => (val, (uint)i)))
         {
             if (idx == 3)
                 Chat.PrintError(Loc.Localize("Chat - Error Fairy Markers", "Tracking for fairies needs to be reset, please go to all listed locations to update."));
 
-            var orgPos = fairy.Pos;
+            var mapPos = fairy.Pos;
             if (ClientState.TerritoryType == 827)
-                orgPos.Z += 475;
+                mapPos.Z += 475;
 
-            if (!AgentMap.Instance()->AddMapMarker(orgPos, 60474 + idx))
-                Chat.PrintError(Loc.Localize("Chat - Error Fairy Map Markers", "Unable to place fairy markers on map"));
-            if (!AgentMap.Instance()->AddMiniMapMarker(fairy.Pos, 60474 + idx))
-                Chat.PrintError(Loc.Localize("Chat - Error Fairy Minimap Markers", "Unable to place fairy markers on minimap"));
+            SetMarkers(fairy.Pos, mapPos, 60474 + idx);
         }
+    }
+
+    public void AddOccultTreasureLocations()
+    {
+        if (ClientState.TerritoryType != 1252)
+        {
+            Chat.PrintError("You are not in South Horn.");
+            return;
+        }
+
+        RemoveMarkerMap();
+
+        ShouldPlaceMarkers = true;
+        foreach (var (worldPos, iconType) in OccultChests.TreasurePosition[ClientState.TerritoryType])
+        {
+            var mapPos = worldPos;
+
+            var icon = iconType switch
+            {
+                1596 => 60356u,
+                1597 => 60355u,
+                _ => 60354u
+            };
+
+            SetMarkers(worldPos, mapPos, icon);
+        }
+    }
+
+    public void AddOccultPotLocations()
+    {
+        if (ClientState.TerritoryType != 1252)
+        {
+            Chat.PrintError("You are not in South Horn.");
+            return;
+        }
+
+        RemoveMarkerMap();
+
+        ShouldPlaceMarkers = true;
+        foreach (var worldPos in OccultChests.PotPosition[ClientState.TerritoryType])
+            SetMarkers(worldPos, worldPos, 60354);
+    }
+
+    public void AddOccultBunnyPositions()
+    {
+        if (ClientState.TerritoryType != 1252)
+        {
+            Chat.PrintError("You are not in South Horn.");
+            return;
+        }
+
+        RemoveMarkerMap();
+
+        ShouldPlaceMarkers = true;
+        foreach (var worldPos in OccultChests.BunnyPosition[ClientState.TerritoryType])
+            SetMarkers(worldPos, worldPos, 62044);
     }
 
     public unsafe void RemoveMarkerMap()
     {
-        if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
-        {
-            Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
-            return;
-        }
-
         ShouldPlaceMarkers = false;
         AgentMap.Instance()->ResetMapMarkers();
         AgentMap.Instance()->ResetMiniMapMarkers();
@@ -644,5 +763,14 @@ public class Plugin : IDalamudPlugin
         CofferPos = ClientState.LocalPlayer.Position;
 
         PreviewTimer.Start();
+    }
+
+    private unsafe void SetMarkers(Vector3 worldPos, Vector3 mapPos, uint iconId)
+    {
+        if (!AgentMap.Instance()->AddMapMarker(mapPos, iconId))
+            Chat.PrintError(Loc.Localize("Chat - Error Map Markers", "Unable to place all markers on map"));
+
+        if (!AgentMap.Instance()->AddMiniMapMarker(worldPos, iconId))
+            Chat.PrintError(Loc.Localize("Chat - Error Minimap Markers", "Unable to place all markers on minimap"));
     }
 }
