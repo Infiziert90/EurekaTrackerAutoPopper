@@ -721,7 +721,7 @@ public class Plugin : IDalamudPlugin
 
         ShouldPlaceMarkers = true;
         foreach (var worldPos in OccultChests.BunnyPosition[ClientState.TerritoryType])
-            SetMarkers(worldPos, worldPos, 62044);
+            SetMarkers(worldPos, worldPos, 25207);
     }
 
     public unsafe void RemoveMarkerMap()
