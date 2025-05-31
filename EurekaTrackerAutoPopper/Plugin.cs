@@ -24,6 +24,7 @@ using EurekaTrackerAutoPopper.Windows;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
+
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
 namespace EurekaTrackerAutoPopper;
@@ -71,8 +72,8 @@ public class Plugin : IDalamudPlugin
     public Vector3 CofferPos = Vector3.Zero;
     private readonly Timer PreviewTimer = new(5 * 1000);
 
-    // Bunny Chest Markers
-    public bool ShouldPlaceMarkers;
+    // Selected Map Markers
+    public SelectedMarkerSet MarkerSetToPlace = SelectedMarkerSet.None;
 
     public Plugin()
     {
@@ -118,6 +119,7 @@ public class Plugin : IDalamudPlugin
     public void Dispose()
     {
         GC.SuppressFinalize(this);
+
         Framework.Update -= PollForFateChange;
         Framework.Update -= FairyCheck;
         Framework.Update -= BunnyCheck;
@@ -143,7 +145,7 @@ public class Plugin : IDalamudPlugin
 
     private unsafe void RefreshMapMarker(AddonEvent type, AddonArgs args)
     {
-        if (!ShouldPlaceMarkers)
+        if (MarkerSetToPlace != SelectedMarkerSet.Eureka)
             return;
 
         // Check the players current territory type
@@ -153,7 +155,6 @@ public class Plugin : IDalamudPlugin
         // Check the map selection, important for Hydatos as it has different map IDs with BA
         if (Library.BunnyMapIds.Contains(AgentMap.Instance()->SelectedMapId))
         {
-            RemoveMarkerMap();
             AddChestsLocationsMap();
             AddFairyLocationsMap();
         }
@@ -161,18 +162,22 @@ public class Plugin : IDalamudPlugin
 
     private unsafe void RefreshMapMarkerOccult(AddonEvent type, AddonArgs args)
     {
-        if (!ShouldPlaceMarkers)
+        if (MarkerSetToPlace is not SelectedMarkerSet.OccultTreasure and not SelectedMarkerSet.OccultPot and not SelectedMarkerSet.OccultBunny)
             return;
 
         // Check the players current territory type
         if (ClientState.TerritoryType != 1252)
             return;
 
-        if (AgentMap.Instance()->SelectedMapId == 967)
-        {
-            RemoveMarkerMap();
+        if (AgentMap.Instance()->SelectedMapId != 967)
+            return;
+
+        if (MarkerSetToPlace == SelectedMarkerSet.OccultTreasure)
             AddOccultTreasureLocations();
-        }
+        if (MarkerSetToPlace == SelectedMarkerSet.OccultPot)
+            AddOccultPotLocations();
+        if (MarkerSetToPlace == SelectedMarkerSet.OccultBunny)
+            AddOccultBunnyPositions();
     }
 
     [Command("/el")]
@@ -435,10 +440,10 @@ public class Plugin : IDalamudPlugin
             .BuiltString
             .Append(treasure.MapLink);
 
-        if (Configuration.EchoFairies)
+        if (Configuration.EchoTreasure)
             Chat.Print(new XivChatEntry { Message = payload });
 
-        if (Configuration.ShowFairyToast)
+        if (Configuration.ShowTreasureToast)
             Toast.ShowQuest(payload);
     }
 
@@ -626,14 +631,13 @@ public class Plugin : IDalamudPlugin
     {
         if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
         {
-            Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka",
-                "You are not in Eureka, this command is unavailable."));
+            Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
             return;
         }
 
         RemoveMarkerMap();
 
-        ShouldPlaceMarkers = true;
+        MarkerSetToPlace = SelectedMarkerSet.Eureka;
         foreach (var worldPos in BunnyChests.Positions[ClientState.TerritoryType])
         {
             var mapPos = worldPos;
@@ -654,7 +658,7 @@ public class Plugin : IDalamudPlugin
 
         RemoveMarkerMap();
 
-        ShouldPlaceMarkers = true;
+        MarkerSetToPlace = SelectedMarkerSet.Eureka;
         foreach (var (fairy, idx) in Library.ExistingFairies.Select((val, i) => (val, (uint)i)))
         {
             if (idx == 3)
@@ -678,11 +682,9 @@ public class Plugin : IDalamudPlugin
 
         RemoveMarkerMap();
 
-        ShouldPlaceMarkers = true;
+        MarkerSetToPlace = SelectedMarkerSet.OccultTreasure;
         foreach (var (worldPos, iconType) in OccultChests.TreasurePosition[ClientState.TerritoryType])
         {
-            var mapPos = worldPos;
-
             var icon = iconType switch
             {
                 1596 => 60356u,
@@ -690,7 +692,7 @@ public class Plugin : IDalamudPlugin
                 _ => 60354u
             };
 
-            SetMarkers(worldPos, mapPos, icon);
+            SetMarkers(worldPos, worldPos, icon);
         }
     }
 
@@ -704,7 +706,7 @@ public class Plugin : IDalamudPlugin
 
         RemoveMarkerMap();
 
-        ShouldPlaceMarkers = true;
+        MarkerSetToPlace = SelectedMarkerSet.OccultPot;
         foreach (var worldPos in OccultChests.PotPosition[ClientState.TerritoryType])
             SetMarkers(worldPos, worldPos, 60354);
     }
@@ -719,14 +721,14 @@ public class Plugin : IDalamudPlugin
 
         RemoveMarkerMap();
 
-        ShouldPlaceMarkers = true;
+        MarkerSetToPlace = SelectedMarkerSet.OccultBunny;
         foreach (var worldPos in OccultChests.BunnyPosition[ClientState.TerritoryType])
             SetMarkers(worldPos, worldPos, 25207);
     }
 
     public unsafe void RemoveMarkerMap()
     {
-        ShouldPlaceMarkers = false;
+        MarkerSetToPlace = SelectedMarkerSet.None;
         AgentMap.Instance()->ResetMapMarkers();
         AgentMap.Instance()->ResetMiniMapMarkers();
     }
@@ -765,12 +767,21 @@ public class Plugin : IDalamudPlugin
         PreviewTimer.Start();
     }
 
-    private unsafe void SetMarkers(Vector3 worldPos, Vector3 mapPos, uint iconId)
+    private unsafe void SetMarkers(Vector3 worldPos, Vector3 mapPos, uint iconId, int scale = 0)
     {
-        if (!AgentMap.Instance()->AddMapMarker(mapPos, iconId))
+        if (!AgentMap.Instance()->AddMapMarker(mapPos, iconId, scale: scale))
             Chat.PrintError(Loc.Localize("Chat - Error Map Markers", "Unable to place all markers on map"));
 
-        if (!AgentMap.Instance()->AddMiniMapMarker(worldPos, iconId))
+        if (!AgentMap.Instance()->AddMiniMapMarker(worldPos, iconId, scale: scale))
             Chat.PrintError(Loc.Localize("Chat - Error Minimap Markers", "Unable to place all markers on minimap"));
+    }
+
+    public enum SelectedMarkerSet
+    {
+        None = 0,
+        Eureka = 1,
+        OccultTreasure = 2,
+        OccultPot = 3,
+        OccultBunny = 4,
     }
 }

@@ -370,7 +370,15 @@ public class MainWindow : Window, IDisposable
             {
                 ImGuiHelpers.ScaledDummy(5);
 
-                ImGui.TextUnformatted($"Options will be added later :)");
+                var changed = false;
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Treasure Proximity", "Random Treasure Proximity"));
+                ImGuiHelpers.ScaledIndent(10.0f);
+                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Echo Treasure", "Echo"), ref Plugin.Configuration.EchoTreasure);
+                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Toast Treasure", "Show Toast"), ref Plugin.Configuration.ShowTreasureToast);
+                ImGuiHelpers.ScaledIndent(-10.0f);
+
+                if (changed)
+                    Plugin.Configuration.Save();
             }
             ImGui.EndChild();
 
