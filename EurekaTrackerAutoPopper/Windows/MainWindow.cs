@@ -9,6 +9,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
@@ -374,7 +375,62 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Treasure Proximity", "Random Treasure Proximity"));
                 ImGuiHelpers.ScaledIndent(10.0f);
                 changed |= ImGui.Checkbox(Loc.Localize("Config Option - Echo Treasure", "Echo"), ref Plugin.Configuration.EchoTreasure);
+                ImGui.SameLine();
                 changed |= ImGui.Checkbox(Loc.Localize("Config Option - Toast Treasure", "Show Toast"), ref Plugin.Configuration.ShowTreasureToast);
+                ImGuiHelpers.ScaledIndent(-10.0f);
+
+                ImGuiHelpers.ScaledDummy(5);
+
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Carrot Proximity", "Bunny Carrot Proximity"));
+                ImGuiHelpers.ScaledIndent(10.0f);
+                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Echo Bunny Carrot", "Echo")}##EchoBunnyCarrot", ref Plugin.Configuration.EchoBunnyCarrot);
+                ImGui.SameLine();
+                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Toast Treasure", "Show Toast")}##ToastBunnyCarrot", ref Plugin.Configuration.ShowBunnyCarrotToast);
+                ImGuiHelpers.ScaledIndent(-10.0f);
+
+                ImGuiHelpers.ScaledDummy(5);
+
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Marker Set Header", "Map Marker"));
+                ImGuiHelpers.ScaledIndent(10.0f);
+                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Place Default", "Place After Entering"), ref Plugin.Configuration.PlaceDefaultOccult);
+                if (Plugin.Configuration.PlaceDefaultOccult)
+                {
+                    using var combo = ImRaii.Combo("##DefaultMarkerSetCombo", Plugin.Configuration.DefaultOccultMarkerSets.ToName());
+                    if (combo.Success)
+                    {
+                        foreach (var set in EnumExtensions.OccultSetArray)
+                        {
+                            if (!ImGui.Selectable(set.ToName(), set == Plugin.Configuration.DefaultOccultMarkerSets))
+                                continue;
+
+                            changed = true;
+                            Plugin.Configuration.DefaultOccultMarkerSets = set;
+                        }
+                    }
+                }
+                ImGuiHelpers.ScaledIndent(-10.0f);
+
+                ImGuiHelpers.ScaledDummy(5);
+
+                var circleColor = Plugin.Configuration.CircleColor;
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Pot Location Helper", "Pot Location Helper"));
+                ImGuiHelpers.ScaledIndent(10.0f);
+                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Draw Circle", "Draw Nearby Coffer Circle"), ref Plugin.Configuration.BunnyCircleDraw);
+                ImGui.SameLine();
+                ImGui.ColorEdit4("##circleColorPicker", ref circleColor, ColorFlags);
+
+                if (circleColor != Plugin.Configuration.CircleColor)
+                {
+                    circleColor.W = 1; // fix alpha
+
+                    Plugin.Configuration.CircleColor = circleColor;
+                    changed = true;
+                }
+                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Draw Circle", "Draws a circle if the player is near a coffer location."));
+
+                if (ImGui.Button(Loc.Localize("Config Button - Circle Preview", "Preview")))
+                    Plugin.EnablePreview();
+
                 ImGuiHelpers.ScaledIndent(-10.0f);
 
                 if (changed)
@@ -388,24 +444,23 @@ public class MainWindow : Window, IDisposable
 
             if (ImGui.BeginChild("OccultBottomBar", new Vector2(0, 0), false, 0))
             {
-                ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
-                if (ImGui.Button(Loc.Localize("Config Button - Add Treasure", "Add Treasure")))
-                    Plugin.AddOccultTreasureLocations();
-                ImGui.PopStyleColor();
-
+                ImGui.AlignTextToFramePadding();
+                ImGui.TextUnformatted("Switch To:");
                 ImGui.SameLine();
+                ImGui.SetNextItemWidth(175.0f * ImGuiHelpers.GlobalScale);
+                using (var combo = ImRaii.Combo("##SwitchMarkersToCombo", Plugin.MarkerSetToPlace.ToOccultSet().ToName()))
+                {
+                    if (combo.Success)
+                    {
+                        foreach (var set in EnumExtensions.OccultSetArray)
+                        {
+                            if (!ImGui.Selectable(set.ToName(), set == Plugin.MarkerSetToPlace.ToOccultSet()))
+                                continue;
 
-                ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
-                if (ImGui.Button(Loc.Localize("Config Button - Add Pot", "Add Pot")))
-                    Plugin.AddOccultPotLocations();
-                ImGui.PopStyleColor();
-
-                ImGui.SameLine();
-
-                ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
-                if (ImGui.Button(Loc.Localize("Config Button - Add Bunny", "Add Bunny")))
-                    Plugin.AddOccultBunnyPositions();
-                ImGui.PopStyleColor();
+                            Plugin.PlaceOccultMarkerSet(set, true);
+                        }
+                    }
+                }
 
                 ImGui.SameLine();
 

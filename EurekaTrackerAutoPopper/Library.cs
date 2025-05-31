@@ -65,6 +65,23 @@ public class Library
         }
     }
 
+    // represents a bunny carrot on the ground which the user has already spotted
+    public HashSet<uint> ExistingBunnyCarrots = [];
+    public record BunnyCarrot
+    {
+        public readonly uint ObjectId;
+        public readonly Vector3 Pos;
+        public readonly SeString MapLink;
+
+        public BunnyCarrot(uint objectId, Vector3 pos)
+        {
+            ObjectId = objectId;
+            Pos = pos;
+
+            MapLink = SeString.CreateMapLink(Plugin.ClientState.TerritoryType, Plugin.ClientState.MapId, (int) pos.X * 1000, (int) pos.Z * 1000);  // directX Z = Y
+        }
+    }
+
     public static readonly List<uint> Fairies =
     [
         7184, // Anemos
@@ -141,6 +158,13 @@ public class Library
             bunny.Alive = false;
             bunny.LastSeenAlive = -1;
         }
+    }
+
+    public void CleanCaches()
+    {
+        ExistingFairies.Clear();
+        ExistingTreasure.Clear();
+        ExistingBunnyCarrots.Clear();
     }
 
     // randomize flag X and Y in a range of +0.5 and -0.5, fitting well into the 1 radius of the fate circle

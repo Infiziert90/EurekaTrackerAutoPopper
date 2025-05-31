@@ -73,7 +73,7 @@ public class Plugin : IDalamudPlugin
     private readonly Timer PreviewTimer = new(5 * 1000);
 
     // Selected Map Markers
-    public SelectedMarkerSet MarkerSetToPlace = SelectedMarkerSet.None;
+    public SharedMarketSet MarkerSetToPlace = SharedMarketSet.None;
 
     public Plugin()
     {
@@ -123,6 +123,9 @@ public class Plugin : IDalamudPlugin
         Framework.Update -= PollForFateChange;
         Framework.Update -= FairyCheck;
         Framework.Update -= BunnyCheck;
+        Framework.Update -= TreasureCheck;
+        Framework.Update -= OccultBunnyCarrotCheck;
+        Framework.Update -= OccultPotCheck;
         ClientState.TerritoryChanged -= TerritoryChangePoll;
 
         PluginInterface.UiBuilder.Draw -= DrawUI;
@@ -145,7 +148,7 @@ public class Plugin : IDalamudPlugin
 
     private unsafe void RefreshMapMarker(AddonEvent type, AddonArgs args)
     {
-        if (MarkerSetToPlace != SelectedMarkerSet.Eureka)
+        if (MarkerSetToPlace != SharedMarketSet.Eureka)
             return;
 
         // Check the players current territory type
@@ -160,24 +163,9 @@ public class Plugin : IDalamudPlugin
         }
     }
 
-    private unsafe void RefreshMapMarkerOccult(AddonEvent type, AddonArgs args)
+    private void RefreshMapMarkerOccult(AddonEvent type, AddonArgs args)
     {
-        if (MarkerSetToPlace is not SelectedMarkerSet.OccultTreasure and not SelectedMarkerSet.OccultPot and not SelectedMarkerSet.OccultBunny)
-            return;
-
-        // Check the players current territory type
-        if (ClientState.TerritoryType != 1252)
-            return;
-
-        if (AgentMap.Instance()->SelectedMapId != 967)
-            return;
-
-        if (MarkerSetToPlace == SelectedMarkerSet.OccultTreasure)
-            AddOccultTreasureLocations();
-        if (MarkerSetToPlace == SelectedMarkerSet.OccultPot)
-            AddOccultPotLocations();
-        if (MarkerSetToPlace == SelectedMarkerSet.OccultBunny)
-            AddOccultBunnyPositions();
+        PlaceOccultMarkerSet(MarkerSetToPlace.ToOccultSet());
     }
 
     [Command("/el")]
@@ -251,15 +239,19 @@ public class Plugin : IDalamudPlugin
         }
         else if (ClientState.TerritoryType == 1252)
         {
-            if (Configuration.AddIconsOnEntry)
+            if (Configuration.PlaceDefaultOccult)
+            {
                 Task.Run(async () =>
                 {
                     // Delay it by 10s so that map had a chance to fully load
                     await Task.Delay(new TimeSpan(0, 0, 10));
-                    await Framework.RunOnFrameworkThread(AddOccultTreasureLocations);
+                    await Framework.RunOnFrameworkThread(() => { PlaceOccultMarkerSet(Configuration.DefaultOccultMarkerSets); });
                 });
+            }
 
             Framework.Update += TreasureCheck;
+            Framework.Update += OccultBunnyCarrotCheck;
+            Framework.Update += OccultPotCheck;
         }
         else
         {
@@ -269,7 +261,7 @@ public class Plugin : IDalamudPlugin
             BunnyWindow.IsOpen = false;
             ShoutWindow.IsOpen = false;
             LastSeenFate = Library.EurekaFate.Empty;
-            Library.ExistingFairies.Clear();
+            Library.CleanCaches();
             Library.ResetBunnies();
 
             GotBunny = false;
@@ -286,6 +278,8 @@ public class Plugin : IDalamudPlugin
             Framework.Update -= FairyCheck;
             Framework.Update -= BunnyCheck;
             Framework.Update -= TreasureCheck;
+            Framework.Update -= OccultBunnyCarrotCheck;
+            Framework.Update -= OccultPotCheck;
         }
     }
 
@@ -301,9 +295,9 @@ public class Plugin : IDalamudPlugin
 
     private void CheckForRelevantFates(ushort currentTerritory)
     {
-        List<ushort> newFateIds = FateTable.Except(LastPolledFates).Select(i => i.FateId).ToList();
-        IEnumerable<Library.EurekaFate> relevantFates = Library.TerritoryToFateDictionary(currentTerritory);
-        foreach (Library.EurekaFate fate in relevantFates.Where(i => newFateIds.Contains(i.FateId)))
+        var newFateIds = FateTable.Except(LastPolledFates).Select(i => i.FateId).ToList();
+        var relevantFates = Library.TerritoryToFateDictionary(currentTerritory);
+        foreach (var fate in relevantFates.Where(i => newFateIds.Contains(i.FateId)))
         {
             LastSeenFate = fate;
 
@@ -315,8 +309,7 @@ public class Plugin : IDalamudPlugin
     {
         var currentFates = FateTable.ToList();
         var relevantFates = Library.TerritoryToFateDictionary(currentTerritory);
-        var relevantCurrentFates = relevantFates
-            .Where(fate => currentFates.Select(i => i.FateId).Contains(fate.FateId)).ToList();
+        var relevantCurrentFates = relevantFates.Where(fate => currentFates.Select(i => i.FateId).Contains(fate.FateId)).ToList();
         foreach (var fate in relevantCurrentFates)
         {
             if (fate.TrackerId != 0 && !string.IsNullOrEmpty(MainWindow.Instance) &&
@@ -439,6 +432,23 @@ public class Plugin : IDalamudPlugin
             .AddUiForegroundOff()
             .BuiltString
             .Append(treasure.MapLink);
+
+        if (Configuration.EchoTreasure)
+            Chat.Print(new XivChatEntry { Message = payload });
+
+        if (Configuration.ShowTreasureToast)
+            Toast.ShowQuest(payload);
+    }
+
+    public void EchoBunnyCarrot(Library.BunnyCarrot carrot)
+    {
+        var payload = new SeStringBuilder()
+            .AddUiForeground(570)
+            .AddText("Carrot spotted: ")
+            .AddUiGlowOff()
+            .AddUiForegroundOff()
+            .BuiltString
+            .Append(carrot.MapLink);
 
         if (Configuration.EchoTreasure)
             Chat.Print(new XivChatEntry { Message = payload });
@@ -597,6 +607,54 @@ public class Plugin : IDalamudPlugin
         }
     }
 
+    private void OccultBunnyCarrotCheck(IFramework _)
+    {
+        foreach (var actor in ObjectTable.Where(gameObject => gameObject.ObjectKind == ObjectKind.EventObj))
+        {
+            if (actor.DataId != 2010139)
+                continue;
+
+            if (Library.ExistingBunnyCarrots.Add(actor.EntityId))
+            {
+                var bunnyCarrot = new Library.BunnyCarrot(actor.EntityId, actor.Position);
+                EchoBunnyCarrot(bunnyCarrot);
+            }
+        }
+    }
+
+    private void OccultPotCheck(IFramework _)
+    {
+        if (ClientState.TerritoryType != 1252)
+            return;
+
+        var local = ClientState.LocalPlayer;
+        if (local == null)
+            return;
+
+        if (local.StatusList.Any(status => status.StatusId == 1531))
+        {
+            var pos = OccultChests.CalculateDistance(ClientState.TerritoryType, local.Position);
+            if (pos != Vector3.Zero)
+            {
+                NearToCoffer = true;
+                CofferPos = pos;
+            }
+            else
+            {
+                NearToCoffer = false;
+            }
+
+            // refresh timer until buff is gone
+            CofferTimer.Stop();
+            CofferTimer.Interval = 20 * 1000;
+            CofferTimer.Start();
+        }
+        else
+        {
+            NearToCoffer = false;
+        }
+    }
+
     private void PollForFateChange(IFramework framework)
     {
         if (NoFatesHaveChangedSinceLastChecked())
@@ -627,6 +685,42 @@ public class Plugin : IDalamudPlugin
         MainWindow.IsOpen = true;
     }
 
+    public unsafe void PlaceOccultMarkerSet(OccultMarkerSets set, bool clearForNone = false)
+    {
+        // Check the players current territory type
+        if (ClientState.TerritoryType != 1252 || AgentMap.Instance()->SelectedMapId != 967)
+            return;
+
+        if (set == OccultMarkerSets.None)
+        {
+            if (clearForNone)
+                RemoveMarkerMap();
+
+            return;
+        }
+
+        RemoveMarkerMap();
+
+        switch (set)
+        {
+            case OccultMarkerSets.OccultTreasure:
+                AddOccultTreasureLocations();
+                break;
+            case OccultMarkerSets.OccultPot:
+                AddOccultPotLocations();
+                break;
+            case OccultMarkerSets.OccultBunny:
+                AddOccultBunnyPositions();
+                break;
+            case OccultMarkerSets.OccultOnlyBronze:
+                AddOccultBronzeLocations();
+                break;
+            case OccultMarkerSets.OccultOnlySilver:
+                AddOccultSilverLocations();
+                break;
+        }
+    }
+
     public void AddChestsLocationsMap()
     {
         if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
@@ -637,7 +731,7 @@ public class Plugin : IDalamudPlugin
 
         RemoveMarkerMap();
 
-        MarkerSetToPlace = SelectedMarkerSet.Eureka;
+        MarkerSetToPlace = SharedMarketSet.Eureka;
         foreach (var worldPos in BunnyChests.Positions[ClientState.TerritoryType])
         {
             var mapPos = worldPos;
@@ -658,7 +752,7 @@ public class Plugin : IDalamudPlugin
 
         RemoveMarkerMap();
 
-        MarkerSetToPlace = SelectedMarkerSet.Eureka;
+        MarkerSetToPlace = SharedMarketSet.Eureka;
         foreach (var (fairy, idx) in Library.ExistingFairies.Select((val, i) => (val, (uint)i)))
         {
             if (idx == 3)
@@ -674,15 +768,7 @@ public class Plugin : IDalamudPlugin
 
     public void AddOccultTreasureLocations()
     {
-        if (ClientState.TerritoryType != 1252)
-        {
-            Chat.PrintError("You are not in South Horn.");
-            return;
-        }
-
-        RemoveMarkerMap();
-
-        MarkerSetToPlace = SelectedMarkerSet.OccultTreasure;
+        MarkerSetToPlace = SharedMarketSet.OccultTreasure;
         foreach (var (worldPos, iconType) in OccultChests.TreasurePosition[ClientState.TerritoryType])
         {
             var icon = iconType switch
@@ -698,37 +784,35 @@ public class Plugin : IDalamudPlugin
 
     public void AddOccultPotLocations()
     {
-        if (ClientState.TerritoryType != 1252)
-        {
-            Chat.PrintError("You are not in South Horn.");
-            return;
-        }
-
-        RemoveMarkerMap();
-
-        MarkerSetToPlace = SelectedMarkerSet.OccultPot;
+        MarkerSetToPlace = SharedMarketSet.OccultPot;
         foreach (var worldPos in OccultChests.PotPosition[ClientState.TerritoryType])
             SetMarkers(worldPos, worldPos, 60354);
     }
 
     public void AddOccultBunnyPositions()
     {
-        if (ClientState.TerritoryType != 1252)
-        {
-            Chat.PrintError("You are not in South Horn.");
-            return;
-        }
-
-        RemoveMarkerMap();
-
-        MarkerSetToPlace = SelectedMarkerSet.OccultBunny;
+        MarkerSetToPlace = SharedMarketSet.OccultBunny;
         foreach (var worldPos in OccultChests.BunnyPosition[ClientState.TerritoryType])
             SetMarkers(worldPos, worldPos, 25207);
     }
 
+    public void AddOccultBronzeLocations()
+    {
+        MarkerSetToPlace = SharedMarketSet.OccultBronze;
+        foreach (var (worldPos, _) in OccultChests.TreasurePosition[ClientState.TerritoryType].Where(pair => pair.Item2 == 1596))
+            SetMarkers(worldPos, worldPos, 60356u);
+    }
+
+    public void AddOccultSilverLocations()
+    {
+        MarkerSetToPlace = SharedMarketSet.OccultSilver;
+        foreach (var (worldPos, _) in OccultChests.TreasurePosition[ClientState.TerritoryType].Where(pair => pair.Item2 == 1597))
+            SetMarkers(worldPos, worldPos, 60355u);
+    }
+
     public unsafe void RemoveMarkerMap()
     {
-        MarkerSetToPlace = SelectedMarkerSet.None;
+        MarkerSetToPlace = SharedMarketSet.None;
         AgentMap.Instance()->ResetMapMarkers();
         AgentMap.Instance()->ResetMiniMapMarkers();
     }
@@ -774,14 +858,5 @@ public class Plugin : IDalamudPlugin
 
         if (!AgentMap.Instance()->AddMiniMapMarker(worldPos, iconId, scale: scale))
             Chat.PrintError(Loc.Localize("Chat - Error Minimap Markers", "Unable to place all markers on minimap"));
-    }
-
-    public enum SelectedMarkerSet
-    {
-        None = 0,
-        Eureka = 1,
-        OccultTreasure = 2,
-        OccultPot = 3,
-        OccultBunny = 4,
     }
 }

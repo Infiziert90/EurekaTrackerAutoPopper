@@ -39,6 +39,10 @@ public class Configuration : IPluginConfiguration
 
     public bool EchoTreasure = true;
     public bool ShowTreasureToast = true;
+    public bool EchoBunnyCarrot = true;
+    public bool ShowBunnyCarrotToast = true;
+    public bool PlaceDefaultOccult = true;
+    public OccultMarkerSets DefaultOccultMarkerSets = OccultMarkerSets.OccultTreasure;
 
     public long TimeInEureka = 0;  // in milliseconds
     public int KilledBunnies = 0;
