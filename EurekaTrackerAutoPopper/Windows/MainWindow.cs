@@ -20,6 +20,9 @@ namespace EurekaTrackerAutoPopper.Windows;
 
 public class MainWindow : Window, IDisposable
 {
+    private const float SeparatorPadding = 1.0f;
+    private static float GetSeparatorPaddingHeight => SeparatorPadding * ImGuiHelpers.GlobalScale;
+
     private const ImGuiColorEditFlags ColorFlags = ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.NoAlpha;
     private static readonly int[] SoundEffects = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52];
 
@@ -288,7 +291,8 @@ public class MainWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Bunny", "Bunny")}##bunny-tab"))
         {
-            if (ImGui.BeginChild("BunnyContent", new Vector2(0, -50 * ImGuiHelpers.GlobalScale)))
+            var buttonHeight = ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().WindowPadding.Y + GetSeparatorPaddingHeight;
+            if (ImGui.BeginChild("BunnyContent", new Vector2(0, -buttonHeight)))
             {
                 ImGuiHelpers.ScaledDummy(5);
 
@@ -329,9 +333,8 @@ public class MainWindow : Window, IDisposable
             }
             ImGui.EndChild();
 
-            ImGuiHelpers.ScaledDummy(5);
             ImGui.Separator();
-            ImGuiHelpers.ScaledDummy(5);
+            ImGuiHelpers.ScaledDummy(1.0f);
 
             if (ImGui.BeginChild("BunnyBottomBar", new Vector2(0, 0), false, 0))
             {
@@ -367,7 +370,8 @@ public class MainWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Occult", "Occult")}##occult-tab"))
         {
-            if (ImGui.BeginChild("OccultContent", new Vector2(0, -50 * ImGuiHelpers.GlobalScale)))
+            var buttonHeight = ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().WindowPadding.Y + GetSeparatorPaddingHeight;
+            if (ImGui.BeginChild("OccultContent", new Vector2(0, -buttonHeight)))
             {
                 ImGuiHelpers.ScaledDummy(5);
 
@@ -448,9 +452,8 @@ public class MainWindow : Window, IDisposable
             }
             ImGui.EndChild();
 
-            ImGuiHelpers.ScaledDummy(5);
             ImGui.Separator();
-            ImGuiHelpers.ScaledDummy(5);
+            ImGuiHelpers.ScaledDummy(1.0f);
 
             if (ImGui.BeginChild("OccultBottomBar", new Vector2(0, 0), false, 0))
             {

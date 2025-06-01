@@ -434,7 +434,7 @@ public class Plugin : IDalamudPlugin
             Toast.ShowQuest(payload);
     }
 
-    public void EchoTreasure(Library.Treasure treasure)
+    private void EchoTreasure(Library.Treasure treasure)
     {
         var payload = new SeStringBuilder()
             .AddUiForeground(570)
@@ -451,7 +451,7 @@ public class Plugin : IDalamudPlugin
             Toast.ShowQuest(payload);
     }
 
-    public void EchoBunnyCarrot(Library.BunnyCarrot carrot)
+    private void EchoBunnyCarrot(Library.BunnyCarrot carrot)
     {
         var payload = new SeStringBuilder()
             .AddUiForeground(570)
@@ -461,10 +461,10 @@ public class Plugin : IDalamudPlugin
             .BuiltString
             .Append(carrot.MapLink);
 
-        if (Configuration.EchoTreasure)
+        if (Configuration.EchoBunnyCarrot)
             Chat.Print(new XivChatEntry { Message = payload });
 
-        if (Configuration.ShowTreasureToast)
+        if (Configuration.ShowBunnyCarrotToast)
             Toast.ShowQuest(payload);
     }
 
