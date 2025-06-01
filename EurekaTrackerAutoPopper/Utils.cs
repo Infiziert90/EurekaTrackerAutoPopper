@@ -1,23 +1,11 @@
 using System;
 using System.Numerics;
-using Dalamud.Utility;
-using Lumina.Excel;
-using Lumina.Text.ReadOnly;
 using static System.Math;
 
 namespace EurekaTrackerAutoPopper;
 
 public static class Utils
 {
-    public static T GetSheet<T>(uint row) where T : struct, IExcelRow<T>
-    {
-        return Plugin.Data
-            .GetExcelSheet<T>(Localization.LangCodeToClientLanguage(Plugin.PluginInterface.UiLanguage))
-            .GetRow(row);
-    }
-
-    public static string FromSeString(ReadOnlySeString text) => text.ToDalamudString().ToString();
-
     public static double GetDistance(Vector3 player, Vector3 target)
     {
         var difV = player - target;

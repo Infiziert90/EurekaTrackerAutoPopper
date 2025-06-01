@@ -409,14 +409,7 @@ public static class QuestHelper
 
     private record Aetheryte(uint Key, uint Unlock, MapLinkPayload MapFlag)
     {
-        public string Name
-        {
-            get
-            {
-                var key = Utils.GetSheet<EurekaAethernet>(Key)!;
-                return Utils.FromSeString(Utils.GetSheet<PlaceName>(key.Location.RowId).Name);
-            }
-        }
+        public string Name => Sheets.EurekaAethernetSheet.GetRow(Key).Location.Value.Name.ExtractText();
     }
 
     #region QuestMapFlags

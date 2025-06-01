@@ -107,59 +107,6 @@ public class Library
         { 827, new Map(827, 515) }
     };
 
-    // Bunnies
-    public class Bunny
-    {
-        public readonly uint FateId;
-        public readonly uint TerritoryId;
-        public readonly bool Easy;
-
-        public bool Alive;
-        public long LastSeenAlive = -1;
-        public bool PlayedSound = false;
-
-        public Bunny(uint id, uint territoryId, bool easy)
-        {
-            FateId = id;
-            TerritoryId = territoryId;
-            Easy = easy;
-        }
-
-        public string Name => Utils.FromSeString(Utils.GetSheet<Fate>(FateId).Name);
-    }
-
-    public readonly List<Bunny> Bunnies =
-    [
-        new(1367, 763, true),
-        new(1368, 763, false),
-        new(1407, 795, true),
-        new(1408, 795, false),
-        new(1425, 827, true)
-    ];
-
-    public static readonly List<uint> BunnyTerritories =
-    [
-        763,
-        795,
-        827
-    ];
-
-    public static readonly List<uint> BunnyMapIds =
-    [
-        467,
-        484,
-        515
-    ];
-
-    public void ResetBunnies()
-    {
-        foreach (var bunny in Bunnies)
-        {
-            bunny.Alive = false;
-            bunny.LastSeenAlive = -1;
-        }
-    }
-
     public void CleanCaches()
     {
         ExistingFairies.Clear();

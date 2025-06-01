@@ -32,9 +32,9 @@ public class MainWindow : Window, IDisposable
     public MainWindow(Plugin plugin) : base("Eureka Linker##EurekaLinker")
     {
         Flags = NoScrollbar | NoScrollWithMouse;
-        SizeConstraints = new WindowSizeConstraints()
+        SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(450, 400),
+            MinimumSize = new Vector2(450, 500),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
@@ -297,7 +297,7 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Bunny", "Bunny"));
                 ImGuiHelpers.ScaledIndent(10.0f);
-                if (ImGui.Checkbox(Loc.Localize("Config Option - Bunny Window", "Show Window on Entry"), ref Plugin.Configuration.ShowBunnyWindow))
+                if (ImGui.Checkbox(Loc.Localize("Config Option - Fate Window", "Show Fate Window On Entry"), ref Plugin.Configuration.ShowBunnyWindow))
                 {
                     if (Plugin.Configuration.ShowBunnyWindow && Plugin.PlayerInRelevantTerritory())
                         Plugin.BunnyWindow.IsOpen = true;
@@ -412,9 +412,19 @@ public class MainWindow : Window, IDisposable
 
                 ImGuiHelpers.ScaledDummy(5);
 
-                var circleColor = Plugin.Configuration.CircleColor;
-                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Pot Location Helper", "Pot Location Helper"));
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Pot Helper Header", "Pot Helper Window"));
                 ImGuiHelpers.ScaledIndent(10.0f);
+                if (ImGui.Checkbox(Loc.Localize("Config Option - Fate Window", "Show Fate Window On Entry"), ref Plugin.Configuration.ShowBunnyWindow))
+                {
+                    if (Plugin.Configuration.ShowBunnyWindow && Plugin.ClientState.TerritoryType == (uint)Territory.SouthHorn)
+                        Plugin.BunnyWindow.IsOpen = true;
+
+                    changed = true;
+                }
+                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Bunny Window", "Or use the command '/elbunny'."));
+                changed |= AddSoundOption(ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
+
+                var circleColor = Plugin.Configuration.CircleColor;
                 changed |= ImGui.Checkbox(Loc.Localize("Config Option - Draw Circle", "Draw Nearby Coffer Circle"), ref Plugin.Configuration.BunnyCircleDraw);
                 ImGui.SameLine();
                 ImGui.ColorEdit4("##circleColorPicker", ref circleColor, ColorFlags);
@@ -680,7 +690,7 @@ public class MainWindow : Window, IDisposable
     private static bool AddSoundOption(ref bool playSound, ref int soundEffect)
     {
         var changed = false;
-        changed |= ImGui.Checkbox(Loc.Localize("Config Option - Sound NM", "Play Sound"), ref playSound);
+        changed |= ImGui.Checkbox(Loc.Localize("Config Option - Spawn Notification", "Play Spawn Sound"), ref playSound);
 
         if (!playSound)
             return changed;

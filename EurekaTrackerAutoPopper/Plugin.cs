@@ -55,6 +55,8 @@ public class Plugin : IDalamudPlugin
     public ShoutWindow ShoutWindow { get; init; }
 
     public readonly Library Library;
+    public readonly Fates Fates;
+
     public bool PlayerInEureka;
     public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
     private List<IFate> LastPolledFates = [];
@@ -81,6 +83,8 @@ public class Plugin : IDalamudPlugin
 
         Library = new Library(Configuration);
         Library.Initialize();
+
+        Fates = new Fates(this);
 
         MainWindow = new MainWindow(this);
         QuestWindow = new QuestWindow();
@@ -126,6 +130,7 @@ public class Plugin : IDalamudPlugin
         Framework.Update -= TreasureCheck;
         Framework.Update -= OccultBunnyCarrotCheck;
         Framework.Update -= OccultPotCheck;
+        Framework.Update -= Fates.CheckForBunnyFates;
         ClientState.TerritoryChanged -= TerritoryChangePoll;
 
         PluginInterface.UiBuilder.Draw -= DrawUI;
@@ -152,11 +157,11 @@ public class Plugin : IDalamudPlugin
             return;
 
         // Check the players current territory type
-        if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
+        if (!Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
             return;
 
         // Check the map selection, important for Hydatos as it has different map IDs with BA
-        if (Library.BunnyMapIds.Contains(AgentMap.Instance()->SelectedMapId))
+        if (Fates.BunnyMapIds.Contains(AgentMap.Instance()->SelectedMapId))
         {
             AddChestsLocationsMap();
             AddFairyLocationsMap();
@@ -186,11 +191,10 @@ public class Plugin : IDalamudPlugin
     [HelpMessage("Opens the bunny window")]
     private void OnBunnyCommand(string command, string args)
     {
-        if (Library.BunnyTerritories.Contains(ClientState.TerritoryType))
+        if (Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
             BunnyWindow.IsOpen ^= true;
         else
-            Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka",
-                "You are not in Eureka, this command is unavailable."));
+            Chat.PrintError(Loc.Localize("Chat - Error Not In Territory", "You are not in a valid bunny area, this command is unavailable."));
     }
 
     [Command("/ellog")]
@@ -220,10 +224,10 @@ public class Plugin : IDalamudPlugin
         {
             PlayerInEureka = true;
 
-            if (Configuration.ShowBunnyWindow && Library.BunnyTerritories.Contains(ClientState.TerritoryType))
+            if (Configuration.ShowBunnyWindow && Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
                 BunnyWindow.IsOpen = true;
 
-            if (Configuration.AddIconsOnEntry && Library.BunnyTerritories.Contains(ClientState.TerritoryType))
+            if (Configuration.AddIconsOnEntry && Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
                 Task.Run(async () =>
                 {
                     // Delay it by 10s so that map had a chance to fully load
@@ -236,9 +240,13 @@ public class Plugin : IDalamudPlugin
             Framework.Update += PollForFateChange;
             Framework.Update += FairyCheck;
             Framework.Update += BunnyCheck;
+            Framework.Update += Fates.CheckForBunnyFates;
         }
-        else if (ClientState.TerritoryType == 1252)
+        else if (ClientState.TerritoryType == (uint)Territory.SouthHorn)
         {
+            if (Configuration.ShowBunnyWindow)
+                BunnyWindow.IsOpen = true;
+
             if (Configuration.PlaceDefaultOccult)
             {
                 Task.Run(async () =>
@@ -252,6 +260,7 @@ public class Plugin : IDalamudPlugin
             Framework.Update += TreasureCheck;
             Framework.Update += OccultBunnyCarrotCheck;
             Framework.Update += OccultPotCheck;
+            Framework.Update += Fates.CheckForBunnyFates;
         }
         else
         {
@@ -262,7 +271,8 @@ public class Plugin : IDalamudPlugin
             ShoutWindow.IsOpen = false;
             LastSeenFate = Library.EurekaFate.Empty;
             Library.CleanCaches();
-            Library.ResetBunnies();
+
+            Fates.Reset();
 
             GotBunny = false;
             BunnyChests.ExistingCoffers.Clear();
@@ -280,6 +290,7 @@ public class Plugin : IDalamudPlugin
             Framework.Update -= TreasureCheck;
             Framework.Update -= OccultBunnyCarrotCheck;
             Framework.Update -= OccultPotCheck;
+            Framework.Update -= Fates.CheckForBunnyFates;
         }
     }
 
@@ -459,37 +470,12 @@ public class Plugin : IDalamudPlugin
 
     private void BunnyCheck(IFramework framework)
     {
-        if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
+        if (!Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
             return;
 
         var local = ClientState.LocalPlayer;
         if (local == null)
             return;
-
-        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-        foreach (var bnuuy in Library.Bunnies)
-        {
-            if (FateTable.Any(fate => fate.FateId == bnuuy.FateId))
-            {
-                bnuuy.Alive = true;
-                bnuuy.LastSeenAlive = currentTime;
-
-                if (!bnuuy.PlayedSound && Configuration.PlayBunnyEffect)
-                {
-                    if (!Configuration.OnlyEasyBunny || bnuuy.Easy)
-                    {
-                        bnuuy.PlayedSound = true;
-                        UIGlobals.PlaySoundEffect((uint)Configuration.BunnySoundEffect);
-                    }
-                }
-            }
-
-            if (bnuuy.LastSeenAlive != currentTime)
-            {
-                bnuuy.Alive = false;
-                bnuuy.PlayedSound = false;
-            }
-        }
 
         if (local.StatusList.Any(status => status.StatusId == 1531))
         {
@@ -723,7 +709,7 @@ public class Plugin : IDalamudPlugin
 
     public void AddChestsLocationsMap()
     {
-        if (!Library.BunnyTerritories.Contains(ClientState.TerritoryType))
+        if (!Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
         {
             Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
             return;

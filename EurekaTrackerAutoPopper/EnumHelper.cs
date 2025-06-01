@@ -23,6 +23,15 @@ public enum OccultMarkerSets
     OccultOnlySilver = 5,
 }
 
+public enum Territory : uint
+{
+    Anemos = 732,
+    Pagos = 763,
+    Pyros = 795,
+    Hydatos = 827,
+    SouthHorn = 1252,
+}
+
 public static class EnumExtensions
 {
     public static readonly OccultMarkerSets[] OccultSetArray = Enum.GetValues<OccultMarkerSets>();
