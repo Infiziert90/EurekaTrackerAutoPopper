@@ -21,7 +21,6 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using EurekaTrackerAutoPopper.Attributes;
 using EurekaTrackerAutoPopper.Windows;
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
 
@@ -53,6 +52,7 @@ public class Plugin : IDalamudPlugin
     private LogWindow LogWindow { get; init; }
     public BunnyWindow BunnyWindow { get; init; }
     public ShoutWindow ShoutWindow { get; init; }
+    public FastSwitchOverlay FastSwitchOverlay { get; init; }
 
     public readonly Library Library;
     public readonly Fates Fates;
@@ -91,11 +91,13 @@ public class Plugin : IDalamudPlugin
         LogWindow = new LogWindow();
         BunnyWindow = new BunnyWindow(this);
         ShoutWindow = new ShoutWindow(this);
+        FastSwitchOverlay = new FastSwitchOverlay(this);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(QuestWindow);
         WindowSystem.AddWindow(LogWindow);
         WindowSystem.AddWindow(BunnyWindow);
         WindowSystem.AddWindow(ShoutWindow);
+        WindowSystem.AddWindow(FastSwitchOverlay);
 
         Commands = new PluginCommandManager<Plugin>(this, CommandManager);
         Localization.SetupWithLangCode(PluginInterface.UiLanguage);
@@ -127,8 +129,7 @@ public class Plugin : IDalamudPlugin
         Framework.Update -= PollForFateChange;
         Framework.Update -= FairyCheck;
         Framework.Update -= BunnyCheck;
-        Framework.Update -= TreasureCheck;
-        Framework.Update -= OccultBunnyCarrotCheck;
+        Framework.Update -= OccultCheck;
         Framework.Update -= OccultPotCheck;
         Framework.Update -= Fates.CheckForBunnyFates;
         ClientState.TerritoryChanged -= TerritoryChangePoll;
@@ -148,7 +149,7 @@ public class Plugin : IDalamudPlugin
         }
 
         Commands.Dispose();
-        WindowSystem.RemoveWindow(QuestWindow);
+        WindowSystem.RemoveAllWindows();
     }
 
     private unsafe void RefreshMapMarker(AddonEvent type, AddonArgs args)
@@ -257,8 +258,7 @@ public class Plugin : IDalamudPlugin
                 });
             }
 
-            Framework.Update += TreasureCheck;
-            Framework.Update += OccultBunnyCarrotCheck;
+            Framework.Update += OccultCheck;
             Framework.Update += OccultPotCheck;
             Framework.Update += Fates.CheckForBunnyFates;
         }
@@ -287,8 +287,7 @@ public class Plugin : IDalamudPlugin
             Framework.Update -= PollForFateChange;
             Framework.Update -= FairyCheck;
             Framework.Update -= BunnyCheck;
-            Framework.Update -= TreasureCheck;
-            Framework.Update -= OccultBunnyCarrotCheck;
+            Framework.Update -= OccultCheck;
             Framework.Update -= OccultPotCheck;
             Framework.Update -= Fates.CheckForBunnyFates;
         }
@@ -417,7 +416,7 @@ public class Plugin : IDalamudPlugin
         ChatBox.SendMessage(BuildChatString());
     }
 
-    public void EchoFairy(Library.Fairy fairy)
+    public void EchoFairy(Library.LocationMemory fairy)
     {
         var payload = new SeStringBuilder()
             .AddUiForeground(570)
@@ -434,7 +433,7 @@ public class Plugin : IDalamudPlugin
             Toast.ShowQuest(payload);
     }
 
-    private void EchoTreasure(Library.Treasure treasure)
+    private void EchoTreasure(Library.LocationMemory treasure)
     {
         var payload = new SeStringBuilder()
             .AddUiForeground(570)
@@ -451,7 +450,7 @@ public class Plugin : IDalamudPlugin
             Toast.ShowQuest(payload);
     }
 
-    private void EchoBunnyCarrot(Library.BunnyCarrot carrot)
+    private void EchoBunnyCarrot(Library.LocationMemory carrot)
     {
         var payload = new SeStringBuilder()
             .AddUiForeground(570)
@@ -547,18 +546,19 @@ public class Plugin : IDalamudPlugin
 
     private void FairyCheck(IFramework framework)
     {
-        foreach (var actor in ObjectTable.OfType<IBattleNpc>()
-                     .Where(battleNpc => Library.Fairies.Contains(battleNpc.NameId))
-                     .Where(battleNpc => Library.ExistingFairies.All(f => f.ObjectId != battleNpc.EntityId)))
-        {
-            var fairy = new Library.Fairy(actor.EntityId, actor.NameId, actor.Position);
-            Library.ExistingFairies.Add(fairy);
-            EchoFairy(fairy);
-        }
-
         var local = ClientState.LocalPlayer;
         if (local == null)
             return;
+
+        foreach (var actor in ObjectTable.OfType<IBattleNpc>().Where(npc => Library.Fairies.Contains(npc.NameId)))
+        {
+            if (Library.ExistingFairies.Any(f => f.ObjectId == actor.EntityId))
+                continue;
+
+            var fairy = new Library.LocationMemory(actor.EntityId, actor.Position);
+            Library.ExistingFairies.Add(fairy);
+            EchoFairy(fairy);
+        }
 
         foreach (var fairy in Library.ExistingFairies.ToArray())
         {
@@ -571,41 +571,79 @@ public class Plugin : IDalamudPlugin
         }
     }
 
-    private unsafe void TreasureCheck(IFramework _)
+    private void OccultCheck(IFramework _)
     {
+        var local = ClientState.LocalPlayer;
+        if (local == null)
+            return;
+
         foreach (var actor in ObjectTable.Where(gameObject => gameObject.ObjectKind == ObjectKind.Treasure))
         {
-            if (!Library.ExistingTreasure.Add(actor.EntityId))
+            // This range should include all random coffer
+            if (actor.DataId is > 1856 or < 1789)
+                return;
+
+            if (!Sheets.TreasureSheet.TryGetRow(actor.DataId, out var treasureRow))
+                return;
+
+            if (Library.ExistingTreasure.Any(f => f.ObjectId == actor.EntityId))
                 continue;
 
-            var treasureObject = ((Treasure*)actor.Address);
-
-            // This range should include all random coffer
-            var baseId = treasureObject->BaseId;
-            if (baseId is > 1856 or < 1789)
-                return;
-
-            if (!Sheets.TreasureSheet.TryGetRow(baseId, out var treasureRow))
-                return;
-
-            var treasure = new Library.Treasure(treasureObject->EntityId, treasureObject->Position, treasureRow);
+            var treasure = new Library.LocationMemory(actor.EntityId, actor.Position, treasureRow.SGB.RowId);
+            Library.ExistingTreasure.Add(treasure);
             EchoTreasure(treasure);
         }
-    }
 
-    private void OccultBunnyCarrotCheck(IFramework _)
-    {
         foreach (var actor in ObjectTable.Where(gameObject => gameObject.ObjectKind == ObjectKind.EventObj))
         {
             if (actor.DataId != 2010139)
                 continue;
 
-            if (Library.ExistingBunnyCarrots.Add(actor.EntityId))
-            {
-                var bunnyCarrot = new Library.BunnyCarrot(actor.EntityId, actor.Position);
-                EchoBunnyCarrot(bunnyCarrot);
-            }
+            if (Library.ExistingBunnyCarrots.Any(f => f.ObjectId == actor.EntityId))
+                continue;
+
+            var bunnyCarrot = new Library.LocationMemory(actor.EntityId, actor.Position);
+            Library.ExistingBunnyCarrots.Add(bunnyCarrot);
+            EchoBunnyCarrot(bunnyCarrot);
         }
+
+        if (!Configuration.ClearMemory)
+            return;
+
+        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        foreach (var treasure in Library.ExistingTreasure.ToArray())
+        {
+            var r = CheckForObjectRemoval(treasure, local, currentTime);
+            if (r.Item1)
+                Library.ExistingTreasure.Remove(treasure);
+
+            if (r.Item2 != 0)
+                Library.ExistingTreasure.First(f => f.ObjectId == treasure.ObjectId).LastSeen = r.Item2;
+        }
+
+        foreach (var bunnyCarrot in Library.ExistingBunnyCarrots.ToArray())
+        {
+            var r = CheckForObjectRemoval(bunnyCarrot, local, currentTime);
+            if (r.Item1)
+                Library.ExistingBunnyCarrots.Remove(bunnyCarrot);
+
+            if (r.Item2 != 0)
+                Library.ExistingBunnyCarrots.First(f => f.ObjectId == bunnyCarrot.ObjectId).LastSeen = r.Item2;
+        }
+    }
+
+    private (bool, long) CheckForObjectRemoval(Library.LocationMemory locationObject, IPlayerCharacter local, long currentTime)
+    {
+        // Treasure still in reach of the object table?
+        if (Utils.GetDistance(local.Position, locationObject.Pos) > 108.0)
+            return (locationObject.LastSeen + 60 < currentTime, 0);
+
+        // Treasure is still around the player
+        if (ObjectTable.Any(obj => locationObject.ObjectId == obj.EntityId))
+            return (false, currentTime);
+
+        // Treasure may be in reach but isn't in the object table anymore, so we check timer for removal
+        return (locationObject.LastSeen + 60 < currentTime, 0);
     }
 
     private void OccultPotCheck(IFramework _)

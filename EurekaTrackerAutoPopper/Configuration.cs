@@ -37,11 +37,13 @@ public class Configuration : IPluginConfiguration
     public bool BunnyCircleDraw = true;
     public Vector4 CircleColor = ImGuiColors.HealerGreen;
 
+    public bool ClearMemory = true;
     public bool EchoTreasure = true;
     public bool ShowTreasureToast = true;
     public bool EchoBunnyCarrot = true;
     public bool ShowBunnyCarrotToast = true;
     public bool PlaceDefaultOccult = true;
+    public bool ShowFastSwitcher = true;
     public OccultMarkerSets DefaultOccultMarkerSets = OccultMarkerSets.OccultTreasure;
 
     public long TimeInEureka = 0;  // in milliseconds

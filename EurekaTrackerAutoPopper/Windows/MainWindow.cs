@@ -376,20 +376,24 @@ public class MainWindow : Window, IDisposable
                 ImGuiHelpers.ScaledDummy(5);
 
                 var changed = false;
-                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Treasure Proximity", "Random Treasure Proximity"));
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Proximity Notification", "Proximity Notification"));
                 ImGuiHelpers.ScaledIndent(10.0f);
+                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Clear Memory", "Clear Memory"), ref Plugin.Configuration.ClearMemory);
+                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Clear Memory", "Remove spotted treasure and carrots, after 1 Minute of being unseen, so that notifications can reappear."));
+
+                ImGui.Columns(2, "ProximityColumns", false);
+
+                ImGui.TextColored(ImGuiColors.DalamudOrange, Loc.Localize("Config Header - Treasure", "Treasure"));
                 changed |= ImGui.Checkbox(Loc.Localize("Config Option - Echo Treasure", "Echo"), ref Plugin.Configuration.EchoTreasure);
-                ImGui.SameLine();
                 changed |= ImGui.Checkbox(Loc.Localize("Config Option - Toast Treasure", "Show Toast"), ref Plugin.Configuration.ShowTreasureToast);
-                ImGuiHelpers.ScaledIndent(-10.0f);
 
-                ImGuiHelpers.ScaledDummy(5);
+                ImGui.NextColumn();
 
-                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Carrot Proximity", "Bunny Carrot Proximity"));
-                ImGuiHelpers.ScaledIndent(10.0f);
+                ImGui.TextColored(ImGuiColors.DalamudOrange, Loc.Localize("Config Header - Bunny Carrot", "Bunny Carrot"));
                 changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Echo Bunny Carrot", "Echo")}##EchoBunnyCarrot", ref Plugin.Configuration.EchoBunnyCarrot);
-                ImGui.SameLine();
-                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Toast Treasure", "Show Toast")}##ToastBunnyCarrot", ref Plugin.Configuration.ShowBunnyCarrotToast);
+                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Toast Bunny Carrot", "Show Toast")}##ToastBunnyCarrot", ref Plugin.Configuration.ShowBunnyCarrotToast);
+
+                ImGui.Columns(1);
                 ImGuiHelpers.ScaledIndent(-10.0f);
 
                 ImGuiHelpers.ScaledDummy(5);
@@ -412,6 +416,7 @@ public class MainWindow : Window, IDisposable
                         }
                     }
                 }
+                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Fast Switcher", "Show Fast Switch Overlay"), ref Plugin.Configuration.ShowFastSwitcher);
                 ImGuiHelpers.ScaledIndent(-10.0f);
 
                 ImGuiHelpers.ScaledDummy(5);

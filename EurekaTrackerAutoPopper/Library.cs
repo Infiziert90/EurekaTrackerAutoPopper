@@ -23,64 +23,49 @@ public class Library
         public override int GetHashCode() => HashCode.Combine(FateId, TrackerId, MapLink, Name, ShortName);
     }
 
-    // represents a elemental/fairy seen by the user
-    public readonly List<Fairy> ExistingFairies = [];
-    public record Fairy
+    public record LocationMemory
     {
         public readonly uint ObjectId;
         public readonly Vector3 Pos;
         public readonly SeString MapLink;
 
-        public Fairy(uint objectId, uint fairy, Vector3 pos)
+        public readonly string Type = string.Empty;
+
+        public long LastSeen;
+
+        public LocationMemory(uint objectId, Vector3 pos, uint? extraInfo = null)
         {
             ObjectId = objectId;
             Pos = pos;
 
-            var map = FairyToTerritory[fairy];
-            MapLink = SeString.CreateMapLink(map.TerritoryId, map.MapId, (int) pos.X * 1000, (int) pos.Z * 1000);  // directX Z = Y
+            MapLink = SeString.CreateMapLink(Plugin.ClientState.TerritoryType, Plugin.ClientState.MapId, (int) pos.X * 1000, (int) pos.Z * 1000);  // directX Z = Y
+
+            if (extraInfo != null)
+                Type = extraInfo == 1597 ? "Silver" : "Bronze";
+        }
+
+        public override int GetHashCode()
+        {
+            return ObjectId.GetHashCode() + Pos.GetHashCode();
+        }
+
+        public virtual bool Equals(LocationMemory? other)
+        {
+            if (other == null)
+                return false;
+
+            return ObjectId == other.ObjectId && Pos.Equals(other.Pos);
         }
     }
+
+    // represents a elemental/fairy seen by the user
+    public readonly List<LocationMemory> ExistingFairies = [];
 
     // represents a random coffer the user has already spotted
-    public readonly HashSet<uint> ExistingTreasure = [];
-    public record Treasure
-    {
-        public readonly uint ObjectId;
-        public readonly Vector3 Pos;
-        public readonly SeString MapLink;
-
-        public readonly string Type;
-
-        public Treasure(uint objectId, Vector3 pos, Lumina.Excel.Sheets.Treasure treasureRow)
-        {
-            ObjectId = objectId;
-            Pos = pos;
-
-            if (treasureRow.SGB.RowId == 1597)
-                Type = "Silver";
-            else
-                Type = "Bronze";
-
-            MapLink = SeString.CreateMapLink(Plugin.ClientState.TerritoryType, Plugin.ClientState.MapId, (int) pos.X * 1000, (int) pos.Z * 1000);  // directX Z = Y
-        }
-    }
+    public readonly HashSet<LocationMemory> ExistingTreasure = [];
 
     // represents a bunny carrot on the ground which the user has already spotted
-    public HashSet<uint> ExistingBunnyCarrots = [];
-    public record BunnyCarrot
-    {
-        public readonly uint ObjectId;
-        public readonly Vector3 Pos;
-        public readonly SeString MapLink;
-
-        public BunnyCarrot(uint objectId, Vector3 pos)
-        {
-            ObjectId = objectId;
-            Pos = pos;
-
-            MapLink = SeString.CreateMapLink(Plugin.ClientState.TerritoryType, Plugin.ClientState.MapId, (int) pos.X * 1000, (int) pos.Z * 1000);  // directX Z = Y
-        }
-    }
+    public readonly HashSet<LocationMemory> ExistingBunnyCarrots = [];
 
     public static readonly List<uint> Fairies =
     [
