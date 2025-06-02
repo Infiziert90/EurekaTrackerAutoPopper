@@ -586,11 +586,11 @@ public class Plugin : IDalamudPlugin
             if (!Sheets.TreasureSheet.TryGetRow(actor.DataId, out var treasureRow))
                 return;
 
-            if (Library.ExistingTreasure.Any(f => f.ObjectId == actor.EntityId))
+            if (Library.ExistingOccultLocations.Any(f => f.ObjectId == actor.EntityId))
                 continue;
 
             var treasure = new Library.LocationMemory(actor.EntityId, actor.Position, treasureRow.SGB.RowId);
-            Library.ExistingTreasure.Add(treasure);
+            Library.ExistingOccultLocations.Add(treasure);
             EchoTreasure(treasure);
         }
 
@@ -599,51 +599,47 @@ public class Plugin : IDalamudPlugin
             if (actor.DataId != 2010139)
                 continue;
 
-            if (Library.ExistingBunnyCarrots.Any(f => f.ObjectId == actor.EntityId))
+            if (Library.ExistingOccultLocations.Any(f => f.ObjectId == actor.EntityId))
                 continue;
 
             var bunnyCarrot = new Library.LocationMemory(actor.EntityId, actor.Position);
-            Library.ExistingBunnyCarrots.Add(bunnyCarrot);
+            Library.ExistingOccultLocations.Add(bunnyCarrot);
             EchoBunnyCarrot(bunnyCarrot);
         }
 
         if (!Configuration.ClearMemory)
             return;
 
+        var deleteIndex = -1;
         var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-        foreach (var treasure in Library.ExistingTreasure.ToArray())
+        foreach (var (locationObject, idx) in Library.ExistingOccultLocations.Select((val, idx) => (val, idx)))
         {
-            var r = CheckForObjectRemoval(treasure, local, currentTime);
-            if (r.Item1)
-                Library.ExistingTreasure.Remove(treasure);
+            if (!CheckForObjectRemoval(locationObject, local, currentTime))
+                continue;
 
-            if (r.Item2 != 0)
-                Library.ExistingTreasure.First(f => f.ObjectId == treasure.ObjectId).LastSeen = r.Item2;
+            deleteIndex = idx;
+            break;
         }
 
-        foreach (var bunnyCarrot in Library.ExistingBunnyCarrots.ToArray())
-        {
-            var r = CheckForObjectRemoval(bunnyCarrot, local, currentTime);
-            if (r.Item1)
-                Library.ExistingBunnyCarrots.Remove(bunnyCarrot);
-
-            if (r.Item2 != 0)
-                Library.ExistingBunnyCarrots.First(f => f.ObjectId == bunnyCarrot.ObjectId).LastSeen = r.Item2;
-        }
+        if (deleteIndex != -1)
+            Library.ExistingOccultLocations.RemoveAt(deleteIndex);
     }
 
-    private (bool, long) CheckForObjectRemoval(Library.LocationMemory locationObject, IPlayerCharacter local, long currentTime)
+    private bool CheckForObjectRemoval(Library.LocationMemory locationObject, IPlayerCharacter local, long currentTime)
     {
         // Treasure still in reach of the object table?
         if (Utils.GetDistance(local.Position, locationObject.Pos) > 108.0)
-            return (locationObject.LastSeen + 60 < currentTime, 0);
+            return locationObject.LastSeen + 60 < currentTime;
 
         // Treasure is still around the player
         if (ObjectTable.Any(obj => locationObject.ObjectId == obj.EntityId))
-            return (false, currentTime);
+        {
+            locationObject.LastSeen = currentTime;
+            return false;
+        }
 
         // Treasure may be in reach but isn't in the object table anymore, so we check timer for removal
-        return (locationObject.LastSeen + 60 < currentTime, 0);
+        return locationObject.LastSeen + 60 < currentTime;
     }
 
     private void OccultPotCheck(IFramework _)

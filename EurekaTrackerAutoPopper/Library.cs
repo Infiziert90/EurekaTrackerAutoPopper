@@ -31,7 +31,7 @@ public class Library
 
         public readonly string Type = string.Empty;
 
-        public long LastSeen;
+        public long LastSeen = DateTimeOffset.Now.ToUnixTimeSeconds();
 
         public LocationMemory(uint objectId, Vector3 pos, uint? extraInfo = null)
         {
@@ -61,11 +61,8 @@ public class Library
     // represents a elemental/fairy seen by the user
     public readonly List<LocationMemory> ExistingFairies = [];
 
-    // represents a random coffer the user has already spotted
-    public readonly HashSet<LocationMemory> ExistingTreasure = [];
-
-    // represents a bunny carrot on the ground which the user has already spotted
-    public readonly HashSet<LocationMemory> ExistingBunnyCarrots = [];
+    // represents a treasure or bunny carrot that the user has already spotted
+    public readonly List<LocationMemory> ExistingOccultLocations = [];
 
     public static readonly List<uint> Fairies =
     [
@@ -95,8 +92,7 @@ public class Library
     public void CleanCaches()
     {
         ExistingFairies.Clear();
-        ExistingTreasure.Clear();
-        ExistingBunnyCarrots.Clear();
+        ExistingOccultLocations.Clear();
     }
 
     // randomize flag X and Y in a range of +0.5 and -0.5, fitting well into the 1 radius of the fate circle
