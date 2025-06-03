@@ -1,9 +1,7 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using CheapLoc;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
@@ -11,6 +9,7 @@ using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
+using EurekaTrackerAutoPopper.Resources;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
 
@@ -74,20 +73,20 @@ public class MainWindow : Window, IDisposable
 
     private void TabGeneral()
     {
-        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - General", "General")}##general-tab"))
+        if (ImGui.BeginTabItem($"{Language.TabHeaderGeneral}##general-tab"))
         {
             ImGuiHelpers.ScaledDummy(5);
 
-            ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Pop", "Pop"));
+            ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderPop);
             ImGuiHelpers.ScaledIndent(10.0f);
             var changed = false;
-            changed |= ImGui.Checkbox(Loc.Localize("Config Option - Echo NM", "Echo"), ref Plugin.Configuration.EchoNMPop);
+            changed |= ImGui.Checkbox(Language.ConfigOptionEchoNM, ref Plugin.Configuration.EchoNMPop);
             changed |= AddSoundOption(ref Plugin.Configuration.PlaySoundEffect, ref Plugin.Configuration.PopSoundEffect);
-            changed |= ImGui.Checkbox(Loc.Localize("Config Option - Toast NM", "Show Toast"), ref Plugin.Configuration.ShowPopToast);
+            changed |= ImGui.Checkbox(Language.ConfigOptionToastNM, ref Plugin.Configuration.ShowPopToast);
             if (Plugin.Configuration.EchoNMPop || Plugin.Configuration.ShowPopToast)
             {
                 ImGuiHelpers.ScaledIndent(10.0f);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Short Names", "Use Short Names"), ref Plugin.Configuration.UseShortNames);
+                changed |= ImGui.Checkbox(Language.ConfigOptionShortNames, ref Plugin.Configuration.UseShortNames);
                 ImGuiHelpers.ScaledIndent(-10.0f);
             }
             ImGuiHelpers.ScaledIndent(-10.0f);
@@ -98,10 +97,10 @@ public class MainWindow : Window, IDisposable
             ImGuiHelpers.ScaledDummy(10);
             ImGui.Separator();
             ImGuiHelpers.ScaledDummy(5);
-            ImGui.TextUnformatted(Loc.Localize("Config Header - Tracker", "Tracker:"));
+            ImGui.TextUnformatted(Language.ConfigHeaderTracker);
             ImGuiHelpers.ScaledDummy(10);
 
-            if (ImGui.InputText(Loc.Localize("Config Input - URL", "Instance URL"), ref Instance, 31))
+            if (ImGui.InputText(Language.ConfigInputURL, ref Instance, 31))
                 Instance = Instance.Length == 6 ? $"https://ffxiv-eureka.com/{Instance}" : Instance;
 
 
@@ -112,7 +111,7 @@ public class MainWindow : Window, IDisposable
                     ImGui.SetClipboardText(Instance);
             }
 
-            ImGui.InputText(Loc.Localize("Config Input - PW", "Password"), ref Password, 50);
+            ImGui.InputText(Language.ConfigInputPW, ref Password, 50);
             if (!string.IsNullOrEmpty(Password))
             {
                 ImGui.SameLine();
@@ -122,7 +121,7 @@ public class MainWindow : Window, IDisposable
 
             if (Plugin.PlayerInEureka && string.IsNullOrEmpty(Instance))
             {
-                if (ImGui.Button(Loc.Localize("Config Button - Start New", "Start New Tracker")))
+                if (ImGui.Button(Language.ConfigButtonStartNew))
                 {
                     Task.Run(() =>
                     {
@@ -134,11 +133,11 @@ public class MainWindow : Window, IDisposable
             else
             {
                 ImGui.BeginDisabled();
-                ImGui.Button(Loc.Localize("Config Button - Start New", "Start New Tracker"));
+                ImGui.Button(Language.ConfigButtonStartNew);
                 ImGui.EndDisabled();
 
                 if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-                    ImGui.SetTooltip(Loc.Localize("Config Tooltip - Start New", "Only available while in eureka"));
+                    ImGui.SetTooltip(Language.ConfigTooltipStartNew);
             }
 
             if (Instance.Length > 0)
@@ -147,7 +146,7 @@ public class MainWindow : Window, IDisposable
                     Dalamud.Utility.Util.OpenLink(Instance);
 
                 if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip(Loc.Localize("Config Tooltip - Open Tracker", "Open Tracker in Browser"));
+                    ImGui.SetTooltip(Language.ConfigTooltipOpenTracker);
             }
 
             ImGui.EndTabItem();
@@ -156,23 +155,23 @@ public class MainWindow : Window, IDisposable
 
     private void TabChat()
     {
-        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Chat", "Chat")}##chat-tab"))
+        if (ImGui.BeginTabItem($"{Language.TabHeaderChat}##chat-tab"))
         {
             ImGuiHelpers.ScaledDummy(5);
 
             var changed = false;
-            changed |= ImGui.Checkbox(Loc.Localize("Config Option - Open Shout Window", "Show Shout Window"), ref Plugin.Configuration.ShowPopWindow);
-            changed |= ImGui.Checkbox(Loc.Localize("Config Option - Copy Shout Message", "Copy Shout Message"), ref Plugin.Configuration.CopyShoutMessage);
-            changed |= ImGui.Checkbox(Loc.Localize("Config Option - Randomize Coords", "Randomize Map Coords"), ref Plugin.Configuration.RandomizeMapCoords);
-            changed |= ImGui.Checkbox(Loc.Localize("Config Option - Show PT", "Show PT in Shout Window"), ref Plugin.Configuration.ShowPullTimer);
-            ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Show PT", "Disabling this option will remove time element from the shout message."));
+            changed |= ImGui.Checkbox(Language.ConfigOptionOpenShoutWindow, ref Plugin.Configuration.ShowPopWindow);
+            changed |= ImGui.Checkbox(Language.ConfigOptionCopyShoutMessage, ref Plugin.Configuration.CopyShoutMessage);
+            changed |= ImGui.Checkbox(Language.ConfigOptionRandomizeCoords, ref Plugin.Configuration.RandomizeMapCoords);
+            changed |= ImGui.Checkbox(Language.ConfigOptionShowPT, ref Plugin.Configuration.ShowPullTimer);
+            ImGuiComponents.HelpMarker(Language.ConfigTooltipShowPT);
 
             if (Plugin.Configuration.ShowPullTimer)
             {
                 ImGuiHelpers.ScaledIndent(10.0f);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Use ET", "Use Eorzea Time instead"), ref Plugin.Configuration.UseEorzeaTimer);
+                changed |= ImGui.Checkbox(Language.ConfigOptionUseET, ref Plugin.Configuration.UseEorzeaTimer);
                 if (Plugin.Configuration.UseEorzeaTimer)
-                    changed |= ImGui.Checkbox(Loc.Localize("Config Option - Use 12h", "Use 12-hour Format"), ref Plugin.Configuration.UseTwelveHourFormat);
+                    changed |= ImGui.Checkbox(Language.ConfigOptionUse12h, ref Plugin.Configuration.UseTwelveHourFormat);
                 ImGuiHelpers.ScaledIndent(-10.0f);
             }
 
@@ -185,7 +184,7 @@ public class MainWindow : Window, IDisposable
             ImGuiHelpers.ScaledDummy(5);
             ImGui.Separator();
             ImGuiHelpers.ScaledDummy(5);
-            ImGui.TextUnformatted(Loc.Localize("Config Header - Format", "Format:"));
+            ImGui.TextUnformatted(Language.ConfigHeaderFormat);
             ImGuiHelpers.ScaledDummy(10);
 
             string chatFormat = Plugin.Configuration.ChatFormat;
@@ -209,25 +208,25 @@ public class MainWindow : Window, IDisposable
 
     private void TabFairy()
     {
-        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Fairy", "Fairy")}##fairy-tab"))
+        if (ImGui.BeginTabItem($"{Language.TabHeaderFairy}##fairy-tab"))
         {
             if (ImGui.BeginChild("FairyContent", new Vector2(0, -50 * ImGuiHelpers.GlobalScale)))
             {
                 ImGuiHelpers.ScaledDummy(5);
 
                 var changed = false;
-                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Fairy", "Fairy / Elemental"));
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderFairy);
                 ImGuiHelpers.ScaledIndent(10.0f);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Echo", "Echo In Chat"), ref Plugin.Configuration.EchoFairies);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Toast", "Show Toast"), ref Plugin.Configuration.ShowFairyToast);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Flag", "Place Map Flag"), ref Plugin.Configuration.PlaceFairyFlag);
+                changed |= ImGui.Checkbox(Language.ConfigOptionEcho, ref Plugin.Configuration.EchoFairies);
+                changed |= ImGui.Checkbox(Language.ConfigOptionToast, ref Plugin.Configuration.ShowFairyToast);
+                changed |= ImGui.Checkbox(Language.ConfigOptionFlag, ref Plugin.Configuration.PlaceFairyFlag);
                 ImGuiHelpers.ScaledIndent(-10.0f);
 
                 if (changed)
                     Plugin.Configuration.Save();
 
                 ImGuiHelpers.ScaledDummy(5);
-                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Known Locations", "Known Locations"));
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderKnownLocations);
                 ImGui.Separator();
                 ImGuiHelpers.ScaledDummy(5);
 
@@ -264,21 +263,21 @@ public class MainWindow : Window, IDisposable
 
             if (ImGui.BeginChild("FairyBottomBar", new Vector2(0, 0), false, 0))
             {
-                if (ImGui.Button(Loc.Localize("Config Button - Fairy All", "Echo All")))
+                if (ImGui.Button(Language.ConfigButtonFairyAll))
                     foreach (var fairy in Plugin.Library.ExistingFairies)
                         Plugin.EchoFairy(fairy);
 
                 ImGui.SameLine();
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
-                if (ImGui.Button(Loc.Localize("Config Button - Add Map Markers", "Add Markers")))
+                if (ImGui.Button(Language.ConfigButtonAddMapMarkers))
                     Plugin.PlaceEurekaMarkerSet(false, false);
                 ImGui.PopStyleColor();
 
                 ImGui.SameLine();
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
-                if (ImGui.Button(Loc.Localize("Config Button - Remove Map Markers", "Remove Markers")))
+                if (ImGui.Button(Language.ConfigButtonRemoveMapMarkers))
                     Plugin.RemoveMapMarker();
                 ImGui.PopStyleColor();
             }
@@ -290,7 +289,7 @@ public class MainWindow : Window, IDisposable
 
     private void TabBunny()
     {
-        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Bunny", "Bunny")}##bunny-tab"))
+        if (ImGui.BeginTabItem($"{Language.TabHeaderBunny}##bunny-tab"))
         {
             var buttonHeight = ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().WindowPadding.Y + GetSeparatorPaddingHeight;
             if (ImGui.BeginChild("BunnyContent", new Vector2(0, -buttonHeight)))
@@ -300,22 +299,22 @@ public class MainWindow : Window, IDisposable
                 var circleColor = Plugin.Configuration.CircleColor;
                 var changed = false;
 
-                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Bunny", "Bunny"));
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderBunny);
                 ImGuiHelpers.ScaledIndent(10.0f);
-                if (ImGui.Checkbox(Loc.Localize("Config Option - Fate Window", "Show Fate Window On Entry"), ref Plugin.Configuration.ShowBunnyWindow))
+                if (ImGui.Checkbox(Language.ConfigOptionFateWindow, ref Plugin.Configuration.ShowBunnyWindow))
                 {
                     if (Plugin.Configuration.ShowBunnyWindow && Plugin.PlayerInRelevantTerritory())
                         Plugin.BunnyWindow.IsOpen = true;
                     changed = true;
                 }
-                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Bunny Window", "Or use the command '/elbunny'."));
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Coffer Icons", "Add Coffer Icons on Entry"), ref Plugin.Configuration.AddIconsOnEntry);
-                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Coffer Icons", "Adds the coffer locations on entry of eureka."));
+                ImGuiComponents.HelpMarker(Language.ConfigTooltipBunnyWindow);
+                changed |= ImGui.Checkbox(Language.ConfigOptionCofferIcons, ref Plugin.Configuration.AddIconsOnEntry);
+                ImGuiComponents.HelpMarker(Language.ConfigTooltipCofferIcons);
 
                 changed |= AddSoundOption(ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Bunny Low Level Fates", "Show Only Low Level"), ref Plugin.Configuration.OnlyEasyBunny);
-                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Bunny Low Level Fates", "Only shows the low level bunny fates for Pagos and Pyros."));
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Draw Circle", "Draw Nearby Coffer Circle"), ref Plugin.Configuration.BunnyCircleDraw);
+                changed |= ImGui.Checkbox(Language.ConfigOptionBunnyLowLevelFates, ref Plugin.Configuration.OnlyEasyBunny);
+                ImGuiComponents.HelpMarker(Language.ConfigTooltipBunnyLowLevelFates);
+                changed |= ImGui.Checkbox(Language.ConfigOptionDrawCircle, ref Plugin.Configuration.BunnyCircleDraw);
                 ImGui.SameLine();
                 ImGui.ColorEdit4("##circleColorPicker", ref circleColor, ColorFlags);
 
@@ -326,7 +325,7 @@ public class MainWindow : Window, IDisposable
                     Plugin.Configuration.CircleColor = circleColor;
                     changed = true;
                 }
-                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Draw Circle", "Draws a circle if the player is near a coffer location."));
+                ImGuiComponents.HelpMarker(Language.ConfigTooltipDrawCircle);
                 ImGuiHelpers.ScaledIndent(-10.0f);
 
                 if (changed)
@@ -339,20 +338,20 @@ public class MainWindow : Window, IDisposable
 
             if (ImGui.BeginChild("BunnyBottomBar", new Vector2(0, 0), false, 0))
             {
-                if (ImGui.Button(Loc.Localize("Config Button - Circle Preview", "Preview")))
+                if (ImGui.Button(Language.ConfigButtonCirclePreview))
                     Plugin.EnablePreview();
 
                 ImGui.SameLine();
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
-                if (ImGui.Button(Loc.Localize("Config Button - Add Map Markers", "Add Markers")))
+                if (ImGui.Button(Language.ConfigButtonAddMapMarkers))
                     Plugin.PlaceEurekaMarkerSet(true);
                 ImGui.PopStyleColor();
 
                 ImGui.SameLine();
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
-                if (ImGui.Button(Loc.Localize("Config Button - Remove Map Markers", "Remove Markers")))
+                if (ImGui.Button(Language.ConfigButtonRemoveMapMarkers))
                     Plugin.RemoveMapMarker();
                 ImGui.PopStyleColor();
             }
@@ -364,7 +363,7 @@ public class MainWindow : Window, IDisposable
 
     private void TabOccult()
     {
-        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Occult", "Occult")}##occult-tab"))
+        if (ImGui.BeginTabItem($"{Language.TabHeaderOccult}##occult-tab"))
         {
             var buttonHeight = ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().WindowPadding.Y + GetSeparatorPaddingHeight;
             if (ImGui.BeginChild("OccultContent", new Vector2(0, -buttonHeight)))
@@ -372,12 +371,12 @@ public class MainWindow : Window, IDisposable
                 ImGuiHelpers.ScaledDummy(5);
 
                 var changed = false;
-                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Proximity Notification", "Proximity Notification"));
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderProximityNotification);
                 ImGuiHelpers.ScaledIndent(10.0f);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Clear Memory", "Clear Memory"), ref Plugin.Configuration.ClearMemory);
-                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Clear Memory", "Remove spotted treasure and carrots, after X Seconds of being unseen, so that notifications can reappear."));
+                changed |= ImGui.Checkbox(Language.ConfigOptionClearMemory, ref Plugin.Configuration.ClearMemory);
+                ImGuiComponents.HelpMarker(Language.ConfigTooltipClearMemory);
                 ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 4);
-                if (ImGui.InputInt(Loc.Localize("Config Option - Memory Timer", "Clear After Seconds"), ref Plugin.Configuration.ClearAfterSeconds, 10))
+                if (ImGui.InputInt(Language.ConfigOptionMemoryTimer, ref Plugin.Configuration.ClearAfterSeconds, 10))
                 {
                     Plugin.Configuration.ClearAfterSeconds = Math.Clamp(Plugin.Configuration.ClearAfterSeconds, 60, 600);
                     changed = true;
@@ -385,26 +384,26 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.Columns(2, "ProximityColumns", false);
 
-                ImGui.TextColored(ImGuiColors.DalamudOrange, Loc.Localize("Config Header - Treasure", "Treasure"));
-                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Echo", "Echo In Chat")}##EchoTreasure", ref Plugin.Configuration.EchoTreasure);
-                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Toast", "Show Toast")}##ToastTreasure", ref Plugin.Configuration.ShowTreasureToast);
-                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Flag", "Place Map Flag")}##FlagTreasure", ref Plugin.Configuration.PlaceTreasureFlag);
+                ImGui.TextColored(ImGuiColors.DalamudOrange, Language.ConfigHeaderTreasure);
+                changed |= ImGui.Checkbox($"{Language.ConfigOptionEcho}##EchoTreasure", ref Plugin.Configuration.EchoTreasure);
+                changed |= ImGui.Checkbox($"{Language.ConfigOptionToast}##ToastTreasure", ref Plugin.Configuration.ShowTreasureToast);
+                changed |= ImGui.Checkbox($"{Language.ConfigOptionFlag}##FlagTreasure", ref Plugin.Configuration.PlaceTreasureFlag);
 
                 ImGui.NextColumn();
 
-                ImGui.TextColored(ImGuiColors.DalamudOrange, Loc.Localize("Config Header - Bunny Carrot", "Bunny Carrot"));
-                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Echo", "Echo In Chat")}##EchoBunnyCarrot", ref Plugin.Configuration.EchoBunnyCarrot);
-                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Toast", "Show Toast")}##ToastBunnyCarrot", ref Plugin.Configuration.ShowBunnyCarrotToast);
-                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Flag", "Place Map Flag")}##FlagBunnyCarrot", ref Plugin.Configuration.PlaceBunnyCarrotFlag);
+                ImGui.TextColored(ImGuiColors.DalamudOrange, Language.ConfigHeaderBunnyCarrot);
+                changed |= ImGui.Checkbox($"{Language.ConfigOptionEcho}##EchoBunnyCarrot", ref Plugin.Configuration.EchoBunnyCarrot);
+                changed |= ImGui.Checkbox($"{Language.ConfigOptionToast}##ToastBunnyCarrot", ref Plugin.Configuration.ShowBunnyCarrotToast);
+                changed |= ImGui.Checkbox($"{Language.ConfigOptionFlag}##FlagBunnyCarrot", ref Plugin.Configuration.PlaceBunnyCarrotFlag);
 
                 ImGui.Columns(1);
                 ImGuiHelpers.ScaledIndent(-10.0f);
 
                 ImGuiHelpers.ScaledDummy(5);
 
-                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Marker Set Header", "Map Marker"));
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderMarkerSetHeader);
                 ImGuiHelpers.ScaledIndent(10.0f);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Place Default", "Place After Entering"), ref Plugin.Configuration.PlaceDefaultOccult);
+                changed |= ImGui.Checkbox(Language.ConfigOptionPlaceDefault, ref Plugin.Configuration.PlaceDefaultOccult);
                 if (Plugin.Configuration.PlaceDefaultOccult)
                 {
                     using var combo = ImRaii.Combo("##DefaultMarkerSetCombo", Plugin.Configuration.DefaultOccultMarkerSets.ToName());
@@ -420,31 +419,31 @@ public class MainWindow : Window, IDisposable
                         }
                     }
                 }
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Fast Switcher", "Show Fast Switch Overlay"), ref Plugin.Configuration.ShowFastSwitcher);
+                changed |= ImGui.Checkbox(Language.ConfigOptionFastSwitcher, ref Plugin.Configuration.ShowFastSwitcher);
                 if (Plugin.Configuration.ShowFastSwitcher)
                 {
                     ImGuiHelpers.ScaledIndent(10.0f);
-                    changed |= ImGui.Checkbox(Loc.Localize("Config Option - Switcher Position", "Position Below Map"), ref Plugin.Configuration.SwitcherBelowMap);
+                    changed |= ImGui.Checkbox(Language.ConfigOptionSwitcherPosition, ref Plugin.Configuration.SwitcherBelowMap);
                     ImGuiHelpers.ScaledIndent(-10.0f);
                 }
                 ImGuiHelpers.ScaledIndent(-10.0f);
 
                 ImGuiHelpers.ScaledDummy(5);
 
-                ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Pot Helper Header", "Pot Helper Window"));
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderPotHelperHeader);
                 ImGuiHelpers.ScaledIndent(10.0f);
-                if (ImGui.Checkbox(Loc.Localize("Config Option - Fate Window", "Show Fate Window On Entry"), ref Plugin.Configuration.ShowBunnyWindow))
+                if (ImGui.Checkbox(Language.ConfigOptionFateWindow, ref Plugin.Configuration.ShowBunnyWindow))
                 {
                     if (Plugin.Configuration.ShowBunnyWindow && Plugin.ClientState.TerritoryType == (uint)Territory.SouthHorn)
                         Plugin.BunnyWindow.IsOpen = true;
 
                     changed = true;
                 }
-                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Bunny Window", "Or use the command '/elbunny'."));
+                ImGuiComponents.HelpMarker(Language.ConfigTooltipBunnyWindow);
                 changed |= AddSoundOption(ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
 
                 var circleColor = Plugin.Configuration.CircleColor;
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Draw Circle", "Draw Nearby Coffer Circle"), ref Plugin.Configuration.BunnyCircleDraw);
+                changed |= ImGui.Checkbox(Language.ConfigOptionDrawCircle, ref Plugin.Configuration.BunnyCircleDraw);
                 ImGui.SameLine();
                 ImGui.ColorEdit4("##circleColorPicker", ref circleColor, ColorFlags);
 
@@ -455,9 +454,9 @@ public class MainWindow : Window, IDisposable
                     Plugin.Configuration.CircleColor = circleColor;
                     changed = true;
                 }
-                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Draw Circle", "Draws a circle if the player is near a coffer location."));
+                ImGuiComponents.HelpMarker(Language.ConfigTooltipDrawCircle);
 
-                if (ImGui.Button(Loc.Localize("Config Button - Circle Preview", "Preview")))
+                if (ImGui.Button(Language.ConfigButtonCirclePreview))
                     Plugin.EnablePreview();
 
                 ImGuiHelpers.ScaledIndent(-10.0f);
@@ -493,7 +492,7 @@ public class MainWindow : Window, IDisposable
                 ImGui.SameLine();
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
-                if (ImGui.Button(Loc.Localize("Config Button - Remove Map Markers", "Remove Markers")))
+                if (ImGui.Button(Language.ConfigButtonRemoveMapMarkers))
                     Plugin.RemoveMapMarker();
                 ImGui.PopStyleColor();
             }
@@ -507,43 +506,43 @@ public class MainWindow : Window, IDisposable
     {
         var secondRow = ImGui.CalcTextSize("Killed Bunnies: ").X + 120.0f;
 
-        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - Stats", "Stats")}##stats-tab"))
+        if (ImGui.BeginTabItem($"{Language.TabHeaderStats}##stats-tab"))
         {
             ImGuiHelpers.ScaledDummy(5.0f);
 
-            ImGui.TextUnformatted(Loc.Localize("Config Header - Total Stats", "Total Stats:"));
+            ImGui.TextUnformatted(Language.ConfigHeaderTotalStats);
             ImGui.Indent(10.0f);
 
             var span = TimeSpan.FromMilliseconds(Plugin.Configuration.TimeInEureka + Plugin.EurekaWatch.ElapsedMilliseconds);
             var text = $"{(int) span.TotalHours:###00}:{span:mm} h";
-            ImGui.TextUnformatted(Loc.Localize("Stats Entry - Time", "Time in Eureka:"));
+            ImGui.TextUnformatted(Language.StatsEntryTime);
             ImGui.SameLine(secondRow - ImGui.CalcTextSize(text).X);
             ImGui.TextColored(ImGuiColors.DalamudOrange, text);
 
             text = $"{Plugin.Configuration.KilledBunnies}";
-            ImGui.TextUnformatted(Loc.Localize("Stats Entry - Killed", "Killed Bunnies:"));
+            ImGui.TextUnformatted(Language.StatsEntryKilled);
             ImGui.SameLine(secondRow - ImGui.CalcTextSize(text).X);
             ImGui.TextColored(ImGuiColors.DalamudOrange, text);
 
             var total = Plugin.Configuration.Stats.Values.Sum(v => v.Values.Sum());
             text = total.ToString();
-            ImGui.TextUnformatted(Loc.Localize("Stats Entry - Found", "Coffers Found:"));
+            ImGui.TextUnformatted(Language.StatsEntryFound);
             ImGui.SameLine(secondRow - ImGui.CalcTextSize(text).X);
             ImGui.TextColored(ImGuiColors.DalamudOrange, text);
 
             var bronze = Plugin.Configuration.Stats.Values.Sum(v => v[2009532]);
-            TextWithCalculatedSpacing(Loc.Localize("Stats Entry - Bronze", "Bronze:"), bronze, total);
+            TextWithCalculatedSpacing(Language.StatsEntryBronze, bronze, total);
 
             var silver = Plugin.Configuration.Stats.Values.Sum(v => v[2009531]);
-            TextWithCalculatedSpacing(Loc.Localize("Stats Entry - Silver", "Silver:"), silver, total);
+            TextWithCalculatedSpacing(Language.StatsEntrySilver, silver, total);
 
             var gold = Plugin.Configuration.Stats.Values.Sum(v => v[2009530]);
-            TextWithCalculatedSpacing(Loc.Localize("Stats Entry - Gold", "Gold:"), gold, total);
+            TextWithCalculatedSpacing(Language.StatsEntryGold, gold, total);
 
             ImGui.Unindent(10.0f);
             ImGuiHelpers.ScaledDummy(10.0f);
 
-            ImGui.TextUnformatted(Loc.Localize("Config Header - Map Stats", "Map Stats:"));
+            ImGui.TextUnformatted(Language.ConfigHeaderMapStats);
             if (ImGui.BeginTabBar("StatsTabBar"))
             {
                 foreach (var (key, value) in Plugin.Configuration.Stats)
@@ -552,9 +551,9 @@ public class MainWindow : Window, IDisposable
                     {
                         ImGui.Indent(10.0f);
                         total = value.Sum(c => c.Value);
-                        TextWithCalculatedSpacing(Loc.Localize("Stats Entry - Bronze", "Bronze:"), value[2009532], total);
-                        TextWithCalculatedSpacing(Loc.Localize("Stats Entry - Silver", "Silver:"), value[2009531], total);
-                        TextWithCalculatedSpacing(Loc.Localize("Stats Entry - Gold", "Gold:"), value[2009530], total);
+                        TextWithCalculatedSpacing(Language.StatsEntryBronze, value[2009532], total);
+                        TextWithCalculatedSpacing(Language.StatsEntrySilver, value[2009531], total);
+                        TextWithCalculatedSpacing(Language.StatsEntryGold, value[2009530], total);
                         ImGui.Unindent(10.0f);
 
                         ImGui.EndTabItem();
@@ -574,21 +573,21 @@ public class MainWindow : Window, IDisposable
 
     private void TabAbout()
     {
-        if (ImGui.BeginTabItem($"{Loc.Localize("Tab Header - About", "About")}##about-tab"))
+        if (ImGui.BeginTabItem($"{Language.TabHeaderAbout}##about-tab"))
         {
             if (ImGui.BeginChild("AboutContent", new Vector2(0, -50 *  ImGuiHelpers.GlobalScale)))
             {
                 ImGuiHelpers.ScaledDummy(5);
 
-                ImGui.TextUnformatted(Loc.Localize("About Entry - Author", "Author:"));
+                ImGui.TextUnformatted(Language.AboutEntryAuthor);
                 ImGui.SameLine();
                 ImGui.TextColored(ImGuiColors.ParsedGold, Plugin.PluginInterface.Manifest.Author);
 
-                ImGui.TextUnformatted(Loc.Localize("About Entry - Discord", "Discord:"));
+                ImGui.TextUnformatted(Language.AboutEntryDiscord);
                 ImGui.SameLine();
                 ImGui.TextColored(ImGuiColors.ParsedGold, "@infi");
 
-                ImGui.TextUnformatted(Loc.Localize("About Entry - Version", "Version:"));
+                ImGui.TextUnformatted(Language.AboutEntryVersion);
                 ImGui.SameLine();
                 ImGui.TextColored(ImGuiColors.ParsedOrange, Plugin.PluginInterface.Manifest.AssemblyVersion.ToString());
             }
@@ -601,14 +600,14 @@ public class MainWindow : Window, IDisposable
             if (ImGui.BeginChild("AboutBottomBar", new Vector2(0, 0), false, 0))
             {
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
-                if (ImGui.Button(Loc.Localize("Config Button - Discord Forum Thread", "Discord Thread")))
+                if (ImGui.Button(Language.ConfigButtonDiscordForumThread))
                     Dalamud.Utility.Util.OpenLink("https://canary.discord.com/channels/581875019861328007/1085943921160491050");
                 ImGui.PopStyleColor();
 
                 ImGui.SameLine();
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
-                if (ImGui.Button(Loc.Localize("Config Button - Github Issues", "Issues")))
+                if (ImGui.Button(Language.ConfigButtonGithubIssues))
                     Dalamud.Utility.Util.OpenLink("https://github.com/Infiziert90/EurekaTrackerAutoPopper/issues");
                 ImGui.PopStyleColor();
 
@@ -669,14 +668,6 @@ public class MainWindow : Window, IDisposable
                 if (ImGui.Button($"SetFlagMarker"))
                     Plugin.SetFlagMarker((MapLinkPayload)Plugin.LastSeenFate.MapLink.Payloads[0]);
 
-                if(ImGui.Button("Export Loc"))
-                {
-                    var pwd = Directory.GetCurrentDirectory();
-                    Directory.SetCurrentDirectory(Plugin.PluginInterface.AssemblyLocation.DirectoryName!);
-                    Loc.ExportLocalizable();
-                    Directory.SetCurrentDirectory(pwd);
-                }
-
                 ImGuiHelpers.ScaledDummy(20);
 
                 if (ImGui.Button($"Reset"))
@@ -708,7 +699,7 @@ public class MainWindow : Window, IDisposable
     private static bool AddSoundOption(ref bool playSound, ref int soundEffect)
     {
         var changed = false;
-        changed |= ImGui.Checkbox(Loc.Localize("Config Option - Spawn Notification", "Play Spawn Sound"), ref playSound);
+        changed |= ImGui.Checkbox(Language.ConfigOptionSpawnNotification, ref playSound);
 
         if (!playSound)
             return changed;

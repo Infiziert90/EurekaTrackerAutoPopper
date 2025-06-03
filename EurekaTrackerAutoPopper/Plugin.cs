@@ -3,11 +3,11 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Timers;
-using CheapLoc;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.ClientState.Fates;
@@ -20,6 +20,7 @@ using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using EurekaTrackerAutoPopper.Attributes;
+using EurekaTrackerAutoPopper.Resources;
 using EurekaTrackerAutoPopper.Windows;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
@@ -65,8 +66,6 @@ public class Plugin : IDalamudPlugin
     private readonly Timer CofferTimer = new(20 * 1000);
 
     public readonly Stopwatch EurekaWatch = new();
-
-    private readonly Localization Localization = new();
     private readonly PluginCommandManager<Plugin> Commands;
 
     // CircleOverlay
@@ -100,11 +99,10 @@ public class Plugin : IDalamudPlugin
         WindowSystem.AddWindow(FastSwitchOverlay);
 
         Commands = new PluginCommandManager<Plugin>(this, CommandManager);
-        Localization.SetupWithLangCode(PluginInterface.UiLanguage);
 
         PluginInterface.UiBuilder.Draw += DrawUI;
         PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
-        PluginInterface.LanguageChanged += Localization.SetupWithLangCode;
+        PluginInterface.LanguageChanged += LanguageChanged;
 
         ClientState.TerritoryChanged += TerritoryChangePoll;
         CofferTimer.AutoReset = false;
@@ -136,7 +134,7 @@ public class Plugin : IDalamudPlugin
 
         PluginInterface.UiBuilder.Draw -= DrawUI;
         PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
-        PluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
+        PluginInterface.LanguageChanged -= LanguageChanged;
 
         AddonLifecycle.UnregisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarker);
         AddonLifecycle.UnregisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarkerOccult);
@@ -150,6 +148,11 @@ public class Plugin : IDalamudPlugin
 
         Commands.Dispose();
         WindowSystem.RemoveAllWindows();
+    }
+
+    private void LanguageChanged(string langCode)
+    {
+        Language.Culture = new CultureInfo(langCode);
     }
 
     private unsafe void RefreshMapMarker(AddonEvent type, AddonArgs args)
@@ -192,7 +195,7 @@ public class Plugin : IDalamudPlugin
         if (Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
             BunnyWindow.IsOpen ^= true;
         else
-            Chat.PrintError(Loc.Localize("Chat - Error Not In Territory", "You are not in a valid bunny area, this command is unavailable."));
+            Chat.PrintError(Language.ChatErrorNotInEureka);
     }
 
     [Command("/ellog")]
@@ -535,19 +538,6 @@ public class Plugin : IDalamudPlugin
                 Configuration.Stats[ClientState.TerritoryType][coffer.DataId] += 1;
                 Configuration.KilledBunnies -= 1;
                 Configuration.Save();
-
-                // TODO Remove after all chests found
-                if (!BunnyChests.Exists(ClientState.TerritoryType, coffer.Position))
-                {
-                    Chat.Print(Loc.Localize("Chat - New Chest Found", "You've found a new chest location"));
-                    Chat.Print(Loc.Localize("Chat - New Chest Found Dev Note",
-                        "Please consider sending the following information to the developer:"));
-                    Chat.Print(Loc.Localize("Chat - New Chest Found Feedback",
-                        "(Please do not use the feedback function to send this)"));
-                    Chat.Print(
-                        $"Terri: {ClientState.TerritoryType} Pos: {coffer.Position.X:000.000000}f, {coffer.Position.Y:000.#########}f, {coffer.Position.Z:000.#########}f");
-                    BunnyChests.Positions[ClientState.TerritoryType].Add(coffer.Position);
-                }
             }
         }
     }
@@ -575,7 +565,7 @@ public class Plugin : IDalamudPlugin
                 continue;
 
             Library.ExistingFairies.Remove(fairy);
-            Chat.Print(Loc.Localize("Chat - Dead Fairy Note", "Removing inactive fairies from tracking."));
+            Chat.Print(Language.ChatDeadFairyNote);
         }
     }
 
@@ -782,7 +772,7 @@ public class Plugin : IDalamudPlugin
         foreach (var (fairy, idx) in Library.ExistingFairies.Select((val, i) => (val, i)))
         {
             if (idx == 3)
-                Chat.PrintError(Loc.Localize("Chat - Error Fairy Markers", "Tracking for fairies needs to be reset, please go to all listed locations to update."));
+                Chat.PrintError(Language.ChatErrorFairyMarkers);
 
             var mapPos = fairy.Pos;
             if (ClientState.TerritoryType == 827)
@@ -876,9 +866,9 @@ public class Plugin : IDalamudPlugin
     private unsafe void SetMarkers(Vector3 worldPos, Vector3 mapPos, uint iconId, int scale = 0)
     {
         if (!AgentMap.Instance()->AddMapMarker(mapPos, iconId, scale: scale))
-            Chat.PrintError(Loc.Localize("Chat - Error Map Markers", "Unable to place all markers on map"));
+            Chat.PrintError(Language.ChatErrorMapMarkers);
 
         if (!AgentMap.Instance()->AddMiniMapMarker(worldPos, iconId, scale: scale))
-            Chat.PrintError(Loc.Localize("Chat - Error Minimap Markers", "Unable to place all markers on minimap"));
+            Chat.PrintError(Language.ChatErrorMinimapMarkers);
     }
 }

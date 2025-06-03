@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Timers;
-using CheapLoc;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
+using EurekaTrackerAutoPopper.Resources;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -47,23 +47,23 @@ public class LogWindow : Window, IDisposable
         ImGuiHelpers.ScaledDummy(5.0f);
         if (!IsCorrectTab())
         {
-            ImGui.TextColored(ImGuiColors.ParsedOrange, Loc.Localize("Log - Wrong Tab Note","Unable to detect eureka progress."));
-            ImGui.TextColored(ImGuiColors.ParsedOrange, Loc.Localize("Log - Wrong Tab","Please open your challenge log in the 'Other' category."));
+            ImGui.TextColored(ImGuiColors.ParsedOrange, Language.LogWrongTabNote);
+            ImGui.TextColored(ImGuiColors.ParsedOrange, Language.LogWrongTab);
             return;
         }
 
         var log = GetContentProgress();
         if (!log.Any())
         {
-            ImGui.TextColored(ImGuiColors.ParsedOrange, Loc.Localize("Log - Error","Unable to read log."));
+            ImGui.TextColored(ImGuiColors.ParsedOrange, Language.LogError);
             return;
         }
 
         if (ImGui.BeginTable("##monsterTable", 3))
         {
-            ImGui.TableSetupColumn(Loc.Localize("Table Label: Monster", "Monster"));
-            ImGui.TableSetupColumn(Loc.Localize("Table Label: Done", "Done"), ImGuiTableColumnFlags.None, 0.4f);
-            ImGui.TableSetupColumn(Loc.Localize("Table Label: Enemy Lvl", "Enemy Level"), ImGuiTableColumnFlags.None, 0.4f);
+            ImGui.TableSetupColumn(Language.TableLabelMonster);
+            ImGui.TableSetupColumn(Language.TableLabelDone, ImGuiTableColumnFlags.None, 0.4f);
+            ImGui.TableSetupColumn(Language.TableLabelEnemyLvl, ImGuiTableColumnFlags.None, 0.4f);
 
             ImGui.TableHeadersRow();
             for (var i = 0; i < log.Count; i += 2)
@@ -179,11 +179,11 @@ public class LogWindow : Window, IDisposable
     {
         return index switch
         {
-            0 => Loc.Localize("Log - Category IL","Ice and Lighting"),
-            2 => Loc.Localize("Log - Category FE","Fire and Earth"),
-            4 => Loc.Localize("Log - Category WW","Water and Wind"),
-            6 => Loc.Localize("Log - Category Night","Night"),
-            8 => Loc.Localize("Log - Category Sprites","Sprites"),
+            0 => Language.LogCategoryIL,
+            2 => Language.LogCategoryFE,
+            4 => Language.LogCategoryWW,
+            6 => Language.LogCategoryNight,
+            8 => Language.LogCategorySprites,
             _ => "Unknown"
         };
     }

@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Numerics;
-using CheapLoc;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
+using EurekaTrackerAutoPopper.Resources;
 using ImGuiNET;
-using Lumina.Excel.Sheets;
 
 namespace EurekaTrackerAutoPopper;
 
@@ -48,7 +47,7 @@ public static class QuestHelper
 
         if (ImGui.BeginChild("BottomBar", new Vector2(0, 0), false, 0))
         {
-            ImGui.TextColored(ImGuiColors.HealerGreen, Loc.Localize("QuestLog - Aetheryte Text", "Aetheryte Unlocks:"));
+            ImGui.TextColored(ImGuiColors.HealerGreen, Language.QuestLogAetheryteText);
             foreach (var aetheryte in Aetherytes[territoryId])
                 AttuneTip(aetheryte);
         }
@@ -61,49 +60,37 @@ public static class QuestHelper
         switch (quest)
         {
             case 1:
-                WrappedPoint(Loc.Localize("QuestLog - Anemos 1 Step 1", "Talk to Krile and Gerolt"));
-                WrappedTips(
-                    Loc.Localize("QuestLog - Anemos 1 Tip 1", "You must obtain a Protean Crystal from a normal monster."),
-                    Loc.Localize("QuestLog - Anemos 1 Tip 2", "You cannot exchange Anemos Crystals for Protean Crystals until you finish this quest."));
+                WrappedPoint(Language.QuestLogAnemos1Step1);
+                WrappedTips(Language.QuestLogAnemos1Tip1, Language.QuestLogAnemos1Tip2);
                 break;
 
             case 3:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Anemos 3 Step 2", "Proceed inside the Early Natural History Society Observatory and interact with the Confluence"),
-                    Anemos3);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogAnemos3Step2, Anemos3);
+                WrappedPoint(Language.QuestLogReturnToKrile);
 
-                WrappedTips(Loc.Localize("QuestLog - Anemos 3 Tip 1", "Mobs will spawn around and inside the building during nighttime and as such it is recommended to do this during daytime (6am to 6pm ET)."));
+                WrappedTips(Language.QuestLogAnemos3Tip1);
                 break;
 
             case 5:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Anemos 5 Step 2", "Proceed to the The Orchard below the cliff and interact with the Confluence"),
-                    Anemos5);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogAnemos5Step2, Anemos5);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
 
             case 13:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Anemos 13 Step 2", "Proceed to the The Val River Swale near the waterfall and interact with the Confluence"),
-                    Anemos13);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogAnemos13Step2, Anemos13);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
 
             case 17:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Anemos 17 Step 2", "Proceed to the Uncanny Valley and interact with the Confluence"),
-                    Anemos17);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Anemos 17 Step 4", "Proceed to the Aethernet Control and interact with the Aethernet Relay"),
-                    Anemos172);
-                WrappedPoint(Loc.Localize("QuestLog - Anemos 17 Step 5", "Interact with the Aethernet Relay again and trade in 99 Anemos Crystals."));
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogAnemos17Step2, Anemos17);
+                WrappedPoint(Language.QuestLogReturnToKrile);
+                TextWithSelectable(Language.QuestLogAnemos17Step4, Anemos172);
+                WrappedPoint(Language.QuestLogAnemos17Step5);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
         }
     }
@@ -115,53 +102,41 @@ public static class QuestHelper
         switch (quest)
         {
             case 17:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
                 break;
 
             case 21:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pagos 21 Step 2", "Locate the Depleted Aetherial Stream at The Cones (upper level on a raised grassy hill)"),
-                    Pagos21);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogPagos21Step2, Pagos21);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
 
             case 23:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pagos 23 Step 2", "Locate the Depleted Aetherial Stream at The Val River Belly"),
-                    Pagos23);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogPagos23Step2, Pagos23);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
 
             case 25:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pagos 25 Step 2", "Locate the magicite at The Eastern Edge"),
-                    Pagos251);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pagos 25 Step 3", "Interact with it again in almost the same location"),
-                    Pagos252);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogPagos25Step2, Pagos251);
+                TextWithSelectable(Language.QuestLogPagos25Step3, Pagos252);
+                WrappedPoint(Language.QuestLogReturnToKrile);
 
-                WrappedTips(Loc.Localize("QuestLog - Pagos 25 Tip 1", "You can also speak with Gerolt any time after first speaking to Krile to unlock Eureka Pagos weapon enhancement."));
+                WrappedTips(Language.QuestLogPagos25Tip1);
                 break;
 
             case 29:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pagos 29 Step 2", "Drop down here"),
-                    Pagos291);
-                WrappedPoint(Loc.Localize("QuestLog - Pagos 29 Step 3", "Talk to Ejika Tsunjika"));
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogPagos29Step2, Pagos291);
+                WrappedPoint(Language.QuestLogPagos29Step3);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
 
             case 35:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pagos 35 Step 2", "Locate the aether column at The Fumarole"),
-                    Pagos35);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogPagos35Step2, Pagos35);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
         }
     }
@@ -173,63 +148,46 @@ public static class QuestHelper
         switch (quest)
         {
             case 35:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pyros 35 Step 2", "Proceed to The Living Foundry and talk to Krile"),
-                    Pyros351);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToGerolt", "Return to Gerolt"));
-                WrappedPoint(Loc.Localize("QuestLog - TalkToDrake", "Talk to Drake"));
-                WrappedPoint(Loc.Localize("QuestLog - Pyros 35 Step 5", "Use the Logos Manipulator and select the Paralyze L logogram and extract the mneme"));
-                WrappedPoint(Loc.Localize("QuestLog - TalkToDrake", "Talk to Drake"));
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pyros 35 Step 7", "Proceed to Northeastern Ice Needles and interact with the confluence"),
-                    Pyros352
-                );
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogPyros35Step2, Pyros351);
+                WrappedPoint(Language.QuestLogReturnToGerolt);
+                WrappedPoint(Language.QuestLogTalkToDrake);
+                WrappedPoint(Language.QuestLogPyros35Step5);
+                WrappedPoint(Language.QuestLogTalkToDrake);
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogPyros35Step7, Pyros352);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
 
             case 38:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                WrappedPoint(Loc.Localize("QuestLog - TalkToDrake", "Talk to Drake"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pyros 38 Step 2", "Proceed to The Surgate Town House and interact with the Promising Scrap"),
-                    Pyros381);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToDrake", "Return to Drake"));
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pyros 38 Step 4", "Proceed to The Firing Chamber and interact with the confluence"),
-                    Pyros382);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                WrappedPoint(Language.QuestLogTalkToDrake);
+                TextWithSelectable(Language.QuestLogPyros38Step2, Pyros381);
+                WrappedPoint(Language.QuestLogReturnToDrake);
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogPyros38Step4,Pyros382);
+                WrappedPoint(Language.QuestLogReturnToKrile);
 
-                WrappedTips(Loc.Localize("QuestLog - Pyros 38 Tip 1", "This quest unlocks additional capacity for the logos manipulator."));
+                WrappedTips(Language.QuestLogPyros38Tip1);
                 break;
 
             case 40:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pyros 40 Step 2", "Proceed to West Flamerock and interact with the confluence"),
-                    Pyros40);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogPyros40Step2, Pyros40);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
 
             case 45:
-                WrappedPoint(Loc.Localize("QuestLog - Pyros 45 Step 1", "Talk to Krile (a few cutscenes will play)"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pyros 45 Step 2", "Proceed to The Living Foundry and talk to Krile"),
-                    Pyros351);
+                WrappedPoint(Language.QuestLogPyros45Step1);
+                TextWithSelectable(Language.QuestLogPyros45Step2, Pyros351);
                 break;
 
             case 50:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pyros 50 Step 2", "Proceed to East Flamerock and interact with the confluence"),
-                    Pyros501);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Pyros 50 Step 4", "Proceed to The Cavern of the Second Cant and interact with the confluence"),
-                    Pyros502);
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogPyros50Step2, Pyros501);
+                WrappedPoint(Language.QuestLogReturnToKrile);
+                TextWithSelectable(Language.QuestLogPyros50Step4, Pyros502);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
         }
     }
@@ -241,86 +199,44 @@ public static class QuestHelper
         switch (quest)
         {
             case 50:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                WrappedPoint(Loc.Localize("QuestLog - TalkToGerolt", "Talk to Gerolt"));
-                WrappedPoint(Loc.Localize("QuestLog - ReturnToKrile", "Return to Krile"));
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                WrappedPoint(Language.QuestLogTalkToGerolt);
+                WrappedPoint(Language.QuestLogReturnToKrile);
                 break;
 
             case 51:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 51 Step 2", "Proceed to The Central Columns and talk again to Krile"),
-                    Hydatos511,
-                    1);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 51 Step 3", "Proceed south to The Val River Source and find the Pooled Aether"),
-                    Hydatos512);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 51 Step 4", "Return to the The Central Columns and talk to Krile"),
-                    Hydatos511,
-                    2);
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogHydatos51Step2, Hydatos511, 1);
+                TextWithSelectable(Language.QuestLogHydatos51Step3, Hydatos512);
+                TextWithSelectable(Language.QuestLogHydatos51Step4, Hydatos511, 2);
                 break;
 
             case 54:
-                WrappedPoint(Loc.Localize("QuestLog - TalkToKrile", "Talk to Krile"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 54 Step 2", "Proceed to The Western Columns and talk again to Krile"),
-                    Hydatos541,
-                    1);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 54 Step 3", "Proceed to The West Val River Bank"),
-                    Hydatos542);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 54 Step 4", "Walk up the large column to find the Pooled Aether"),
-                    Hydatos543);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 54 Step 5", "Return to The Western Columns and talk to Krile"),
-                    Hydatos541,
-                    2);
+                WrappedPoint(Language.QuestLogTalkToKrile);
+                TextWithSelectable(Language.QuestLogHydatos54Step2, Hydatos541, 1);
+                TextWithSelectable(Language.QuestLogHydatos54Step3, Hydatos542);
+                TextWithSelectable(Language.QuestLogHydatos54Step4, Hydatos543);
+                TextWithSelectable(Language.QuestLogHydatos54Step5, Hydatos541, 2);
                 break;
 
             case 57:
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 57 Step 1", "Talk to Krile at the The Western Columns"),
-                    Hydatos541);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 57 Step 2", "Proceed east to The Eastern Columns and talk to Krile again"),
-                    Hydatos571,
-                    1);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 57 Step 3", "Head north to The East Val River Bank to find the Pooled Aether"),
-                    Hydatos572);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 57 Step 4", "Return to The Eastern Columns and talk to Krile"),
-                    Hydatos571,
-                    2);
+                TextWithSelectable(Language.QuestLogHydatos57Step1, Hydatos541);
+                TextWithSelectable(Language.QuestLogHydatos57Step2, Hydatos571, 1);
+                TextWithSelectable(Language.QuestLogHydatos57Step3, Hydatos572);
+                TextWithSelectable(Language.QuestLogHydatos57Step4, Hydatos571, 2);
                 break;
 
             case 60:
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 60 Step 1", "Head to The Eastern Columns and talk to Krile"),
-                    Hydatos571);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 60 Step 2", "Head to The Aetherbridge Foundation and talk again to Krile"),
-                    Hydatos60);
-                WrappedPoint(Loc.Localize("QuestLog - Hydatos 60 Step 3", "Proceed into the Headquarters Entrance (Teleport next to you)"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 60 Step 4", "Talk again to Krile"),
-                    Headquarters);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 60 Step 5", "Go in the Board Room and talk again to Krile"),
-                    BookRoom);
-                WrappedPoint(Loc.Localize("QuestLog - Hydatos 60 Step 6", "Interact with the Scattered Tomes"));
-                WrappedPoint(Loc.Localize("QuestLog - Hydatos 60 Step 7", "Talk again to Krile (a few cutscenes will play)"));
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 60 Step 8", "Choose between Krile's path (sealing) or that of Ejika Tsunjika (destruction)"),
-                    CoreArea);
-                TextWithSelectable(
-                    Loc.Localize("QuestLog - Hydatos 60 Step 9", "Return to Central Point and talk to Ejika Tsunjika or Krile (opposite you picked)"),
-                    HydatosHub);
-                WrappedTips(
-                    Loc.Localize("QuestLog - Hydatos 60 Tip 1", "This quest unlocks The Baldesion Arsenal."),
-                    Loc.Localize("QuestLog - Hydatos 60 Tip 2", "Speak with the Expedition Scholar after finishing this quest."));
+                TextWithSelectable(Language.QuestLogHydatos60Step1, Hydatos571);
+                TextWithSelectable(Language.QuestLogHydatos60Step2, Hydatos60);
+                WrappedPoint(Language.QuestLogHydatos60Step3);
+                TextWithSelectable(Language.QuestLogHydatos60Step4, Headquarters);
+                TextWithSelectable(Language.QuestLogHydatos60Step5,BookRoom);
+                WrappedPoint(Language.QuestLogHydatos60Step6);
+                WrappedPoint(Language.QuestLogHydatos60Step7);
+                TextWithSelectable(Language.QuestLogHydatos60Step8, CoreArea);
+                TextWithSelectable(Language.QuestLogHydatos60Step9, HydatosHub);
+                WrappedTips(Language.QuestLogHydatos60Tip1, Language.QuestLogHydatos60Tip2);
                 break;
         }
     }
@@ -553,11 +469,11 @@ public static class QuestHelper
     {
         return territoryId switch
         {
-            732 => Loc.Localize("Area Name - Anemos", "Anemos"),
-            763 => Loc.Localize("Area Name - Pagos", "Pagos"),
-            795 => Loc.Localize("Area Name - Pyros", "Pyros"),
-            827 => Loc.Localize("Area Name - Hydatos", "Hydatos"),
-            _ => Loc.Localize("Area Name - Anemos", "Anemos")
+            732 => Language.AreaNameAnemos,
+            763 => Language.AreaNamePagos,
+            795 => Language.AreaNamePyros,
+            827 => Language.AreaNameHydatos,
+            _ => Language.AreaNameAnemos
         };
     }
 }

@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using CheapLoc;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
+using EurekaTrackerAutoPopper.Resources;
 using ImGuiNET;
 
 using static ImGuiNET.ImGuiWindowFlags;
@@ -88,11 +88,11 @@ public class BunnyWindow : Window, IDisposable
             ImGui.TextUnformatted($"Fate: {bunny.Name}{bunny.Position}");
             if (bunny.Alive)
             {
-                ImGui.TextColored(ImGuiColors.HealerGreen, Loc.Localize("Bunny Window - Status Alive", "Alive"));
+                ImGui.TextColored(ImGuiColors.HealerGreen, Language.BunnyWindowStatusAlive);
             }
             else
             {
-                ImGui.TextColored(ImGuiColors.ParsedGold, Loc.Localize("Bunny Window - Respawning", "Respawning in:"));
+                ImGui.TextColored(ImGuiColors.ParsedGold, Language.BunnyWindowRespawning);
                 ImGui.SameLine();
                 if (bunny.LastSeenAlive != -1)
                 {
@@ -100,21 +100,16 @@ public class BunnyWindow : Window, IDisposable
                     var max = TimeSpan.FromSeconds(bunny.LastSeenAlive + (InEureka ? MaxRespawn : OccultRespawn) - currentTime);
 
                     if (min.TotalSeconds > 0)
-                    {
                         ImGui.TextUnformatted(Utils.TimeToFormatted(min));
-                    }
                     else
-                    {
-                        ImGui.TextColored(ImGuiColors.ParsedGold,
-                            Loc.Localize("Bunny Window - Respawning soon", " soon "));
-                    }
+                        ImGui.TextColored(ImGuiColors.ParsedGold, Language.BunnyWindowRespawningsoon);
 
                     ImGui.SameLine();
                     ImGui.TextUnformatted($"(max {Utils.TimeToFormatted(max)})");
                 }
                 else
                 {
-                    ImGui.TextColored(ImGuiColors.ParsedBlue, Loc.Localize("Bunny Window - Status Unknown", "Unknown"));
+                    ImGui.TextColored(ImGuiColors.ParsedBlue, Language.BunnyWindowStatusUnknown);
                 }
             }
 

@@ -27,15 +27,20 @@
 		<Content Include="images\icon.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="loc\**">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
-		<Reference Include="CheapLoc">
-			<HintPath>$(DalamudLibPath)CheapLoc.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
+	  <EmbeddedResource Update="Resources\Language.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Language.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\Language.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Language.resx</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 </Project>

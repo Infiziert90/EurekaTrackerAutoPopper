@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Numerics;
-using CheapLoc;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
+using EurekaTrackerAutoPopper.Resources;
 using ImGuiNET;
 
 namespace EurekaTrackerAutoPopper.Windows;
@@ -27,13 +27,13 @@ public class QuestWindow : Window, IDisposable
 
         if (!Library.TerritoryToMap.ContainsKey(territoryId))
         {
-            ImGui.TextColored(ImGuiColors.ParsedGold, $"{Loc.Localize("QuestLog - Header", "Current Area")}: ");
+            ImGui.TextColored(ImGuiColors.ParsedGold, $"{Language.QuestLogHeader}: ");
             ImGui.SameLine();
-            ImGui.TextColored(ImGuiColors.ParsedOrange, $"{Loc.Localize("QuestLog - Outside", "Not Eureka...")}");
+            ImGui.TextColored(ImGuiColors.ParsedOrange, $"{Language.QuestLogOutside}");
             return;
         }
 
-        ImGui.TextColored(ImGuiColors.ParsedGold, $"{Loc.Localize("QuestLog - Header", "Current Area")}: ");
+        ImGui.TextColored(ImGuiColors.ParsedGold, $"{Language.QuestLogHeader}: ");
         ImGui.SameLine();
         ImGui.TextColored(ImGuiColors.ParsedOrange, QuestHelper.TerritoryToPlaceName(territoryId));
 
@@ -54,7 +54,7 @@ public class QuestWindow : Window, IDisposable
 
     private void TabItem(uint territoryId, uint quest)
     {
-        if (ImGui.BeginTabItem($"{Loc.Localize("QuestLog - Tab Item Quest Level", "Level")} {quest}"))
+        if (ImGui.BeginTabItem($"{Language.QuestLogTabItemQuestLevel} {quest}"))
         {
             QuestHelper.Quests(territoryId, quest);
             ImGui.EndTabItem();

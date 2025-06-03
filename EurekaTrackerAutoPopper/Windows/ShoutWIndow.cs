@@ -1,8 +1,8 @@
 using System;
 using System.Numerics;
 using System.Timers;
-using CheapLoc;
 using Dalamud.Interface.Windowing;
+using EurekaTrackerAutoPopper.Resources;
 using ImGuiNET;
 
 using static ImGuiNET.ImGuiWindowFlags;
@@ -84,7 +84,7 @@ public class ShoutWindow : Window, IDisposable
         ImGui.SameLine(size + 30 + extraSize);
         if (!ShoutTimer.Enabled)
         {
-            if (ImGui.Button(Loc.Localize("Shout Button - Post", "Post"), new Vector2(50, 0)))
+            if (ImGui.Button(Language.ShoutButtonPost, new Vector2(50, 0)))
             {
                 Plugin.PostChatMessage();
                 IsOpen = false;
@@ -93,17 +93,17 @@ public class ShoutWindow : Window, IDisposable
         else
         {
             ImGui.BeginDisabled();
-            ImGui.Button(Loc.Localize("Shout Button - Post", "Post"), new Vector2(50, 0));
+            ImGui.Button(Language.ShoutButtonPost, new Vector2(50, 0));
             ImGui.EndDisabled();
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
             {
-                ImGui.SetTooltip(Loc.Localize("Shout Window - Limit", "Shout will be available 20s after spawn."));
+                ImGui.SetTooltip(Language.ShoutWindowLimit);
             }
         }
 
         ImGui.SameLine(size + 85 + extraSize);
-        if (ImGui.Button(Loc.Localize("Shout Button - Close", "Close"), new Vector2(50, 0)))
+        if (ImGui.Button(Language.ShoutButtonClose, new Vector2(50, 0)))
             IsOpen = false;
     }
 
