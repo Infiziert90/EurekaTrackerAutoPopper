@@ -37,7 +37,7 @@ public class MainWindow : Window, IDisposable
         Flags = NoScrollbar | NoScrollWithMouse;
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(450, 500),
+            MinimumSize = new Vector2(450, 550),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
@@ -271,14 +271,14 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
                 if (ImGui.Button(Loc.Localize("Config Button - Add Map Markers", "Add Markers")))
-                    Plugin.AddFairyLocationsMap();
+                    Plugin.PlaceEurekaMarkerSet(false, false);
                 ImGui.PopStyleColor();
 
                 ImGui.SameLine();
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
                 if (ImGui.Button(Loc.Localize("Config Button - Remove Map Markers", "Remove Markers")))
-                    Plugin.RemoveMarkerMap();
+                    Plugin.RemoveMapMarker();
                 ImGui.PopStyleColor();
             }
             ImGui.EndChild();
@@ -345,19 +345,14 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
                 if (ImGui.Button(Loc.Localize("Config Button - Add Map Markers", "Add Markers")))
-                    Plugin.AddChestsLocationsMap();
+                    Plugin.PlaceEurekaMarkerSet(true);
                 ImGui.PopStyleColor();
 
                 ImGui.SameLine();
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
                 if (ImGui.Button(Loc.Localize("Config Button - Remove Map Markers", "Remove Markers")))
-                    Plugin.RemoveMarkerMap();
-                ImGui.PopStyleColor();
-
-                ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
-                if (ImGui.Button("Add Occult Markers"))
-                    Plugin.AddOccultTreasureLocations();
+                    Plugin.RemoveMapMarker();
                 ImGui.PopStyleColor();
             }
             ImGui.EndChild();
@@ -379,7 +374,13 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Proximity Notification", "Proximity Notification"));
                 ImGuiHelpers.ScaledIndent(10.0f);
                 changed |= ImGui.Checkbox(Loc.Localize("Config Option - Clear Memory", "Clear Memory"), ref Plugin.Configuration.ClearMemory);
-                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Clear Memory", "Remove spotted treasure and carrots, after 1 Minute of being unseen, so that notifications can reappear."));
+                ImGuiComponents.HelpMarker(Loc.Localize("Config Tooltip - Clear Memory", "Remove spotted treasure and carrots, after X Seconds of being unseen, so that notifications can reappear."));
+                ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 4);
+                if (ImGui.InputInt(Loc.Localize("Config Option - Memory Timer", "Clear After Seconds"), ref Plugin.Configuration.ClearAfterSeconds, 10))
+                {
+                    Plugin.Configuration.ClearAfterSeconds = Math.Clamp(Plugin.Configuration.ClearAfterSeconds, 60, 600);
+                    changed = true;
+                }
 
                 ImGui.Columns(2, "ProximityColumns", false);
 
@@ -417,6 +418,12 @@ public class MainWindow : Window, IDisposable
                     }
                 }
                 changed |= ImGui.Checkbox(Loc.Localize("Config Option - Fast Switcher", "Show Fast Switch Overlay"), ref Plugin.Configuration.ShowFastSwitcher);
+                if (Plugin.Configuration.ShowFastSwitcher)
+                {
+                    ImGuiHelpers.ScaledIndent(10.0f);
+                    changed |= ImGui.Checkbox(Loc.Localize("Config Option - Switcher Position", "Position Below Map"), ref Plugin.Configuration.SwitcherBelowMap);
+                    ImGuiHelpers.ScaledIndent(-10.0f);
+                }
                 ImGuiHelpers.ScaledIndent(-10.0f);
 
                 ImGuiHelpers.ScaledDummy(5);
@@ -484,7 +491,7 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.DPSRed);
                 if (ImGui.Button(Loc.Localize("Config Button - Remove Map Markers", "Remove Markers")))
-                    Plugin.RemoveMarkerMap();
+                    Plugin.RemoveMapMarker();
                 ImGui.PopStyleColor();
             }
             ImGui.EndChild();

@@ -19,6 +19,9 @@ public class BunnyWindow : Window, IDisposable
 
     private readonly Plugin Plugin;
 
+    private bool InEureka;
+    private bool InOccult;
+
     public BunnyWindow(Plugin plugin) : base("Bunny##EurekaLinker")
     {
         Flags = AlwaysAutoResize;
@@ -33,20 +36,23 @@ public class BunnyWindow : Window, IDisposable
 
     public void Dispose() { }
 
+    public override bool DrawConditions()
+    {
+        InEureka = Fates.EurekaBunnyTerritories.Contains(Plugin.ClientState.TerritoryType);
+        InOccult = Plugin.ClientState.TerritoryType == (uint)Territory.SouthHorn;
+
+        return InEureka || InOccult;
+    }
+
     public override void Draw()
     {
-        var isEurekaBunny = Fates.EurekaBunnyTerritories.Contains(Plugin.ClientState.TerritoryType);
-        var isOccult = Plugin.ClientState.TerritoryType == (uint)Territory.SouthHorn;
-        if (!isEurekaBunny && !isOccult)
-            return;
-
         var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
         var bunnies = Plugin.Fates.BunnyFates.Where(bnuuuy => (uint)bnuuuy.Territory == Plugin.ClientState.TerritoryType).ToArray();
-        if (isEurekaBunny && Plugin.Configuration.OnlyEasyBunny)
+        if (InEureka && Plugin.Configuration.OnlyEasyBunny)
             bunnies = bunnies[..1];
 
         // In Occult the bunny fates spawn after another in a cycle, so we have to sort them based on death time
-        if (isOccult)
+        if (InOccult)
         {
             var sortedFates = bunnies.OrderBy(bnuuuy => bnuuuy.LastSeenAlive).ToArray();
 
@@ -90,8 +96,8 @@ public class BunnyWindow : Window, IDisposable
                 ImGui.SameLine();
                 if (bunny.LastSeenAlive != -1)
                 {
-                    var min = TimeSpan.FromSeconds(bunny.LastSeenAlive + (isEurekaBunny ? MinRespawn : OccultRespawn) - currentTime);
-                    var max = TimeSpan.FromSeconds(bunny.LastSeenAlive + (isEurekaBunny ? MaxRespawn : OccultRespawn) - currentTime);
+                    var min = TimeSpan.FromSeconds(bunny.LastSeenAlive + (InEureka ? MinRespawn : OccultRespawn) - currentTime);
+                    var max = TimeSpan.FromSeconds(bunny.LastSeenAlive + (InEureka ? MaxRespawn : OccultRespawn) - currentTime);
 
                     if (min.TotalSeconds > 0)
                     {

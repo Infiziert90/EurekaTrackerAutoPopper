@@ -163,10 +163,7 @@ public class Plugin : IDalamudPlugin
 
         // Check the map selection, important for Hydatos as it has different map IDs with BA
         if (Fates.BunnyMapIds.Contains(AgentMap.Instance()->SelectedMapId))
-        {
-            AddChestsLocationsMap();
-            AddFairyLocationsMap();
-        }
+            PlaceEurekaMarkerSet(true);
     }
 
     private void RefreshMapMarkerOccult(AddonEvent type, AddonArgs args)
@@ -216,7 +213,7 @@ public class Plugin : IDalamudPlugin
     [HelpMessage("Removes all the placed markers")]
     private void OnRemoveCommand(string command, string args)
     {
-        RemoveMarkerMap();
+        RemoveMapMarker();
     }
 
     private void TerritoryChangePoll(ushort territoryId)
@@ -228,13 +225,15 @@ public class Plugin : IDalamudPlugin
             if (Configuration.ShowBunnyWindow && Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
                 BunnyWindow.IsOpen = true;
 
-            if (Configuration.AddIconsOnEntry && Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
+            if (Configuration.AddIconsOnEntry)
+            {
                 Task.Run(async () =>
                 {
                     // Delay it by 10s so that map had a chance to fully load
                     await Task.Delay(new TimeSpan(0, 0, 10));
-                    await Framework.RunOnFrameworkThread(AddChestsLocationsMap);
+                    await Framework.RunOnFrameworkThread(() => { PlaceEurekaMarkerSet(true); });
                 });
+            }
 
             EurekaWatch.Restart();
 
@@ -629,7 +628,7 @@ public class Plugin : IDalamudPlugin
     {
         // Treasure still in reach of the object table?
         if (Utils.GetDistance(local.Position, locationObject.Pos) > 108.0)
-            return locationObject.LastSeen + 60 < currentTime;
+            return locationObject.LastSeen + Configuration.ClearAfterSeconds < currentTime;
 
         // Treasure is still around the player
         if (ObjectTable.Any(obj => locationObject.ObjectId == obj.EntityId))
@@ -639,7 +638,7 @@ public class Plugin : IDalamudPlugin
         }
 
         // Treasure may be in reach but isn't in the object table anymore, so we check timer for removal
-        return locationObject.LastSeen + 60 < currentTime;
+        return locationObject.LastSeen + Configuration.ClearAfterSeconds < currentTime;
     }
 
     private void OccultPotCheck(IFramework _)
@@ -705,6 +704,20 @@ public class Plugin : IDalamudPlugin
         MainWindow.IsOpen = true;
     }
 
+    public void PlaceEurekaMarkerSet(bool placeBunny, bool clear = true)
+    {
+        if (!Library.TerritoryToMap.ContainsKey(ClientState.TerritoryType))
+            return;
+
+        if (clear)
+            RemoveMapMarker();
+
+        if (placeBunny && Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
+            AddChestsLocationsMap();
+
+        AddFairyLocationsMap();
+    }
+
     public unsafe void PlaceOccultMarkerSet(OccultMarkerSets set, bool clearForNone = false)
     {
         // Check the players current territory type
@@ -714,12 +727,12 @@ public class Plugin : IDalamudPlugin
         if (set == OccultMarkerSets.None)
         {
             if (clearForNone)
-                RemoveMarkerMap();
+                RemoveMapMarker();
 
             return;
         }
 
-        RemoveMarkerMap();
+        RemoveMapMarker();
 
         switch (set)
         {
@@ -741,16 +754,8 @@ public class Plugin : IDalamudPlugin
         }
     }
 
-    public void AddChestsLocationsMap()
+    private void AddChestsLocationsMap()
     {
-        if (!Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
-        {
-            Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
-            return;
-        }
-
-        RemoveMarkerMap();
-
         MarkerSetToPlace = SharedMarketSet.Eureka;
         foreach (var worldPos in BunnyChests.Positions[ClientState.TerritoryType])
         {
@@ -762,18 +767,10 @@ public class Plugin : IDalamudPlugin
         }
     }
 
-    public void AddFairyLocationsMap()
+    private void AddFairyLocationsMap()
     {
-        if (!PlayerInEureka)
-        {
-            Chat.PrintError(Loc.Localize("Chat - Error Not In Eureka", "You are not in Eureka, this command is unavailable."));
-            return;
-        }
-
-        RemoveMarkerMap();
-
         MarkerSetToPlace = SharedMarketSet.Eureka;
-        foreach (var (fairy, idx) in Library.ExistingFairies.Select((val, i) => (val, (uint)i)))
+        foreach (var (fairy, idx) in Library.ExistingFairies.Select((val, i) => (val, i)))
         {
             if (idx == 3)
                 Chat.PrintError(Loc.Localize("Chat - Error Fairy Markers", "Tracking for fairies needs to be reset, please go to all listed locations to update."));
@@ -782,11 +779,11 @@ public class Plugin : IDalamudPlugin
             if (ClientState.TerritoryType == 827)
                 mapPos.Z += 475;
 
-            SetMarkers(fairy.Pos, mapPos, 60474 + idx);
+            SetMarkers(fairy.Pos, mapPos, 60474 + (uint)idx);
         }
     }
 
-    public void AddOccultTreasureLocations()
+    private void AddOccultTreasureLocations()
     {
         MarkerSetToPlace = SharedMarketSet.OccultTreasure;
         foreach (var (worldPos, iconType) in OccultChests.TreasurePosition[ClientState.TerritoryType])
@@ -802,35 +799,35 @@ public class Plugin : IDalamudPlugin
         }
     }
 
-    public void AddOccultPotLocations()
+    private void AddOccultPotLocations()
     {
         MarkerSetToPlace = SharedMarketSet.OccultPot;
         foreach (var worldPos in OccultChests.PotPosition[ClientState.TerritoryType])
             SetMarkers(worldPos, worldPos, 60354);
     }
 
-    public void AddOccultBunnyPositions()
+    private void AddOccultBunnyPositions()
     {
         MarkerSetToPlace = SharedMarketSet.OccultBunny;
         foreach (var worldPos in OccultChests.BunnyPosition[ClientState.TerritoryType])
             SetMarkers(worldPos, worldPos, 25207);
     }
 
-    public void AddOccultBronzeLocations()
+    private void AddOccultBronzeLocations()
     {
         MarkerSetToPlace = SharedMarketSet.OccultBronze;
         foreach (var (worldPos, _) in OccultChests.TreasurePosition[ClientState.TerritoryType].Where(pair => pair.Item2 == 1596))
             SetMarkers(worldPos, worldPos, 60356u);
     }
 
-    public void AddOccultSilverLocations()
+    private void AddOccultSilverLocations()
     {
         MarkerSetToPlace = SharedMarketSet.OccultSilver;
         foreach (var (worldPos, _) in OccultChests.TreasurePosition[ClientState.TerritoryType].Where(pair => pair.Item2 == 1597))
             SetMarkers(worldPos, worldPos, 60355u);
     }
 
-    public unsafe void RemoveMarkerMap()
+    public unsafe void RemoveMapMarker()
     {
         MarkerSetToPlace = SharedMarketSet.None;
         AgentMap.Instance()->ResetMapMarkers();

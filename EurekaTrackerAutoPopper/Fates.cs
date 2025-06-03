@@ -44,7 +44,7 @@ public class Fates
         new(1977, Territory.SouthHorn, true, " (South)"),
     ];
 
-    public static readonly List<uint> BunnyTerritories =
+    public static readonly HashSet<uint> BunnyTerritories =
     [
         (uint)Territory.Pagos,
         (uint)Territory.Pyros,
@@ -52,14 +52,14 @@ public class Fates
         (uint)Territory.SouthHorn
     ];
 
-    public static readonly List<uint> EurekaBunnyTerritories =
+    public static readonly HashSet<uint> EurekaBunnyTerritories =
     [
         (uint)Territory.Pagos,
         (uint)Territory.Pyros,
         (uint)Territory.Hydatos
     ];
 
-    public static readonly List<uint> BunnyMapIds =
+    public static readonly HashSet<uint> BunnyMapIds =
     [
         467,
         484,

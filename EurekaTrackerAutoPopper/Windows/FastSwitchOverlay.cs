@@ -12,7 +12,7 @@ namespace EurekaTrackerAutoPopper.Windows;
 public class FastSwitchOverlay : Window, IDisposable
 {
     private readonly Plugin Plugin;
-    private Vector2 OriginalSize = new(260, 40);
+    private readonly Vector2 OriginalSize = new(260, 40);
 
     public FastSwitchOverlay(Plugin plugin) : base("Linker: Fast Switch##EurekaLinker")
     {
@@ -47,7 +47,11 @@ public class FastSwitchOverlay : Window, IDisposable
             if (!mapBaseNode->IsVisible)
                 return;
 
-            Position = new Vector2(mapBaseNode->X + 5, mapBaseNode->Y - (Size!.Value.Y * ImGuiHelpers.GlobalScale));
+            var posY = mapBaseNode->Y - OriginalSize.Y * ImGuiHelpers.GlobalScale;
+            if (Plugin.Configuration.SwitcherBelowMap)
+                posY = mapBaseNode->Y + mapBaseNode->GetScaledHeight(true);
+
+            Position = new Vector2(mapBaseNode->X + 5, posY);
             PositionCondition = ImGuiCond.Always;
 
             IsOpen = true;
