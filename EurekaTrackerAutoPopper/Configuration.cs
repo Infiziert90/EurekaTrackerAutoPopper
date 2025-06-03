@@ -28,6 +28,7 @@ public class Configuration : IPluginConfiguration
 
     public bool EchoFairies = true;
     public bool ShowFairyToast = true;
+    public bool PlaceFairyFlag = false;
 
     public bool ShowBunnyWindow = true;
     public bool AddIconsOnEntry = true;
@@ -41,8 +42,10 @@ public class Configuration : IPluginConfiguration
     public int ClearAfterSeconds = 60;
     public bool EchoTreasure = true;
     public bool ShowTreasureToast = true;
+    public bool PlaceTreasureFlag = false;
     public bool EchoBunnyCarrot = true;
     public bool ShowBunnyCarrotToast = true;
+    public bool PlaceBunnyCarrotFlag = false;
     public bool PlaceDefaultOccult = true;
     public bool ShowFastSwitcher = true;
     public bool SwitcherBelowMap = false;

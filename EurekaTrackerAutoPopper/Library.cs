@@ -2,7 +2,6 @@
 using Dalamud.Game.Text.SeStringHandling;
 using System.Collections.Generic;
 using System.Numerics;
-using Lumina.Excel.Sheets;
 
 namespace EurekaTrackerAutoPopper;
 

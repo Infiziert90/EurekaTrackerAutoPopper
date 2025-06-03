@@ -37,7 +37,7 @@ public class MainWindow : Window, IDisposable
         Flags = NoScrollbar | NoScrollWithMouse;
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(450, 550),
+            MinimumSize = new Vector2(450, 570),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
@@ -218,8 +218,9 @@ public class MainWindow : Window, IDisposable
                 var changed = false;
                 ImGui.TextColored(ImGuiColors.DalamudViolet, Loc.Localize("Config Header - Fairy", "Fairy / Elemental"));
                 ImGuiHelpers.ScaledIndent(10.0f);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Echo Fairy", "Echo"), ref Plugin.Configuration.EchoFairies);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Toast Fairy", "Show Toast"), ref Plugin.Configuration.ShowFairyToast);
+                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Echo", "Echo In Chat"), ref Plugin.Configuration.EchoFairies);
+                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Toast", "Show Toast"), ref Plugin.Configuration.ShowFairyToast);
+                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Flag", "Place Map Flag"), ref Plugin.Configuration.PlaceFairyFlag);
                 ImGuiHelpers.ScaledIndent(-10.0f);
 
                 if (changed)
@@ -385,14 +386,16 @@ public class MainWindow : Window, IDisposable
                 ImGui.Columns(2, "ProximityColumns", false);
 
                 ImGui.TextColored(ImGuiColors.DalamudOrange, Loc.Localize("Config Header - Treasure", "Treasure"));
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Echo Treasure", "Echo"), ref Plugin.Configuration.EchoTreasure);
-                changed |= ImGui.Checkbox(Loc.Localize("Config Option - Toast Treasure", "Show Toast"), ref Plugin.Configuration.ShowTreasureToast);
+                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Echo", "Echo In Chat")}##EchoTreasure", ref Plugin.Configuration.EchoTreasure);
+                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Toast", "Show Toast")}##ToastTreasure", ref Plugin.Configuration.ShowTreasureToast);
+                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Flag", "Place Map Flag")}##FlagTreasure", ref Plugin.Configuration.PlaceTreasureFlag);
 
                 ImGui.NextColumn();
 
                 ImGui.TextColored(ImGuiColors.DalamudOrange, Loc.Localize("Config Header - Bunny Carrot", "Bunny Carrot"));
-                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Echo Bunny Carrot", "Echo")}##EchoBunnyCarrot", ref Plugin.Configuration.EchoBunnyCarrot);
-                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Toast Bunny Carrot", "Show Toast")}##ToastBunnyCarrot", ref Plugin.Configuration.ShowBunnyCarrotToast);
+                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Echo", "Echo In Chat")}##EchoBunnyCarrot", ref Plugin.Configuration.EchoBunnyCarrot);
+                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Toast", "Show Toast")}##ToastBunnyCarrot", ref Plugin.Configuration.ShowBunnyCarrotToast);
+                changed |= ImGui.Checkbox($"{Loc.Localize("Config Option - Flag", "Place Map Flag")}##FlagBunnyCarrot", ref Plugin.Configuration.PlaceBunnyCarrotFlag);
 
                 ImGui.Columns(1);
                 ImGuiHelpers.ScaledIndent(-10.0f);
@@ -664,7 +667,7 @@ public class MainWindow : Window, IDisposable
                 }
 
                 if (ImGui.Button($"SetFlagMarker"))
-                    Plugin.SetFlagMarker();
+                    Plugin.SetFlagMarker((MapLinkPayload)Plugin.LastSeenFate.MapLink.Payloads[0]);
 
                 if(ImGui.Button("Export Loc"))
                 {

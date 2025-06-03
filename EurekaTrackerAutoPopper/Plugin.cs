@@ -405,13 +405,13 @@ public class Plugin : IDalamudPlugin
 
     public void CopyChatMessage()
     {
-        SetFlagMarker();
+        SetFlagMarker((MapLinkPayload)LastSeenFate.MapLink.Payloads[0]);
         ImGui.SetClipboardText(BuildChatString());
     }
 
     public void PostChatMessage()
     {
-        SetFlagMarker();
+        SetFlagMarker((MapLinkPayload)LastSeenFate.MapLink.Payloads[0]);
         ChatBox.SendMessage(BuildChatString());
     }
 
@@ -430,6 +430,9 @@ public class Plugin : IDalamudPlugin
 
         if (Configuration.ShowFairyToast)
             Toast.ShowQuest(payload);
+
+        if (Configuration.PlaceFairyFlag)
+            SetFlagMarker((MapLinkPayload)fairy.MapLink.Payloads[0]);
     }
 
     private void EchoTreasure(Library.LocationMemory treasure)
@@ -447,6 +450,9 @@ public class Plugin : IDalamudPlugin
 
         if (Configuration.ShowTreasureToast)
             Toast.ShowQuest(payload);
+
+        if (Configuration.PlaceTreasureFlag)
+            SetFlagMarker((MapLinkPayload)treasure.MapLink.Payloads[0]);
     }
 
     private void EchoBunnyCarrot(Library.LocationMemory carrot)
@@ -464,6 +470,9 @@ public class Plugin : IDalamudPlugin
 
         if (Configuration.ShowBunnyCarrotToast)
             Toast.ShowQuest(payload);
+
+        if (Configuration.PlaceBunnyCarrotFlag)
+            SetFlagMarker((MapLinkPayload)carrot.MapLink.Payloads[0]);
     }
 
     private void BunnyCheck(IFramework framework)
@@ -834,20 +843,16 @@ public class Plugin : IDalamudPlugin
         AgentMap.Instance()->ResetMiniMapMarkers();
     }
 
-    public unsafe void SetFlagMarker()
+    public unsafe void SetFlagMarker(MapLinkPayload map)
     {
         try
         {
+            var agent = AgentMap.Instance();
             // removes current flag marker from map
-            AgentMap.Instance()->IsFlagMarkerSet = false;
+            agent->IsFlagMarkerSet = false;
 
             // divide by 1000 as raw is too long for CS SetFlagMapMarker
-            var map = (MapLinkPayload)LastSeenFate.MapLink.Payloads.First();
-            AgentMap.Instance()->SetFlagMapMarker(
-                map.Map.Value.TerritoryType.RowId,
-                map.Map.RowId,
-                map.RawX / 1000.0f,
-                map.RawY / 1000.0f);
+            agent->SetFlagMapMarker(map.Map.Value.TerritoryType.RowId, map.Map.RowId, map.RawX / 1000.0f, map.RawY / 1000.0f);
         }
         catch (Exception)
         {
