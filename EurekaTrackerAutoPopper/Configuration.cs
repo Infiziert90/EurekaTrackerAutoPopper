@@ -49,7 +49,7 @@ public class Configuration : IPluginConfiguration
     public bool PlaceDefaultOccult = true;
     public bool ShowFastSwitcher = true;
     public bool SwitcherBelowMap = false;
-    public OccultMarkerSets DefaultOccultMarkerSets = OccultMarkerSets.OccultTreasure;
+    public OccultMarkerSets DefaultOccultMarkerSets = OccultMarkerSets.Treasure;
 
     public long TimeInEureka = 0;  // in milliseconds
     public int KilledBunnies = 0;

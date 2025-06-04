@@ -1,452 +1,514 @@
+<?xml version="1.0" encoding="utf-8"?>
 <root>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>1.3</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <data name="AboutEntryAuthor" xml:space="preserve">
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:element name="root" msdata:IsDataSet="true">
+        </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutEntryAuthor" xml:space="preserve">
         <value>Ersteller:</value>
     </data>
-    <data name="AboutEntryDiscord" xml:space="preserve">
+  <data name="AboutEntryDiscord" xml:space="preserve">
         <value>Discord:</value>
     </data>
-    <data name="AboutEntryVersion" xml:space="preserve">
+  <data name="AboutEntryVersion" xml:space="preserve">
         <value>Version:</value>
     </data>
-    <data name="AreaNameAnemos" xml:space="preserve">
+  <data name="AreaNameAnemos" xml:space="preserve">
         <value>Anemos</value>
     </data>
-    <data name="AreaNameHydatos" xml:space="preserve">
+  <data name="AreaNameHydatos" xml:space="preserve">
         <value>Hydatos</value>
     </data>
-    <data name="AreaNamePagos" xml:space="preserve">
+  <data name="AreaNamePagos" xml:space="preserve">
         <value>Pagos</value>
     </data>
-    <data name="AreaNamePyros" xml:space="preserve">
+  <data name="AreaNamePyros" xml:space="preserve">
         <value>Pyros</value>
     </data>
-    <data name="BunnyWindowRespawning" xml:space="preserve">
+  <data name="BunnyWindowRespawning" xml:space="preserve">
         <value>Erscheint in:</value>
     </data>
-    <data name="BunnyWindowRespawningsoon" xml:space="preserve">
+  <data name="BunnyWindowRespawningsoon" xml:space="preserve">
         <value> bald </value>
     </data>
-    <data name="BunnyWindowStatusAlive" xml:space="preserve">
+  <data name="BunnyWindowStatusAlive" xml:space="preserve">
         <value>Am Leben</value>
     </data>
-    <data name="BunnyWindowStatusUnknown" xml:space="preserve">
+  <data name="BunnyWindowStatusUnknown" xml:space="preserve">
         <value>Unbekannt</value>
     </data>
-    <data name="ChatDeadFairyNote" xml:space="preserve">
+  <data name="ChatDeadFairyNote" xml:space="preserve">
         <value>Entferne inaktive Feen aus dem Tracking.</value>
     </data>
-    <data name="ChatErrorFairyMapMarkers" xml:space="preserve">
+  <data name="ChatErrorFairyMapMarkers" xml:space="preserve">
         <value>Es konnten nicht alle Feen Marker auf der Karte platziert werden</value>
     </data>
-    <data name="ChatErrorFairyMarkers" xml:space="preserve">
+  <data name="ChatErrorFairyMarkers" xml:space="preserve">
         <value>Die Liste der lebenden Feen muss aktualisiert werden, bitte gehe alle bekannten Standorte ab.</value>
     </data>
-    <data name="ChatErrorFairyMinimapMarkers" xml:space="preserve">
+  <data name="ChatErrorFairyMinimapMarkers" xml:space="preserve">
         <value>Es konnten nicht alle Feen Marker auf der Minimap platziert werden</value>
     </data>
-    <data name="ChatErrorMapMarkers" xml:space="preserve">
+  <data name="ChatErrorMapMarkers" xml:space="preserve">
         <value>Es konnten nicht alle Marker auf der Karte platziert werden</value>
     </data>
-    <data name="ChatErrorMinimapMarkers" xml:space="preserve">
+  <data name="ChatErrorMinimapMarkers" xml:space="preserve">
         <value>Es konnten nicht alle Marker auf der Minimap platziert werden</value>
     </data>
-    <data name="ChatErrorNotInEureka" xml:space="preserve">
+  <data name="ChatErrorNotInEureka" xml:space="preserve">
         <value>Du bist nicht in Eureka, dieser Befehl ist nicht verfügbar.</value>
     </data>
-    <data name="ChatNewChestFound" xml:space="preserve">
+  <data name="ChatNewChestFound" xml:space="preserve">
         <value>Du hast eine neue Schatztruhe entdeckt</value>
     </data>
-    <data name="ChatNewChestFoundDevNote" xml:space="preserve">
+  <data name="ChatNewChestFoundDevNote" xml:space="preserve">
         <value>Bitte überlege dir die folgenden Informationen den Entwickler mitzuteilen:</value>
     </data>
-    <data name="ChatNewChestFoundFeedback" xml:space="preserve">
+  <data name="ChatNewChestFoundFeedback" xml:space="preserve">
         <value>(Bitte nutze nicht die Feedback-Funktion um dies mitzuteilen)</value>
     </data>
-    <data name="ConfigButtonAddMapMarkers" xml:space="preserve">
+  <data name="ConfigButtonAddMapMarkers" xml:space="preserve">
         <value>Symbole einzeichnen</value>
     </data>
-    <data name="ConfigButtonCirclePreview" xml:space="preserve">
+  <data name="ConfigButtonCirclePreview" xml:space="preserve">
         <value>Vorschau</value>
     </data>
-    <data name="ConfigButtonDiscordForumThread" xml:space="preserve">
+  <data name="ConfigButtonDiscordForumThread" xml:space="preserve">
         <value>Discord-Thread</value>
     </data>
-    <data name="ConfigButtonFairyAll" xml:space="preserve">
+  <data name="ConfigButtonFairyAll" xml:space="preserve">
         <value>Echo Alle</value>
     </data>
-    <data name="ConfigButtonGithubIssues" xml:space="preserve">
+  <data name="ConfigButtonGithubIssues" xml:space="preserve">
         <value>Probleme</value>
     </data>
-    <data name="ConfigButtonRemoveMapMarkers" xml:space="preserve">
+  <data name="ConfigButtonRemoveMapMarkers" xml:space="preserve">
         <value>Symbole entfernen</value>
     </data>
-    <data name="ConfigButtonStartNew" xml:space="preserve">
+  <data name="ConfigButtonStartNew" xml:space="preserve">
         <value>Neuen Tracker starten</value>
     </data>
-    <data name="ConfigHeaderBunny" xml:space="preserve">
+  <data name="ConfigHeaderBunny" xml:space="preserve">
         <value>Glückshase</value>
     </data>
-    <data name="ConfigHeaderFairy" xml:space="preserve">
+  <data name="ConfigHeaderBunnyCarrot" xml:space="preserve">
+        <value>Bunny Carrot</value>
+    </data>
+  <data name="ConfigHeaderFairy" xml:space="preserve">
         <value>Fee / Elementar</value>
     </data>
-    <data name="ConfigHeaderFormat" xml:space="preserve">
+  <data name="ConfigHeaderFormat" xml:space="preserve">
         <value>Formatierung:</value>
     </data>
-    <data name="ConfigHeaderKnownLocations" xml:space="preserve">
+  <data name="ConfigHeaderKnownLocations" xml:space="preserve">
         <value>Bekannte Standorte</value>
     </data>
-    <data name="ConfigHeaderMapStats" xml:space="preserve">
+  <data name="ConfigHeaderMapStats" xml:space="preserve">
         <value>Karten Statistik:</value>
     </data>
-    <data name="ConfigHeaderPop" xml:space="preserve">
+  <data name="ConfigHeaderMarkerSetHeader" xml:space="preserve">
+        <value>Map Marker</value>
+    </data>
+  <data name="ConfigHeaderPop" xml:space="preserve">
         <value>Pop</value>
     </data>
-    <data name="ConfigHeaderTotalStats" xml:space="preserve">
+  <data name="ConfigHeaderPotHelperHeader" xml:space="preserve">
+        <value>Pot Helper Window</value>
+    </data>
+  <data name="ConfigHeaderProximityNotification" xml:space="preserve">
+        <value>Proximity Notification</value>
+    </data>
+  <data name="ConfigHeaderTotalStats" xml:space="preserve">
         <value>Gesamt-Statistik:</value>
     </data>
-    <data name="ConfigHeaderTracker" xml:space="preserve">
+  <data name="ConfigHeaderTracker" xml:space="preserve">
         <value>Tracker:</value>
     </data>
-    <data name="ConfigInputPW" xml:space="preserve">
+  <data name="ConfigHeaderTreasure" xml:space="preserve">
+        <value>Treasure</value>
+    </data>
+  <data name="ConfigInputPW" xml:space="preserve">
         <value>Passwort</value>
     </data>
-    <data name="ConfigInputURL" xml:space="preserve">
+  <data name="ConfigInputURL" xml:space="preserve">
         <value>Instanz-URL</value>
     </data>
-    <data name="ConfigOptionBunnyLowLevelFates" xml:space="preserve">
+  <data name="ConfigOptionBunnyLowLevelFates" xml:space="preserve">
         <value>Nur niedriges Level anzeigen</value>
     </data>
-    <data name="ConfigOptionBunnyWindow" xml:space="preserve">
+  <data name="ConfigOptionBunnyWindow" xml:space="preserve">
         <value>Zeig Fenster beim Betreten</value>
     </data>
-    <data name="ConfigOptionCofferIcons" xml:space="preserve">
+  <data name="ConfigOptionClearMemory" xml:space="preserve">
+        <value>Clear Memory</value>
+    </data>
+  <data name="ConfigOptionCofferIcons" xml:space="preserve">
         <value>Schatzkisten-Icons beim Eintreten hinzufügen</value>
     </data>
-    <data name="ConfigOptionDrawCircle" xml:space="preserve">
+  <data name="ConfigOptionCopyShoutMessage" xml:space="preserve">
+        <value>Copy Shout Message</value>
+    </data>
+  <data name="ConfigOptionDrawCircle" xml:space="preserve">
         <value>Zeichne Kreis wenn Nahe</value>
     </data>
-    <data name="ConfigOptionEchoFairy" xml:space="preserve">
+  <data name="ConfigOptionEcho" xml:space="preserve">
+        <value>Echo In Chat</value>
+    </data>
+  <data name="ConfigOptionEchoFairy" xml:space="preserve">
         <value>Echo</value>
     </data>
-    <data name="ConfigOptionEchoNM" xml:space="preserve">
+  <data name="ConfigOptionEchoNM" xml:space="preserve">
         <value>Echo</value>
     </data>
-    <data name="ConfigOptionOpenShoutWindow" xml:space="preserve">
+  <data name="ConfigOptionFastSwitcher" xml:space="preserve">
+        <value>Show Fast Switch Overlay</value>
+    </data>
+  <data name="ConfigOptionFateWindow" xml:space="preserve">
+        <value>Show Fate Window On Entry</value>
+    </data>
+  <data name="ConfigOptionFlag" xml:space="preserve">
+        <value>Place Map Flag</value>
+    </data>
+  <data name="ConfigOptionMemoryTimer" xml:space="preserve">
+        <value>Clear After Seconds</value>
+    </data>
+  <data name="ConfigOptionOpenShoutWindow" xml:space="preserve">
         <value>Schreien-Fenster anzeigen</value>
     </data>
-    <data name="ConfigOptionRandomizeCoords" xml:space="preserve">
+  <data name="ConfigOptionPlaceDefault" xml:space="preserve">
+        <value>Place After Entering</value>
+    </data>
+  <data name="ConfigOptionRandomizeCoords" xml:space="preserve">
         <value>Zufällige Karten-Koordinaten</value>
     </data>
-    <data name="ConfigOptionShortNames" xml:space="preserve">
+  <data name="ConfigOptionShortNames" xml:space="preserve">
         <value>Kurznamen verwenden</value>
     </data>
-    <data name="ConfigOptionShowPT" xml:space="preserve">
+  <data name="ConfigOptionShowPT" xml:space="preserve">
         <value>Zeige PT im Schreien-Fenster</value>
     </data>
-    <data name="ConfigOptionSoundNM" xml:space="preserve">
+  <data name="ConfigOptionSoundNM" xml:space="preserve">
         <value>Ton abspielen</value>
     </data>
-    <data name="ConfigOptionToastFairy" xml:space="preserve">
+  <data name="ConfigOptionSpawnNotification" xml:space="preserve">
+        <value>Play Spawn Sound</value>
+    </data>
+  <data name="ConfigOptionSwitcherPosition" xml:space="preserve">
+        <value>Position Below Map</value>
+    </data>
+  <data name="ConfigOptionToast" xml:space="preserve">
+        <value>Show Toast</value>
+    </data>
+  <data name="ConfigOptionToastFairy" xml:space="preserve">
         <value>Toast-Benachrichtigungen anzeigen</value>
     </data>
-    <data name="ConfigOptionToastNM" xml:space="preserve">
+  <data name="ConfigOptionToastNM" xml:space="preserve">
         <value>Toast-Benachrichtigungen anzeigen</value>
     </data>
-    <data name="ConfigOptionUse12h" xml:space="preserve">
+  <data name="ConfigOptionUse12h" xml:space="preserve">
         <value>12-Stunden-Zählung verwenden</value>
     </data>
-    <data name="ConfigOptionUseET" xml:space="preserve">
+  <data name="ConfigOptionUseET" xml:space="preserve">
         <value>Eorzea-Zeit verwenden</value>
     </data>
-    <data name="ConfigTooltipBunnyLowLevelFates" xml:space="preserve">
+  <data name="ConfigTooltipBunnyLowLevelFates" xml:space="preserve">
         <value>Zeigt nur die niedrig stufigen Hasen-FATEs in Pagos und Pyros.</value>
     </data>
-    <data name="ConfigTooltipBunnyWindow" xml:space="preserve">
+  <data name="ConfigTooltipBunnyWindow" xml:space="preserve">
         <value>Oder verwende den '/elbunny' Befehl.</value>
     </data>
-    <data name="ConfigTooltipCofferIcons" xml:space="preserve">
+  <data name="ConfigTooltipClearMemory" xml:space="preserve">
+        <value>Remove spotted treasure and carrots, after X Seconds of being unseen, so that notifications can reappear.</value>
+    </data>
+  <data name="ConfigTooltipCofferIcons" xml:space="preserve">
         <value>Fügt die Schatzkisten Standorte beim Eintreten in Eureka hinzu.</value>
     </data>
-    <data name="ConfigTooltipDrawCircle" xml:space="preserve">
+  <data name="ConfigTooltipDrawCircle" xml:space="preserve">
         <value>Zeichnet einen Kreis, wenn sich der Spieler in der Nähe einer Schatzkiste befindet.</value>
     </data>
-    <data name="ConfigTooltipOpenTracker" xml:space="preserve">
+  <data name="ConfigTooltipOpenTracker" xml:space="preserve">
         <value>Tracker im Browser öffnen</value>
     </data>
-    <data name="ConfigTooltipShowPT" xml:space="preserve">
+  <data name="ConfigTooltipShowPT" xml:space="preserve">
         <value>Durch die Deaktivierung dieser Option wird das zeitliche Element aus der Schreien-Nachricht entfernt.</value>
     </data>
-    <data name="LogCategoryFE" xml:space="preserve">
+  <data name="ConfigTooltipStartNew" xml:space="preserve">
+        <value>Only available while in eureka</value>
+    </data>
+  <data name="LogCategoryFE" xml:space="preserve">
         <value>Feuer und Erde</value>
     </data>
-    <data name="LogCategoryIL" xml:space="preserve">
+  <data name="LogCategoryIL" xml:space="preserve">
         <value>Eis und Donner</value>
     </data>
-    <data name="LogCategoryNight" xml:space="preserve">
+  <data name="LogCategoryNight" xml:space="preserve">
         <value>Nacht</value>
     </data>
-    <data name="LogCategorySprites" xml:space="preserve">
+  <data name="LogCategorySprites" xml:space="preserve">
         <value>Elemente</value>
     </data>
-    <data name="LogCategoryWW" xml:space="preserve">
+  <data name="LogCategoryWW" xml:space="preserve">
         <value>Wasser und Wind</value>
     </data>
-    <data name="LogError" xml:space="preserve">
+  <data name="LogError" xml:space="preserve">
         <value>Log konnte nicht gelesen werden.</value>
     </data>
-    <data name="LogWrongTab" xml:space="preserve">
+  <data name="LogWrongTab" xml:space="preserve">
         <value>Bitte öffne dein Challenge-Log in der Kategorie 'Andere'.</value>
     </data>
-    <data name="LogWrongTabNote" xml:space="preserve">
+  <data name="LogWrongTabNote" xml:space="preserve">
         <value>Der Fortschritt konnte nicht festgestellt werden.</value>
     </data>
-    <data name="QuestLogAetheryteText" xml:space="preserve">
+  <data name="QuestLogAetheryteText" xml:space="preserve">
         <value>Freischaltung der Ätheryt:</value>
     </data>
-    <data name="QuestLogAnemos13Step2" xml:space="preserve">
+  <data name="QuestLogAnemos13Step2" xml:space="preserve">
         <value>Beweg dich zum Val-Becken nahe dem Wasserfall und interagiere mit der Äetherstauung</value>
     </data>
-    <data name="QuestLogAnemos17Step2" xml:space="preserve">
+  <data name="QuestLogAnemos17Step2" xml:space="preserve">
         <value>Beweg dich zum Schaudertal und interagiere mit der Äetherstauung</value>
     </data>
-    <data name="QuestLogAnemos17Step4" xml:space="preserve">
+  <data name="QuestLogAnemos17Step4" xml:space="preserve">
         <value>Beweg dich in die Ätherytennetz-Kontrolle und interagiere mit dem Ätherytenrelais</value>
     </data>
-    <data name="QuestLogAnemos17Step5" xml:space="preserve">
+  <data name="QuestLogAnemos17Step5" xml:space="preserve">
         <value>Interagiere erneut mit dem Ätherytenrelais und übergebe 99 Anemos-Kristalle</value>
     </data>
-    <data name="QuestLogAnemos1Step1" xml:space="preserve">
+  <data name="QuestLogAnemos1Step1" xml:space="preserve">
         <value>Sprech mit Krile und Gerolt</value>
     </data>
-    <data name="QuestLogAnemos1Tip1" xml:space="preserve">
+  <data name="QuestLogAnemos1Tip1" xml:space="preserve">
         <value>Du musst einen 'Instabiler Kristall' von einem normalen Monster erhalten.</value>
     </data>
-    <data name="QuestLogAnemos1Tip2" xml:space="preserve">
+  <data name="QuestLogAnemos1Tip2" xml:space="preserve">
         <value>Du kannst Anemos-Kristalle nicht gegen 'Instabile Kristalle' tauschen, bis du diese Quest abgeschlossen hast.</value>
     </data>
-    <data name="QuestLogAnemos3Step2" xml:space="preserve">
+  <data name="QuestLogAnemos3Step2" xml:space="preserve">
         <value>Beweg dich ins Observatorium für Frühe Naturgeschichte und interagiere mit der Äetherstauung</value>
     </data>
-    <data name="QuestLogAnemos3Tip1" xml:space="preserve">
+  <data name="QuestLogAnemos3Tip1" xml:space="preserve">
         <value>Monster erscheinen in der Nacht um und im Gebäudes, es wird daher empfohlen diese Quest tagsüber zu erledigen (6:00 bis 18:00 Uhr ET).</value>
     </data>
-    <data name="QuestLogAnemos5Step2" xml:space="preserve">
+  <data name="QuestLogAnemos5Step2" xml:space="preserve">
         <value>Beweg dich zum Obstgarten und interagiere mit der Äetherstauung</value>
     </data>
-    <data name="QuestLogHeader" xml:space="preserve">
+  <data name="QuestLogHeader" xml:space="preserve">
         <value>Aktuelles Gebiet</value>
     </data>
-    <data name="QuestLogHydatos51Step2" xml:space="preserve">
+  <data name="QuestLogHydatos51Step2" xml:space="preserve">
         <value>Beweg dich zur Zentralplattform und sprech erneut mit Krile</value>
     </data>
-    <data name="QuestLogHydatos51Step3" xml:space="preserve">
+  <data name="QuestLogHydatos51Step3" xml:space="preserve">
         <value>Beweg dich südlich in das Val-Delta und finde die Ätherstörung</value>
     </data>
-    <data name="QuestLogHydatos51Step4" xml:space="preserve">
+  <data name="QuestLogHydatos51Step4" xml:space="preserve">
         <value>Kehre zur Zentralplattform zurück und sprech mit Krile</value>
     </data>
-    <data name="QuestLogHydatos54Step2" xml:space="preserve">
+  <data name="QuestLogHydatos54Step2" xml:space="preserve">
         <value>Beweg dich zur Westplattform und sprech erneut mit Krile</value>
     </data>
-    <data name="QuestLogHydatos54Step3" xml:space="preserve">
+  <data name="QuestLogHydatos54Step3" xml:space="preserve">
         <value>Beweg dich zum Westufer des Val</value>
     </data>
-    <data name="QuestLogHydatos54Step4" xml:space="preserve">
+  <data name="QuestLogHydatos54Step4" xml:space="preserve">
         <value>Lauf den großen Felsen hoch um die Ätherstörung zu finden</value>
     </data>
-    <data name="QuestLogHydatos54Step5" xml:space="preserve">
+  <data name="QuestLogHydatos54Step5" xml:space="preserve">
         <value>Kehre zur Westplattform zurück und sprech mit Krile</value>
     </data>
-    <data name="QuestLogHydatos57Step1" xml:space="preserve">
+  <data name="QuestLogHydatos57Step1" xml:space="preserve">
         <value>Sprech mit Krile bei der Westplattform</value>
     </data>
-    <data name="QuestLogHydatos57Step2" xml:space="preserve">
+  <data name="QuestLogHydatos57Step2" xml:space="preserve">
         <value>Beweg dich zur Ostplattform und sprech erneut mit Krile</value>
     </data>
-    <data name="QuestLogHydatos57Step3" xml:space="preserve">
+  <data name="QuestLogHydatos57Step3" xml:space="preserve">
         <value>Beweg dich nördlich zum Ostufer des Val und finde die Ätherstörung</value>
     </data>
-    <data name="QuestLogHydatos57Step4" xml:space="preserve">
+  <data name="QuestLogHydatos57Step4" xml:space="preserve">
         <value>Kehre zur Ostplattform zurück und sprech mit Krile</value>
     </data>
-    <data name="QuestLogHydatos60Step1" xml:space="preserve">
+  <data name="QuestLogHydatos60Step1" xml:space="preserve">
         <value>Beweg dich zur Ostplattform und sprech mit Krile</value>
     </data>
-    <data name="QuestLogHydatos60Step2" xml:space="preserve">
+  <data name="QuestLogHydatos60Step2" xml:space="preserve">
         <value>Beweg dich zur Transportplattform und sprech erneut mit Krile</value>
     </data>
-    <data name="QuestLogHydatos60Step3" xml:space="preserve">
+  <data name="QuestLogHydatos60Step3" xml:space="preserve">
         <value>Betrete das Hauptquartier (Eingang ist neben dir)</value>
     </data>
-    <data name="QuestLogHydatos60Step4" xml:space="preserve">
+  <data name="QuestLogHydatos60Step4" xml:space="preserve">
         <value>Sprech nochmal einmal mit Krile</value>
     </data>
-    <data name="QuestLogHydatos60Step5" xml:space="preserve">
+  <data name="QuestLogHydatos60Step5" xml:space="preserve">
         <value>Beweg dich in das Arbeitszimmer Galufs und sprech erneut mit Krile</value>
     </data>
-    <data name="QuestLogHydatos60Step6" xml:space="preserve">
+  <data name="QuestLogHydatos60Step6" xml:space="preserve">
         <value>Interagiere mit dem eingestürzten Bücherstapel</value>
     </data>
-    <data name="QuestLogHydatos60Step7" xml:space="preserve">
+  <data name="QuestLogHydatos60Step7" xml:space="preserve">
         <value>Sprech noch einmal mit Krile (ein paar Zwischensequenzen folgen)</value>
     </data>
-    <data name="QuestLogHydatos60Step8" xml:space="preserve">
+  <data name="QuestLogHydatos60Step8" xml:space="preserve">
         <value>Wähle zwischen Kriles (Versiegelung) oder Ejika Tsunjikas (Zerstörung) Pfad</value>
     </data>
-    <data name="QuestLogHydatos60Step9" xml:space="preserve">
+  <data name="QuestLogHydatos60Step9" xml:space="preserve">
         <value>Kehre zum Zentralen Sammelpunkt zurück und spreche mit Krile oder Ejika Tsunjika (Gegenteil was du gewählt hattest)</value>
     </data>
-    <data name="QuestLogHydatos60Tip1" xml:space="preserve">
+  <data name="QuestLogHydatos60Tip1" xml:space="preserve">
         <value>Diese Quest schaltet Baldesions Arsenal frei.</value>
     </data>
-    <data name="QuestLogHydatos60Tip2" xml:space="preserve">
+  <data name="QuestLogHydatos60Tip2" xml:space="preserve">
         <value>Sprech mit der Inselforscherin, nachdem du die Quest abgeschlossen hast.</value>
     </data>
-    <data name="QuestLogOutside" xml:space="preserve">
+  <data name="QuestLogOutside" xml:space="preserve">
         <value>Nicht in Eureka...</value>
     </data>
-    <data name="QuestLogPagos21Step2" xml:space="preserve">
+  <data name="QuestLogPagos21Step2" xml:space="preserve">
         <value>Finde den versiegten Ätherstrom beim Kegel (Auf dem Grashügel)</value>
     </data>
-    <data name="QuestLogPagos23Step2" xml:space="preserve">
+  <data name="QuestLogPagos23Step2" xml:space="preserve">
         <value>Finden den versiegten Ätherstrom beim gefrorenen See</value>
     </data>
-    <data name="QuestLogPagos25Step2" xml:space="preserve">
+  <data name="QuestLogPagos25Step2" xml:space="preserve">
         <value>Finde den Magicite bei der Ostklippe</value>
     </data>
-    <data name="QuestLogPagos25Step3" xml:space="preserve">
+  <data name="QuestLogPagos25Step3" xml:space="preserve">
         <value>Interagiere erneut ein kleines Stück südwestlich</value>
     </data>
-    <data name="QuestLogPagos25Tip1" xml:space="preserve">
+  <data name="QuestLogPagos25Tip1" xml:space="preserve">
         <value>Nach einem Gespräch mit Krile kannst du zu jederzeit mit Gerolt reden um die Relikt Quest für Pagos freizuschalten.</value>
     </data>
-    <data name="QuestLogPagos29Step2" xml:space="preserve">
+  <data name="QuestLogPagos29Step2" xml:space="preserve">
         <value>Hier die Klippe herunterfallen</value>
     </data>
-    <data name="QuestLogPagos29Step3" xml:space="preserve">
+  <data name="QuestLogPagos29Step3" xml:space="preserve">
         <value>Sprech mit Ejika Tsunjika</value>
     </data>
-    <data name="QuestLogPagos35Step2" xml:space="preserve">
+  <data name="QuestLogPagos35Step2" xml:space="preserve">
         <value>Finde die Äther-Column bei Fumarole</value>
     </data>
-    <data name="QuestLogPyros35Step2" xml:space="preserve">
+  <data name="QuestLogPyros35Step2" xml:space="preserve">
         <value>Beweg dich ins Magielabor und sprech mit Krile</value>
     </data>
-    <data name="QuestLogPyros35Step5" xml:space="preserve">
+  <data name="QuestLogPyros35Step5" xml:space="preserve">
         <value>Verwende den Logos-Manipulator, wähle ein Logos-Splitter der Paralyse aus und extrahiere diesen als Mneme</value>
     </data>
-    <data name="QuestLogPyros35Step7" xml:space="preserve">
+  <data name="QuestLogPyros35Step7" xml:space="preserve">
         <value>Beweg dich zu den Nortöstlichen Eisnadeln und interagiere mit der Äetherstauung</value>
     </data>
-    <data name="QuestLogPyros38Step2" xml:space="preserve">
+  <data name="QuestLogPyros38Step2" xml:space="preserve">
         <value>Beweg dich zum Surgate-Landhaus und interagiere mit der defekten Apparatur</value>
     </data>
-    <data name="QuestLogPyros38Step4" xml:space="preserve">
+  <data name="QuestLogPyros38Step4" xml:space="preserve">
         <value>Beweg dich zur Brennkammer und interagiere mit der Äetherstauung</value>
     </data>
-    <data name="QuestLogPyros38Tip1" xml:space="preserve">
+  <data name="QuestLogPyros38Tip1" xml:space="preserve">
         <value>Diese Quest schaltet zusätzliche Kapazität für deinen Logos-Manipulator frei.</value>
     </data>
-    <data name="QuestLogPyros40Step2" xml:space="preserve">
+  <data name="QuestLogPyros40Step2" xml:space="preserve">
         <value>Beweg dich zum Westlichen Flammenfels und interagiere mit der Äetherstauung</value>
     </data>
-    <data name="QuestLogPyros45Step1" xml:space="preserve">
+  <data name="QuestLogPyros45Step1" xml:space="preserve">
         <value>Sprech mit Krile (ein paar Zwischensequenzen folgen)</value>
     </data>
-    <data name="QuestLogPyros45Step2" xml:space="preserve">
+  <data name="QuestLogPyros45Step2" xml:space="preserve">
         <value>Beweg dich ins Magielabor und sprech mit Krile</value>
     </data>
-    <data name="QuestLogPyros50Step2" xml:space="preserve">
+  <data name="QuestLogPyros50Step2" xml:space="preserve">
         <value>Beweg dich zum Östlichen Flammenfels und interagiere mit der Äetherstauung</value>
     </data>
-    <data name="QuestLogPyros50Step4" xml:space="preserve">
+  <data name="QuestLogPyros50Step4" xml:space="preserve">
         <value>Beweg dich zur Singenden Eisgrotte und interagiere mit der Äetherstauung</value>
     </data>
-    <data name="QuestLogReturnToDrake" xml:space="preserve">
+  <data name="QuestLogReturnToDrake" xml:space="preserve">
         <value>Kehre zurück zu Drake</value>
     </data>
-    <data name="QuestLogReturnToGerolt" xml:space="preserve">
+  <data name="QuestLogReturnToGerolt" xml:space="preserve">
         <value>Kehre zurück zu Gerolt</value>
     </data>
-    <data name="QuestLogReturnToKrile" xml:space="preserve">
+  <data name="QuestLogReturnToKrile" xml:space="preserve">
         <value>Kehre zurück zu Krile</value>
     </data>
-    <data name="QuestLogTabItemQuestLevel" xml:space="preserve">
+  <data name="QuestLogTabItemQuestLevel" xml:space="preserve">
         <value>Level</value>
     </data>
-    <data name="QuestLogTalkToDrake" xml:space="preserve">
+  <data name="QuestLogTalkToDrake" xml:space="preserve">
         <value>Sprech mit Drake</value>
     </data>
-    <data name="QuestLogTalkToGerolt" xml:space="preserve">
+  <data name="QuestLogTalkToGerolt" xml:space="preserve">
         <value>Sprech mit Gerolt</value>
     </data>
-    <data name="QuestLogTalkToKrile" xml:space="preserve">
+  <data name="QuestLogTalkToKrile" xml:space="preserve">
         <value>Sprech mit Krile</value>
     </data>
-    <data name="ShoutButtonClose" xml:space="preserve">
+  <data name="ShoutButtonClose" xml:space="preserve">
         <value>Schließen</value>
     </data>
-    <data name="ShoutButtonPost" xml:space="preserve">
+  <data name="ShoutButtonPost" xml:space="preserve">
         <value>Senden</value>
     </data>
-    <data name="ShoutWindowLimit" xml:space="preserve">
+  <data name="ShoutWindowLimit" xml:space="preserve">
         <value>Schreien wird 20s nachdem erscheinen verfügbar sein.</value>
     </data>
-    <data name="StatsEntryBronze" xml:space="preserve">
+  <data name="StatsEntryBronze" xml:space="preserve">
         <value>Bronze:</value>
     </data>
-    <data name="StatsEntryFound" xml:space="preserve">
+  <data name="StatsEntryFound" xml:space="preserve">
         <value>Truhen gefunden:</value>
     </data>
-    <data name="StatsEntryGold" xml:space="preserve">
+  <data name="StatsEntryGold" xml:space="preserve">
         <value>Gold:</value>
     </data>
-    <data name="StatsEntryKilled" xml:space="preserve">
+  <data name="StatsEntryKilled" xml:space="preserve">
         <value>Getötete Häschen:</value>
     </data>
-    <data name="StatsEntrySilver" xml:space="preserve">
+  <data name="StatsEntrySilver" xml:space="preserve">
         <value>Silber:</value>
     </data>
-    <data name="StatsEntryTime" xml:space="preserve">
+  <data name="StatsEntryTime" xml:space="preserve">
         <value>Zeit in Eureka:</value>
     </data>
-    <data name="TabHeaderAbout" xml:space="preserve">
+  <data name="TabHeaderAbout" xml:space="preserve">
         <value>Über uns</value>
     </data>
-    <data name="TabHeaderBunny" xml:space="preserve">
+  <data name="TabHeaderBunny" xml:space="preserve">
         <value>Hase</value>
     </data>
-    <data name="TabHeaderChat" xml:space="preserve">
+  <data name="TabHeaderChat" xml:space="preserve">
         <value>Chat</value>
     </data>
-    <data name="TabHeaderFairy" xml:space="preserve">
+  <data name="TabHeaderFairy" xml:space="preserve">
         <value>Fee</value>
     </data>
-    <data name="TabHeaderGeneral" xml:space="preserve">
+  <data name="TabHeaderGeneral" xml:space="preserve">
         <value>Allgemein</value>
     </data>
-    <data name="TabHeaderStats" xml:space="preserve">
+  <data name="TabHeaderOccult" xml:space="preserve">
+        <value>Occult</value>
+    </data>
+  <data name="TabHeaderStats" xml:space="preserve">
         <value>Statistik</value>
     </data>
-    <data name="TableLabelDone" xml:space="preserve">
+  <data name="TableLabelDone" xml:space="preserve">
         <value>Fertig</value>
     </data>
-    <data name="TableLabelEnemyLvl" xml:space="preserve">
+  <data name="TableLabelEnemyLvl" xml:space="preserve">
         <value>Level des Gegners</value>
     </data>
-    <data name="TableLabelMonster" xml:space="preserve">
+  <data name="TableLabelMonster" xml:space="preserve">
         <value>Monster</value>
     </data>
 </root>

@@ -577,15 +577,20 @@ public class Plugin : IDalamudPlugin
         if (local == null)
             return;
 
+        var fateManager = FateManager.Instance();
+        var publicContent = PublicContentOccultCrescent.GetInstance();
+        if (publicContent == null || fateManager == null)
+            return;
+
         // Player is in a Critical Engagement, disable all checking
         // TODO Replace with CS version after stable release
-        var activeCE = *((byte*)&PublicContentOccultCrescent.GetInstance()->DynamicEventContainer + 0x1D7E);
+        var activeCE = *((byte*)&publicContent->DynamicEventContainer + 0x1D7E);
         if (activeCE != 0xFF)
             return;
 
         // Player is in a fade, disable all checking
         // TODO Replace with CS version after stable release
-        var fateJoined = *(byte*)((nint)FateManager.Instance() + 0xAF);
+        var fateJoined = *(byte*)((nint)fateManager + 0xAF);
         if (fateJoined > 0)
             return;
 
@@ -749,20 +754,25 @@ public class Plugin : IDalamudPlugin
 
         switch (set)
         {
-            case OccultMarkerSets.OccultTreasure:
+            case OccultMarkerSets.Treasure:
                 AddOccultTreasureLocations();
                 break;
-            case OccultMarkerSets.OccultPot:
+            case OccultMarkerSets.Pot:
                 AddOccultPotLocations();
                 break;
-            case OccultMarkerSets.OccultBunny:
+            case OccultMarkerSets.Bunny:
                 AddOccultBunnyPositions();
                 break;
-            case OccultMarkerSets.OccultOnlyBronze:
+            case OccultMarkerSets.OnlyBronze:
                 AddOccultBronzeLocations();
                 break;
-            case OccultMarkerSets.OccultOnlySilver:
+            case OccultMarkerSets.OnlySilver:
                 AddOccultSilverLocations();
+                break;
+            case OccultMarkerSets.TreasureAndCarrots:
+                AddOccultTreasureLocations();
+                AddOccultBunnyPositions();
+                MarkerSetToPlace = SharedMarketSet.OccultTreasureCarrots;
                 break;
         }
     }
@@ -839,6 +849,7 @@ public class Plugin : IDalamudPlugin
         foreach (var (worldPos, _) in OccultChests.TreasurePosition[ClientState.TerritoryType].Where(pair => pair.Item2 == 1597))
             SetMarkers(worldPos, worldPos, 60355u);
     }
+
 
     public unsafe void RemoveMapMarker()
     {

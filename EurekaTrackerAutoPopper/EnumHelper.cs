@@ -11,16 +11,18 @@ public enum SharedMarketSet
     OccultBunny = 4,
     OccultBronze = 5,
     OccultSilver = 6,
+    OccultTreasureCarrots = 7,
 }
 
 public enum OccultMarkerSets
 {
     None = 0,
-    OccultTreasure = 1,
-    OccultPot = 2,
-    OccultBunny = 3,
-    OccultOnlyBronze = 4,
-    OccultOnlySilver = 5,
+    Treasure = 1,
+    Pot = 2,
+    Bunny = 3,
+    OnlyBronze = 4,
+    OnlySilver = 5,
+    TreasureAndCarrots = 6,
 }
 
 public enum Territory : uint
@@ -41,11 +43,12 @@ public static class EnumExtensions
         return set switch
         {
             OccultMarkerSets.None => "Show None",
-            OccultMarkerSets.OccultTreasure => "All Treasure",
-            OccultMarkerSets.OccultPot => "Pot Locations",
-            OccultMarkerSets.OccultBunny => "Bunny Carrot Locations",
-            OccultMarkerSets.OccultOnlyBronze => "Bronze Treasure",
-            OccultMarkerSets.OccultOnlySilver => "Silver Treasure",
+            OccultMarkerSets.Treasure => "All Treasure",
+            OccultMarkerSets.Pot => "Pot Locations",
+            OccultMarkerSets.Bunny => "Bunny Carrot Locations",
+            OccultMarkerSets.OnlyBronze => "Bronze Treasure",
+            OccultMarkerSets.OnlySilver => "Silver Treasure",
+            OccultMarkerSets.TreasureAndCarrots => "Treasure And Carrots",
             _ => "Unknown",
         };
     }
@@ -55,11 +58,12 @@ public static class EnumExtensions
         return set switch
         {
             SharedMarketSet.None or SharedMarketSet.Eureka => OccultMarkerSets.None,
-            SharedMarketSet.OccultTreasure => OccultMarkerSets.OccultTreasure,
-            SharedMarketSet.OccultPot => OccultMarkerSets.OccultPot,
-            SharedMarketSet.OccultBunny => OccultMarkerSets.OccultBunny,
-            SharedMarketSet.OccultBronze => OccultMarkerSets.OccultOnlyBronze,
-            SharedMarketSet.OccultSilver => OccultMarkerSets.OccultOnlySilver,
+            SharedMarketSet.OccultTreasure => OccultMarkerSets.Treasure,
+            SharedMarketSet.OccultPot => OccultMarkerSets.Pot,
+            SharedMarketSet.OccultBunny => OccultMarkerSets.Bunny,
+            SharedMarketSet.OccultBronze => OccultMarkerSets.OnlyBronze,
+            SharedMarketSet.OccultSilver => OccultMarkerSets.OnlySilver,
+            SharedMarketSet.OccultTreasureCarrots => OccultMarkerSets.TreasureAndCarrots,
             _ =>  OccultMarkerSets.None,
         };
     }
