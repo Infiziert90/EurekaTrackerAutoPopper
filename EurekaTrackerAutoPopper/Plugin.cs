@@ -22,6 +22,8 @@ using Dalamud.Plugin.Services;
 using EurekaTrackerAutoPopper.Attributes;
 using EurekaTrackerAutoPopper.Resources;
 using EurekaTrackerAutoPopper.Windows;
+using FFXIVClientStructs.FFXIV.Client.Game.Fate;
+using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
 
@@ -569,10 +571,22 @@ public class Plugin : IDalamudPlugin
         }
     }
 
-    private void OccultCheck(IFramework _)
+    private unsafe void OccultCheck(IFramework _)
     {
         var local = ClientState.LocalPlayer;
         if (local == null)
+            return;
+
+        // Player is in a Critical Engagement, disable all checking
+        // TODO Replace with CS version after stable release
+        var activeCE = *((byte*)&PublicContentOccultCrescent.GetInstance()->DynamicEventContainer + 0x1D7E);
+        if (activeCE != 0xFF)
+            return;
+
+        // Player is in a fade, disable all checking
+        // TODO Replace with CS version after stable release
+        var fateJoined = *(byte*)((nint)FateManager.Instance() + 0xAF);
+        if (fateJoined > 0)
             return;
 
         foreach (var actor in ObjectTable.Where(gameObject => gameObject.ObjectKind == ObjectKind.Treasure))
