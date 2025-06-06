@@ -24,6 +24,7 @@ using EurekaTrackerAutoPopper.Resources;
 using EurekaTrackerAutoPopper.Windows;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
 
@@ -600,6 +601,10 @@ public class Plugin : IDalamudPlugin
             if (actor.DataId is > 1856 or < 1789)
                 return;
 
+            var treasureObject = (Treasure*)actor.Address;
+            if (treasureObject->RenderFlags > 0)
+                return;
+
             if (!Sheets.TreasureSheet.TryGetRow(actor.DataId, out var treasureRow))
                 return;
 
@@ -645,7 +650,7 @@ public class Plugin : IDalamudPlugin
     private bool CheckForObjectRemoval(Library.LocationMemory locationObject, IPlayerCharacter local, long currentTime)
     {
         // Treasure still in reach of the object table?
-        if (Utils.GetDistance(local.Position, locationObject.Pos) > 108.0)
+        if (Utils.GetDistance(local.Position, locationObject.Pos) > 120.0)
             return locationObject.LastSeen + Configuration.ClearAfterSeconds < currentTime;
 
         // Treasure is still around the player
