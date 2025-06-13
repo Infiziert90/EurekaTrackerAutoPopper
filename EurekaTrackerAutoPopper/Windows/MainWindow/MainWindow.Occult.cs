@@ -165,6 +165,8 @@ public partial class MainWindow
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipBunnyWindow);
                 changed |= Helper.AddSoundOption(ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
 
+                changed |= ImGui.Checkbox(Language.ConfigOptionDrawCircle, ref Plugin.Configuration.BunnyCircleDraw);
+                ImGui.SameLine();
                 var circleColor = Plugin.Configuration.CircleColor;
                 ImGui.ColorEdit4("##circleColorPicker", ref circleColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.NoAlpha);
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipDrawCircle);

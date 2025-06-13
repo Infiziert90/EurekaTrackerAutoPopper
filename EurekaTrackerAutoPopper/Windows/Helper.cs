@@ -1,3 +1,4 @@
+using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
@@ -51,5 +52,61 @@ public static class Helper
             UIGlobals.PlaySoundEffect((uint) soundEffect);
 
         return changed;
+    }
+
+    /// <summary>
+    /// An unformatted version for ImGui.TextColored
+    /// </summary>
+    /// <param name="color">color to be used</param>
+    /// <param name="text">text to display</param>
+    public static void TextColored(Vector4 color, string text)
+    {
+        using (ImRaii.PushColor(ImGuiCol.Text, color))
+            ImGui.TextUnformatted(text);
+    }
+
+    /// <summary>
+    /// An unformatted version for ImGui.Tooltip
+    /// </summary>
+    /// <param name="tooltip">tooltip to display</param>
+    public static void Tooltip(string tooltip)
+    {
+        using (ImRaii.Tooltip())
+        using (ImRaii.TextWrapPos(ImGui.GetFontSize() * 35.0f))
+            ImGui.TextUnformatted(tooltip);
+    }
+
+    /// <summary>
+    /// An unformatted version for ImGui.TextWrapped
+    /// </summary>
+    /// <param name="text">text to display</param>
+    public static void TextWrapped(string text)
+    {
+        using (ImRaii.TextWrapPos(0.0f))
+            ImGui.TextUnformatted(text);
+    }
+
+    /// <summary>
+    /// An unformatted version for ImGui.TextWrapped with color
+    /// </summary>
+    /// <param name="color">color to be used</param>
+    /// <param name="text">text to display</param>
+    public static void WrappedTextWithColor(Vector4 color, string text)
+    {
+        using (ImRaii.PushColor(ImGuiCol.Text, color))
+            TextWrapped(text);
+    }
+
+    /// <summary>
+    /// Bullet with clickable link
+    /// </summary>
+    /// <param name="text">text to display</param>
+    /// <param name="url">url to open</param>
+    public static void BulletLink(string text, string url)
+    {
+        ImGui.Bullet();
+        ImGui.SameLine();
+        if (ImGui.Selectable(text))
+            Dalamud.Utility.Util.OpenLink(url);
     }
 }

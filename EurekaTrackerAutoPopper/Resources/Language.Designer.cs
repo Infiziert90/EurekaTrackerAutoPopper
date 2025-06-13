@@ -159,6 +159,42 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Battle Underway.
+        /// </summary>
+        internal static string CEStateBattle {
+            get {
+                return ResourceManager.GetString("CEStateBattle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inactive.
+        /// </summary>
+        internal static string CEStateInactive {
+            get {
+                return ResourceManager.GetString("CEStateInactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recruiting Members.
+        /// </summary>
+        internal static string CEStateRegister {
+            get {
+                return ResourceManager.GetString("CEStateRegister", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing To Commence.
+        /// </summary>
+        internal static string CEStateWarmup {
+            get {
+                return ResourceManager.GetString("CEStateWarmup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Removing inactive fairies from tracking..
         /// </summary>
         internal static string ChatDeadFairyNote {
@@ -245,6 +281,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string ChatNewChestFoundFeedback {
             get {
                 return ResourceManager.GetString("ChatNewChestFoundFeedback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All Previous Engagements.
+        /// </summary>
+        internal static string CollapseablePreviousEngagements {
+            get {
+                return ResourceManager.GetString("CollapseablePreviousEngagements", resourceCulture);
             }
         }
         
@@ -753,6 +798,168 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Last Seen: {0} ago.
+        /// </summary>
+        internal static string FateInfoLastSeen {
+            get {
+                return ResourceManager.GetString("FateInfoLastSeen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Respawn Times: [{0}].
+        /// </summary>
+        internal static string FateInfoRespawnTimes {
+            get {
+                return ResourceManager.GetString("FateInfoRespawnTimes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Walking Time: {0}.
+        /// </summary>
+        internal static string FateInfoWalkingTime {
+            get {
+                return ResourceManager.GetString("FateInfoWalkingTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Progress.
+        /// </summary>
+        internal static string FateProgress {
+            get {
+                return ResourceManager.GetString("FateProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Remaining.
+        /// </summary>
+        internal static string FateTimeRemaining {
+            get {
+                return ResourceManager.GetString("FateTimeRemaining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Where can I join an organized run? (Click name).
+        /// </summary>
+        internal static string ForkedTowerInfoJoinDiscordList {
+            get {
+                return ResourceManager.GetString("ForkedTowerInfoJoinDiscordList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Want to join a Forked Tower run?.
+        /// </summary>
+        internal static string ForkedTowerInfoJoinRun {
+            get {
+                return ResourceManager.GetString("ForkedTowerInfoJoinRun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Players on Platform: {0}.
+        /// </summary>
+        internal static string ForkedTowerInfoPlayerCount {
+            get {
+                return ResourceManager.GetString("ForkedTowerInfoPlayerCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Player List.
+        /// </summary>
+        internal static string ForkedTowerInfoPlayerListCollapseable {
+            get {
+                return ResourceManager.GetString("ForkedTowerInfoPlayerListCollapseable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please be aware that attempting to join Forked Tower as an individual player is highly discouraged. This means to stand on the tower platform during the prerequisite weather conditions, in addition to offering any amount of ciphers for entry during this period..
+        /// </summary>
+        internal static string ForkedTowerInfoWarning1 {
+            get {
+                return ResourceManager.GetString("ForkedTowerInfoWarning1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entering as a solo player is a waste of both your time, as well as those participating in organized runs due to the coordinated nature of the instance. If you wish to learn more about Forked Tower or would like to participate in an organized group, it&apos;s encouraged to join one of the following Discord servers for your respective region..
+        /// </summary>
+        internal static string ForkedTowerInfoWarning2 {
+            get {
+                return ResourceManager.GetString("ForkedTowerInfoWarning2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not on the Platform..
+        /// </summary>
+        internal static string ForkedTowerNotOnPlatform {
+            get {
+                return ResourceManager.GetString("ForkedTowerNotOnPlatform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forked Tower hasn&apos;t been seen yet..
+        /// </summary>
+        internal static string ForkedTowerNotSeen {
+            get {
+                return ResourceManager.GetString("ForkedTowerNotSeen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Active Critical Encounter:.
+        /// </summary>
+        internal static string HeaderActiveCE {
+            get {
+                return ResourceManager.GetString("HeaderActiveCE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Active FATE:.
+        /// </summary>
+        internal static string HeaderActiveFate {
+            get {
+                return ResourceManager.GetString("HeaderActiveFate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Active Pot FATE:.
+        /// </summary>
+        internal static string HeaderActivePot {
+            get {
+                return ResourceManager.GetString("HeaderActivePot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Critical Encounter:.
+        /// </summary>
+        internal static string HeaderCE {
+            get {
+                return ResourceManager.GetString("HeaderCE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FATEs:.
+        /// </summary>
+        internal static string HeaderFates {
+            get {
+                return ResourceManager.GetString("HeaderFates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fire and Earth.
         /// </summary>
         internal static string LogCategoryFE {
@@ -831,6 +1038,78 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string LogWrongTabNote {
             get {
                 return ResourceManager.GetString("LogWrongTabNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bunny Carrot Locations.
+        /// </summary>
+        internal static string MarkerSetBunny {
+            get {
+                return ResourceManager.GetString("MarkerSetBunny", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Treasure And Carrots.
+        /// </summary>
+        internal static string MarkerSetCombined {
+            get {
+                return ResourceManager.GetString("MarkerSetCombined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show None.
+        /// </summary>
+        internal static string MarkerSetNone {
+            get {
+                return ResourceManager.GetString("MarkerSetNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bronze Treasure.
+        /// </summary>
+        internal static string MarkerSetOnlyBronze {
+            get {
+                return ResourceManager.GetString("MarkerSetOnlyBronze", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Silver Treasure.
+        /// </summary>
+        internal static string MarkerSetOnlySilver {
+            get {
+                return ResourceManager.GetString("MarkerSetOnlySilver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pot Locations.
+        /// </summary>
+        internal static string MarkerSetPot {
+            get {
+                return ResourceManager.GetString("MarkerSetPot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All Treasure.
+        /// </summary>
+        internal static string MarkerSetTreasure {
+            get {
+                return ResourceManager.GetString("MarkerSetTreasure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You aren&apos;t in the occult territory, this window is not of any use..
+        /// </summary>
+        internal static string OccultWindowNotInTerritory {
+            get {
+                return ResourceManager.GetString("OccultWindowNotInTerritory", resourceCulture);
             }
         }
         
@@ -1492,6 +1771,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Engagements.
+        /// </summary>
+        internal static string TabHeaderEngagements {
+            get {
+                return ResourceManager.GetString("TabHeaderEngagements", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fairy.
         /// </summary>
         internal static string TabHeaderFairy {
@@ -1551,6 +1839,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string TabHeaderStats {
             get {
                 return ResourceManager.GetString("TabHeaderStats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forked Tower.
+        /// </summary>
+        internal static string TabHeaderTower {
+            get {
+                return ResourceManager.GetString("TabHeaderTower", resourceCulture);
             }
         }
         

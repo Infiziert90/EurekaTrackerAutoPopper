@@ -39,7 +39,7 @@ public class BunnyWindow : Window, IDisposable
     public override bool DrawConditions()
     {
         InEureka = Fates.EurekaBunnyTerritories.Contains(Plugin.ClientState.TerritoryType);
-        InOccult = Plugin.ClientState.TerritoryType == (uint)Territory.SouthHorn;
+        InOccult = Plugin.PlayerInOccultTerritory();
 
         return InEureka || InOccult;
     }
@@ -85,7 +85,7 @@ public class BunnyWindow : Window, IDisposable
                 ImGuiHelpers.ScaledDummy(5);
             }
 
-            ImGui.TextUnformatted($"Fate: {bunny.Name}{bunny.Position}");
+            ImGui.TextUnformatted($"Fate: {bunny.GetName()}{bunny.Position}");
             if (bunny.Alive)
             {
                 ImGui.TextColored(ImGuiColors.HealerGreen, Language.BunnyWindowStatusAlive);

@@ -16,4 +16,14 @@ public static class Utils
     {
         return span.ToString(span.TotalSeconds > 59 ? @"%m\ \m\i\n" : @"%s\ \s\e\c");
     }
+
+    public static string TimeToClockFormat(TimeSpan span)
+    {
+        return $"{span.Minutes:00}:{span.Seconds:00}";
+    }
+
+    public static float Distance(Vector2 worldPos, Vector3 playerPos)
+    {
+        return Vector2.Distance(worldPos, new Vector2(playerPos.X, playerPos.Z));
+    }
 }

@@ -23,6 +23,7 @@ using EurekaTrackerAutoPopper.Attributes;
 using EurekaTrackerAutoPopper.Resources;
 using EurekaTrackerAutoPopper.Windows;
 using EurekaTrackerAutoPopper.Windows.MainWindow;
+using EurekaTrackerAutoPopper.Windows.OccultWindow;
 using EurekaTrackerAutoPopper.Windows.Overlay;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
@@ -47,13 +48,14 @@ public class Plugin : IDalamudPlugin
     [PluginService] public static IGameGui GameGui { get; private set; } = null!;
     [PluginService] public static IDataManager Data { get; private set; } = null!;
     [PluginService] public static IPluginLog Log { get; private set; } = null!;
-    [PluginService] public static IGameInteropProvider Hook { get; private set; } = null!;
+    [PluginService] public static ITextureProvider TextureManager { get; private set; } = null!;
     [PluginService] public static IAddonLifecycle AddonLifecycle { get; private set; } = null!;
 
     public Configuration Configuration { get; init; }
 
     private WindowSystem WindowSystem { get; init; } = new("Eureka Linker");
     private MainWindow MainWindow { get; init; }
+    private OccultWindow OccultWindow { get; init; }
     private QuestWindow QuestWindow { get; init; }
     private LogWindow LogWindow { get; init; }
     public BunnyWindow BunnyWindow { get; init; }
@@ -91,12 +93,14 @@ public class Plugin : IDalamudPlugin
         Fates = new Fates(this);
 
         MainWindow = new MainWindow(this);
+        OccultWindow = new OccultWindow(this);
         QuestWindow = new QuestWindow();
         LogWindow = new LogWindow();
         BunnyWindow = new BunnyWindow(this);
         ShoutWindow = new ShoutWindow(this);
         FastSwitchOverlay = new FastSwitchOverlay(this);
         WindowSystem.AddWindow(MainWindow);
+        WindowSystem.AddWindow(OccultWindow);
         WindowSystem.AddWindow(QuestWindow);
         WindowSystem.AddWindow(LogWindow);
         WindowSystem.AddWindow(BunnyWindow);
@@ -129,12 +133,13 @@ public class Plugin : IDalamudPlugin
     {
         GC.SuppressFinalize(this);
 
+        Fates.Dispose();
+
         Framework.Update -= PollForFateChange;
         Framework.Update -= FairyCheck;
         Framework.Update -= BunnyCheck;
         Framework.Update -= OccultCheck;
         Framework.Update -= OccultPotCheck;
-        Framework.Update -= Fates.CheckForBunnyFates;
         ClientState.TerritoryChanged -= TerritoryChangePoll;
 
         PluginInterface.UiBuilder.Draw -= DrawUI;
@@ -200,14 +205,21 @@ public class Plugin : IDalamudPlugin
     [HelpMessage("Opens the config window")]
     private void OnEurekaCommand(string command, string args)
     {
-        MainWindow.IsOpen ^= true;
+        MainWindow.Toggle();
+    }
+
+    [Command("/eloccult")]
+    [HelpMessage("Opens occult helper window")]
+    private void OnOccultCommand(string command, string args)
+    {
+        OccultWindow.Toggle();
     }
 
     [Command("/elquest")]
     [HelpMessage("Opens the quest guide")]
     private void OnQuestCommand(string command, string args)
     {
-        QuestWindow.IsOpen ^= true;
+        QuestWindow.Toggle();
     }
 
     [Command("/elbunny")]
@@ -215,7 +227,7 @@ public class Plugin : IDalamudPlugin
     private void OnBunnyCommand(string command, string args)
     {
         if (Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
-            BunnyWindow.IsOpen ^= true;
+            BunnyWindow.Toggle();
         else
             Chat.PrintError(Language.ChatErrorNotInEureka);
     }
@@ -224,7 +236,7 @@ public class Plugin : IDalamudPlugin
     [HelpMessage("Opens the log window")]
     private void OnLogCommand(string command, string args)
     {
-        LogWindow.IsOpen ^= true;
+        LogWindow.Toggle();
     }
 
     [Command("/elmarkers")]
@@ -265,10 +277,22 @@ public class Plugin : IDalamudPlugin
             Framework.Update += PollForFateChange;
             Framework.Update += FairyCheck;
             Framework.Update += BunnyCheck;
-            Framework.Update += Fates.CheckForBunnyFates;
+            Fates.RegisterEvents();
         }
         else if (ClientState.TerritoryType == (uint)Territory.SouthHorn)
         {
+            // TODO: Remove after 30.06.25
+            if (!Configuration.FirstTimeOccultAfterUpdate)
+            {
+                Chat.Print(new XivChatEntry { Message = new SeStringBuilder()
+                    .AddUiForeground("[Eureka Linker] ", 540)
+                    .AddUiForeground("Welcome Adventurer, this is your first time in occult crescent after the latest update, a new helper has been added under /eloccult, enjoy your time.", 43)
+                    .BuiltString });
+
+                Configuration.FirstTimeOccultAfterUpdate = true;
+                Configuration.Save();
+            }
+
             if (Configuration.ShowBunnyWindow)
                 BunnyWindow.IsOpen = true;
 
@@ -284,7 +308,8 @@ public class Plugin : IDalamudPlugin
 
             Framework.Update += OccultCheck;
             Framework.Update += OccultPotCheck;
-            Framework.Update += Fates.CheckForBunnyFates;
+
+            Fates.RegisterEvents();
         }
         else
         {
@@ -313,7 +338,8 @@ public class Plugin : IDalamudPlugin
             Framework.Update -= BunnyCheck;
             Framework.Update -= OccultCheck;
             Framework.Update -= OccultPotCheck;
-            Framework.Update -= Fates.CheckForBunnyFates;
+
+            Fates.RemoveEvents();
         }
     }
 

@@ -1,4 +1,6 @@
 using System;
+using EurekaTrackerAutoPopper.Resources;
+using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 
 namespace EurekaTrackerAutoPopper;
 
@@ -34,6 +36,16 @@ public enum Territory : uint
     SouthHorn = 1252,
 }
 
+public enum OccultAetheryte : uint
+{
+    None = 0,
+    ExpeditionBaseCamp = 4944,
+    TheWanderersHaven = 4936,
+    CrystallizedCaverns = 4939,
+    Eldergrowth = 4940,
+    Stonemarsh = 4947,
+}
+
 public static class EnumExtensions
 {
     public static readonly OccultMarkerSets[] OccultSetArray = Enum.GetValues<OccultMarkerSets>();
@@ -42,13 +54,13 @@ public static class EnumExtensions
     {
         return set switch
         {
-            OccultMarkerSets.None => "Show None",
-            OccultMarkerSets.Treasure => "All Treasure",
-            OccultMarkerSets.Pot => "Pot Locations",
-            OccultMarkerSets.Bunny => "Bunny Carrot Locations",
-            OccultMarkerSets.OnlyBronze => "Bronze Treasure",
-            OccultMarkerSets.OnlySilver => "Silver Treasure",
-            OccultMarkerSets.TreasureAndCarrots => "Treasure And Carrots",
+            OccultMarkerSets.None => Language.MarkerSetNone,
+            OccultMarkerSets.Treasure => Language.MarkerSetTreasure,
+            OccultMarkerSets.Pot => Language.MarkerSetPot,
+            OccultMarkerSets.Bunny => Language.MarkerSetBunny,
+            OccultMarkerSets.OnlyBronze => Language.MarkerSetOnlyBronze,
+            OccultMarkerSets.OnlySilver => Language.MarkerSetOnlySilver,
+            OccultMarkerSets.TreasureAndCarrots => Language.MarkerSetCombined,
             _ => "Unknown",
         };
     }
@@ -66,6 +78,26 @@ public static class EnumExtensions
             SharedMarketSet.OccultTreasureCarrots => OccultMarkerSets.TreasureAndCarrots,
             _ =>  OccultMarkerSets.None,
         };
+    }
+
+    public static string ToName(this DynamicEventState state)
+    {
+        return state switch
+        {
+            DynamicEventState.Inactive => Language.CEStateInactive,
+            DynamicEventState.Register => Language.CEStateRegister,
+            DynamicEventState.Warmup => Language.CEStateWarmup,
+            DynamicEventState.Battle => Language.CEStateBattle,
+            _ => "Unknown State",
+        };
+    }
+
+    public static string ToName(this OccultAetheryte id)
+    {
+        if (id == OccultAetheryte.None)
+            return "None";
+
+        return !Sheets.PlaceNameSheet.TryGetRow((uint) id, out var placeNameRow) ? "Unknown" : placeNameRow.Name.ExtractText();
     }
 }
 

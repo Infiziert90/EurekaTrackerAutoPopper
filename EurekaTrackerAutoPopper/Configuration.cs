@@ -50,6 +50,7 @@ public class Configuration : IPluginConfiguration
     public bool ShowFastSwitcher = true;
     public bool SwitcherBelowMap = false;
     public OccultMarkerSets DefaultOccultMarkerSets = OccultMarkerSets.Treasure;
+    public bool FirstTimeOccultAfterUpdate = false;
 
     public long TimeInEureka = 0;  // in milliseconds
     public int KilledBunnies = 0;
