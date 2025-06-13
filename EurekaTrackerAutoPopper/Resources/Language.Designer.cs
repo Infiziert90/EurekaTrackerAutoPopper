@@ -888,7 +888,7 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Entering as a solo player is a waste of both your time, as well as those participating in organized runs due to the coordinated nature of the instance. If you wish to learn more about Forked Tower or would like to participate in an organized group, it&apos;s encouraged to join one of the following Discord servers for your respective region..
+        ///   Looks up a localized string similar to If you wish to learn more about Forked Tower or would like to participate in an organized group, it&apos;s encouraged to join one of the following Discord servers for your respective region..
         /// </summary>
         internal static string ForkedTowerInfoWarning2 {
             get {

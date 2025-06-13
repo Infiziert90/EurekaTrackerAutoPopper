@@ -611,7 +611,7 @@ A cooldown of 5s applies after each use.</value>
         <value>Please be aware that attempting to join Forked Tower as an individual player is highly discouraged. This means to stand on the tower platform during the prerequisite weather conditions, in addition to offering any amount of ciphers for entry during this period.</value>
     </data>
     <data name="ForkedTowerInfoWarning2" xml:space="preserve">
-        <value>Entering as a solo player is a waste of both your time, as well as those participating in organized runs due to the coordinated nature of the instance. If you wish to learn more about Forked Tower or would like to participate in an organized group, it's encouraged to join one of the following Discord servers for your respective region.</value>
+        <value>If you wish to learn more about Forked Tower or would like to participate in an organized group, it's encouraged to join one of the following Discord servers for your respective region.</value>
     </data>
     <data name="ForkedTowerInfoJoinDiscordList" xml:space="preserve">
         <value>Where can I join an organized run? (Click name)</value>
