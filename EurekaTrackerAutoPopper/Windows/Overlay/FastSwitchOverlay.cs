@@ -7,7 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 
-namespace EurekaTrackerAutoPopper.Windows;
+namespace EurekaTrackerAutoPopper.Windows.Overlay;
 
 public class FastSwitchOverlay : Window, IDisposable
 {
@@ -63,6 +63,11 @@ public class FastSwitchOverlay : Window, IDisposable
     }
 
     public override void Draw()
+    {
+        DrawMapSetSwitcher();
+    }
+
+    public void DrawMapSetSwitcher()
     {
         ImGui.AlignTextToFramePadding();
         ImGui.TextUnformatted("Switch To:");

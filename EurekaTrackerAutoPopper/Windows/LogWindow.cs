@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Timers;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using EurekaTrackerAutoPopper.Resources;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
@@ -14,23 +14,18 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
-using Lumina.Excel;
 
 namespace EurekaTrackerAutoPopper.Windows;
 
 public class LogWindow : Window, IDisposable
 {
-    private readonly ExcelSheet<Lumina.Excel.Sheets.ContentsNote> ContentsSheet;
-
-    private readonly Timer Cooldown = new(5 * 1000);
     private bool OnCooldown;
+    private readonly Timer Cooldown = new(5 * 1000);
 
     public LogWindow() : base("Log##EurekaLinker")
     {
         Flags = ImGuiWindowFlags.NoResize;
         Size = new Vector2(370, 220);
-
-        ContentsSheet = Plugin.Data.GetExcelSheet<Lumina.Excel.Sheets.ContentsNote>()!;
 
         Cooldown.AutoReset = false;
         Cooldown.Elapsed += (_, _) => OnCooldown = false;
@@ -53,54 +48,55 @@ public class LogWindow : Window, IDisposable
         }
 
         var log = GetContentProgress();
-        if (!log.Any())
+        if (log.Count == 0)
         {
             ImGui.TextColored(ImGuiColors.ParsedOrange, Language.LogError);
             return;
         }
 
-        if (ImGui.BeginTable("##monsterTable", 3))
+        using (var table = ImRaii.Table("MonsterTable", 3))
         {
-            ImGui.TableSetupColumn(Language.TableLabelMonster);
-            ImGui.TableSetupColumn(Language.TableLabelDone, ImGuiTableColumnFlags.None, 0.4f);
-            ImGui.TableSetupColumn(Language.TableLabelEnemyLvl, ImGuiTableColumnFlags.None, 0.4f);
-
-            ImGui.TableHeadersRow();
-            for (var i = 0; i < log.Count; i += 2)
+            if (table.Success)
             {
-                ImGui.TableNextColumn();
-                ImGui.TextUnformatted(IndexToName(i));
+                ImGui.TableSetupColumn(Language.TableLabelMonster);
+                ImGui.TableSetupColumn(Language.TableLabelDone, ImGuiTableColumnFlags.None, 0.4f);
+                ImGui.TableSetupColumn(Language.TableLabelEnemyLvl, ImGuiTableColumnFlags.None, 0.4f);
 
-                ImGui.TableNextColumn();
-                var progress1 = log[i];
-                var progress2 = log[i + 1];
-
-                var required1 = ContentsSheet.GetRow((uint) progress1.Id)!.RequiredAmount;
-                var required2 = ContentsSheet.GetRow((uint) progress2.Id)!.RequiredAmount;
-
-                if (progress1.Killed < required1)
+                ImGui.TableHeadersRow();
+                for (var i = 0; i < log.Count; i += 2)
                 {
-                    ImGui.TextUnformatted($"{progress1.Killed} / {required1}");
-                }
-                else if (progress2.Killed < required2)
-                {
-                    ImGui.TextUnformatted($"{progress2.Killed} / {required2}");
-                }
-                else
-                {
-                    ImGui.PushFont(UiBuilder.IconFont);
-                    ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                    ImGui.PopFont();
-                }
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(IndexToName(i));
 
-                ImGui.TableNextColumn();
-                var elementalLevel = ((BattleChara*) local.Address)->GetForayInfo()->Level;
-                ImGui.TextUnformatted($"{elementalLevel + IndexToRequirement(i)}");
+                    ImGui.TableNextColumn();
+                    var progress1 = log[i];
+                    var progress2 = log[i + 1];
 
-                ImGui.TableNextRow();
+                    var required1 = Sheets.ContentsSheet.GetRow((uint) progress1.Id).RequiredAmount;
+                    var required2 = Sheets.ContentsSheet.GetRow((uint) progress2.Id).RequiredAmount;
+
+                    if (progress1.Killed < required1)
+                    {
+                        ImGui.TextUnformatted($"{progress1.Killed} / {required1}");
+                    }
+                    else if (progress2.Killed < required2)
+                    {
+                        ImGui.TextUnformatted($"{progress2.Killed} / {required2}");
+                    }
+                    else
+                    {
+                        using var pushedFont = ImRaii.PushFont(UiBuilder.IconFont);
+                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                    }
+
+                    ImGui.TableNextColumn();
+                    var elementalLevel = ((BattleChara*) local.Address)->GetForayInfo()->Level;
+                    ImGui.TextUnformatted($"{elementalLevel + IndexToRequirement(i)}");
+
+                    ImGui.TableNextRow();
+                }
             }
         }
-        ImGui.EndTable();
 
         ImGuiHelpers.ScaledDummy(5.0f);
 
@@ -110,13 +106,12 @@ public class LogWindow : Window, IDisposable
 
         if (OnCooldown)
         {
-            ImGui.BeginDisabled();
+            using var disabled = ImRaii.Disabled();
             ImGui.Button(buttonText, buttonSize);
-            ImGui.EndDisabled();
         }
         else
         {
-            ImGui.PushStyleColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
+            using var pushedColor = ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.ParsedBlue);
             if (ImGui.Button(buttonText, buttonSize))
             {
                 // closing if it is already open
@@ -135,9 +130,9 @@ public class LogWindow : Window, IDisposable
                 OnCooldown = true;
                 Cooldown.Start();
             }
-            ImGui.PopStyleColor();
         }
-        ImGuiComponents.HelpMarker("Refreshing is necessary as the game has to request updated progress from the server.\nCooldown of 5s applies after each use.");
+
+        ImGuiComponents.HelpMarker(Language.LogWindowRefreshTooltip);
     }
 
     private static unsafe bool IsCorrectTab()
@@ -158,7 +153,7 @@ public class LogWindow : Window, IDisposable
 
         try
         {
-            for (var i = 0; i < ContentsNote.Instance()->DisplayCount; i++)
+            for (var i = 0; i < note->DisplayCount; i++)
             {
                 var (id, progress) = (note->DisplayIds[i], note->DisplayStatuses[i]);
                 if (id is < 56 or > 65)

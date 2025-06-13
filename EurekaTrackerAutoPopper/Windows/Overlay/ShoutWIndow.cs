@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using System.Timers;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using EurekaTrackerAutoPopper.Resources;
 using ImGuiNET;
@@ -8,7 +9,7 @@ using ImGuiNET;
 using static ImGuiNET.ImGuiWindowFlags;
 using static FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
 
-namespace EurekaTrackerAutoPopper.Windows;
+namespace EurekaTrackerAutoPopper.Windows.Overlay;
 
 public class ShoutWindow : Window, IDisposable
 {
@@ -52,11 +53,9 @@ public class ShoutWindow : Window, IDisposable
                 ImGui.TextUnformatted("PT");
 
                 ImGui.SameLine(size + 55);
-                ImGui.SetNextItemWidth(80);
+                ImGui.SetNextItemWidth(80 * ImGuiHelpers.GlobalScale);
                 if (ImGui.InputInt("##pulltimer_input", ref PullTime, 1))
-                {
                     PullTime = Math.Clamp(PullTime, 1, 30);
-                }
             }
             else
             {
@@ -65,11 +64,9 @@ public class ShoutWindow : Window, IDisposable
                 ImGui.TextUnformatted("ET");
 
                 ImGui.SameLine(size + 55);
-                ImGui.SetNextItemWidth(80 + extraSize);
+                ImGui.SetNextItemWidth(80 * ImGuiHelpers.GlobalScale + extraSize);
                 if (ImGui.SliderInt("##eorzeatime_input", ref EorzeaTime, 1, 1440, CurrentEorzeanPullTime()))
-                {
                     EorzeaTime = RoundOff(Math.Clamp(EorzeaTime, 1, 1440));
-                }
             }
         }
 
@@ -97,9 +94,7 @@ public class ShoutWindow : Window, IDisposable
             ImGui.EndDisabled();
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-            {
                 ImGui.SetTooltip(Language.ShoutWindowLimit);
-            }
         }
 
         ImGui.SameLine(size + 85 + extraSize);
@@ -116,7 +111,7 @@ public class ShoutWindow : Window, IDisposable
 
     public string CurrentEorzeanPullTime()
     {
-        DateTime time = new DateTime().AddMinutes(EorzeaTime);
+        var time = new DateTime().AddMinutes(EorzeaTime);
 
         return !Plugin.Configuration.UseTwelveHourFormat ? $"{time:HH:mm}" : $"{time:hh:mm tt}";
     }

@@ -2,6 +2,7 @@
 using System.Numerics;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using EurekaTrackerAutoPopper.Resources;
 using ImGuiNET;
@@ -25,14 +26,6 @@ public class QuestWindow : Window, IDisposable
     {
         var territoryId = Plugin.ClientState.TerritoryType;
 
-        if (!Library.TerritoryToMap.ContainsKey(territoryId))
-        {
-            ImGui.TextColored(ImGuiColors.ParsedGold, $"{Language.QuestLogHeader}: ");
-            ImGui.SameLine();
-            ImGui.TextColored(ImGuiColors.ParsedOrange, $"{Language.QuestLogOutside}");
-            return;
-        }
-
         ImGui.TextColored(ImGuiColors.ParsedGold, $"{Language.QuestLogHeader}: ");
         ImGui.SameLine();
         ImGui.TextColored(ImGuiColors.ParsedOrange, QuestHelper.TerritoryToPlaceName(territoryId));
@@ -41,23 +34,17 @@ public class QuestWindow : Window, IDisposable
         ImGui.Separator();
         ImGuiHelpers.ScaledDummy(5);
 
-        if (ImGui.BeginTabBar("##quest-tabs"))
-        {
-            foreach (var quest in QuestHelper.TerritoryToQuests(territoryId))
-            {
-                TabItem(territoryId, quest);
-            }
+        using var tabBar = ImRaii.TabBar("QuestTabs");
+        if (!tabBar.Success)
+            return;
 
-            ImGui.EndTabBar();
-        }
-    }
-
-    private void TabItem(uint territoryId, uint quest)
-    {
-        if (ImGui.BeginTabItem($"{Language.QuestLogTabItemQuestLevel} {quest}"))
+        foreach (var quest in QuestHelper.TerritoryToQuests(territoryId))
         {
+            using var tabItem = ImRaii.TabItem($"{Language.QuestLogTabItemQuestLevel} {quest}");
+            if (!tabItem.Success)
+                continue;
+
             QuestHelper.Quests(territoryId, quest);
-            ImGui.EndTabItem();
         }
     }
 }

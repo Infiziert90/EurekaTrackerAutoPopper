@@ -807,6 +807,16 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Refreshing is necessary as the game has to request updated progress from the server.
+        ///A cooldown of 5s applies after each use..
+        /// </summary>
+        internal static string LogWindowRefreshTooltip {
+            get {
+                return ResourceManager.GetString("LogWindowRefreshTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please open your challenge log in the &apos;Other&apos; category..
         /// </summary>
         internal static string LogWrongTab {
@@ -1500,6 +1510,24 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Map.
+        /// </summary>
+        internal static string TabHeaderMap {
+            get {
+                return ResourceManager.GetString("TabHeaderMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notification.
+        /// </summary>
+        internal static string TabHeaderNotification {
+            get {
+                return ResourceManager.GetString("TabHeaderNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Occult.
         /// </summary>
         internal static string TabHeaderOccult {
@@ -1509,11 +1537,29 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pot.
+        /// </summary>
+        internal static string TabHeaderPot {
+            get {
+                return ResourceManager.GetString("TabHeaderPot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stats.
         /// </summary>
         internal static string TabHeaderStats {
             get {
                 return ResourceManager.GetString("TabHeaderStats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tracker.
+        /// </summary>
+        internal static string TabHeaderTracker {
+            get {
+                return ResourceManager.GetString("TabHeaderTracker", resourceCulture);
             }
         }
         

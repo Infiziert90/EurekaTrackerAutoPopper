@@ -22,6 +22,8 @@ using Dalamud.Plugin.Services;
 using EurekaTrackerAutoPopper.Attributes;
 using EurekaTrackerAutoPopper.Resources;
 using EurekaTrackerAutoPopper.Windows;
+using EurekaTrackerAutoPopper.Windows.MainWindow;
+using EurekaTrackerAutoPopper.Windows.Overlay;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
@@ -151,6 +153,23 @@ public class Plugin : IDalamudPlugin
 
         Commands.Dispose();
         WindowSystem.RemoveAllWindows();
+    }
+
+    public void StartTrackerAsync()
+    {
+        Task.Run(async () =>
+        {
+            try
+            {
+                (MainWindow.Instance, MainWindow.Password) = await EurekaTrackerWrapper.WebRequests.CreateNewTracker(Library.TerritoryToTrackerDictionary[ClientState.TerritoryType]);
+
+                await Framework.RunOnFrameworkThread(ProcessCurrentFates);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to start new Tracker.");
+            }
+        });
     }
 
     private void LanguageChanged(string langCode)
@@ -303,6 +322,11 @@ public class Plugin : IDalamudPlugin
         return Library.TerritoryToMap.ContainsKey(ClientState.TerritoryType);
     }
 
+    public static bool PlayerInOccultTerritory()
+    {
+        return ClientState.TerritoryType == (uint)Territory.SouthHorn;
+    }
+
     private bool NoFatesHaveChangedSinceLastChecked()
     {
         return FateTable.SequenceEqual(LastPolledFates);
@@ -320,10 +344,10 @@ public class Plugin : IDalamudPlugin
         }
     }
 
-    public void ProcessCurrentFates(ushort currentTerritory)
+    public void ProcessCurrentFates()
     {
         var currentFates = FateTable.ToList();
-        var relevantFates = Library.TerritoryToFateDictionary(currentTerritory);
+        var relevantFates = Library.TerritoryToFateDictionary(ClientState.TerritoryType);
         var relevantCurrentFates = relevantFates.Where(fate => currentFates.Select(i => i.FateId).Contains(fate.FateId)).ToList();
         foreach (var fate in relevantCurrentFates)
         {

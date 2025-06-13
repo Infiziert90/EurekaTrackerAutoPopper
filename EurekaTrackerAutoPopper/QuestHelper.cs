@@ -3,6 +3,7 @@ using System.Numerics;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using EurekaTrackerAutoPopper.Resources;
 using ImGuiNET;
 
@@ -12,46 +13,51 @@ public static class QuestHelper
 {
     public static void Quests(uint territoryId, uint quest)
     {
-        if (ImGui.BeginChild("Content", new Vector2(0, -(Aetherytes[territoryId].Length == 3 ? 115 : 90)), false, 0))
+        using (var contentChild = ImRaii.Child("Content", new Vector2(0, -(Aetherytes[territoryId].Length == 3 ? 115 : 90))))
         {
-            Header(Headers[territoryId][quest]);
-
-            if (ImGui.BeginTable("##Table", 2))
+            if (contentChild.Success)
             {
-                ImGui.TableSetupColumn("##Quest");
-                ImGui.TableSetupColumn("##Flag", 0, 0.4f);
+                Header(Headers[territoryId][quest]);
+                using var indent = ImRaii.PushIndent(5.0f);
 
-                switch (territoryId)
+                using var table = ImRaii.Table("QuestTable", 2);
+                if (table.Success)
                 {
-                    case 732:
-                        Anemos(quest);
-                        break;
-                    case 763:
-                        Pagos(quest);
-                        break;
-                    case 795:
-                        Pyros(quest);
-                        break;
-                    case 827:
-                        Hydatos(quest);
-                        break;
+                    ImGui.TableSetupColumn("##Quest");
+                    ImGui.TableSetupColumn("##Flag", ImGuiTableColumnFlags.WidthStretch, 0.4f);
+
+                    switch (territoryId)
+                    {
+                        case 732:
+                            Anemos(quest);
+                            break;
+                        case 763:
+                            Pagos(quest);
+                            break;
+                        case 795:
+                            Pyros(quest);
+                            break;
+                        case 827:
+                            Hydatos(quest);
+                            break;
+                    }
                 }
-                ImGui.EndTable();
             }
         }
-        ImGui.EndChild();
 
         ImGuiHelpers.ScaledDummy(5);
         ImGui.Separator();
         ImGuiHelpers.ScaledDummy(5);
 
-        if (ImGui.BeginChild("BottomBar", new Vector2(0, 0), false, 0))
+        using (var bottomChild = ImRaii.Child("BottomBar", Vector2.Zero))
         {
-            ImGui.TextColored(ImGuiColors.HealerGreen, Language.QuestLogAetheryteText);
-            foreach (var aetheryte in Aetherytes[territoryId])
-                AttuneTip(aetheryte);
+            if (bottomChild.Success)
+            {
+                ImGui.TextColored(ImGuiColors.HealerGreen, Language.QuestLogAetheryteText);
+                foreach (var aetheryte in Aetherytes[territoryId])
+                    AttuneTip(aetheryte);
+            }
         }
-        ImGui.EndChild();
     }
 
     #region anemos
@@ -236,6 +242,7 @@ public static class QuestHelper
                 WrappedPoint(Language.QuestLogHydatos60Step7);
                 TextWithSelectable(Language.QuestLogHydatos60Step8, CoreArea);
                 TextWithSelectable(Language.QuestLogHydatos60Step9, HydatosHub);
+
                 WrappedTips(Language.QuestLogHydatos60Tip1, Language.QuestLogHydatos60Tip2);
                 break;
         }
@@ -248,7 +255,6 @@ public static class QuestHelper
         ImGuiHelpers.ScaledDummy(5f);
         ImGui.TextColored(ImGuiColors.HealerGreen, header);
         ImGuiHelpers.ScaledDummy(5f);
-        ImGui.Indent(5f);
     }
 
     private static void WrappedPoint(string content)
@@ -264,19 +270,17 @@ public static class QuestHelper
 
     private static void WrappedTips(params string[] tips)
     {
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+
         // It is currently not possible in imgui to span multiple columns, so we
         // end the table early and start a new one afterwards
-        ImGui.EndTable();
-
-        ImGui.Unindent(5);
         ImGuiHelpers.ScaledDummy(15f);
-        ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.DalamudGrey);
-        ImGui.TextUnformatted("Tip:");
-        foreach (var tip in tips)
-            ImGui.TextWrapped($"{tip}");
-        ImGui.PopStyleColor();
 
-        ImGui.BeginTable("##nothing", 2);
+        using var pushedColor = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey);
+        ImGui.TextUnformatted("Tips:");
+        foreach (var tip in tips)
+            ImGui.TextWrapped(tip);
     }
 
     private static void TextWithSelectable(string content, MapLinkPayload map, int index = 0)
@@ -291,8 +295,7 @@ public static class QuestHelper
         ImGui.TextWrapped($"{content}");
         ImGui.TableNextColumn();
         // right align coords
-        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - length.X - ImGui.GetScrollX()
-                            - 2 * ImGui.GetStyle().ItemSpacing.X);
+        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - length.X - ImGui.GetScrollX() - 2 * ImGui.GetStyle().ItemSpacing.X);
         if (ImGui.Selectable($"{text}##{index}", false, 0, length))
             Plugin.OpenMap(map);
 

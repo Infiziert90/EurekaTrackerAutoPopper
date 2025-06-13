@@ -9,7 +9,7 @@ using ImGuiNET;
 
 using static ImGuiNET.ImGuiWindowFlags;
 
-namespace EurekaTrackerAutoPopper.Windows;
+namespace EurekaTrackerAutoPopper.Windows.Overlay;
 
 public class BunnyWindow : Window, IDisposable
 {

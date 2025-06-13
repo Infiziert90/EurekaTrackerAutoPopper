@@ -3,7 +3,7 @@
 <root>
     <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
         <xsd:element name="root" msdata:IsDataSet="true">
-            
+
         </xsd:element>
     </xsd:schema>
     <resheader name="resmimetype">
@@ -501,6 +501,15 @@
     <data name="TabHeaderOccult" xml:space="preserve">
         <value>Occult</value>
     </data>
+    <data name="TabHeaderNotification" xml:space="preserve">
+        <value>Notification</value>
+    </data>
+    <data name="TabHeaderMap" xml:space="preserve">
+        <value>Map</value>
+    </data>
+    <data name="TabHeaderPot" xml:space="preserve">
+        <value>Pot</value>
+    </data>
     <data name="TabHeaderStats" xml:space="preserve">
         <value>Stats</value>
     </data>
@@ -512,5 +521,12 @@
     </data>
     <data name="TableLabelMonster" xml:space="preserve">
         <value>Monster</value>
+    </data>
+    <data name="LogWindowRefreshTooltip" xml:space="preserve">
+        <value>Refreshing is necessary as the game has to request updated progress from the server.
+A cooldown of 5s applies after each use.</value>
+    </data>
+    <data name="TabHeaderTracker" xml:space="preserve">
+        <value>Tracker</value>
     </data>
 </root>
