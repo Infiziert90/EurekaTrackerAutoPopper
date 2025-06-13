@@ -324,6 +324,8 @@ public class Plugin : IDalamudPlugin
             Fates.Reset();
 
             GotBunny = false;
+            NearToCoffer = false;
+            CofferPos = Vector3.Zero;
             BunnyChests.ExistingCoffers.Clear();
 
             if (EurekaWatch.IsRunning)
