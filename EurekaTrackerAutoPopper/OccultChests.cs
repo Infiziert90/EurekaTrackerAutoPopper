@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 
 namespace EurekaTrackerAutoPopper;
@@ -7,19 +6,6 @@ namespace EurekaTrackerAutoPopper;
 public static class OccultChests
 {
     private const double InRange = 80.0f;
-
-    public static readonly List<uint> ExistingCoffers = [];
-    public static readonly List<uint> Coffers =
-    [
-        1596,
-        1597,
-
-        2014741,
-        2014742,
-        2014743,
-
-        2012936,
-    ];
 
     public static readonly Dictionary<uint, List<(Vector3, uint)>> TreasurePosition = new()
     {
@@ -229,11 +215,5 @@ public static class OccultChests
         }
 
         return bestPos.Pos;
-    }
-
-    public static bool Exists(uint territoryId, Vector3 player)
-    {
-        return PotPosition.TryGetValue(territoryId, out var positions) &&
-               positions.Any(pos => Utils.GetDistance(player, pos) < 5.0);
     }
 }

@@ -16,7 +16,7 @@ public class Fate(uint id, Territory territory, bool easy, string position)
 
     public bool Alive;
     public long LastSeenAlive = -1;
-    public bool PlayedSound = false;
+    public bool PlayedSound;
 
     public string Name => Sheets.FateSheet.GetRow(FateId).Name.ExtractText();
 }

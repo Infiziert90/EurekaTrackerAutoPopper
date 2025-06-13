@@ -72,14 +72,6 @@ public class Library
     ];
 
     public record Map(uint TerritoryId, uint MapId);
-    private static readonly Dictionary<uint, Map> FairyToTerritory = new()
-    {
-        { 7184, new Map(732, 414) },
-        { 7567, new Map(763, 467) },
-        { 7764, new Map(795, 484) },
-        { 8131, new Map(827, 515) }
-    };
-
     public static readonly Dictionary<uint, Map> TerritoryToMap = new()
     {
         { 732, new Map(732, 414) },
