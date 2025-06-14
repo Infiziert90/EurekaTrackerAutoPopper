@@ -19,7 +19,7 @@ public static class Utils
 
     public static string TimeToClockFormat(TimeSpan span)
     {
-        return $"{span.Minutes:00}:{span.Seconds:00}";
+        return span.Hours == 0 ? $"{span.Minutes:00}:{span.Seconds:00}" : $"{span.Hours:00}:{span.Minutes:00}:{span.Seconds:00}" ;
     }
 
     public static float Distance(Vector2 worldPos, Vector3 playerPos)
