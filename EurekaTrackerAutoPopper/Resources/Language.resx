@@ -631,6 +631,9 @@ A cooldown of 5s applies after each use.</value>
     <data name="FateInfoLastSeen" xml:space="preserve">
         <value>Last Seen: {0} ago</value>
     </data>
+    <data name="FateInfoLastSeenUnknown" xml:space="preserve">
+        <value>Last Seen: not seen</value>
+    </data>
     <data name="FateInfoRespawnTimes" xml:space="preserve">
         <value>Respawn Times: [{0}]</value>
     </data>

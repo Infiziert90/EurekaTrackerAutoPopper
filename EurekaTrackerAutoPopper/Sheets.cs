@@ -10,6 +10,7 @@ public static class Sheets
     public static readonly ExcelSheet<Treasure> TreasureSheet;
     public static readonly ExcelSheet<PlaceName> PlaceNameSheet;
     public static readonly ExcelSheet<ContentsNote> ContentsSheet;
+    public static readonly ExcelSheet<DynamicEvent> DynamicEventSheet;
     public static readonly ExcelSheet<Lumina.Excel.Sheets.Fate> FateSheet;
     public static readonly ExcelSheet<EurekaAethernet> EurekaAethernetSheet;
 
@@ -19,6 +20,7 @@ public static class Sheets
         TreasureSheet = Plugin.Data.GetExcelSheet<Treasure>();
         PlaceNameSheet = Plugin.Data.GetExcelSheet<PlaceName>();
         ContentsSheet = Plugin.Data.GetExcelSheet<ContentsNote>();
+        DynamicEventSheet = Plugin.Data.GetExcelSheet<DynamicEvent>();
         FateSheet = Plugin.Data.GetExcelSheet<Lumina.Excel.Sheets.Fate>();
         EurekaAethernetSheet = Plugin.Data.GetExcelSheet<EurekaAethernet>();
     }

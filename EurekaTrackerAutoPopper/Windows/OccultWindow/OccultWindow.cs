@@ -113,7 +113,7 @@ public class OccultWindow : Window, IDisposable
             return;
 
         var towerEngagement = Plugin.Fates.OccultCriticalEncounters[^1];
-        if (towerEngagement.MapIcon != 0)
+        if (towerEngagement.SpawnTime > 0)
             DrawFateInfo(towerEngagement, false, true);
         else
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.ForkedTowerNotSeen);
@@ -245,8 +245,11 @@ public class OccultWindow : Window, IDisposable
             heightOffset += lineHeightWithSpacing;
             if (fate.State == DynamicEventState.Inactive)
             {
-                var lastSpawn = TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive);
-                DrawOffsetText(new Vector2(widthOffset, heightOffset), ImGuiColors.HealerGreen, Language.FateInfoLastSeen.Format(Utils.TimeToClockFormat(lastSpawn)));
+                var text = fate.LastSeenAlive > 0
+                    ? Language.FateInfoLastSeen.Format(Utils.TimeToClockFormat(TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive)))
+                    : Language.FateInfoLastSeenUnknown;
+
+                DrawOffsetText(new Vector2(widthOffset, heightOffset), ImGuiColors.HealerGreen, text);
             }
             else
             {
@@ -255,10 +258,12 @@ public class OccultWindow : Window, IDisposable
         }
         else
         {
-            var lastSpawn = TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive);
+            var text = fate.LastSeenAlive > 0
+                ? Language.FateInfoLastSeen.Format(Utils.TimeToClockFormat(TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive)))
+                : Language.FateInfoLastSeenUnknown;
 
             heightOffset += lineHeightWithSpacing;
-            DrawOffsetText(new Vector2(widthOffset, heightOffset), ImGuiColors.HealerGreen, Language.FateInfoLastSeen.Format(Utils.TimeToClockFormat(lastSpawn)));
+            DrawOffsetText(new Vector2(widthOffset, heightOffset), ImGuiColors.HealerGreen, text);
         }
 
         if (showSpawnTimer && fate.PreviousRespawnTimes.Count > 0)

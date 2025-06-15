@@ -897,6 +897,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Last Seen: not seen.
+        /// </summary>
+        internal static string FateInfoLastSeenUnknown {
+            get {
+                return ResourceManager.GetString("FateInfoLastSeenUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Respawn Times: [{0}].
         /// </summary>
         internal static string FateInfoRespawnTimes {
