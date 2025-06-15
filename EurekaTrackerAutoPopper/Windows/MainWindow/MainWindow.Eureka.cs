@@ -63,7 +63,7 @@ public partial class MainWindow
         using (ImRaii.PushIndent(10.0f))
         {
             changed |= ImGui.Checkbox(Language.ConfigOptionEchoNM, ref Plugin.Configuration.EchoNMPop);
-            changed |= Helper.AddSoundOption(ref Plugin.Configuration.PlaySoundEffect, ref Plugin.Configuration.PopSoundEffect);
+            changed |= Helper.AddSoundOption(Language.ConfigOptionSpawnNotification, ref Plugin.Configuration.PlaySoundEffect, ref Plugin.Configuration.PopSoundEffect);
             changed |= ImGui.Checkbox(Language.ConfigOptionToastNM, ref Plugin.Configuration.ShowPopToast);
             if (Plugin.Configuration.EchoNMPop || Plugin.Configuration.ShowPopToast)
             {
@@ -290,7 +290,7 @@ public partial class MainWindow
                 changed |= ImGui.Checkbox(Language.ConfigOptionCofferIcons, ref Plugin.Configuration.AddIconsOnEntry);
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipCofferIcons);
 
-                changed |= Helper.AddSoundOption(ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
+                changed |= Helper.AddSoundOption(Language.ConfigOptionSpawnNotification, ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
                 changed |= ImGui.Checkbox(Language.ConfigOptionBunnyLowLevelFates, ref Plugin.Configuration.OnlyEasyBunny);
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipBunnyLowLevelFates);
 

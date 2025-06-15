@@ -26,6 +26,8 @@ public partial class MainWindow
         TabMap();
 
         TabPot();
+
+        TabHelper();
     }
 
     private void TabNotification()
@@ -163,7 +165,7 @@ public partial class MainWindow
                         Plugin.BunnyWindow.IsOpen = true;
                 }
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipBunnyWindow);
-                changed |= Helper.AddSoundOption(ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
+                changed |= Helper.AddSoundOption(Language.ConfigOptionSpawnNotification, ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
 
                 changed |= ImGui.Checkbox(Language.ConfigOptionDrawCircle, ref Plugin.Configuration.BunnyCircleDraw);
                 ImGui.SameLine();
@@ -192,5 +194,42 @@ public partial class MainWindow
                     Plugin.EnablePreview();
             }
         }
+    }
+
+    private void TabHelper()
+    {
+        using var tabItem = ImRaii.TabItem($"{Language.TabHeaderHelper}##HelperTab");
+        if (!tabItem.Success)
+            return;
+
+        var changed = false;
+
+        ImGuiHelpers.ScaledDummy(5);
+
+        ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderGeneral);
+        using (ImRaii.PushIndent(10.0f))
+            changed |= ImGui.Checkbox(Language.ConfigOptionEngagementsHide, ref Plugin.Configuration.EngagementsHideInEncounter);
+
+        ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderEngagements);
+        using (ImRaii.PushIndent(10.0f))
+        {
+            changed |= ImGui.Checkbox(Language.ConfigOptionEngagementsPot, ref Plugin.Configuration.EngagementsShowPot);
+
+            changed |= Helper.AddSoundOption(Language.ConfigOptionSoundFateSpawn, ref Plugin.Configuration.PlayFateEffect, ref Plugin.Configuration.FateSoundEffect);
+            changed |= Helper.AddSoundOption(Language.ConfigOptionSoundCESpawn, ref Plugin.Configuration.PlayEncounterEffect, ref Plugin.Configuration.EncounterSoundEffect);
+        }
+
+        ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderTower);
+        using (ImRaii.PushIndent(10.0f))
+        {
+            changed |= ImGui.Checkbox(Language.ConfigOptionTowerTabName, ref Plugin.Configuration.TowerChangeHeader);
+            ImGuiComponents.HelpMarker(Language.ConfigOptionTowerTabTooltip);
+
+            changed |= Helper.AddSoundOption(Language.ConfigOptionSpawnNotification, ref Plugin.Configuration.PlayTowerEffect, ref Plugin.Configuration.TowerSoundEffect);
+        }
+
+
+        if (changed)
+            Plugin.Configuration.Save();
     }
 }

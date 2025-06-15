@@ -129,6 +129,15 @@
     <data name="ConfigHeaderPotHelperHeader" xml:space="preserve">
         <value>Pot Helper Window</value>
     </data>
+    <data name="ConfigHeaderEngagements" xml:space="preserve">
+        <value>Engagements</value>
+    </data>
+    <data name="ConfigHeaderTower" xml:space="preserve">
+        <value>Forked Tower</value>
+    </data>
+    <data name="ConfigHeaderGeneral" xml:space="preserve">
+        <value>General</value>
+    </data>
     <data name="ConfigHeaderProximityNotification" xml:space="preserve">
         <value>Proximity Notification</value>
     </data>
@@ -180,6 +189,18 @@
     <data name="ConfigOptionFateWindow" xml:space="preserve">
         <value>Show Fate Window On Entry</value>
     </data>
+    <data name="ConfigOptionEngagementsPot" xml:space="preserve">
+        <value>Show Active Pot</value>
+    </data>
+    <data name="ConfigOptionTowerTabName" xml:space="preserve">
+        <value>Change Tab Name</value>
+    </data>
+    <data name="ConfigOptionTowerTabTooltip" xml:space="preserve">
+        <value>Adds a small indicator "(active)" to the tab name if tower is active.</value>
+    </data>
+    <data name="ConfigOptionEngagementsHide" xml:space="preserve">
+        <value>Hide In Critical Encounters</value>
+    </data>
     <data name="ConfigOptionFlag" xml:space="preserve">
         <value>Place Map Flag</value>
     </data>
@@ -206,6 +227,15 @@
     </data>
     <data name="ConfigOptionSpawnNotification" xml:space="preserve">
         <value>Play Spawn Sound</value>
+    </data>
+    <data name="ConfigOptionSoundCESpawn" xml:space="preserve">
+        <value>Play Critical Encounter Sound</value>
+    </data>
+    <data name="ConfigOptionSoundFateSpawn" xml:space="preserve">
+        <value>Play Fate Sound</value>
+    </data>
+    <data name="ConfigOptionSoundTowerSpawn" xml:space="preserve">
+        <value>Play Tower Sound</value>
     </data>
     <data name="ConfigOptionSwitcherPosition" xml:space="preserve">
         <value>Position Below Map</value>
@@ -535,6 +565,9 @@ A cooldown of 5s applies after each use.</value>
     <data name="TabHeaderTracker" xml:space="preserve">
         <value>Tracker</value>
     </data>
+    <data name="TabHeaderHelper" xml:space="preserve">
+        <value>Helper</value>
+    </data>
     <data name="OccultWindowNotInTerritory" xml:space="preserve">
         <value>You aren't in the occult territory, this window is not of any use.</value>
     </data>
@@ -627,5 +660,8 @@ A cooldown of 5s applies after each use.</value>
     </data>
     <data name="ForkedTowerNotSeen" xml:space="preserve">
         <value>Forked Tower hasn't been seen yet.</value>
+    </data>
+    <data name="OccultTowerActiveIndicator" xml:space="preserve">
+        <value> (active)</value>
     </data>
 </root>

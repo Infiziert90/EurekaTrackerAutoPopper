@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -14,7 +15,7 @@ public class Fate
 {
     public readonly uint FateId;
     public readonly Territory Territory;
-    public readonly bool Easy;
+    public bool Easy;
 
     public string Position = string.Empty;
 
@@ -33,7 +34,9 @@ public class Fate
     public long SpawnTime;
     public long StateTimeLeft;
 
-    public SeString? MapLink;
+    public SeString MapLink;
+    public MapLinkPayload MapLinkPayload;
+
     public Vector2 WorldPos = Vector2.Zero;
     public uint[] SpecialRewards = [];
 
@@ -46,6 +49,9 @@ public class Fate
         Territory = territory;
         Easy = easy;
         Position = position;
+
+        MapLink = Fates.CreateOccultLink(0, 0);
+        MapLinkPayload = (MapLinkPayload) MapLink.Payloads[0];
     }
 
     public Fate(uint id, Territory territory, Vector2 worldPosition, uint[] rewards, OccultAetheryte aetheryte = OccultAetheryte.ExpeditionBaseCamp, int distance = 0)
@@ -54,11 +60,13 @@ public class Fate
         Territory = territory;
 
         WorldPos = worldPosition;
-        MapLink = Fates.CreateOccultLink(worldPosition.X, worldPosition.Y);
         SpecialRewards = rewards;
 
         Aetheryte = aetheryte;
         WalkingDistance = distance;
+
+        MapLink = Fates.CreateOccultLink(worldPosition.X, worldPosition.Y);
+        MapLinkPayload = (MapLinkPayload) MapLink.Payloads[0];
     }
 
     public string GetName()
@@ -158,8 +166,8 @@ public class Fates
         new(1425, Territory.Hydatos, true, ""),
 
         // Occult
-        new(1976, Territory.SouthHorn, true, " (North)"),
-        new(1977, Territory.SouthHorn, true, " (South)"),
+        new(1976, Territory.SouthHorn, new Vector2(206.12666f, 205.55835f), [47749, 47738], OccultAetheryte.CrystallizedCaverns, 40) { Position = " (North)", Easy = true},
+        new(1977, Territory.SouthHorn, new Vector2(-479.7468f, 524.8094f), [47745, 47738], OccultAetheryte.Stonemarsh, 18) { Position = " (South)", Easy = true},
     ];
 
     public static readonly HashSet<uint> BunnyTerritories =
@@ -248,10 +256,7 @@ public class Fates
                 UIGlobals.PlaySoundEffect((uint)Plugin.Configuration.BunnySoundEffect);
             }
 
-            if (!bnuuy.Alive)
-                continue;
-
-            if (bnuuy.LastSeenAlive == currentTime)
+            if (!bnuuy.Alive || bnuuy.LastSeenAlive == currentTime)
                 continue;
 
             bnuuy.Alive = false;
@@ -266,12 +271,14 @@ public class Fates
                     continue;
 
                 occultFate.Update(fate, currentTime);
+                if (occultFate.PlayedSound || !Plugin.Configuration.PlayFateEffect)
+                    continue;
+
+                occultFate.PlayedSound = true;
+                UIGlobals.PlaySoundEffect((uint)Plugin.Configuration.FateSoundEffect);
             }
 
-            if (!occultFate.Alive)
-                continue;
-
-            if (occultFate.LastSeenAlive == currentTime)
+            if (!occultFate.Alive || occultFate.LastSeenAlive == currentTime)
                 continue;
 
             occultFate.Alive = false;
@@ -283,7 +290,14 @@ public class Fates
     {
         var publicContent = PublicContentOccultCrescent.GetInstance();
         if (publicContent == null)
+        {
+            // Reset all states while publicContent is not initialized yet
+            // This can happen if people get timeout from an active Encounter
+            foreach (var occultCE in OccultCriticalEncounters)
+                occultCE.State = DynamicEventState.Inactive;
+
             return;
+        }
 
         var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
         foreach (var occultCE in OccultCriticalEncounters)
@@ -299,12 +313,28 @@ public class Fates
                     continue;
 
                 occultCE.Update(ref criticalEncounter, currentTime);
+                if (occultCE.PlayedSound)
+                    continue;
+                occultCE.PlayedSound = true;
+
+                // Forked Tower
+                if (occultCE.FateId == 48)
+                {
+                    if (!Plugin.Configuration.PlayTowerEffect)
+                        continue;
+
+                    UIGlobals.PlaySoundEffect((uint)Plugin.Configuration.TowerSoundEffect);
+                }
+                else
+                {
+                    if (!Plugin.Configuration.PlayEncounterEffect)
+                        continue;
+
+                    UIGlobals.PlaySoundEffect((uint)Plugin.Configuration.EncounterSoundEffect);
+                }
             }
 
-            if (!occultCE.Alive)
-                continue;
-
-            if (occultCE.LastSeenAlive == currentTime)
+            if (!occultCE.Alive || occultCE.LastSeenAlive == currentTime)
                 continue;
 
             occultCE.Alive = false;

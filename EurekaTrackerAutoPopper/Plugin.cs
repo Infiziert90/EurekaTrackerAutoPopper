@@ -630,21 +630,12 @@ public class Plugin : IDalamudPlugin
         if (local == null)
             return;
 
-        var fateManager = FateManager.Instance();
-        var publicContent = PublicContentOccultCrescent.GetInstance();
-        if (publicContent == null || fateManager == null)
+        // Player is in a Critical Engagement, disable all scans
+        if (IsInCriticalEncounter())
             return;
 
-        // Player is in a Critical Engagement, disable all checking
-        // TODO Replace with CS version after stable release
-        var activeCE = *((byte*)&publicContent->DynamicEventContainer + 0x1D7E);
-        if (activeCE != 0xFF)
-            return;
-
-        // Player is in a fade, disable all checking
-        // TODO Replace with CS version after stable release
-        var fateJoined = *(byte*)((nint)fateManager + 0xAF);
-        if (fateJoined > 0)
+        // Player is in a fade, disable all scans
+        if (IsInFate())
             return;
 
         foreach (var actor in ObjectTable.Where(gameObject => gameObject.ObjectKind == ObjectKind.Treasure))
@@ -933,6 +924,24 @@ public class Plugin : IDalamudPlugin
     }
 
     public static void OpenMap(MapLinkPayload map) => GameGui.OpenMapWithMapLink(map);
+
+    public unsafe bool IsInCriticalEncounter()
+    {
+        var publicContent = PublicContentOccultCrescent.GetInstance();
+        if (publicContent == null)
+            return false;
+
+        return publicContent->DynamicEventContainer.CurrentEventIndex != -1;
+    }
+
+    public unsafe bool IsInFate()
+    {
+        var fateManager = FateManager.Instance();
+        if (fateManager == null)
+            return false;
+
+        return fateManager->FateJoined > 0;
+    }
 
     public void EnablePreview()
     {

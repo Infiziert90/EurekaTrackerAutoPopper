@@ -375,6 +375,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Engagements.
+        /// </summary>
+        internal static string ConfigHeaderEngagements {
+            get {
+                return ResourceManager.GetString("ConfigHeaderEngagements", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fairy / Elemental.
         /// </summary>
         internal static string ConfigHeaderFairy {
@@ -389,6 +398,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string ConfigHeaderFormat {
             get {
                 return ResourceManager.GetString("ConfigHeaderFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        internal static string ConfigHeaderGeneral {
+            get {
+                return ResourceManager.GetString("ConfigHeaderGeneral", resourceCulture);
             }
         }
         
@@ -452,6 +470,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string ConfigHeaderTotalStats {
             get {
                 return ResourceManager.GetString("ConfigHeaderTotalStats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forked Tower.
+        /// </summary>
+        internal static string ConfigHeaderTower {
+            get {
+                return ResourceManager.GetString("ConfigHeaderTower", resourceCulture);
             }
         }
         
@@ -573,6 +600,24 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide In Critical Encounters.
+        /// </summary>
+        internal static string ConfigOptionEngagementsHide {
+            get {
+                return ResourceManager.GetString("ConfigOptionEngagementsHide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Active Pot.
+        /// </summary>
+        internal static string ConfigOptionEngagementsPot {
+            get {
+                return ResourceManager.GetString("ConfigOptionEngagementsPot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Fast Switch Overlay.
         /// </summary>
         internal static string ConfigOptionFastSwitcher {
@@ -654,11 +699,38 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Play Critical Encounter Sound.
+        /// </summary>
+        internal static string ConfigOptionSoundCESpawn {
+            get {
+                return ResourceManager.GetString("ConfigOptionSoundCESpawn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play Fate Sound.
+        /// </summary>
+        internal static string ConfigOptionSoundFateSpawn {
+            get {
+                return ResourceManager.GetString("ConfigOptionSoundFateSpawn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Play Sound.
         /// </summary>
         internal static string ConfigOptionSoundNM {
             get {
                 return ResourceManager.GetString("ConfigOptionSoundNM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play Tower Sound.
+        /// </summary>
+        internal static string ConfigOptionSoundTowerSpawn {
+            get {
+                return ResourceManager.GetString("ConfigOptionSoundTowerSpawn", resourceCulture);
             }
         }
         
@@ -704,6 +776,24 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string ConfigOptionToastNM {
             get {
                 return ResourceManager.GetString("ConfigOptionToastNM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change Tab Name.
+        /// </summary>
+        internal static string ConfigOptionTowerTabName {
+            get {
+                return ResourceManager.GetString("ConfigOptionTowerTabName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adds a small indicator &quot;(active)&quot; to the tab name if tower is active..
+        /// </summary>
+        internal static string ConfigOptionTowerTabTooltip {
+            get {
+                return ResourceManager.GetString("ConfigOptionTowerTabTooltip", resourceCulture);
             }
         }
         
@@ -1101,6 +1191,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string MarkerSetTreasure {
             get {
                 return ResourceManager.GetString("MarkerSetTreasure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  (active).
+        /// </summary>
+        internal static string OccultTowerActiveIndicator {
+            get {
+                return ResourceManager.GetString("OccultTowerActiveIndicator", resourceCulture);
             }
         }
         
@@ -1794,6 +1893,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string TabHeaderGeneral {
             get {
                 return ResourceManager.GetString("TabHeaderGeneral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Helper.
+        /// </summary>
+        internal static string TabHeaderHelper {
+            get {
+                return ResourceManager.GetString("TabHeaderHelper", resourceCulture);
             }
         }
         

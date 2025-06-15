@@ -52,6 +52,17 @@ public class Configuration : IPluginConfiguration
     public OccultMarkerSets DefaultOccultMarkerSets = OccultMarkerSets.Treasure;
     public bool FirstTimeOccultAfterUpdate = false;
 
+    public bool EngagementsHideInEncounter = true;
+    public bool EngagementsShowPot = true;
+    public bool PlayEncounterEffect = true;
+    public int EncounterSoundEffect = 48;
+    public bool PlayFateEffect = true;
+    public int FateSoundEffect = 51;
+
+    public bool TowerChangeHeader = true;
+    public bool PlayTowerEffect = true;
+    public int TowerSoundEffect = 49;
+
     public long TimeInEureka = 0;  // in milliseconds
     public int KilledBunnies = 0;
     public Dictionary<uint, Dictionary<uint, int>> Stats = new()
