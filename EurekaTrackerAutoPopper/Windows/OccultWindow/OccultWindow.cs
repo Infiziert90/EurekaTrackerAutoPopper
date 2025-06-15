@@ -177,6 +177,7 @@ public class OccultWindow : Window, IDisposable
             Helper.BulletLink("FOE", "https://discord.gg/foexiv");
             Helper.BulletLink("ABBA", "https://discord.gg/abbaffxiv");
             Helper.BulletLink("CAFE", "https://discord.gg/c-a-f-e");
+            Helper.BulletLink("CEM", "https://discord.gg/cem");
             Helper.BulletLink("DFO", "https://discord.gg/vjwYEeubeN");
             Helper.BulletLink("The Help Lines", "https://discord.gg/thehelplines");
         }
