@@ -164,12 +164,13 @@ public class OccultWindow : Window, IDisposable
 
             Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, Language.ForkedTowerInfoJoinDiscordList);
             Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "EU:");
-
             Helper.BulletLink("CBT", "https://discord.gg/8HUKDA745x");
             Helper.BulletLink("Savage Slimes", "https://discord.gg/SavageSlimes");
             Helper.BulletLink("Lunar Forays Group", "https://discord.gg/d5gNTMmqbp");
             Helper.BulletLink("Late Night", "https://discord.gg/28SRRADTK3");
             Helper.BulletLink("Chaos Hour", "https://discord.gg/eE7vkX73");
+            Helper.BulletLink("Students of  Baldesion", "https://discord.gg/students-of-baldesion");
+            Helper.BulletLink("Conclave d'Exploration (French)", "https://discord.gg/rYSMDkWQKb");
 
             ImGuiHelpers.ScaledDummy(10.0f);
 
@@ -180,6 +181,11 @@ public class OccultWindow : Window, IDisposable
             Helper.BulletLink("CEM", "https://discord.gg/cem");
             Helper.BulletLink("DFO", "https://discord.gg/vjwYEeubeN");
             Helper.BulletLink("The Help Lines", "https://discord.gg/thehelplines");
+
+            ImGuiHelpers.ScaledDummy(10.0f);
+
+            Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "OCE/JP:");
+            Helper.BulletLink("Content Achievers", "https://discord.gg/FJFxr2U");
         }
 
     }
