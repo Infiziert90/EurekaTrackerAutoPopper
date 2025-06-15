@@ -91,14 +91,14 @@ public class OccultWindow : Window, IDisposable
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderCE);
             foreach (var previousCE in Plugin.Fates.OccultCriticalEncounters.Where(f => f.MapIcon != 0))
             {
-                DrawFateInfo(previousCE, false);
+                DrawFateInfo(previousCE, false, false, true);
                 DrawSeparator();
             }
 
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderFates);
             foreach (var previousFate in Plugin.Fates.OccultFates.Where(f => f.MapIcon != 0))
             {
-                DrawFateInfo(previousFate, false);
+                DrawFateInfo(previousFate, false, false, true);
                 DrawSeparator();
             }
         }
@@ -114,7 +114,7 @@ public class OccultWindow : Window, IDisposable
 
         var towerEngagement = Plugin.Fates.OccultCriticalEncounters[^1];
         if (towerEngagement.SpawnTime > 0)
-            DrawFateInfo(towerEngagement, false, true);
+            DrawFateInfo(towerEngagement, false, true, true);
         else
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.ForkedTowerNotSeen);
 
