@@ -165,7 +165,7 @@ public partial class MainWindow
                         Plugin.BunnyWindow.IsOpen = true;
                 }
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipBunnyWindow);
-                changed |= Helper.AddSoundOption(Language.ConfigOptionSpawnNotification, ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
+                changed |= Helper.AddSoundOption(0, Language.ConfigOptionSpawnNotification, ref Plugin.Configuration.PlayBunnyEffect, ref Plugin.Configuration.BunnySoundEffect);
 
                 changed |= ImGui.Checkbox(Language.ConfigOptionDrawCircle, ref Plugin.Configuration.BunnyCircleDraw);
                 ImGui.SameLine();
@@ -215,8 +215,8 @@ public partial class MainWindow
         {
             changed |= ImGui.Checkbox(Language.ConfigOptionEngagementsPot, ref Plugin.Configuration.EngagementsShowPot);
 
-            changed |= Helper.AddSoundOption(Language.ConfigOptionSoundFateSpawn, ref Plugin.Configuration.PlayFateEffect, ref Plugin.Configuration.FateSoundEffect);
-            changed |= Helper.AddSoundOption(Language.ConfigOptionSoundCESpawn, ref Plugin.Configuration.PlayEncounterEffect, ref Plugin.Configuration.EncounterSoundEffect);
+            changed |= Helper.AddSoundOption(0, Language.ConfigOptionSoundFateSpawn, ref Plugin.Configuration.PlayFateEffect, ref Plugin.Configuration.FateSoundEffect);
+            changed |= Helper.AddSoundOption(1, Language.ConfigOptionSoundCESpawn, ref Plugin.Configuration.PlayEncounterEffect, ref Plugin.Configuration.EncounterSoundEffect);
         }
 
         ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderTower);
@@ -225,7 +225,7 @@ public partial class MainWindow
             changed |= ImGui.Checkbox(Language.ConfigOptionTowerTabName, ref Plugin.Configuration.TowerChangeHeader);
             ImGuiComponents.HelpMarker(Language.ConfigOptionTowerTabTooltip);
 
-            changed |= Helper.AddSoundOption(Language.ConfigOptionSpawnNotification, ref Plugin.Configuration.PlayTowerEffect, ref Plugin.Configuration.TowerSoundEffect);
+            changed |= Helper.AddSoundOption(2, Language.ConfigOptionSpawnNotification, ref Plugin.Configuration.PlayTowerEffect, ref Plugin.Configuration.TowerSoundEffect);
         }
 
 
