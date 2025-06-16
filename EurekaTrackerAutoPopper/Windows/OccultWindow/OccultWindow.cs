@@ -170,7 +170,8 @@ public class OccultWindow : Window, IDisposable
             Helper.BulletLink("Late Night", "https://discord.gg/28SRRADTK3");
             Helper.BulletLink("Chaos Hour", "https://discord.gg/eE7vkX73");
             Helper.BulletLink("Students of Baldesion", "https://discord.gg/students-of-baldesion");
-            Helper.BulletLink("Conclave d'Exploration (French)", "https://discord.gg/rYSMDkWQKb");
+            Helper.BulletLink("Conclave d'Exploration (French)", "https://discord.gg/CgSRvTEHh8");
+            Helper.BulletLink("Apocalypse ", "https://discord.gg/EKK3Ta5QwQ");
 
             ImGuiHelpers.ScaledDummy(10.0f);
 
