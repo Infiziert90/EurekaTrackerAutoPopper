@@ -20,8 +20,9 @@ public class Fate
 
     public bool Alive;
     public bool PlayedSound;
+    public long SpawnTime;
     public long LastSeenAlive = -1;
-    public readonly List<long> PreviousRespawnTimes = [];
+    public List<long> PreviousRespawnTimes = [];
 
     public long TimeLeft;
     public byte Progress;
@@ -29,9 +30,8 @@ public class Fate
     public uint MapIcon;
     public string Name;
 
-    public DynamicEventState State;
-    public long SpawnTime;
     public long StateTimeLeft;
+    public DynamicEventState State;
 
     public SeString MapLink;
     public MapLinkPayload MapLinkPayload;
@@ -39,8 +39,8 @@ public class Fate
     public Vector2 WorldPos = Vector2.Zero;
     public uint[] SpecialRewards = [];
 
-    public OccultAetheryte Aetheryte = OccultAetheryte.None;
     public int WalkingDistance;
+    public OccultAetheryte Aetheryte = OccultAetheryte.None;
 
     public Fate(uint id, Territory territory, bool easy, string position)
     {
@@ -89,6 +89,7 @@ public class Fate
 
         Alive = true;
         LastSeenAlive = currentTime;
+        SpawnTime = fate.StartTimeEpoch;
 
         TimeLeft = fate.TimeRemaining;
         Progress = fate.Progress;
@@ -259,8 +260,15 @@ public class Fates
         {
             foreach (var fate in Plugin.FateTable)
             {
+                if (fate.StartTimeEpoch == 0)
+                    continue;
+
                 if (fate.FateId != occultFate.FateId)
                     continue;
+
+                // freshly spawned fate
+                if (!occultFate.Alive)
+                    Plugin.TrackerHandler.InstanceCheckAsync(fate);
 
                 occultFate.Update(fate, currentTime);
                 if (occultFate.PlayedSound || !Plugin.Configuration.PlayFateEffect)

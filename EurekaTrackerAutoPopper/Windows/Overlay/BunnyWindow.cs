@@ -46,7 +46,6 @@ public class BunnyWindow : Window, IDisposable
 
     public override void Draw()
     {
-        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
         var bunnies = Plugin.Fates.BunnyFates.Where(bnuuuy => (uint)bnuuuy.Territory == Plugin.ClientState.TerritoryType).ToArray();
         if (InEureka && Plugin.Configuration.OnlyEasyBunny)
             bunnies = bunnies[..1];
@@ -73,6 +72,7 @@ public class BunnyWindow : Window, IDisposable
             else
             {
                 nextSpawn.LastSeenAlive = lastAlive.LastSeenAlive;
+                nextSpawn.SpawnTime = lastAlive.SpawnTime;
                 bunnies = [nextSpawn];
             }
         }
@@ -96,8 +96,9 @@ public class BunnyWindow : Window, IDisposable
                 ImGui.SameLine();
                 if (bunny.LastSeenAlive != -1)
                 {
-                    var min = TimeSpan.FromSeconds(bunny.LastSeenAlive + (InEureka ? MinRespawn : OccultRespawn) - currentTime);
-                    var max = TimeSpan.FromSeconds(bunny.LastSeenAlive + (InEureka ? MaxRespawn : OccultRespawn) - currentTime);
+                    var (min, max) = InEureka
+                        ? CalculateEurekaRespawn(bunny)
+                        : CalculateOccultRespawn(bunny);
 
                     if (min.TotalSeconds > 0)
                         ImGui.TextUnformatted(Utils.TimeToFormatted(min));
@@ -115,5 +116,33 @@ public class BunnyWindow : Window, IDisposable
 
             ImGuiHelpers.ScaledDummy(5);
         }
+    }
+
+    /// <summary>
+    /// Calculates the respawn time of bunny fates in eureka, which depends on if people keep their bunnies out long.
+    /// </summary>
+    /// <param name="bunny">fate</param>
+    /// <returns>min and max respawn times</returns>
+    private (TimeSpan Min, TimeSpan Max) CalculateEurekaRespawn(Fate bunny)
+    {
+        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+
+        var min = TimeSpan.FromSeconds(bunny.LastSeenAlive + MinRespawn - currentTime);
+        var max = TimeSpan.FromSeconds(bunny.LastSeenAlive + MaxRespawn - currentTime);
+
+        return (min, max);
+    }
+
+    /// <summary>
+    /// Calculates the respawn time of pot fates in occult crescent, which is exactly every 30 minutes after the last one spawned.
+    /// </summary>
+    /// <param name="pot"></param>
+    /// <returns>fixed respawn time</returns>
+    private (TimeSpan Min, TimeSpan Max) CalculateOccultRespawn(Fate pot)
+    {
+        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+
+        var min = TimeSpan.FromSeconds(pot.SpawnTime + OccultRespawn - currentTime);
+        return (min, min);
     }
 }

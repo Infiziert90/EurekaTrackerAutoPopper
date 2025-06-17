@@ -53,6 +53,8 @@ public class OccultWindow : Window, IDisposable
         TabEngagements();
 
         TabTower();
+
+        TabTracker();
     }
 
     private void TabEngagements()
@@ -168,7 +170,6 @@ public class OccultWindow : Window, IDisposable
             Helper.BulletLink("Savage Slimes", "https://discord.gg/SavageSlimes");
             Helper.BulletLink("Lunar Forays Group", "https://discord.gg/d5gNTMmqbp");
             Helper.BulletLink("Late Night", "https://discord.gg/28SRRADTK3");
-            Helper.BulletLink("Chaos Hour", "https://discord.gg/eE7vkX73");
             Helper.BulletLink("Students of Baldesion", "https://discord.gg/students-of-baldesion");
             Helper.BulletLink("Conclave d'Exploration (French)", "https://discord.gg/CgSRvTEHh8");
             Helper.BulletLink("Apocalypse ", "https://discord.gg/EKK3Ta5QwQ");
@@ -188,7 +189,48 @@ public class OccultWindow : Window, IDisposable
             Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "OCE/JP:");
             Helper.BulletLink("Content Achievers", "https://discord.gg/FJFxr2U");
         }
+    }
 
+    private void TabTracker()
+    {
+        using var tabItem = ImRaii.TabItem("Tracker###TrackerTab");
+        if (!tabItem.Success)
+            return;
+
+        Helper.CenterText("== WORK IN PROGRESS ==");
+        ImGuiHelpers.ScaledDummy(10.0f);
+
+        if (!Plugin.Configuration.UploadPermission)
+        {
+            Helper.TextColored(ImGuiColors.DalamudOrange, "No Upload Permission Granted.");
+            return;
+        }
+
+        if (Plugin.TrackerHandler.CurrentTracker == null || !Plugin.TrackerHandler.IsConnected)
+            return;
+
+        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        Helper.TextColored(ImGuiColors.HealerGreen, $"Instance Share: {Plugin.TrackerHandler.ConnectedTo}");
+        if (Plugin.TrackerHandler.CurrentTracker.Encounters.Length == 0)
+        {
+            Helper.TextColored(ImGuiColors.DalamudOrange, "No Instance History Yet.");
+            return;
+        }
+
+        using var table = ImRaii.Table("##TrackerHistory", 2);
+        if (!table.Success)
+            return;
+
+        ImGui.TableSetupColumn("##Name");
+        ImGui.TableSetupColumn("##Timer");
+        foreach (var fate in  Plugin.TrackerHandler.CurrentTracker.Encounters.Where(f => f.LastSeenAlive > 0))
+        {
+            ImGui.TableNextColumn();
+            Helper.TextColored(ImGuiColors.DalamudOrange, $"{Sheets.DynamicEventSheet.GetRow(fate.FateId).Name.ExtractText()}");
+
+            ImGui.TableNextColumn();
+            Helper.TextColored(ImGuiColors.HealerGreen, Language.FateInfoLastSeen.Format(Utils.TimeToClockFormat(TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive))));
+        }
     }
 
     private void DrawFateInfo(Fate fate, bool isCurrent, bool isTower = false, bool showSpawnTimer = false)

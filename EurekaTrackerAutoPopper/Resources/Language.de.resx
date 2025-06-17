@@ -2,6 +2,7 @@
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:element name="root" msdata:IsDataSet="true">
+
         </xsd:element>
   </xsd:schema>
   <resheader name="resmimetype">
@@ -127,6 +128,15 @@
   <data name="ConfigHeaderPotHelperHeader" xml:space="preserve">
         <value>Pot Helper Window</value>
     </data>
+  <data name="ConfigHeaderEngagements" xml:space="preserve">
+        <value>Engagements</value>
+    </data>
+  <data name="ConfigHeaderTower" xml:space="preserve">
+        <value>Forked Tower</value>
+    </data>
+  <data name="ConfigHeaderGeneral" xml:space="preserve">
+        <value>General</value>
+    </data>
   <data name="ConfigHeaderProximityNotification" xml:space="preserve">
         <value>Proximity Notification</value>
     </data>
@@ -178,6 +188,18 @@
   <data name="ConfigOptionFateWindow" xml:space="preserve">
         <value>Show Fate Window On Entry</value>
     </data>
+  <data name="ConfigOptionEngagementsPot" xml:space="preserve">
+        <value>Show Active Pot</value>
+    </data>
+  <data name="ConfigOptionTowerTabName" xml:space="preserve">
+        <value>Change Tab Name</value>
+    </data>
+  <data name="ConfigOptionTowerTabTooltip" xml:space="preserve">
+        <value>Adds a small indicator "(active)" to the tab name if tower is active.</value>
+    </data>
+  <data name="ConfigOptionEngagementsHide" xml:space="preserve">
+        <value>Hide In Critical Encounters</value>
+    </data>
   <data name="ConfigOptionFlag" xml:space="preserve">
         <value>Place Map Flag</value>
     </data>
@@ -204,6 +226,15 @@
     </data>
   <data name="ConfigOptionSpawnNotification" xml:space="preserve">
         <value>Play Spawn Sound</value>
+    </data>
+  <data name="ConfigOptionSoundCESpawn" xml:space="preserve">
+        <value>Play Critical Encounter Sound</value>
+    </data>
+  <data name="ConfigOptionSoundFateSpawn" xml:space="preserve">
+        <value>Play Fate Sound</value>
+    </data>
+  <data name="ConfigOptionSoundTowerSpawn" xml:space="preserve">
+        <value>Play Tower Sound</value>
     </data>
   <data name="ConfigOptionSwitcherPosition" xml:space="preserve">
         <value>Position Below Map</value>
@@ -499,6 +530,21 @@
   <data name="TabHeaderOccult" xml:space="preserve">
         <value>Occult</value>
     </data>
+  <data name="TabHeaderNotification" xml:space="preserve">
+        <value>Notification</value>
+    </data>
+  <data name="TabHeaderMap" xml:space="preserve">
+        <value>Map</value>
+    </data>
+  <data name="TabHeaderEngagements" xml:space="preserve">
+        <value>Engagements</value>
+    </data>
+  <data name="TabHeaderTower" xml:space="preserve">
+        <value>Forked Tower</value>
+    </data>
+  <data name="TabHeaderPot" xml:space="preserve">
+        <value>Pot</value>
+    </data>
   <data name="TabHeaderStats" xml:space="preserve">
         <value>Statistik</value>
     </data>
@@ -510,5 +556,114 @@
     </data>
   <data name="TableLabelMonster" xml:space="preserve">
         <value>Monster</value>
+    </data>
+  <data name="LogWindowRefreshTooltip" xml:space="preserve">
+        <value>Refreshing is necessary as the game has to request updated progress from the server.
+A cooldown of 5s applies after each use.</value>
+    </data>
+  <data name="TabHeaderTracker" xml:space="preserve">
+        <value>Tracker</value>
+    </data>
+  <data name="TabHeaderHelper" xml:space="preserve">
+        <value>Helper</value>
+    </data>
+  <data name="OccultWindowNotInTerritory" xml:space="preserve">
+        <value>You aren't in the occult territory, this window is not of any use.</value>
+    </data>
+  <data name="CEStateInactive" xml:space="preserve">
+        <value>Inactive</value>
+    </data>
+  <data name="CEStateRegister" xml:space="preserve">
+        <value>Recruiting Members</value>
+    </data>
+  <data name="CEStateWarmup" xml:space="preserve">
+        <value>Preparing To Commence</value>
+    </data>
+  <data name="CEStateBattle" xml:space="preserve">
+        <value>Battle Underway</value>
+    </data>
+  <data name="MarkerSetCombined" xml:space="preserve">
+        <value>Treasure And Carrots</value>
+    </data>
+  <data name="MarkerSetOnlySilver" xml:space="preserve">
+        <value>Silver Treasure</value>
+    </data>
+  <data name="MarkerSetOnlyBronze" xml:space="preserve">
+        <value>Bronze Treasure</value>
+    </data>
+  <data name="MarkerSetBunny" xml:space="preserve">
+        <value>Bunny Carrot Locations</value>
+    </data>
+  <data name="MarkerSetPot" xml:space="preserve">
+        <value>Pot Locations</value>
+    </data>
+  <data name="MarkerSetTreasure" xml:space="preserve">
+        <value>All Treasure</value>
+    </data>
+  <data name="MarkerSetNone" xml:space="preserve">
+        <value>Show None</value>
+    </data>
+  <data name="HeaderActiveCE" xml:space="preserve">
+        <value>Active Critical Encounter:</value>
+    </data>
+  <data name="HeaderActiveFate" xml:space="preserve">
+        <value>Active FATE:</value>
+    </data>
+  <data name="HeaderActivePot" xml:space="preserve">
+        <value>Active Pot FATE:</value>
+    </data>
+  <data name="CollapseablePreviousEngagements" xml:space="preserve">
+        <value>All Previous Engagements</value>
+    </data>
+  <data name="HeaderCE" xml:space="preserve">
+        <value>Critical Encounter:</value>
+    </data>
+  <data name="HeaderFates" xml:space="preserve">
+        <value>FATEs:</value>
+    </data>
+  <data name="FateTimeRemaining" xml:space="preserve">
+        <value>Time Remaining</value>
+    </data>
+  <data name="FateProgress" xml:space="preserve">
+        <value>Progress</value>
+    </data>
+  <data name="FateInfoLastSeen" xml:space="preserve">
+        <value>Last Seen: {0} ago</value>
+    </data>
+  <data name="FateInfoLastSeenUnknown" xml:space="preserve">
+        <value>Last Seen: not seen</value>
+    </data>
+  <data name="FateInfoRespawnTimes" xml:space="preserve">
+        <value>Respawn Times: [{0}]</value>
+    </data>
+  <data name="FateInfoWalkingTime" xml:space="preserve">
+        <value>Walking Time: {0}</value>
+    </data>
+  <data name="ForkedTowerInfoJoinRun" xml:space="preserve">
+        <value>Want to join a Forked Tower run?</value>
+    </data>
+  <data name="ForkedTowerInfoWarning1" xml:space="preserve">
+        <value>Please be aware that attempting to join Forked Tower as an individual player is highly discouraged. This means to stand on the tower platform during the prerequisite weather conditions, in addition to offering any amount of ciphers for entry during this period.</value>
+    </data>
+  <data name="ForkedTowerInfoWarning2" xml:space="preserve">
+        <value>If you wish to learn more about Forked Tower or would like to participate in an organized group, it's encouraged to join one of the following Discord servers for your respective region.</value>
+    </data>
+  <data name="ForkedTowerInfoJoinDiscordList" xml:space="preserve">
+        <value>Where can I join an organized run? (Click name)</value>
+    </data>
+  <data name="ForkedTowerInfoPlayerCount" xml:space="preserve">
+        <value>Players on Platform: {0}</value>
+    </data>
+  <data name="ForkedTowerInfoPlayerListCollapseable" xml:space="preserve">
+        <value>Player List</value>
+    </data>
+  <data name="ForkedTowerNotOnPlatform" xml:space="preserve">
+        <value>Not on the Platform.</value>
+    </data>
+  <data name="ForkedTowerNotSeen" xml:space="preserve">
+        <value>Forked Tower hasn't been seen yet.</value>
+    </data>
+  <data name="OccultTowerActiveIndicator" xml:space="preserve">
+        <value> (active)</value>
     </data>
 </root>

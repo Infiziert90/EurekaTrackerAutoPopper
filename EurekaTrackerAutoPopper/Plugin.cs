@@ -64,6 +64,7 @@ public class Plugin : IDalamudPlugin
 
     public readonly Library Library;
     public readonly Fates Fates;
+    public readonly TrackerHandler TrackerHandler;
 
     public bool PlayerInEureka;
     public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
@@ -91,6 +92,7 @@ public class Plugin : IDalamudPlugin
         Library.Initialize();
 
         Fates = new Fates(this);
+        TrackerHandler = new TrackerHandler(this);
 
         MainWindow = new MainWindow(this);
         OccultWindow = new OccultWindow(this);
@@ -134,6 +136,7 @@ public class Plugin : IDalamudPlugin
         GC.SuppressFinalize(this);
 
         Fates.Dispose();
+        TrackerHandler.Dispose();
 
         Framework.Update -= PollForFateChange;
         Framework.Update -= FairyCheck;
@@ -255,6 +258,19 @@ public class Plugin : IDalamudPlugin
 
     private void TerritoryChangePoll(ushort territoryId)
     {
+        // Notify the user once about upload opt out
+        if (Configuration.UploadNotification)
+        {
+            // User received the notice, so we schedule the first upload 1h after
+            Configuration.UploadNotification = false;
+            Configuration.Save();
+
+            Chat.Print(Utils.SuccessMessage("Important"));
+            Chat.Print(Utils.SuccessMessage("This plugin uploads anonymized instance data. " +
+                                            "For more information on the exact data collected please see the upload tab in the configuration menu. " +
+                                            "You can opt out of any and all forms of data collection."));
+        }
+
         if (PlayerInRelevantTerritory())
         {
             PlayerInEureka = true;
@@ -322,6 +338,7 @@ public class Plugin : IDalamudPlugin
             Library.CleanCaches();
 
             Fates.Reset();
+            TrackerHandler.Reset();
 
             GotBunny = false;
             NearToCoffer = false;

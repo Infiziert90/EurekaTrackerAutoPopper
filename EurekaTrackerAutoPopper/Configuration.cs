@@ -63,6 +63,9 @@ public class Configuration : IPluginConfiguration
     public bool PlayTowerEffect = true;
     public int TowerSoundEffect = 49;
 
+    public bool UploadNotification = true;
+    public bool UploadPermission = true;
+
     public long TimeInEureka = 0;  // in milliseconds
     public int KilledBunnies = 0;
     public Dictionary<uint, Dictionary<uint, int>> Stats = new()

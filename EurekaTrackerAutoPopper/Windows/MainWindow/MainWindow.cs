@@ -35,6 +35,8 @@ public partial class MainWindow : Window, IDisposable
 
         OccultCategory();
 
+        UploadCategory();
+
         AboutCategory();
     }
 }

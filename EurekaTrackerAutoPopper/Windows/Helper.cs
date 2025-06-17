@@ -3,7 +3,6 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using EurekaTrackerAutoPopper.Resources;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
 
@@ -53,6 +52,13 @@ public static class Helper
             UIGlobals.PlaySoundEffect((uint) soundEffect);
 
         return changed;
+    }
+
+    public static void CenterText(string text, float indent = 0.0f)
+    {
+        indent *= ImGuiHelpers.GlobalScale;
+        ImGui.SetCursorPosX(((ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(text).X) * 0.5f) + indent);
+        ImGui.TextUnformatted(text);
     }
 
     /// <summary>

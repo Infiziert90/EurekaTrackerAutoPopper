@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Dalamud.Game.Text.SeStringHandling;
 using static System.Math;
 
 namespace EurekaTrackerAutoPopper;
@@ -25,5 +26,13 @@ public static class Utils
     public static float Distance(Vector2 worldPos, Vector3 playerPos)
     {
         return Vector2.Distance(worldPos, new Vector2(playerPos.X, playerPos.Z));
+    }
+
+    public static SeString SuccessMessage(string success)
+    {
+        return new SeStringBuilder()
+            .AddUiForeground("[Eureka Linker] ", 540)
+            .AddUiForeground($"{success}", 43)
+            .BuiltString;
     }
 }

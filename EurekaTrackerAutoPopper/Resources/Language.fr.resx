@@ -2,6 +2,7 @@
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:element name="root" msdata:IsDataSet="true">
+
         </xsd:element>
   </xsd:schema>
   <resheader name="resmimetype">
@@ -38,7 +39,7 @@
         <value>Pyros</value>
     </data>
   <data name="BunnyWindowRespawning" xml:space="preserve">
-        <value>Réapparition dans:</value>
+        <value>Réapparition dans :</value>
     </data>
   <data name="BunnyWindowRespawningsoon" xml:space="preserve">
         <value> bientôt </value>
@@ -74,10 +75,10 @@
         <value>Vous avez découvert un nouvel emplacement de coffre</value>
     </data>
   <data name="ChatNewChestFoundDevNote" xml:space="preserve">
-        <value>S'il vous plaît envisager d'envoyer l'information suivante au développeur:</value>
+        <value>Envisagez d'envoyer l'information suivante au développeur :</value>
     </data>
   <data name="ChatNewChestFoundFeedback" xml:space="preserve">
-        <value>(S'il vous plaît ne pas utiliser la fonction commentaire pour envoyer ceci)</value>
+        <value>(N'utilisez pas la fonction de feedback pour l'envoyer)</value>
     </data>
   <data name="ConfigButtonAddMapMarkers" xml:space="preserve">
         <value>Ajouter des marqueurs</value>
@@ -104,7 +105,7 @@
         <value>Lapin</value>
     </data>
   <data name="ConfigHeaderBunnyCarrot" xml:space="preserve">
-        <value>Carrotte du bonheur</value>
+        <value>Carotte du bonheur</value>
     </data>
   <data name="ConfigHeaderFairy" xml:space="preserve">
         <value>Fée / Élémentaire</value>
@@ -126,6 +127,15 @@
     </data>
   <data name="ConfigHeaderPotHelperHeader" xml:space="preserve">
         <value>Fenêtre d'aide du pot</value>
+    </data>
+  <data name="ConfigHeaderEngagements" xml:space="preserve">
+        <value>Confrontations</value>
+    </data>
+  <data name="ConfigHeaderTower" xml:space="preserve">
+        <value>Tour fourchue de la Force</value>
+    </data>
+  <data name="ConfigHeaderGeneral" xml:space="preserve">
+        <value>Général</value>
     </data>
   <data name="ConfigHeaderProximityNotification" xml:space="preserve">
         <value>Notification de proximité</value>
@@ -178,6 +188,18 @@
   <data name="ConfigOptionFateWindow" xml:space="preserve">
         <value>Afficher la fenêtre ALEA à l'entrée</value>
     </data>
+  <data name="ConfigOptionEngagementsPot" xml:space="preserve">
+        <value>Montrer le pot magique actif</value>
+    </data>
+  <data name="ConfigOptionTowerTabName" xml:space="preserve">
+        <value>Modifier le nom de l'onglet</value>
+    </data>
+  <data name="ConfigOptionTowerTabTooltip" xml:space="preserve">
+        <value>Ajoute un indicateur "(active)" au nom de l'onglet si la Tour est apparue.</value>
+    </data>
+  <data name="ConfigOptionEngagementsHide" xml:space="preserve">
+        <value>Cacher lors des confrontations critiques</value>
+    </data>
   <data name="ConfigOptionFlag" xml:space="preserve">
         <value>Placer un drapeau sur la carte</value>
     </data>
@@ -204,6 +226,15 @@
     </data>
   <data name="ConfigOptionSpawnNotification" xml:space="preserve">
         <value>Jouer un son d'apparition</value>
+    </data>
+  <data name="ConfigOptionSoundCESpawn" xml:space="preserve">
+        <value>Jouer un son pour les confrontations critiques</value>
+    </data>
+  <data name="ConfigOptionSoundFateSpawn" xml:space="preserve">
+        <value>Jouer un son pour les ALÉAs</value>
+    </data>
+  <data name="ConfigOptionSoundTowerSpawn" xml:space="preserve">
+        <value>Jouer un son pour la Tour fourchue</value>
     </data>
   <data name="ConfigOptionSwitcherPosition" xml:space="preserve">
         <value>Position sous la carte</value>
@@ -499,6 +530,21 @@
   <data name="TabHeaderOccult" xml:space="preserve">
         <value>Lunule</value>
     </data>
+  <data name="TabHeaderNotification" xml:space="preserve">
+        <value>Notification</value>
+    </data>
+  <data name="TabHeaderMap" xml:space="preserve">
+        <value>Carte</value>
+    </data>
+  <data name="TabHeaderEngagements" xml:space="preserve">
+        <value>Confrontations</value>
+    </data>
+  <data name="TabHeaderTower" xml:space="preserve">
+        <value>Tour fourchue de la Force</value>
+    </data>
+  <data name="TabHeaderPot" xml:space="preserve">
+        <value>Pot persistant</value>
+    </data>
   <data name="TabHeaderStats" xml:space="preserve">
         <value>Statistiques</value>
     </data>
@@ -510,5 +556,114 @@
     </data>
   <data name="TableLabelMonster" xml:space="preserve">
         <value>Monstre</value>
+    </data>
+  <data name="LogWindowRefreshTooltip" xml:space="preserve">
+        <value>Une actualisation est nécessaire pour que le jeu puisse récupérer et mettre à jour la progression depuis le serveur. 
+Temps de recharge de 5s après chaque utilisation.</value>
+    </data>
+  <data name="TabHeaderTracker" xml:space="preserve">
+        <value>Tracker</value>
+    </data>
+  <data name="TabHeaderHelper" xml:space="preserve">
+        <value>Aide</value>
+    </data>
+  <data name="OccultWindowNotInTerritory" xml:space="preserve">
+        <value>Entrez dans une instance de l'Île de Lunule pour accéder à cette fenêtre.</value>
+    </data>
+  <data name="CEStateInactive" xml:space="preserve">
+        <value>Inactif</value>
+    </data>
+  <data name="CEStateRegister" xml:space="preserve">
+        <value>Recrutement d'équipiers</value>
+    </data>
+  <data name="CEStateWarmup" xml:space="preserve">
+        <value>Préparation</value>
+    </data>
+  <data name="CEStateBattle" xml:space="preserve">
+        <value>Combat en cours</value>
+    </data>
+  <data name="MarkerSetCombined" xml:space="preserve">
+        <value>Coffres et Carottes</value>
+    </data>
+  <data name="MarkerSetOnlySilver" xml:space="preserve">
+        <value>Coffre en argent</value>
+    </data>
+  <data name="MarkerSetOnlyBronze" xml:space="preserve">
+        <value>Coffre en bronze</value>
+    </data>
+  <data name="MarkerSetBunny" xml:space="preserve">
+        <value>Emplacement de Carotte du bonheur</value>
+    </data>
+  <data name="MarkerSetPot" xml:space="preserve">
+        <value>Emplacement de Pot persistant</value>
+    </data>
+  <data name="MarkerSetTreasure" xml:space="preserve">
+        <value>Tous les coffres</value>
+    </data>
+  <data name="MarkerSetNone" xml:space="preserve">
+        <value>Ne rien afficher</value>
+    </data>
+  <data name="HeaderActiveCE" xml:space="preserve">
+        <value>Confrontation critique active :</value>
+    </data>
+  <data name="HeaderActiveFate" xml:space="preserve">
+        <value>ALÉA actif :</value>
+    </data>
+  <data name="HeaderActivePot" xml:space="preserve">
+        <value>ALÉA de pot magique actif :</value>
+    </data>
+  <data name="CollapseablePreviousEngagements" xml:space="preserve">
+        <value>Toutes les confrontations critiques précédentes</value>
+    </data>
+  <data name="HeaderCE" xml:space="preserve">
+        <value>Confrontation critique :</value>
+    </data>
+  <data name="HeaderFates" xml:space="preserve">
+        <value>ALÉAs :</value>
+    </data>
+  <data name="FateTimeRemaining" xml:space="preserve">
+        <value>Temps restant</value>
+    </data>
+  <data name="FateProgress" xml:space="preserve">
+        <value>Progression</value>
+    </data>
+  <data name="FateInfoLastSeen" xml:space="preserve">
+        <value>Dernière apparition : Il y a {0}</value>
+    </data>
+  <data name="FateInfoLastSeenUnknown" xml:space="preserve">
+        <value>Dernière apparition : jamais apparu</value>
+    </data>
+  <data name="FateInfoRespawnTimes" xml:space="preserve">
+        <value>Réapparition dans : {0}</value>
+    </data>
+  <data name="FateInfoWalkingTime" xml:space="preserve">
+        <value>Temps de marche : {0}</value>
+    </data>
+  <data name="ForkedTowerInfoJoinRun" xml:space="preserve">
+        <value>Vous souhaitez participer à une incursion de la Tour fourchue ?</value>
+    </data>
+  <data name="ForkedTowerInfoWarning1" xml:space="preserve">
+        <value>Veuillez noter qu'entrer dans la Tour fourchue de la Force en solo est fortement déconseillé. Cela ne peut se faire en restant sur la plateforme de téléportation pendant la météo dédiée et après avoir offert un ou des sceaux arcaniques de la Force.</value>
+    </data>
+  <data name="ForkedTowerInfoWarning2" xml:space="preserve">
+        <value>Si vous souhaitez en savoir plus au sujet de la Tour fourchue de la Force ou si vous souhaitez rejoindre un groupe prédéfini, il est fortement recommandé de rejoindre un ou des serveurs Discord dédiés dans votre région.</value>
+    </data>
+  <data name="ForkedTowerInfoJoinDiscordList" xml:space="preserve">
+        <value>Où puis-je rejoindre une incursion ? (Cliquez sur le nom)</value>
+    </data>
+  <data name="ForkedTowerInfoPlayerCount" xml:space="preserve">
+        <value>Nombre de joueurs sur la plateforme : {0}</value>
+    </data>
+  <data name="ForkedTowerInfoPlayerListCollapseable" xml:space="preserve">
+        <value>Liste de joueurs</value>
+    </data>
+  <data name="ForkedTowerNotOnPlatform" xml:space="preserve">
+        <value>Vous n'êtes pas sur la plateforme.</value>
+    </data>
+  <data name="ForkedTowerNotSeen" xml:space="preserve">
+        <value>La Tour fourchue de la Force n'est pas encore apparue.</value>
+    </data>
+  <data name="OccultTowerActiveIndicator" xml:space="preserve">
+        <value> (active)</value>
     </data>
 </root>
