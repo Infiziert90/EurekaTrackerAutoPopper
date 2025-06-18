@@ -230,6 +230,10 @@ public class Fates
 
     private void ScanOccultFates(IFramework _)
     {
+        var local = Plugin.ClientState.LocalPlayer;
+        if (local == null)
+            return;
+
         var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
         foreach (var bnuuy in BunnyFates)
         {
@@ -268,7 +272,7 @@ public class Fates
 
                 // freshly spawned fate
                 if (!occultFate.Alive)
-                    Plugin.TrackerHandler.InstanceCheckAsync(fate);
+                    Plugin.TrackerHandler.InstanceCheckAsync(fate, local);
 
                 occultFate.Update(fate, currentTime);
                 if (occultFate.PlayedSound || !Plugin.Configuration.PlayFateEffect)
@@ -288,6 +292,10 @@ public class Fates
 
     private unsafe void ScanOccultCEs(IFramework _)
     {
+        var local = Plugin.ClientState.LocalPlayer;
+        if (local == null)
+            return;
+
         var publicContent = PublicContentOccultCrescent.GetInstance();
         if (publicContent == null)
         {

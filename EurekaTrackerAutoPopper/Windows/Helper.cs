@@ -54,11 +54,31 @@ public static class Helper
         return changed;
     }
 
+    /// <summary>
+    /// Centers a colored text in the available space
+    /// </summary>
+    /// <param name="text">text to display</param>
+    /// <param name="indent">indention to respect</param>
     public static void CenterText(string text, float indent = 0.0f)
     {
         indent *= ImGuiHelpers.GlobalScale;
         ImGui.SetCursorPosX(((ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(text).X) * 0.5f) + indent);
         ImGui.TextUnformatted(text);
+    }
+
+    /// <summary>
+    /// Right aligns a colored text in the available space
+    /// </summary>
+    /// <param name="color">color to be used</param>
+    /// <param name="text">text to display</param>
+    /// <param name="indent">indention to respect</param>
+    public static void RightTextColored(Vector4 color, string text, float indent = 0.0f)
+    {
+        indent *= ImGuiHelpers.GlobalScale;
+        ImGui.SameLine(ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(text).X + indent);
+
+        using (ImRaii.PushColor(ImGuiCol.Text, color))
+            ImGui.TextUnformatted(text);
     }
 
     /// <summary>

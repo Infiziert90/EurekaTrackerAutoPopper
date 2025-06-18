@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Fates;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Newtonsoft.Json;
 using Serilog;
 
@@ -99,7 +100,7 @@ public class TrackerHandler
         [JsonConstructor]
         public NewTracker() {}
 
-        public NewTracker(uint fateId, int timestamp, List<Fate> criticalEncounter, List<Fate> potFates) : base("OccultTracker")
+        public NewTracker(uint dcId, uint fateId, int timestamp, List<Fate> criticalEncounter, List<Fate> potFates) : base("OccultTracker")
         {
             EncounterHistory = JsonConvert.SerializeObject(criticalEncounter.Select(f => new ShareableFate(f)));
             PotHistory = JsonConvert.SerializeObject(potFates.TakeLast(2).Select(f => new ShareableFate(f)));
@@ -107,6 +108,7 @@ public class TrackerHandler
             using var stream = new MemoryStream();
             using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
             {
+                writer.Write(dcId);
                 writer.Write(fateId);
                 writer.Write(timestamp);
             }
@@ -137,6 +139,9 @@ public class TrackerHandler
         [JsonIgnore]
         public ShareableFate[] Encounters;
 
+        [JsonIgnore]
+        public ShareableFate[] Pots;
+
         [JsonConstructor]
         public ExistingTracker() {}
 
@@ -144,6 +149,7 @@ public class TrackerHandler
         internal void Init(StreamingContext _)
         {
             Encounters = JsonConvert.DeserializeObject<ShareableFate[]>(EncounterHistory) ?? [];
+            Pots = JsonConvert.DeserializeObject<ShareableFate[]>(PotHistory) ?? [];
         }
     }
 
@@ -163,7 +169,7 @@ public class TrackerHandler
         public long[] PreviousRespawnTimes = fate.PreviousRespawnTimes.ToArray();
     }
 
-    public void InstanceCheckAsync(IFate fate)
+    public void InstanceCheckAsync(IFate fate, IPlayerCharacter localPlayer)
     {
         if (Plugin.ClientState.TerritoryType != (uint)Territory.SouthHorn)
             return;
@@ -172,7 +178,8 @@ public class TrackerHandler
         if (!Plugin.Configuration.UploadPermission)
             return;
 
-        UpcomingTracker = new NewTracker(fate.FateId, fate.StartTimeEpoch, Plugin.Fates.OccultCriticalEncounters, Plugin.Fates.BunnyFates);
+        var dcId = localPlayer.CurrentWorld.Value.DataCenter.RowId;
+        UpcomingTracker = new NewTracker(dcId, fate.FateId, fate.StartTimeEpoch, Plugin.Fates.OccultCriticalEncounters, Plugin.Fates.BunnyFates);
         Task.Run(async () => await DelayedInstanceCheck());
     }
 
@@ -218,9 +225,20 @@ public class TrackerHandler
             IsConnected = true;
             ConnectedTo = CurrentTracker.Identifier;
 
+            // Write back critical encounters fetched from tracker
             foreach (var fate in CurrentTracker.Encounters)
             {
                 var cachedFate = Plugin.Fates.OccultCriticalEncounters.First(f => f.FateId == fate.FateId);
+
+                cachedFate.LastSeenAlive = fate.LastSeenAlive;
+                cachedFate.SpawnTime = fate.SpawnTime;
+                cachedFate.PreviousRespawnTimes = fate.PreviousRespawnTimes.ToList();
+            }
+
+            // Write back pot fates fetched from tracker
+            foreach (var fate in CurrentTracker.Pots)
+            {
+                var cachedFate = Plugin.Fates.BunnyFates.First(f => f.FateId == fate.FateId);
 
                 cachedFate.LastSeenAlive = fate.LastSeenAlive;
                 cachedFate.SpawnTime = fate.SpawnTime;

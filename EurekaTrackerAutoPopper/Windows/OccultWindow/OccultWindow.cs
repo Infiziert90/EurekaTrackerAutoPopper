@@ -226,10 +226,10 @@ public class OccultWindow : Window, IDisposable
         foreach (var fate in  Plugin.TrackerHandler.CurrentTracker.Encounters.Where(f => f.LastSeenAlive > 0))
         {
             ImGui.TableNextColumn();
-            Helper.TextColored(ImGuiColors.DalamudOrange, $"{Sheets.DynamicEventSheet.GetRow(fate.FateId).Name.ExtractText()}");
+            ImGui.TextUnformatted($"{Sheets.DynamicEventSheet.GetRow(fate.FateId).Name.ExtractText()}");
 
             ImGui.TableNextColumn();
-            Helper.TextColored(ImGuiColors.HealerGreen, Language.FateInfoLastSeen.Format(Utils.TimeToClockFormat(TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive))));
+            Helper.RightTextColored(ImGuiColors.HealerGreen, Language.FateInfoLastSeen.Format(Utils.TimeToClockFormat(TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive))));
         }
     }
 
