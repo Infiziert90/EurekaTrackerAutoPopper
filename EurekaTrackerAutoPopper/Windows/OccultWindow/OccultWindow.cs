@@ -217,19 +217,21 @@ public class OccultWindow : Window, IDisposable
             return;
         }
 
-        using var table = ImRaii.Table("##TrackerHistory", 2);
+        using var table = ImRaii.Table("##TrackerHistory", 2, ImGuiTableFlags.BordersInner | ImGuiTableFlags.RowBg);
         if (!table.Success)
             return;
 
-        ImGui.TableSetupColumn("##Name");
-        ImGui.TableSetupColumn("##Timer");
+        ImGui.TableSetupColumn("Name##Name", ImGuiTableColumnFlags.WidthFixed, ImGui.GetContentRegionAvail().X / 1.3f);
+        ImGui.TableSetupColumn("Last Seen##Timer");
+
+        ImGui.TableHeadersRow();
         foreach (var fate in  Plugin.TrackerHandler.CurrentTracker.Encounters.Where(f => f.LastSeenAlive > 0))
         {
             ImGui.TableNextColumn();
             ImGui.TextUnformatted($"{Sheets.DynamicEventSheet.GetRow(fate.FateId).Name.ExtractText()}");
 
             ImGui.TableNextColumn();
-            Helper.RightTextColored(ImGuiColors.HealerGreen, Language.FateInfoLastSeen.Format(Utils.TimeToClockFormat(TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive))));
+            Helper.RightTextColored(ImGuiColors.HealerGreen, Utils.TimeToClockFormat(TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive)));
         }
     }
 
