@@ -202,34 +202,52 @@ public partial class MainWindow
         if (!tabItem.Success)
             return;
 
-        var changed = false;
-
-        ImGuiHelpers.ScaledDummy(5);
-
-        ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderGeneral);
-        using (ImRaii.PushIndent(10.0f))
-            changed |= ImGui.Checkbox(Language.ConfigOptionEngagementsHide, ref Plugin.Configuration.EngagementsHideInEncounter);
-
-        ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderEngagements);
-        using (ImRaii.PushIndent(10.0f))
+        var buttonHeight = Helper.CalculateChildHeight();
+        using (var contentChild = ImRaii.Child("Content", new Vector2(0, -buttonHeight)))
         {
-            changed |= ImGui.Checkbox(Language.ConfigOptionEngagementsPot, ref Plugin.Configuration.EngagementsShowPot);
+            if (contentChild.Success)
+            {
+                var changed = false;
 
-            changed |= Helper.AddSoundOption(0, Language.ConfigOptionSoundFateSpawn, ref Plugin.Configuration.PlayFateEffect, ref Plugin.Configuration.FateSoundEffect);
-            changed |= Helper.AddSoundOption(1, Language.ConfigOptionSoundCESpawn, ref Plugin.Configuration.PlayEncounterEffect, ref Plugin.Configuration.EncounterSoundEffect);
+                ImGuiHelpers.ScaledDummy(5.0f);
+
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderGeneral);
+                using (ImRaii.PushIndent(10.0f))
+                    changed |= ImGui.Checkbox(Language.ConfigOptionEngagementsHide, ref Plugin.Configuration.EngagementsHideInEncounter);
+
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderEngagements);
+                using (ImRaii.PushIndent(10.0f))
+                {
+                    changed |= ImGui.Checkbox(Language.ConfigOptionEngagementsPot, ref Plugin.Configuration.EngagementsShowPot);
+
+                    changed |= Helper.AddSoundOption(0, Language.ConfigOptionSoundFateSpawn, ref Plugin.Configuration.PlayFateEffect, ref Plugin.Configuration.FateSoundEffect);
+                    changed |= Helper.AddSoundOption(1, Language.ConfigOptionSoundCESpawn, ref Plugin.Configuration.PlayEncounterEffect, ref Plugin.Configuration.EncounterSoundEffect);
+                }
+
+                ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderTower);
+                using (ImRaii.PushIndent(10.0f))
+                {
+                    changed |= ImGui.Checkbox(Language.ConfigOptionTowerTabName, ref Plugin.Configuration.TowerChangeHeader);
+                    ImGuiComponents.HelpMarker(Language.ConfigOptionTowerTabTooltip);
+
+                    changed |= Helper.AddSoundOption(2, Language.ConfigOptionSpawnNotification, ref Plugin.Configuration.PlayTowerEffect, ref Plugin.Configuration.TowerSoundEffect);
+                }
+
+                if (changed)
+                    Plugin.Configuration.Save();
+            }
         }
 
-        ImGui.TextColored(ImGuiColors.DalamudViolet, Language.ConfigHeaderTower);
-        using (ImRaii.PushIndent(10.0f))
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(Helper.SeparatorPadding);
+
+        using (var bottomChild = ImRaii.Child("Bottom", Vector2.Zero))
         {
-            changed |= ImGui.Checkbox(Language.ConfigOptionTowerTabName, ref Plugin.Configuration.TowerChangeHeader);
-            ImGuiComponents.HelpMarker(Language.ConfigOptionTowerTabTooltip);
-
-            changed |= Helper.AddSoundOption(2, Language.ConfigOptionSpawnNotification, ref Plugin.Configuration.PlayTowerEffect, ref Plugin.Configuration.TowerSoundEffect);
+            if (bottomChild.Success)
+            {
+                if (ImGui.Button(Language.ButtonOpenHelper))
+                    Plugin.OccultWindow.Toggle();
+            }
         }
-
-
-        if (changed)
-            Plugin.Configuration.Save();
     }
 }

@@ -1,6 +1,10 @@
 using System;
+using System.Linq;
 using System.Numerics;
+using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text.SeStringHandling;
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using static System.Math;
 
 namespace EurekaTrackerAutoPopper;
@@ -34,5 +38,14 @@ public static class Utils
             .AddUiForeground("[Eureka Linker] ", 540)
             .AddUiForeground($"{success}", 43)
             .BuiltString;
+    }
+
+    public static unsafe IGameObject[] GetTowerCharacter(Fate towerEngagement)
+    {
+        return Plugin.ObjectTable
+            .Where(o => o.ObjectKind == ObjectKind.Player)
+            .Where(o => Distance(towerEngagement.WorldPos, o.Position) <= 20.0f)
+            .Where(o => ((BattleChara*)o.Address)->GetForayInfo()->Level >= 20)
+            .ToArray();
     }
 }

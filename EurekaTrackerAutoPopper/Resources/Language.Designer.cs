@@ -159,6 +159,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Helper Window.
+        /// </summary>
+        internal static string ButtonOpenHelper {
+            get {
+                return ResourceManager.GetString("ButtonOpenHelper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Battle Underway.
         /// </summary>
         internal static string CEStateBattle {
@@ -960,7 +969,7 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Players on Platform: {0}.
+        ///   Looks up a localized string similar to Players on Platform (Level 20 or above): {0}.
         /// </summary>
         internal static string ForkedTowerInfoPlayerCount {
             get {

@@ -55,7 +55,7 @@ public class Plugin : IDalamudPlugin
 
     private WindowSystem WindowSystem { get; init; } = new("Eureka Linker");
     private MainWindow MainWindow { get; init; }
-    private OccultWindow OccultWindow { get; init; }
+    public OccultWindow OccultWindow { get; init; }
     private QuestWindow QuestWindow { get; init; }
     private LogWindow LogWindow { get; init; }
     public BunnyWindow BunnyWindow { get; init; }
@@ -784,7 +784,7 @@ public class Plugin : IDalamudPlugin
 
     private void DrawConfigUI()
     {
-        MainWindow.IsOpen = true;
+        MainWindow.Toggle();
     }
 
     public void PlaceEurekaMarkerSet(bool placeBunny, bool clear = true)

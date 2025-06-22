@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
@@ -134,10 +133,7 @@ public class OccultWindow : Window, IDisposable
         }
         else
         {
-            var playersClose = Plugin.ObjectTable
-                .Where(o => o.ObjectKind == ObjectKind.Player)
-                .Where(o => Utils.Distance(towerEngagement.WorldPos, o.Position) <= 20.0f)
-                .ToArray();
+            var playersClose = Utils.GetTowerCharacter(towerEngagement);
 
             Helper.TextColored(ImGuiColors.HealerGreen, Language.ForkedTowerInfoPlayerCount.Format(playersClose.Length));
             if (ImGui.CollapsingHeader(Language.ForkedTowerInfoPlayerListCollapseable))

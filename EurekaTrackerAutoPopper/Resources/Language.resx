@@ -653,7 +653,7 @@ A cooldown of 5s applies after each use.</value>
         <value>Where can I join an organized run? (Click name)</value>
     </data>
     <data name="ForkedTowerInfoPlayerCount" xml:space="preserve">
-        <value>Players on Platform: {0}</value>
+        <value>Players on Platform (Level 20 or above): {0}</value>
     </data>
     <data name="ForkedTowerInfoPlayerListCollapseable" xml:space="preserve">
         <value>Player List</value>
@@ -666,5 +666,8 @@ A cooldown of 5s applies after each use.</value>
     </data>
     <data name="OccultTowerActiveIndicator" xml:space="preserve">
         <value> (active)</value>
+    </data>
+    <data name="ButtonOpenHelper" xml:space="preserve">
+        <value>Open Helper Window</value>
     </data>
 </root>
