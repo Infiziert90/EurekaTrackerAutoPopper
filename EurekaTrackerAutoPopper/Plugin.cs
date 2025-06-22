@@ -115,6 +115,8 @@ public class Plugin : IDalamudPlugin
         PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
         PluginInterface.LanguageChanged += LanguageChanged;
 
+        LanguageChanged(PluginInterface.UiLanguage);
+
         ClientState.TerritoryChanged += TerritoryChangePoll;
         CofferTimer.AutoReset = false;
 
