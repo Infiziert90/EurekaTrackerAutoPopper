@@ -24,7 +24,7 @@ public class QuestWindow : Window, IDisposable
 
     public override void Draw()
     {
-        var territoryId = Plugin.ClientState.TerritoryType;
+        var territoryId = QuestHelper.TerritoryTypeToSafeId(Plugin.ClientState.TerritoryType);
 
         ImGui.TextColored(ImGuiColors.ParsedGold, $"{Language.QuestLogHeader}: ");
         ImGui.SameLine();

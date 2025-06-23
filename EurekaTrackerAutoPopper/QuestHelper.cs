@@ -479,4 +479,16 @@ public static class QuestHelper
             _ => Language.AreaNameAnemos
         };
     }
+
+    public static uint TerritoryTypeToSafeId(uint territoryId)
+    {
+        return territoryId switch
+        {
+            732 => 732,
+            763 => 763,
+            795 => 795,
+            827 => 827,
+            _ => 732
+        };
+    }
 }
