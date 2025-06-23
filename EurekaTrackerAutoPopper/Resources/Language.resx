@@ -298,7 +298,7 @@
         <value>Unable to read log.</value>
     </data>
     <data name="LogWrongTab" xml:space="preserve">
-        <value>Please open your challenge log in the 'Other' category.</value>
+        <value>Please open your challenge log in the 'Field Operations' category.</value>
     </data>
     <data name="LogWrongTabNote" xml:space="preserve">
         <value>Unable to detect eureka progress.</value>

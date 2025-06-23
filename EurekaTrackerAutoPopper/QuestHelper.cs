@@ -397,8 +397,8 @@ public static class QuestHelper
         {
             827,
             [
-                new Aetheryte(13, 51, CreateHydatosLink(14.0f, 12.3f)),
-                new Aetheryte(14, 55, CreateHydatosLink(30.2f, 20.5f))
+                new Aetheryte(13, 51, CreateHydatosLink(9.7f, 28.0f)),
+                new Aetheryte(14, 55, CreateHydatosLink(37.1f, 22.6f))
             ]
         },
     };

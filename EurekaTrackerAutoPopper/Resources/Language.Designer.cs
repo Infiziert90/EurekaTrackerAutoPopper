@@ -1132,7 +1132,7 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please open your challenge log in the &apos;Other&apos; category..
+        ///   Looks up a localized string similar to Please open your challenge log in the &apos;Field Operations&apos; category..
         /// </summary>
         internal static string LogWrongTab {
             get {

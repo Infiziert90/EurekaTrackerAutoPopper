@@ -71,7 +71,6 @@ public class BunnyWindow : Window, IDisposable
             // Apply the time of latest kill to calculate next respawn
             else
             {
-                nextSpawn.LastSeenAlive = lastAlive.LastSeenAlive;
                 nextSpawn.SpawnTime = lastAlive.SpawnTime;
                 bunnies = [nextSpawn];
             }
