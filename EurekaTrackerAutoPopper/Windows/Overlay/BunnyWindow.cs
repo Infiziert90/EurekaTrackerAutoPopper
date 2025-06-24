@@ -50,7 +50,7 @@ public class BunnyWindow : Window, IDisposable
         if (InEureka && Plugin.Configuration.OnlyEasyBunny)
             bunnies = bunnies[..1];
 
-        // In Occult the bunny fates spawn after another in a cycle, so we have to sort them based on death time
+        // In Occult the bunny fates spawn after another in a cycle, so we have to sort them based on spawn time
         if (InOccult)
         {
             var sortedFates = bunnies.OrderBy(bnuuuy => bnuuuy.LastSeenAlive).ToArray();
@@ -68,9 +68,13 @@ public class BunnyWindow : Window, IDisposable
             {
                 bunnies = [lastAlive];
             }
-            // Apply the time of latest kill to calculate next respawn
+            // Apply the time of latest spawn to calculate next respawn
             else
             {
+                // Set LastSeenAlive to 30min previously
+                if (nextSpawn.LastSeenAlive == -1)
+                    nextSpawn.LastSeenAlive = lastAlive.SpawnTime - OccultRespawn;
+
                 nextSpawn.SpawnTime = lastAlive.SpawnTime;
                 bunnies = [nextSpawn];
             }
