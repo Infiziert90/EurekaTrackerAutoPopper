@@ -184,6 +184,7 @@ public class OccultWindow : Window, IDisposable
 
             Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "OCE/JP:");
             Helper.BulletLink("Content Achievers", "https://discord.gg/FJFxr2U");
+            Helper.BulletLink("Once Upon a Fork [Elemental DC]", "https://discord.gg/GJxnnYKVHQ");
         }
     }
 
