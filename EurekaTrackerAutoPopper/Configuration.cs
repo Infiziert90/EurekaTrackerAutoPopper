@@ -50,7 +50,6 @@ public class Configuration : IPluginConfiguration
     public bool ShowFastSwitcher = true;
     public bool SwitcherBelowMap = false;
     public OccultMarkerSets DefaultOccultMarkerSets = OccultMarkerSets.Treasure;
-    public bool FirstTimeOccultAfterUpdate = false;
 
     public bool EngagementsHideInEncounter = true;
     public bool EngagementsShowPot = true;

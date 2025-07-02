@@ -299,18 +299,6 @@ public class Plugin : IDalamudPlugin
         }
         else if (ClientState.TerritoryType == (uint)Territory.SouthHorn)
         {
-            // TODO: Remove after 30.06.25
-            if (!Configuration.FirstTimeOccultAfterUpdate)
-            {
-                Chat.Print(new XivChatEntry { Message = new SeStringBuilder()
-                    .AddUiForeground("[Eureka Linker] ", 540)
-                    .AddUiForeground("Welcome Adventurer, this is your first time in occult crescent after the latest update, a new helper has been added under /eloccult, enjoy your time.", 43)
-                    .BuiltString });
-
-                Configuration.FirstTimeOccultAfterUpdate = true;
-                Configuration.Save();
-            }
-
             if (Configuration.ShowBunnyWindow)
                 BunnyWindow.IsOpen = true;
 
@@ -328,6 +316,9 @@ public class Plugin : IDalamudPlugin
             Framework.Update += OccultPotCheck;
 
             Fates.RegisterEvents();
+
+            // Set forked tower timer to when the client joined south horn
+            Fates.OccultCriticalEncounters[^1].InstanceJoinedTimer = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
         else
         {

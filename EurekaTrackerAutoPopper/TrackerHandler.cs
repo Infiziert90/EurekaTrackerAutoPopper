@@ -167,6 +167,12 @@ public class TrackerHandler
 
         [JsonProperty("respawn_times")]
         public long[] PreviousRespawnTimes = fate.PreviousRespawnTimes.ToArray();
+
+        [JsonProperty("killed_fates")]
+        public int KilledFates = fate.KilledFates;
+
+        [JsonProperty("killed_ces")]
+        public int KilledCEs = fate.KilledCEs;
     }
 
     public void InstanceCheckAsync(IFate fate, IPlayerCharacter localPlayer)
@@ -226,23 +232,30 @@ public class TrackerHandler
             ConnectedTo = CurrentTracker.Identifier;
 
             // Write back critical encounters fetched from tracker
-            foreach (var fate in CurrentTracker.Encounters)
+            foreach (var sharedFate in CurrentTracker.Encounters)
             {
-                var cachedFate = Plugin.Fates.OccultCriticalEncounters.First(f => f.FateId == fate.FateId);
+                var localFate = Plugin.Fates.OccultCriticalEncounters.First(f => f.FateId == sharedFate.FateId);
 
-                cachedFate.LastSeenAlive = fate.LastSeenAlive;
-                cachedFate.SpawnTime = fate.SpawnTime;
-                cachedFate.PreviousRespawnTimes = fate.PreviousRespawnTimes.ToList();
+                localFate.LastSeenAlive = sharedFate.LastSeenAlive;
+                localFate.SpawnTime = sharedFate.SpawnTime;
+                localFate.PreviousRespawnTimes = sharedFate.PreviousRespawnTimes.ToList();
+
+                // Only important for forked tower
+                if (localFate.FateId != 48)
+                    continue;
+
+                localFate.KilledFates = sharedFate.KilledFates;
+                localFate.KilledCEs = sharedFate.KilledCEs;
             }
 
             // Write back pot fates fetched from tracker
-            foreach (var fate in CurrentTracker.Pots)
+            foreach (var sharedFate in CurrentTracker.Pots)
             {
-                var cachedFate = Plugin.Fates.BunnyFates.First(f => f.FateId == fate.FateId);
+                var localFate = Plugin.Fates.BunnyFates.First(f => f.FateId == sharedFate.FateId);
 
-                cachedFate.LastSeenAlive = fate.LastSeenAlive;
-                cachedFate.SpawnTime = fate.SpawnTime;
-                cachedFate.PreviousRespawnTimes = fate.PreviousRespawnTimes.ToList();
+                localFate.LastSeenAlive = sharedFate.LastSeenAlive;
+                localFate.SpawnTime = sharedFate.SpawnTime;
+                localFate.PreviousRespawnTimes = sharedFate.PreviousRespawnTimes.ToList();
             }
         }
         catch (Exception ex)

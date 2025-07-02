@@ -42,6 +42,11 @@ public class Fate
     public int WalkingDistance;
     public OccultAetheryte Aetheryte = OccultAetheryte.None;
 
+    // Only used for Forked Tower
+    public int KilledFates;
+    public int KilledCEs;
+    public long InstanceJoinedTimer;
+
     public Fate(uint id, Territory territory, bool easy, string position)
     {
         FateId = id;
@@ -120,6 +125,9 @@ public class Fate
         Alive = false;
         SpawnTime = -1;
         LastSeenAlive = -1;
+
+        KilledFates = 0;
+        KilledCEs = 0;
     }
 }
 
@@ -234,6 +242,8 @@ public class Fates
         if (local == null)
             return;
 
+        var towerEngagement = Plugin.Fates.OccultCriticalEncounters[^1];
+
         var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
         foreach (var bnuuy in BunnyFates)
         {
@@ -258,6 +268,7 @@ public class Fates
 
             bnuuy.Alive = false;
             bnuuy.PlayedSound = false;
+            towerEngagement.KilledFates += 1;
         }
 
         foreach (var occultFate in OccultFates)
@@ -287,6 +298,7 @@ public class Fates
 
             occultFate.Alive = false;
             occultFate.PlayedSound = false;
+            towerEngagement.KilledFates += 1;
         }
     }
 
@@ -295,6 +307,8 @@ public class Fates
         var local = Plugin.ClientState.LocalPlayer;
         if (local == null)
             return;
+
+        var towerEngagement = Plugin.Fates.OccultCriticalEncounters[^1];
 
         var publicContent = PublicContentOccultCrescent.GetInstance();
         if (publicContent == null)
@@ -310,6 +324,8 @@ public class Fates
         var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
         foreach (var occultCE in OccultCriticalEncounters)
         {
+            var isTowerCE = occultCE.FateId == 48;
+
             foreach (ref var criticalEncounter in publicContent->DynamicEventContainer.Events)
             {
                 if (criticalEncounter.State == DynamicEventState.Inactive)
@@ -324,7 +340,7 @@ public class Fates
                 occultCE.PlayedSound = true;
 
                 // Forked Tower
-                if (occultCE.FateId == 48)
+                if (isTowerCE)
                 {
                     if (!Plugin.Configuration.PlayTowerEffect)
                         continue;
@@ -346,6 +362,13 @@ public class Fates
             occultCE.Alive = false;
             occultCE.PlayedSound = false;
             occultCE.State = DynamicEventState.Inactive;
+            towerEngagement.KilledCEs += 1;
+
+            if (isTowerCE)
+            {
+                towerEngagement.KilledFates = 0;
+                towerEngagement.KilledCEs = 0;
+            }
         }
     }
 

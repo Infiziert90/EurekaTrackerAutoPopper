@@ -17,6 +17,8 @@ namespace EurekaTrackerAutoPopper.Windows.OccultWindow;
 
 public class OccultWindow : Window, IDisposable
 {
+    private const int TowerSpawnTimer = 3600;
+
     private readonly Plugin Plugin;
 
     public OccultWindow(Plugin plugin) : base("Occult Helper##EurekaLinker")
@@ -151,6 +153,45 @@ public class OccultWindow : Window, IDisposable
         ImGuiHelpers.ScaledDummy(5.0f);
         ImGui.Separator();
         ImGuiHelpers.ScaledDummy(5.0f);
+
+        if (ImGui.CollapsingHeader("Spawn Prediction"))
+        {
+            Helper.CenterText("== WORK IN PROGRESS ==");
+            ImGuiHelpers.ScaledDummy(10.0f);
+
+            if (towerEngagement.Alive)
+            {
+                Helper.TextColored(ImGuiColors.HealerGreen, "Forked Tower is already active.");
+            }
+            else
+            {
+                var lastSpawn = towerEngagement.LastSeenAlive;
+                var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+                var spawnTimer = TowerSpawnTimer - (300 * towerEngagement.KilledCEs) - (60 * towerEngagement.KilledFates);
+                if (towerEngagement.LastSeenAlive == -1)
+                {
+                    lastSpawn = towerEngagement.InstanceJoinedTimer;
+                    Helper.TextColored(ImGuiColors.DalamudOrange, "This may not be correct!!!");
+                }
+
+                var timer = Utils.TimeToClockFormat(TimeSpan.FromSeconds(lastSpawn - currentTime + spawnTimer));
+                Helper.TextColored(ImGuiColors.HealerGreen, $"Predicted Respawn: {timer}");
+
+                var activeFate = Plugin.Fates.OccultFates.FirstOrDefault(f => f.Alive);
+                var activeCE =  Plugin.Fates.OccultCriticalEncounters.FirstOrDefault(f => f.Alive);
+                var activeBunny =  Plugin.Fates.BunnyFates.FirstOrDefault(f => f.Alive);
+
+                Helper.TextColored(ImGuiColors.HealerGreen, "Upcoming Reductions:");
+                if (activeFate != null)
+                    Helper.TextColored(ImGuiColors.TankBlue, $"-1 Minute [{activeFate.Name} - {activeFate.Progress}%]");
+
+                if (activeBunny != null)
+                    Helper.TextColored(ImGuiColors.TankBlue, $"-1 Minute [{activeBunny.Name} - {activeBunny.Progress}%]");
+
+                if (activeCE != null)
+                    Helper.TextColored(ImGuiColors.TankBlue, $"-5 Minute [{activeCE.Name} - {activeCE.Progress}%]");
+            }
+        }
 
         if (ImGui.CollapsingHeader(Language.ForkedTowerInfoJoinRun))
         {
