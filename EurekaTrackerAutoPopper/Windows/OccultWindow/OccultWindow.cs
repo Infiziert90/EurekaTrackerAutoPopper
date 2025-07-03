@@ -209,7 +209,8 @@ public class OccultWindow : Window, IDisposable
             Helper.BulletLink("Late Night", "https://discord.gg/28SRRADTK3");
             Helper.BulletLink("Students of Baldesion", "https://discord.gg/students-of-baldesion");
             Helper.BulletLink("Conclave d'Exploration (French)", "https://discord.gg/CgSRvTEHh8");
-            Helper.BulletLink("Apocalypse ", "https://discord.gg/EKK3Ta5QwQ");
+            Helper.BulletLink("Apocalypse", "https://discord.gg/EKK3Ta5QwQ");
+            Helper.BulletLink("Occult Crescent Chaos!", "https://discord.gg/btD94nYhJA");
 
             ImGuiHelpers.ScaledDummy(10.0f);
 
@@ -224,7 +225,8 @@ public class OccultWindow : Window, IDisposable
             ImGuiHelpers.ScaledDummy(10.0f);
 
             Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "OCE/JP:");
-            Helper.BulletLink("Content Achievers", "https://discord.gg/FJFxr2U");
+            Helper.BulletLink("Content Achievers [OCE + JP]", "https://discord.gg/FJFxr2U");
+            Helper.BulletLink("Content Achievers [OCE]", "https://discord.gg/zpGRYsZpRA");
             Helper.BulletLink("Once Upon a Fork [Elemental DC]", "https://discord.gg/GJxnnYKVHQ");
         }
     }
