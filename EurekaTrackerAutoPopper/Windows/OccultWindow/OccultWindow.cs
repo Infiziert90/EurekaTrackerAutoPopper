@@ -211,6 +211,7 @@ public class OccultWindow : Window, IDisposable
             Helper.BulletLink("Conclave d'Exploration (French)", "https://discord.gg/CgSRvTEHh8");
             Helper.BulletLink("Apocalypse", "https://discord.gg/EKK3Ta5QwQ");
             Helper.BulletLink("Occult Crescent Chaos!", "https://discord.gg/btD94nYhJA");
+            Helper.BulletLink("Double Edge", "https://discord.gg/doubleedge");
 
             ImGuiHelpers.ScaledDummy(10.0f);
 
@@ -226,7 +227,7 @@ public class OccultWindow : Window, IDisposable
 
             Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "OCE/JP:");
             Helper.BulletLink("Content Achievers [OCE + JP]", "https://discord.gg/FJFxr2U");
-            Helper.BulletLink("Content Achievers [OCE]", "https://discord.gg/zpGRYsZpRA");
+            Helper.BulletLink("Murder of Geese [OCE]", "https://discord.gg/zpGRYsZpRA");
             Helper.BulletLink("Once Upon a Fork [Elemental DC]", "https://discord.gg/GJxnnYKVHQ");
         }
     }
