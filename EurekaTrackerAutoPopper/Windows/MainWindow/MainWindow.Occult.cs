@@ -178,6 +178,9 @@ public partial class MainWindow
                     Plugin.Configuration.CircleColor = circleColor with {W = 1}; // fix alpha
                 }
 
+                changed |= ImGui.Checkbox(Language.ConfigOptionAutoPots, ref Plugin.Configuration.AutoSwitchToOccultPots);
+                ImGuiComponents.HelpMarker(Language.ConfigTooltipAutoPots);
+
                 if (changed)
                     Plugin.Configuration.Save();
             }

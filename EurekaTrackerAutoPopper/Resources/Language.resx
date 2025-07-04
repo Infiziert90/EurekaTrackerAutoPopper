@@ -261,6 +261,12 @@
     <data name="ConfigTooltipBunnyWindow" xml:space="preserve">
         <value>Or use the command '/elbunny'.</value>
     </data>
+    <data name="ConfigOptionAutoPots" xml:space="preserve">
+        <value>Switch To Pot Markers Automatically</value>
+    </data>
+    <data name="ConfigTooltipAutoPots" xml:space="preserve">
+        <value>Automatically display pot treasure locations on the map when you have a pot following you.</value>
+    </data>
     <data name="ConfigTooltipClearMemory" xml:space="preserve">
         <value>Remove spotted treasure and carrots, after X Seconds of being unseen, so that notifications can reappear.</value>
     </data>
