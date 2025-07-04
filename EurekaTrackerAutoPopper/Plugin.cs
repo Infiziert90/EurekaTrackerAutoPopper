@@ -83,6 +83,7 @@ public class Plugin : IDalamudPlugin
 
     // Selected Map Markers
     public SharedMarketSet MarkerSetToPlace = SharedMarketSet.None;
+    public SharedMarketSet? SavedOccultMarkerSets;
 
     public Plugin()
     {
@@ -743,10 +744,21 @@ public class Plugin : IDalamudPlugin
             CofferTimer.Stop();
             CofferTimer.Interval = 20 * 1000;
             CofferTimer.Start();
+
+            if (Configuration.AutoSwitchToOccultPots && SavedOccultMarkerSets is null)
+            {
+                SavedOccultMarkerSets = MarkerSetToPlace;
+                PlaceOccultMarkerSet(OccultMarkerSets.Pot, true);
+            }
         }
         else
         {
             NearToCoffer = false;
+            if (SavedOccultMarkerSets is { } set)
+            {
+                PlaceOccultMarkerSet(set.ToOccultSet(), true);
+                SavedOccultMarkerSets = null;
+            }
         }
     }
 

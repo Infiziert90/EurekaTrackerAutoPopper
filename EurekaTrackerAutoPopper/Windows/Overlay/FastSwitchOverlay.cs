@@ -82,6 +82,7 @@ public class FastSwitchOverlay : Window, IDisposable
             if (!ImGui.Selectable(set.ToName(), set == Plugin.MarkerSetToPlace.ToOccultSet()))
                 continue;
 
+            Plugin.SavedOccultMarkerSets = null;
             Plugin.PlaceOccultMarkerSet(set, true);
         }
     }
