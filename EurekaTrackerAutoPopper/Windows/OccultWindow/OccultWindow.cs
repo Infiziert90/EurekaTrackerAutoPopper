@@ -208,10 +208,11 @@ public class OccultWindow : Window, IDisposable
             Helper.BulletLink("Lunar Forays Group", "https://discord.gg/d5gNTMmqbp");
             Helper.BulletLink("Late Night", "https://discord.gg/28SRRADTK3");
             Helper.BulletLink("Students of Baldesion", "https://discord.gg/students-of-baldesion");
-            Helper.BulletLink("Conclave d'Exploration (French)", "https://discord.gg/CgSRvTEHh8");
             Helper.BulletLink("Apocalypse", "https://discord.gg/EKK3Ta5QwQ");
             Helper.BulletLink("Occult Crescent Chaos!", "https://discord.gg/btD94nYhJA");
             Helper.BulletLink("Double Edge", "https://discord.gg/doubleedge");
+            Helper.BulletLink("Light Savage Lemmings (German)", "https://discord.gg/p3QwFREXJP");
+            Helper.BulletLink("Conclave d'Exploration (French)", "https://discord.gg/CgSRvTEHh8");
 
             ImGuiHelpers.ScaledDummy(10.0f);
 
