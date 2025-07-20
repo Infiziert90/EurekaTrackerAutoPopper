@@ -1,6 +1,7 @@
 <script>
     import { onDestroy, onMount } from "svelte";
     import { page } from "$app/stores";
+    import { base } from "$app/paths";
     import { OCCULT_ENCOUNTERS, OCCULT_FATES } from "$lib/const";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid } from "@lucide/svelte";
     import Time from "svelte-time";
@@ -77,9 +78,9 @@
     {#if (isLoading && trackerResults.length === 0) || error || trackerResults.length === 0}
         <div class="bg-slate-950 text-center p-20">
             <h1 class="w-fit mx-auto mb-4">
-                <a href="/" aria-label="Occult Tracker">
+                <a href={base} aria-label="Occult Tracker">
                     <img
-                        src="/logo.png"
+                        src={`${base}/logo.png`}
                         alt="Occult Tracker"
                         height="80"
                         class="h-20"
@@ -110,9 +111,9 @@
                 class="max-w-6xl px-8 mx-auto flex flex-row items-center justify-between"
             >
                 <h1>
-                    <a href="/" aria-label="Occult Tracker">
+                    <a href={base} aria-label="Occult Tracker">
                         <img
-                            src="/logo.png"
+                            src={`${base}/logo.png`}
                             alt="Occult Tracker"
                             height="80"
                             class="h-20 w-auto"
@@ -128,7 +129,7 @@
         <!-- Encounter History -->    
         <div class="max-w-6xl w-full mx-auto mb-4">
             <h2 class="text-2xl font-bold">
-                <img src="/icons/ce.png" alt="Critical Encounter Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
+                <img src={`${base}/icons/ce.png`} alt="Critical Encounter Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
                 Encounter History
             </h2>
             <table class="table-auto w-full border-separate border-spacing-y-0.5 text-sm">
@@ -160,7 +161,7 @@
         <!-- Pot History -->
         <div class="max-w-6xl w-full mx-auto mb-4">
             <h2 class="text-2xl font-bold">
-                <img src="/icons/bunny.png" alt="Bunny Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
+                <img src={`${base}/icons/bunny.png`} alt="Bunny Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
                 Bunny History
             </h2>
             <table class="table-auto w-full border-separate border-spacing-y-0.5 text-sm">

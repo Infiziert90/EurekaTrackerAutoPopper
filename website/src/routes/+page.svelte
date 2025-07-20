@@ -6,7 +6,7 @@
     <div class="bg-slate-950 text-center p-20">
         <h1 class="w-fit mx-auto mb-4">
             <a href="/" aria-label="Occult Tracker">
-                <img src="/logo.png" alt="Occult Tracker" height="80" class="h-20"/>
+                <img src={`${base}/logo.png`} alt="Occult Tracker" height="80" class="h-20"/>
             </a>
         </h1>
         
@@ -19,10 +19,11 @@
 
 <script>
     import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
     // on form submit, go to /[trackerId]
     function handleSubmit(event) {
         event.preventDefault();
         const trackerId = event.target.trackerId.value;
-        goto(`/${trackerId}`);
+        goto(`${base}/${trackerId}`);
     }
 </script>
