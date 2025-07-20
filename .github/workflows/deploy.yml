@@ -11,9 +11,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Go to website directory
-        run: cd website
-
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
@@ -22,17 +19,19 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: website
 
       - name: build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
         run: |
           npm run build
+        working-directory: website
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'build/'
+          path: 'website/build/'
 
   deploy:
     needs: build_site
