@@ -13,10 +13,10 @@ jobs:
 
       - name: Install Node.js
         uses: actions/setup-node@v4
+        working-directory: website
         with:
           node-version: 20
           cache: npm
-        working-directory: website
 
       - name: Install dependencies
         run: npm install
