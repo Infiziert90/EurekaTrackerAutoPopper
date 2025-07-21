@@ -14,6 +14,7 @@
     const timeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
 
     let trackerResults = $state([]);
+    let nextPotFate = $state(null);
     let fetchInterval = $state(null);
     let isLoading = $state(true);
     let error = $state(null);
@@ -43,6 +44,15 @@
             trackerResults = data[0];
             trackerResults.encounter_history = JSON.parse(trackerResults.encounter_history);
             trackerResults.pot_history = JSON.parse(trackerResults.pot_history);
+
+            // Parse Pot Fate data to get the next one
+            let mostRecentPotFate = trackerResults.pot_history.reduce((a, b) => (a.last_seen > b.last_seen ? a : b));
+            let oldestPotFate = trackerResults.pot_history.reduce((a, b) => (a.last_seen < b.last_seen ? a : b));
+            const nextRespawnTimestamp = mostRecentPotFate.last_seen + 1800; // 30 minutes
+
+            oldestPotFate.next_respawn = nextRespawnTimestamp;
+            nextPotFate = oldestPotFate;
+
             console.log(trackerResults);
         } catch (err) {
             console.error("Error fetching tracker data:", err);
@@ -108,7 +118,7 @@
     {:else}
         <div class="bg-slate-950 p-2 mb-2">
             <div
-                class="max-w-6xl px-8 mx-auto flex flex-row items-center justify-between"
+                class="max-w-6xl px-8 mx-auto flex flex-col lg:flex-row items-center justify-between"
             >
                 <h1>
                     <a href={base} aria-label="Occult Tracker">
@@ -124,6 +134,42 @@
                     <p>Tracker ID: {uid}</p>
                 </div>
             </div>
+        </div>
+
+        <!-- 2col, Forked Tower & Pot Fate -->
+        <div class="max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+
+            <!-- Forked Tower: Blood -->
+            <div class="bg-slate-800/90 p-4">
+                <h2 class="text-2xl font-bold">
+                    <img src={`${base}/icons/forked_tower.png`} alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
+                    Forked Tower: Blood
+                </h2>
+
+                <!-- Pick it from the encounter_history -->
+                {#each trackerResults.encounter_history as encounter}
+                    {#if encounter.fate_id === 48}
+                        <p>Last seen: <Time timestamp={encounter.last_seen * 1000} relative live={60 * 1_000} /></p>
+                        <p>Previous respawns:</p>
+                        <ul class="list-disc list-inside pl-4">
+                            {#each encounter.respawn_times as time, i}
+                                <li>{Math.floor(time / 60)} min {time % 60} sec</li>
+                            {/each}
+                        </ul>
+                    {/if}
+                {/each}
+            </div>
+
+            <!-- Pot Fate-->
+            <div class="bg-slate-800/90 p-4">
+                <h2 class="text-2xl font-bold">
+                    <img src={`${base}/icons/bunny.png`} alt="Pot Fate Icon" class="w-16 h-16 inline-block mr-2" />
+                    Pot Fate
+                </h2>
+
+                <p>Incoming FATE: {OCCULT_FATES[nextPotFate.fate_id].name}</p>
+                <p>Next respawn: <Time timestamp={nextPotFate.next_respawn * 1000} relative live={60 * 1_000} /></p>
+            </div>  
         </div>
 
         <!-- Encounter History -->    
@@ -142,44 +188,12 @@
                 </thead>
                 <tbody>
                     {#each trackerResults.encounter_history as encounter}
-                        <tr class="bg-slate-800">
+                        <tr class="bg-slate-800/90">
                             <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].name}</td>
                             <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].aetheryte}</td>
                             <td class="px-2">
                                 {#if encounter.last_seen != -1}
                                     <Time timestamp={encounter.last_seen * 1000} relative />
-                                {:else}
-                                    N/A
-                                {/if}
-                            </td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pot History -->
-        <div class="max-w-6xl w-full mx-auto mb-4">
-            <h2 class="text-2xl font-bold">
-                <img src={`${base}/icons/bunny.png`} alt="Bunny Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
-                Bunny History
-            </h2>
-            <table class="table-auto w-full border-separate border-spacing-y-0.5 text-sm">
-                <thead>
-                    <tr class="text-left">
-                        <th class="px-2">Fate</th>
-                        <th class="px-2">Aetheryte</th>
-                        <th class="px-2">Last Seen</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each trackerResults.pot_history as pot}
-                        <tr class="bg-slate-800">
-                            <td class="px-2">{OCCULT_FATES[pot.fate_id].name}</td>
-                            <td class="px-2">{OCCULT_FATES[pot.fate_id].aetheryte}</td>
-                            <td class="px-2">
-                                {#if pot.last_seen != -1}
-                                    <Time timestamp={pot.last_seen * 1000} relative />
                                 {:else}
                                     N/A
                                 {/if}
