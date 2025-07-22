@@ -2,9 +2,11 @@
     import { onDestroy, onMount } from "svelte";
     import { page } from "$app/stores";
     import { base } from "$app/paths";
-    import { OCCULT_ENCOUNTERS, OCCULT_FATES } from "$lib/const";
+    import { OCCULT_RESPAWN,OCCULT_ENCOUNTERS, OCCULT_FATES } from "$lib/const";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid } from "@lucide/svelte";
+    import { calculateOccultRespawn, formatSeconds } from "$lib/utils";
     import Time from "svelte-time";
+    const locale = 'en';
 
     const uid = $page.params.uid;
     const SUPABASE_URL = "https://xzwnvwjxgmaqtrxewngh.supabase.co/rest/v1/";
@@ -14,7 +16,7 @@
     const timeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
 
     let trackerResults = $state([]);
-    let nextPotFate = $state(null);
+    let bunny = $state(null); // The next pot fate to spawn, named "bunny" to match the Dalamud plugin
     let fetchInterval = $state(null);
     let isLoading = $state(true);
     let error = $state(null);
@@ -25,6 +27,7 @@
             isLoading = true;
             error = null;
 
+            // FETCH TRACKER DATA
             const response = await fetch(
                 `${SUPABASE_URL}OccultTracker?identifier=eq.${uid}`,
                 {
@@ -35,25 +38,41 @@
                     },
                 },
             );
-
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
             trackerResults = data[0];
+            
+            // ADD DATA TO STATE
             trackerResults.encounter_history = JSON.parse(trackerResults.encounter_history);
             trackerResults.pot_history = JSON.parse(trackerResults.pot_history);
+            trackerResults.pot_history.forEach(pot => {
+                pot.last_seen = pot.last_seen;
+                pot.spawn_time = pot.spawn_time;
+                pot.name = OCCULT_FATES[pot.fate_id].name[locale];
+            });
 
-            // Parse Pot Fate data to get the next one
-            let mostRecentPotFate = trackerResults.pot_history.reduce((a, b) => (a.last_seen > b.last_seen ? a : b));
-            let oldestPotFate = trackerResults.pot_history.reduce((a, b) => (a.last_seen < b.last_seen ? a : b));
-            const nextRespawnTimestamp = mostRecentPotFate.last_seen + 1800; // 30 minutes
+            // Sort pot_history by last_seen (ascending), and get the nextSpawn and the lastAlive
+            trackerResults.pot_history.sort((a, b) => a.last_seen - b.last_seen);
+            const nextSpawn = trackerResults.pot_history[0];
+            const lastAlive = trackerResults.pot_history[trackerResults.pot_history.length - 1];
 
-            oldestPotFate.next_respawn = nextRespawnTimestamp;
-            nextPotFate = oldestPotFate;
+            // If both are -1, then no pot has spawned
+            if (nextSpawn == -1 && lastAlive == -1) {
+                bunny = nextSpawn;
+            } else { 
+                // Else, apply the time of the latest spawn to calculate the next spawn
+                if (nextSpawn.last_seen == -1) {
+                    // Set last_seen to 30 min previously
+                    nextSpawn.last_seen = lastAlive.spawn_time - OCCULT_RESPAWN;
+                }                
 
-            console.log(trackerResults);
+                nextSpawn.spawn_time = lastAlive.spawn_time;
+                bunny = nextSpawn;
+            }
+
         } catch (err) {
             console.error("Error fetching tracker data:", err);
             error = err.message;
@@ -143,7 +162,7 @@
             <div class="bg-slate-800/90 p-4">
                 <h2 class="text-2xl font-bold">
                     <img src={`${base}/icons/forked_tower.png`} alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
-                    Forked Tower: Blood
+                    {OCCULT_ENCOUNTERS[48].name[locale]}
                 </h2>
 
                 <!-- Pick it from the encounter_history -->
@@ -153,7 +172,7 @@
                         <p>Previous respawns:</p>
                         <ul class="list-disc list-inside pl-4">
                             {#each encounter.respawn_times as time, i}
-                                <li>{Math.floor(time / 60)} min {time % 60} sec</li>
+                                <li>{formatSeconds(time)}</li>
                             {/each}
                         </ul>
                     {/if}
@@ -167,9 +186,9 @@
                     Pot Fate
                 </h2>
 
-                <p>Incoming FATE: {OCCULT_FATES[nextPotFate.fate_id].name}</p>
-                <p>Next respawn: <Time timestamp={nextPotFate.next_respawn * 1000} relative live={60 * 1_000} /></p>
-            </div>  
+                <p>Incoming FATE: {OCCULT_FATES[bunny.fate_id].name[locale]}</p>
+                <p>Respawns in: {formatSeconds(calculateOccultRespawn(bunny))}</p>
+            </div>
         </div>
 
         <!-- Encounter History -->    
@@ -189,7 +208,7 @@
                 <tbody>
                     {#each trackerResults.encounter_history as encounter}
                         <tr class="bg-slate-800/90">
-                            <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].name}</td>
+                            <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].name[locale]}</td>
                             <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].aetheryte}</td>
                             <td class="px-2">
                                 {#if encounter.last_seen != -1}
