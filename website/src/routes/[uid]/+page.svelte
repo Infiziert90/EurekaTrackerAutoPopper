@@ -3,10 +3,11 @@
     import { page } from "$app/stores";
     import { base } from "$app/paths";
     import { OCCULT_RESPAWN,OCCULT_ENCOUNTERS, OCCULT_FATES } from "$lib/const";
+    import { currentLanguage } from "$lib/stores";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid } from "@lucide/svelte";
+    import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import { calculateOccultRespawn, formatSeconds } from "$lib/utils";
     import Time from "svelte-time";
-    const locale = 'en';
 
     const uid = $page.params.uid;
     const SUPABASE_URL = "https://xzwnvwjxgmaqtrxewngh.supabase.co/rest/v1/";
@@ -51,7 +52,7 @@
             trackerResults.pot_history.forEach(pot => {
                 pot.last_seen = pot.last_seen;
                 pot.spawn_time = pot.spawn_time;
-                pot.name = OCCULT_FATES[pot.fate_id].name[locale];
+                pot.name = OCCULT_FATES[pot.fate_id].name[$currentLanguage];
             });
 
             // Sort pot_history by last_seen (ascending), and get the nextSpawn and the lastAlive
@@ -107,7 +108,7 @@
     {#if (isLoading && trackerResults.length === 0) || error || trackerResults.length === 0}
         <div class="bg-slate-950 text-center p-20">
             <h1 class="w-fit mx-auto mb-4">
-                <a href={base} aria-label="Occult Tracker">
+                <a href={`${base}/`} aria-label="Occult Tracker">
                     <img
                         src={`${base}/logo.png`}
                         alt="Occult Tracker"
@@ -140,7 +141,7 @@
                 class="max-w-6xl px-8 mx-auto flex flex-col lg:flex-row items-center justify-between"
             >
                 <h1>
-                    <a href={base} aria-label="Occult Tracker">
+                    <a href={`${base}/`} aria-label="Occult Tracker">
                         <img
                             src={`${base}/logo.png`}
                             alt="Occult Tracker"
@@ -149,8 +150,9 @@
                         />
                     </a>
                 </h1>
-                <div>
+                <div class="flex flex-col items-end gap-2">
                     <p>Tracker ID: {uid}</p>
+                    <LanguageSwitcher />
                 </div>
             </div>
         </div>
@@ -162,7 +164,7 @@
             <div class="bg-slate-800/90 p-4">
                 <h2 class="text-2xl font-bold">
                     <img src={`${base}/icons/forked_tower.png`} alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
-                    {OCCULT_ENCOUNTERS[48].name[locale]}
+                    {OCCULT_ENCOUNTERS[48].name[$currentLanguage]}
                 </h2>
 
                 <!-- Pick it from the encounter_history -->
@@ -186,7 +188,7 @@
                     Pot Fate
                 </h2>
 
-                <p>Incoming FATE: {OCCULT_FATES[bunny.fate_id].name[locale]}</p>
+                <p>Incoming FATE: {OCCULT_FATES[bunny.fate_id].name[$currentLanguage]}</p>
                 <p>Respawns in: {formatSeconds(calculateOccultRespawn(bunny))}</p>
             </div>
         </div>
@@ -208,7 +210,7 @@
                 <tbody>
                     {#each trackerResults.encounter_history as encounter}
                         <tr class="bg-slate-800/90">
-                            <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].name[locale]}</td>
+                            <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
                             <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].aetheryte}</td>
                             <td class="px-2">
                                 {#if encounter.last_seen != -1}

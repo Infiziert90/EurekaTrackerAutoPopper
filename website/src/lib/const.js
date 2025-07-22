@@ -6,6 +6,8 @@ export const OCCULT_FATES = {
         name: {
             "en": "Pleading Pots",
             "fr": "Pas de pot pour les pots",
+            "ja": "しあわせのマジックポット",
+            "de": "Freude im Pott"
         },
         aetheryte: "Crystallized Caverns",
         encounter_id: 40,
@@ -14,6 +16,8 @@ export const OCCULT_FATES = {
         name: {
             "en": "Persistent Pots",
             "fr": "Mauvais œil pour les pots",
+            "ja": "カチカチのマジックポット",
+            "de": "Wunder im Pott"
         },
         aetheryte: "Stonemarsh",
         encounter_id: 18,
