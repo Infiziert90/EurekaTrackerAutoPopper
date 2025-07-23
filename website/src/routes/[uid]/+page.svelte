@@ -172,13 +172,13 @@
                     <!-- Pick it from the encounter_history -->
                     {#each trackerResults.encounter_history as encounter}
                         {#if encounter.fate_id === 48}
-                            <p>Last seen: <Time timestamp={encounter.last_seen * 1000} relative live={60 * 1_000} /></p>
-                            <p>Previous respawns:</p>
-                            <ul class="list-disc list-inside pl-4">
+                            <p>Last seen: <AutoTimeFormatted timestamp={encounter.last_seen} /></p>
+                            <p>Previous respawn times:
+
                                 {#each encounter.respawn_times as time, i}
-                                    <li>{formatSeconds(time)}</li>
+                                    <span>{formatSeconds(time) + (i < encounter.respawn_times.length - 1 ? ', ' : '')}</span>
                                 {/each}
-                            </ul>
+                            </p>
                         {/if}
                     {/each}
                 </div>
@@ -191,8 +191,7 @@
                     </h2>
 
                     <p>Incoming FATE: {OCCULT_FATES[bunny.fate_id].name[$currentLanguage]}</p>
-                    <p>Respawns in: {calculateOccultRespawn(bunny, 'seconds') / 60} minutes</p>
-                    <p>Respawns in: <AutoTimeFormatted timestamp={calculateOccultRespawn(bunny, 'timestamp')} format="relative" /></p>
+                    <p>Respawns in: <AutoTimeFormatted timestamp={calculateOccultRespawn(bunny, 'timestamp')} format="full" /></p>
                 </div>
             </div>
 

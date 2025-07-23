@@ -10,10 +10,13 @@
     function updateTime() {
         // Calculate delta every time to get the current time difference
         let delta;
+
         if (timestamp) {
-            delta = Math.floor((new Date().getTime() / 1000) - timestamp);
+            // Calculate the absolute difference between current time and timestamp
+            // This handles both past and future timestamps correctly
+            delta = Math.abs(Math.floor((new Date().getTime() / 1000) - timestamp));
         } else {
-            delta = seconds;
+            delta = Math.abs(seconds);
         }
         
         finalString = formatSeconds(delta, format);
@@ -29,6 +32,6 @@
     });
 </script>
 
-<span title={timestamp ? new Date(Number(timestamp) * 1000).toISOString() : null} class="tabular-nums">
+<span title={timestamp ? new Date(Number(timestamp) * 1000).toLocaleString() : null} class="tabular-nums">
     {finalString}
 </span>
