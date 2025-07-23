@@ -6,6 +6,7 @@
     import { currentLanguage } from "$lib/stores";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid } from "@lucide/svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
+    import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
     import { calculateOccultRespawn, formatSeconds } from "$lib/utils";
     import Time from "svelte-time";
 
@@ -157,72 +158,75 @@
             </div>
         </div>
 
-        <!-- 2col, Forked Tower & Pot Fate -->
-        <div class="max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="px-4">
+            <!-- 2col, Forked Tower & Pot Fate -->
+            <div class="max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
-            <!-- Forked Tower: Blood -->
-            <div class="bg-slate-800/90 p-4">
-                <h2 class="text-2xl font-bold">
-                    <img src={`${base}/icons/forked_tower.png`} alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
-                    {OCCULT_ENCOUNTERS[48].name[$currentLanguage]}
-                </h2>
+                <!-- Forked Tower: Blood -->
+                <div class="bg-slate-800/90 p-4">
+                    <h2 class="text-2xl font-bold">
+                        <img src={`${base}/icons/forked_tower.png`} alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
+                        {OCCULT_ENCOUNTERS[48].name[$currentLanguage]}
+                    </h2>
 
-                <!-- Pick it from the encounter_history -->
-                {#each trackerResults.encounter_history as encounter}
-                    {#if encounter.fate_id === 48}
-                        <p>Last seen: <Time timestamp={encounter.last_seen * 1000} relative live={60 * 1_000} /></p>
-                        <p>Previous respawns:</p>
-                        <ul class="list-disc list-inside pl-4">
-                            {#each encounter.respawn_times as time, i}
-                                <li>{formatSeconds(time)}</li>
-                            {/each}
-                        </ul>
-                    {/if}
-                {/each}
-            </div>
-
-            <!-- Pot Fate-->
-            <div class="bg-slate-800/90 p-4">
-                <h2 class="text-2xl font-bold">
-                    <img src={`${base}/icons/bunny.png`} alt="Pot Fate Icon" class="w-16 h-16 inline-block mr-2" />
-                    Pot Fate
-                </h2>
-
-                <p>Incoming FATE: {OCCULT_FATES[bunny.fate_id].name[$currentLanguage]}</p>
-                <p>Respawns in: {formatSeconds(calculateOccultRespawn(bunny))}</p>
-            </div>
-        </div>
-
-        <!-- Encounter History -->    
-        <div class="max-w-6xl w-full mx-auto mb-4">
-            <h2 class="text-2xl font-bold">
-                <img src={`${base}/icons/ce.png`} alt="Critical Encounter Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
-                Encounter History
-            </h2>
-            <table class="table-auto w-full border-separate border-spacing-y-0.5 text-sm">
-                <thead>
-                    <tr class="text-left">
-                        <th class="px-2">Encounter</th>
-                        <th class="px-2">Aetheryte</th>
-                        <th class="px-2">Last Seen</th>
-                    </tr>
-                </thead>
-                <tbody>
+                    <!-- Pick it from the encounter_history -->
                     {#each trackerResults.encounter_history as encounter}
-                        <tr class="bg-slate-800/90">
-                            <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
-                            <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].aetheryte}</td>
-                            <td class="px-2">
-                                {#if encounter.last_seen != -1}
-                                    <Time timestamp={encounter.last_seen * 1000} relative />
-                                {:else}
-                                    N/A
-                                {/if}
-                            </td>
-                        </tr>
+                        {#if encounter.fate_id === 48}
+                            <p>Last seen: <Time timestamp={encounter.last_seen * 1000} relative live={60 * 1_000} /></p>
+                            <p>Previous respawns:</p>
+                            <ul class="list-disc list-inside pl-4">
+                                {#each encounter.respawn_times as time, i}
+                                    <li>{formatSeconds(time)}</li>
+                                {/each}
+                            </ul>
+                        {/if}
                     {/each}
-                </tbody>
-            </table>
+                </div>
+
+                <!-- Pot Fate-->
+                <div class="bg-slate-800/90 p-4">
+                    <h2 class="text-2xl font-bold">
+                        <img src={`${base}/icons/bunny.png`} alt="Pot Fate Icon" class="w-16 h-16 inline-block mr-2" />
+                        Pot Fate
+                    </h2>
+
+                    <p>Incoming FATE: {OCCULT_FATES[bunny.fate_id].name[$currentLanguage]}</p>
+                    <p>Respawns in: {calculateOccultRespawn(bunny, 'seconds') / 60} minutes</p>
+                    <p>Respawns in: <AutoTimeFormatted timestamp={calculateOccultRespawn(bunny, 'timestamp')} format="relative" /></p>
+                </div>
+            </div>
+
+            <!-- Encounter History -->    
+            <div class="max-w-6xl w-full mx-auto mb-4">
+                <h2 class="text-2xl font-bold">
+                    <img src={`${base}/icons/ce.png`} alt="Critical Encounter Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
+                    Encounter History
+                </h2>
+                <table class="table-auto w-full border-separate border-spacing-y-0.5 text-sm">
+                    <thead>
+                        <tr class="text-left">
+                            <th class="px-2">Encounter</th>
+                            <th class="px-2">Aetheryte</th>
+                            <th class="px-2">Last Seen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each trackerResults.encounter_history as encounter}
+                            <tr class="bg-slate-800/90">
+                                <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
+                                <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].aetheryte}</td>
+                                <td class="px-2 text-end">
+                                    {#if encounter.last_seen != -1}
+                                        <AutoTimeFormatted timestamp={encounter.last_seen} />
+                                    {:else}
+                                        N/A
+                                    {/if}
+                                </td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
         </div>
     {/if}
 </div>
