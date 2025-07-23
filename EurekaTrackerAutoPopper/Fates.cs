@@ -21,6 +21,7 @@ public class Fate
     public bool Alive;
     public bool PlayedSound;
     public long SpawnTime;
+    public long DeathTime;
     public long LastSeenAlive = -1;
     public List<long> PreviousRespawnTimes = [];
 
@@ -281,7 +282,7 @@ public class Fates
                 if (fate.FateId != occultFate.FateId)
                     continue;
 
-                // freshly spawned fate
+                // Freshly spawned fate
                 if (!occultFate.Alive)
                     Plugin.TrackerHandler.InstanceCheckAsync(fate, local);
 
@@ -299,6 +300,10 @@ public class Fates
             occultFate.Alive = false;
             occultFate.PlayedSound = false;
             towerEngagement.KilledFates += 1;
+            occultFate.DeathTime = occultFate.LastSeenAlive;
+
+            // Fate has died, update our running tracker
+            Plugin.TrackerHandler.UpdateRunningTracker();
         }
     }
 
@@ -334,6 +339,10 @@ public class Fates
                 if (criticalEncounter.DynamicEventId != occultCE.FateId)
                     continue;
 
+                // Freshly spawned CE
+                if (!occultCE.Alive)
+                    Plugin.TrackerHandler.UpdateRunningTracker();
+
                 occultCE.Update(ref criticalEncounter, currentTime);
                 if (occultCE.PlayedSound)
                     continue;
@@ -362,6 +371,7 @@ public class Fates
             occultCE.Alive = false;
             occultCE.PlayedSound = false;
             occultCE.State = DynamicEventState.Inactive;
+            occultCE.DeathTime = occultCE.LastSeenAlive;
             towerEngagement.KilledCEs += 1;
 
             if (isTowerCE)
@@ -369,6 +379,9 @@ public class Fates
                 towerEngagement.KilledFates = 0;
                 towerEngagement.KilledCEs = 0;
             }
+
+            // CE has died, update our running tracker
+            Plugin.TrackerHandler.UpdateRunningTracker();
         }
     }
 

@@ -156,9 +156,6 @@ public class OccultWindow : Window, IDisposable
 
         if (ImGui.CollapsingHeader("Spawn Prediction"))
         {
-            Helper.CenterText("== WORK IN PROGRESS ==");
-            ImGuiHelpers.ScaledDummy(10.0f);
-
             if (towerEngagement.Alive)
             {
                 Helper.TextColored(ImGuiColors.HealerGreen, "Forked Tower is already active.");
@@ -239,9 +236,6 @@ public class OccultWindow : Window, IDisposable
         if (!tabItem.Success)
             return;
 
-        Helper.CenterText("== WORK IN PROGRESS ==");
-        ImGuiHelpers.ScaledDummy(10.0f);
-
         if (!Plugin.Configuration.UploadPermission)
         {
             Helper.TextColored(ImGuiColors.DalamudOrange, "No Upload Permission Granted.");
@@ -249,10 +243,38 @@ public class OccultWindow : Window, IDisposable
         }
 
         if (Plugin.TrackerHandler.CurrentTracker == null || !Plugin.TrackerHandler.IsConnected)
+        {
+            Helper.CenterText("Searching active tracker...");
+
             return;
+        }
 
         var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        ImGui.AlignTextToFramePadding();
         Helper.TextColored(ImGuiColors.HealerGreen, $"Instance Share: {Plugin.TrackerHandler.ConnectedTo}");
+
+        ImGui.SameLine();
+
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+        {
+            if (ImGui.Button(FontAwesomeIcon.Clipboard.ToIconString()))
+                ImGui.SetClipboardText(Plugin.TrackerHandler.ConnectedTo);
+        }
+
+        if (ImGui.IsItemHovered())
+            Helper.Tooltip("Copy tracker instance id to clipboard.");
+
+        ImGui.SameLine();
+
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+        {
+            ImGui.Button(FontAwesomeIcon.Globe.ToIconString());
+        }
+
+        if (ImGui.IsItemHovered())
+            Helper.Tooltip("Open tracker website. (coming soon)");
+
+
         if (Plugin.TrackerHandler.CurrentTracker.Encounters.Length == 0)
         {
             Helper.TextColored(ImGuiColors.DalamudOrange, "No Instance History Yet.");
