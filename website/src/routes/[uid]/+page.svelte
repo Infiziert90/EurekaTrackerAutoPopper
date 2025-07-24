@@ -11,9 +11,9 @@
     import Time from "svelte-time";
 
     const uid = $page.params.uid;
-    const SUPABASE_URL = "https://xzwnvwjxgmaqtrxewngh.supabase.co/rest/v1/";
-    const SUPABASE_ANON_KEY =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6d252d2p4Z21hcXRyeGV3bmdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODk3NzcwMDIsImV4cCI6MjAwNTM1MzAwMn0.aNYTnhY_Sagi9DyH5Q9tCz9lwaRCYzMC12SZ7q7jZBc";
+    const BASE_URL = "https://infi.ovh/api/";
+    const BASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiJ9.Ur6wgi_rD4dr3uLLvbLoaEvfLCu4QFWdrF-uHRtbl_s";
 
     const timeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
 
@@ -23,7 +23,7 @@
     let isLoading = $state(true);
     let error = $state(null);
 
-    // Fetch tracker data from Supabase
+    // Fetch tracker data from API
     async function fetchTrackerData() {
         try {
             isLoading = true;
@@ -31,11 +31,11 @@
 
             // FETCH TRACKER DATA
             const response = await fetch(
-                `${SUPABASE_URL}OccultTracker?identifier=eq.${uid}`,
+                `${BASE_URL}OccultTrackerV2?tracker_id=eq.${uid}`,
                 {
                     headers: {
-                        apikey: SUPABASE_ANON_KEY,
-                        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+                        apikey: BASE_ANON_KEY,
+                        Authorization: `Bearer ${BASE_ANON_KEY}`,
                         Prefer: "return=representation",
                     },
                 },
