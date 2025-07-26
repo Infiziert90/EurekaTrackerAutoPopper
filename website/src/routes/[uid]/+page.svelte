@@ -111,7 +111,7 @@
             <h1 class="w-fit mx-auto mb-4">
                 <a href={`${base}/`} aria-label="Occult Tracker">
                     <img
-                        src={`${base}/logo.png`}
+                        src={`${base}/logo.svg`}
                         alt="Occult Tracker"
                         height="80"
                         class="h-20"
@@ -144,7 +144,7 @@
                 <h1>
                     <a href={`${base}/`} aria-label="Occult Tracker">
                         <img
-                            src={`${base}/logo.png`}
+                            src={`${base}/logo.svg`}
                             alt="Occult Tracker"
                             height="80"
                             class="h-20 w-auto"
