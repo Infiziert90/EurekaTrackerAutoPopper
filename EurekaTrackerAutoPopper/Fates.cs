@@ -269,6 +269,7 @@ public class Fates
 
             bnuuy.Alive = false;
             bnuuy.PlayedSound = false;
+            bnuuy.DeathTime = bnuuy.LastSeenAlive;
             towerEngagement.KilledFates += 1;
         }
 

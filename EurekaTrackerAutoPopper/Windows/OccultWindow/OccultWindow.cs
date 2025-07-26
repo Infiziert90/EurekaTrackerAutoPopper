@@ -250,8 +250,13 @@ public class OccultWindow : Window, IDisposable
         }
 
         var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        var width = ImGui.CalcTextSize("Tracker ID: ").X + 20.0f * ImGuiHelpers.GlobalScale;
+
         ImGui.AlignTextToFramePadding();
-        Helper.TextColored(ImGuiColors.HealerGreen, $"Instance Share: {Plugin.TrackerHandler.ConnectedTo}");
+        Helper.TextColored(ImGuiColors.HealerGreen, "Tracker ID: ");
+        ImGui.SameLine(width);
+        ImGui.SetNextItemWidth(100 * ImGuiHelpers.GlobalScale);
+        ImGui.InputText("##trackerIdInput", ref Plugin.TrackerHandler.ConnectedTo, 100, ImGuiInputTextFlags.ReadOnly);
 
         ImGui.SameLine();
 
@@ -273,6 +278,23 @@ public class OccultWindow : Window, IDisposable
 
         if (ImGui.IsItemHovered())
             Helper.Tooltip("Open tracker website. (coming soon)");
+
+        ImGui.AlignTextToFramePadding();
+        Helper.TextColored(ImGuiColors.HealerGreen, "Password: ");
+        ImGui.SameLine(width);
+        ImGui.SetNextItemWidth(100 * ImGuiHelpers.GlobalScale);
+        ImGui.InputText("##passwordInput", ref Plugin.TrackerHandler.TrackerPassword, 100, ImGuiInputTextFlags.ReadOnly);
+
+        ImGui.SameLine();
+
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+        {
+            if (ImGui.Button($"{FontAwesomeIcon.Clipboard.ToIconString()}##CopyPasswordButton"))
+                ImGui.SetClipboardText(Plugin.TrackerHandler.TrackerPassword);
+        }
+
+        if (ImGui.IsItemHovered())
+            Helper.Tooltip("Copy tracker password to clipboard.");
 
 
         if (Plugin.TrackerHandler.CurrentTracker.Encounters.Length == 0)
