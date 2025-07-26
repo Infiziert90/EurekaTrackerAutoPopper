@@ -16,7 +16,7 @@
         
         <form class="flex flex-row items-center gap-4 max-w-sm w-full mx-auto" onsubmit={handleSubmit}>
             <input type="text" name="trackerId" placeholder="Tracker ID" class="border-b-2 border-white p-2 focus:outline-none flex-1"/>
-            <button type="submit" class="bg-white text-black px-4 py-2">Enter</button>
+            <button type="submit" class="bg-white hover:bg-white/80 text-black px-4 py-2 transition-colors duration-200 cursor-pointer">Enter</button>
         </form>
     </div>
 </div>

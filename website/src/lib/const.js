@@ -1,4 +1,5 @@
 export const OCCULT_RESPAWN = 1800; // 30 minutes
+export const TOWER_SPAWN_TIMER = 3600; // 1 hour
 
 export const OCCULT_FATES = {
     // BUNNY FATES
