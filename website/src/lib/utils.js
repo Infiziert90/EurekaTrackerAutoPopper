@@ -12,10 +12,6 @@ export function calculateOccultRespawn(pot, returnType = 'seconds') {
     const target = pot.spawn_time + OCCULT_RESPAWN;
     const remaining = target - now;
 
-    console.log('now =', now);
-    console.log('target =', target, '(', pot.spawn_time, ' + ', OCCULT_RESPAWN, ')');
-    console.log('remaining =', remaining, '(', target, ' - ', now, ')');
-
     return returnType === 'seconds' ? remaining : target;
 }
 

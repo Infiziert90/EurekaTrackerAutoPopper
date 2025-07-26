@@ -7,8 +7,8 @@
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid } from "@lucide/svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
+    import ItemIcon from "../../components/ItemIcon.svelte";
     import { calculateOccultRespawn, formatSeconds } from "$lib/utils";
-    import Time from "svelte-time";
 
     const uid = $page.params.uid;
     const BASE_URL = "https://infi.ovh/api/";
@@ -164,7 +164,7 @@
 
                 <!-- Forked Tower: Blood -->
                 <div class="bg-slate-800/90 p-4">
-                    <h2 class="text-2xl font-bold">
+                    <h2 class="text-2xl font-extrabold">
                         <img src={`${base}/icons/forked_tower.png`} alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
                         {OCCULT_ENCOUNTERS[48].name[$currentLanguage]}
                     </h2>
@@ -185,7 +185,7 @@
 
                 <!-- Pot Fate-->
                 <div class="bg-slate-800/90 p-4">
-                    <h2 class="text-2xl font-bold">
+                    <h2 class="text-2xl font-extrabold">
                         <img src={`${base}/icons/bunny.png`} alt="Pot Fate Icon" class="w-16 h-16 inline-block mr-2" />
                         Pot Fate
                     </h2>
@@ -197,15 +197,15 @@
 
             <!-- Encounter History -->    
             <div class="max-w-6xl w-full mx-auto mb-4">
-                <h2 class="text-2xl font-bold">
+                <h2 class="text-2xl font-extrabold">
                     <img src={`${base}/icons/ce.png`} alt="Critical Encounter Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
                     Encounter History
                 </h2>
-                <table class="table-auto w-full border-separate border-spacing-y-0.5 text-sm">
+                <table class="table-fixed w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
                     <thead>
                         <tr class="text-left">
                             <th class="px-2">Encounter</th>
-                            <th class="px-2">Aetheryte</th>
+                            <th class="px-2">Drops</th>
                             <th class="px-2">Last Seen</th>
                         </tr>
                     </thead>
@@ -213,7 +213,13 @@
                         {#each trackerResults.encounter_history as encounter}
                             <tr class="bg-slate-800/90">
                                 <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
-                                <td class="px-2">{OCCULT_ENCOUNTERS[encounter.fate_id].aetheryte}</td>
+                                <td class="px-2">
+                                    <div class="flex flex-wrap gap-1">
+                                        {#each OCCULT_ENCOUNTERS[encounter.fate_id].drops as drop}
+                                            <ItemIcon itemId={drop} />
+                                        {/each}
+                                    </div>
+                                </td>
                                 <td class="px-2 text-end">
                                     {#if encounter.last_seen != -1}
                                         <AutoTimeFormatted timestamp={encounter.last_seen} />
