@@ -528,6 +528,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Switch To Pot Markers Automatically.
+        /// </summary>
+        internal static string ConfigOptionAutoPots {
+            get {
+                return ResourceManager.GetString("ConfigOptionAutoPots", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Only Low Level.
         /// </summary>
         internal static string ConfigOptionBunnyLowLevelFates {
@@ -821,6 +830,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string ConfigOptionUseET {
             get {
                 return ResourceManager.GetString("ConfigOptionUseET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically display pot treasure locations on the map when you have a pot following you..
+        /// </summary>
+        internal static string ConfigTooltipAutoPots {
+            get {
+                return ResourceManager.GetString("ConfigTooltipAutoPots", resourceCulture);
             }
         }
         
