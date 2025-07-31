@@ -208,6 +208,7 @@ public class OccultWindow : Window, IDisposable
             Helper.BulletLink("Apocalypse", "https://discord.gg/EKK3Ta5QwQ");
             Helper.BulletLink("Occult Crescent Chaos!", "https://discord.gg/btD94nYhJA");
             Helper.BulletLink("Double Edge", "https://discord.gg/doubleedge");
+            Helper.BulletLink("Forked Tower Enjoyer Light", "https://discord.gg/forkedtower");
             Helper.BulletLink("Light Savage Lemmings (German)", "https://discord.gg/p3QwFREXJP");
             Helper.BulletLink("Conclave d'Exploration (French)", "https://discord.gg/CgSRvTEHh8");
 

@@ -270,7 +270,10 @@ public class Fates
             bnuuy.Alive = false;
             bnuuy.PlayedSound = false;
             bnuuy.DeathTime = bnuuy.LastSeenAlive;
-            towerEngagement.KilledFates += 1;
+
+            // Only increase if tower is not active
+            if (!towerEngagement.Alive)
+                towerEngagement.KilledFates += 1;
         }
 
         foreach (var occultFate in OccultFates)
@@ -300,8 +303,11 @@ public class Fates
 
             occultFate.Alive = false;
             occultFate.PlayedSound = false;
-            towerEngagement.KilledFates += 1;
             occultFate.DeathTime = occultFate.LastSeenAlive;
+
+            // Only increase if tower is not active
+            if (!towerEngagement.Alive)
+                towerEngagement.KilledFates += 1;
 
             // Fate has died, update our running tracker
             Plugin.TrackerHandler.UpdateRunningTracker();
@@ -373,7 +379,10 @@ public class Fates
             occultCE.PlayedSound = false;
             occultCE.State = DynamicEventState.Inactive;
             occultCE.DeathTime = occultCE.LastSeenAlive;
-            towerEngagement.KilledCEs += 1;
+
+            // Only increase if tower is not active
+            if (!towerEngagement.Alive)
+                towerEngagement.KilledCEs += 1;
 
             if (isTowerCE)
             {
