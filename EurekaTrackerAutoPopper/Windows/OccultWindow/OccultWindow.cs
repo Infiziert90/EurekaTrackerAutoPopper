@@ -11,7 +11,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using EurekaTrackerAutoPopper.Resources;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace EurekaTrackerAutoPopper.Windows.OccultWindow;
 
@@ -338,7 +338,7 @@ public class OccultWindow : Window, IDisposable
         ImGui.TableNextColumn();
 
         var pos = ImGui.GetCursorPos();
-        ImGui.Image(iconTexture.ImGuiHandle, iconTexture.Size * ImGuiHelpers.GlobalScale);
+        ImGui.Image(iconTexture.Handle, iconTexture.Size * ImGuiHelpers.GlobalScale);
         var afterPos = ImGui.GetCursorPos();
 
         var lineHeightWithSpacing = ImGui.GetTextLineHeightWithSpacing();
@@ -423,7 +423,7 @@ public class OccultWindow : Window, IDisposable
             if (itemIcon == null)
                 continue;
 
-            ImGui.Image(itemIcon.ImGuiHandle, new Vector2(lineHeight, lineHeight));
+            ImGui.Image(itemIcon.Handle, new Vector2(lineHeight, lineHeight));
             if (ImGui.IsItemHovered())
                 Helper.Tooltip(item.Name.ExtractText());
 

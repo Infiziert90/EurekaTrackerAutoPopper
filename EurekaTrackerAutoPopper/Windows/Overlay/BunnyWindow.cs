@@ -5,9 +5,7 @@ using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using EurekaTrackerAutoPopper.Resources;
-using ImGuiNET;
-
-using static ImGuiNET.ImGuiWindowFlags;
+using Dalamud.Bindings.ImGui;
 
 namespace EurekaTrackerAutoPopper.Windows.Overlay;
 
@@ -24,7 +22,7 @@ public class BunnyWindow : Window, IDisposable
 
     public BunnyWindow(Plugin plugin) : base("Bunny##EurekaLinker")
     {
-        Flags = AlwaysAutoResize;
+        Flags = ImGuiWindowFlags.AlwaysAutoResize;
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(135, 70),

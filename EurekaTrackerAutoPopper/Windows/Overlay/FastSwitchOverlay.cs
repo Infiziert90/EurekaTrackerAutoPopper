@@ -4,8 +4,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using FFXIVClientStructs.FFXIV.Component.GUI;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace EurekaTrackerAutoPopper.Windows.Overlay;
 
@@ -39,19 +38,18 @@ public class FastSwitchOverlay : Window, IDisposable
             if (Plugin.ClientState.TerritoryType != 1252 || AgentMap.Instance()->SelectedMapId != 967)
                 return;
 
-            var addonPtr = Plugin.GameGui.GetAddonByName("AreaMap");
-            if (addonPtr == nint.Zero)
+            var mapBaseNode = Plugin.GameGui.GetAddonByName("AreaMap");
+            if (mapBaseNode == nint.Zero)
                 return;
 
-            var mapBaseNode = (AtkUnitBase*) addonPtr;
-            if (!mapBaseNode->IsVisible)
+            if (!mapBaseNode.IsVisible)
                 return;
 
-            var posY = mapBaseNode->Y - OriginalSize.Y * ImGuiHelpers.GlobalScale;
+            var posY = mapBaseNode.Y - OriginalSize.Y * ImGuiHelpers.GlobalScale;
             if (Plugin.Configuration.SwitcherBelowMap)
-                posY = mapBaseNode->Y + mapBaseNode->GetScaledHeight(true);
+                posY = mapBaseNode.Y + mapBaseNode.ScaledHeight;
 
-            Position = new Vector2(mapBaseNode->X + 5, posY);
+            Position = new Vector2(mapBaseNode.X + 5, posY);
             PositionCondition = ImGuiCond.Always;
 
             IsOpen = true;

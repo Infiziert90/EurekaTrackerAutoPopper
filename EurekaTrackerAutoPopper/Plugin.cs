@@ -29,7 +29,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
@@ -193,13 +193,14 @@ public class Plugin : IDalamudPlugin
         if (MarkerSetToPlace != SharedMarketSet.Eureka)
             return;
 
-        // Check the players current territory type
-        if (!Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
+        // Check the players territory type
+        if (!Fates.EurekaTerritories.Contains(ClientState.TerritoryType))
             return;
 
         // Check the map selection, important for Hydatos as it has different map IDs with BA
-        if (Fates.BunnyMapIds.Contains(AgentMap.Instance()->SelectedMapId))
-            PlaceEurekaMarkerSet(true);
+        var isBunnyMap = Fates.BunnyMapIds.Contains(AgentMap.Instance()->SelectedMapId);
+
+        PlaceEurekaMarkerSet(isBunnyMap);
     }
 
     private void RefreshMapMarkerOccult(AddonEvent type, AddonArgs args)
@@ -872,6 +873,7 @@ public class Plugin : IDalamudPlugin
             if (ClientState.TerritoryType == 827)
                 mapPos.Z += 475;
 
+            Log.Information($"Adding Fairy Marker: {fairy.Pos}");
             SetMarkers(fairy.Pos, mapPos, 60474 + (uint)idx);
         }
     }
@@ -934,7 +936,7 @@ public class Plugin : IDalamudPlugin
         {
             var agent = AgentMap.Instance();
             // removes current flag marker from map
-            agent->IsFlagMarkerSet = false;
+            agent->FlagMarkerCount = 0;
 
             // divide by 1000 as raw is too long for CS SetFlagMapMarker
             agent->SetFlagMapMarker(map.Map.Value.TerritoryType.RowId, map.Map.RowId, map.RawX / 1000.0f, map.RawY / 1000.0f);

@@ -4,9 +4,8 @@ using System.Timers;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using EurekaTrackerAutoPopper.Resources;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
-using static ImGuiNET.ImGuiWindowFlags;
 using static FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
 
 namespace EurekaTrackerAutoPopper.Windows.Overlay;
@@ -23,7 +22,7 @@ public class ShoutWindow : Window, IDisposable
 
     public ShoutWindow(Plugin plugin) : base("Shout##EurekaLinker")
     {
-        Flags = NoDecoration | AlwaysAutoResize;
+        Flags = ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.AlwaysAutoResize;
 
         Plugin = plugin;
         ShoutTimer.AutoReset = false;

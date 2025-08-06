@@ -5,7 +5,7 @@ using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using EurekaTrackerAutoPopper.Resources;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace EurekaTrackerAutoPopper;
 

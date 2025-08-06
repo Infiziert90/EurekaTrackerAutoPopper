@@ -13,7 +13,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace EurekaTrackerAutoPopper.Windows;
 
@@ -117,15 +117,15 @@ public class LogWindow : Window, IDisposable
                 // closing if it is already open
                 var ptr = Plugin.GameGui.GetAddonByName("ContentsNote");
                 if (ptr != nint.Zero)
-                    ((AtkUnitBase*) ptr)->Close(true);
+                    ((AtkUnitBase*) ptr.Address)->Close(true);
 
-                var ui = (UIModule*) Plugin.GameGui.GetUIModule();
-                if (ui != null && ui->IsMainCommandUnlocked(60))
-                    ui->ExecuteMainCommand(60);
+                var ui = Plugin.GameGui.GetUIModule();
+                if (!ui.IsNull && ((UIModule*) ui.Address)->IsMainCommandUnlocked(60))
+                    ((UIModule*) ui.Address)->ExecuteMainCommand(60);
 
                 ptr = Plugin.GameGui.GetAddonByName("ContentsNote");
                 if (ptr != nint.Zero)
-                    ((AtkUnitBase*) ptr)->Close(true);
+                    ((AtkUnitBase*) ptr.Address)->Close(true);
 
                 OnCooldown = true;
                 Cooldown.Start();

@@ -8,7 +8,7 @@ using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using EurekaTrackerAutoPopper.Resources;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace EurekaTrackerAutoPopper.Windows.MainWindow;
 
@@ -206,7 +206,7 @@ public partial class MainWindow
                     if (table.Success)
                     {
                         ImGui.TableSetupColumn("##location");
-                        ImGui.TableSetupColumn("##trash", ImGuiTableColumnFlags.WidthFixed, 0.1f);
+                        ImGui.TableSetupColumn("##trash", ImGuiTableColumnFlags.WidthStretch, 0.1f);
 
                         var delIdx = -1;
                         foreach (var (fairy, idx) in Plugin.Library.ExistingFairies.Select((val, i) => (val, i)))
@@ -247,7 +247,7 @@ public partial class MainWindow
                 using (ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.ParsedBlue))
                 {
                     if (ImGui.Button(Language.ConfigButtonAddMapMarkers))
-                        Plugin.PlaceEurekaMarkerSet(false, false);
+                        Plugin.Framework.RunOnFrameworkThread(() => { Plugin.PlaceEurekaMarkerSet(false, false); });
                 }
 
                 ImGui.SameLine();
@@ -255,7 +255,7 @@ public partial class MainWindow
                 using (ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.DPSRed))
                 {
                     if (ImGui.Button(Language.ConfigButtonRemoveMapMarkers))
-                        Plugin.RemoveMapMarker();
+                        Plugin.Framework.RunOnFrameworkThread(() => { Plugin.RemoveMapMarker(); });
                 }
             }
         }
@@ -325,7 +325,7 @@ public partial class MainWindow
                 using (ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.ParsedBlue))
                 {
                     if (ImGui.Button(Language.ConfigButtonAddMapMarkers))
-                        Plugin.PlaceEurekaMarkerSet(true);
+                        Plugin.Framework.RunOnFrameworkThread(() => { Plugin.PlaceEurekaMarkerSet(true); });
                 }
 
                 ImGui.SameLine();
@@ -333,7 +333,7 @@ public partial class MainWindow
                 using (ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.DPSRed))
                 {
                     if (ImGui.Button(Language.ConfigButtonRemoveMapMarkers))
-                        Plugin.RemoveMapMarker();
+                        Plugin.Framework.RunOnFrameworkThread(() => { Plugin.RemoveMapMarker(); });
                 }
             }
         }
@@ -466,7 +466,7 @@ public partial class MainWindow
             total = 1;
 
         var text = count.ToString();
-        var perc = $"{(double) count / total * 100.0:##0.00} %%";
+        var perc = $"{(double) count / total * 100.0:##0.00} %";
 
         var secondRow = ImGui.CalcTextSize("Killed Bunnies: ").X + 120.0f;
         var thirdRow = secondRow + 100.0f;

@@ -172,6 +172,14 @@ public class Fates
         new(1977, 60958, new Vector2(-479.7468f, 524.8094f), [47745, 47738], OccultAetheryte.Stonemarsh, 18) { Position = " (South)", Easy = true},
     ];
 
+    public static readonly HashSet<uint> EurekaTerritories =
+    [
+        (uint)Territory.Anemos,
+        (uint)Territory.Pagos,
+        (uint)Territory.Pyros,
+        (uint)Territory.Hydatos,
+    ];
+
     public static readonly HashSet<uint> BunnyTerritories =
     [
         (uint)Territory.Pagos,
