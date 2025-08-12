@@ -1,19 +1,23 @@
 <script>
     import { base } from "$app/paths";
-    import { onMount } from "svelte";
-    import { OCCULT_FATES, BASE_URL, API_HEADERS } from "$lib/const";
+    import { onMount, onDestroy } from "svelte";
+    import { OCCULT_FATES, OCCULT_ENCOUNTERS, BASE_URL, API_HEADERS } from "$lib/const";
+    import { currentLanguage } from "$lib/stores";
+    import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
+    import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
 
     let trackers = $state([]);
     let loading = $state(true);
     let error = $state(null);
+    let refreshInterval = $state(null);
 
-    async function fetchRecentTrackers(hours = 6) {
+    async function fetchRecentTrackers(hours = 1) {
         try {
-            const sixHoursAgo = Math.floor(
+            const oneHourAgo = Math.floor(
                 (Date.now() - hours * 60 * 60 * 1000) / 1000,
             );
             const response = await fetch(
-                `${BASE_URL}?last_update=gte.${sixHoursAgo}`,
+                `${BASE_URL}?last_update=gte.${oneHourAgo}`,
                 {
                     headers: API_HEADERS,
                 },
@@ -34,29 +38,44 @@
             loading = true;
             error = null;
 
-            const data = await fetchRecentTrackers(6);
+            const data = await fetchRecentTrackers(1);
             // sort by last_update
             data.sort((a, b) => b.last_update - a.last_update);
 
-            // Process the data to add last_fate information
+            // Process the data to add last_ce information and cap timestamps
+            const currentTime = Math.floor(Date.now() / 1000);
             trackers = data.map((tracker) => {
-                let lastFate = "";
+                let isCeActive = false;
+                let activeCeFateId = null;
+                let recentCeFateId = null;
 
-                // Try to parse pot_history to get the last active fate
-                if (tracker.pot_history) {
+                // Cap the last_update timestamp to current time if it's in the future
+                const cappedLastUpdate = Math.min(tracker.last_update, currentTime);
+
+                // Try to parse encounter_history to get the last active CE
+                if (tracker.encounter_history) {
                     try {
-                        const potHistory = JSON.parse(tracker.pot_history);
-                        const lastActivePot = potHistory.find(
-                            (pot) => pot.death_time < pot.spawn_time,
+                        const encounterHistory = JSON.parse(tracker.encounter_history);
+                        // Find the first CE that is currently active (death_time < spawn_time)
+                        const activeCe = encounterHistory.find(
+                            (ce) => ce.death_time < ce.spawn_time
                         );
-                        if (lastActivePot) {
-                            lastFate =
-                                OCCULT_FATES[lastActivePot.fate_id]?.name?.en ||
-                                "Unknown Fate";
+                        if (activeCe) {
+                            activeCeFateId = activeCe.fate_id;
+                            isCeActive = true;
+                        } else {
+                            // If no active CE, find the most recently seen CE
+                            const recentCe = encounterHistory
+                                .filter(ce => ce.last_seen > 0)
+                                .sort((a, b) => b.last_seen - a.last_seen)[0];
+                            if (recentCe) {
+                                recentCeFateId = recentCe.fate_id;
+                                isCeActive = false;
+                            }
                         }
                     } catch (e) {
                         console.warn(
-                            "Failed to parse pot_history for tracker:",
+                            "Failed to parse encounter_history for tracker:",
                             tracker.tracker_id,
                         );
                     }
@@ -64,7 +83,10 @@
 
                 return {
                     ...tracker,
-                    last_fate: lastFate,
+                    last_update: cappedLastUpdate,
+                    active_ce_fate_id: activeCeFateId,
+                    recent_ce_fate_id: recentCeFateId,
+                    is_ce_active: isCeActive,
                 };
             });
         } catch (err) {
@@ -77,23 +99,18 @@
 
     onMount(() => {
         loadRecentTrackers();
+        
+        // Set up auto-refresh every minute
+        refreshInterval = setInterval(() => {
+            loadRecentTrackers();
+        }, 60000); // 60 seconds
     });
 
-    function formatTime(timestamp) {
-        const date = new Date(timestamp * 1000); // Convert from Unix timestamp
-        const now = new Date();
-        const diffMs = now - date;
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-        const diffMinutes = Math.floor(
-            (diffMs % (1000 * 60 * 60)) / (1000 * 60),
-        );
-
-        if (diffHours > 0) {
-            return `${diffHours}h ${diffMinutes}m ago`;
-        } else {
-            return `${diffMinutes}m ago`;
+    onDestroy(() => {
+        if (refreshInterval) {
+            clearInterval(refreshInterval);
         }
-    }
+    });
 </script>
 
 <svelte:head>
@@ -114,6 +131,7 @@
                 />
             </a>
         </h1>
+        <LanguageSwitcher />
     </div>
 </div>
 
@@ -128,30 +146,53 @@
         </div>
     {:else if trackers.length === 0}
         <div class="text-white mb-8">
-            <p>No trackers updated in the last 6 hours.</p>
+            <p>No trackers updated in the last hour.</p>
         </div>
     {:else}
-        <div class="max-w-4xl mx-auto mb-8">
+        <div class="max-w-6xl mx-auto mb-8">
             <table class="w-full">
                 <thead>
                     <tr>
                         <th>Tracker ID</th>
                         <th>Last Updated</th>
-                        <th>View Tracker</th>
+                        <th>Last/Current CE</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each trackers as tracker}
-                        <tr>
-                            <td>{tracker.tracker_id}</td>
-                            <td>{formatTime(tracker.last_update)}</td>
-                            <td>
+                        <tr class="relative group cursor-pointer hover:bg-slate-800 transition-colors duration-200">
+                            <td class="relative">
+                                {tracker.tracker_id}
                                 <a
                                     href={`${base}/${tracker.tracker_id}`}
-                                    class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                                >
-                                    View Tracker
-                                </a>
+                                    class="absolute inset-0 z-10"
+                                    aria-label={`View tracker ${tracker.tracker_id}`}
+                                ></a>
+                            </td>
+                            <td class="relative">
+                                <AutoTimeFormatted timestamp={tracker.last_update} format="relative" />
+                                <a
+                                    href={`${base}/${tracker.tracker_id}`}
+                                    class="absolute inset-0 z-10"
+                                    aria-label={`View tracker ${tracker.tracker_id}`}
+                                ></a>
+                            </td>
+                            <td class="relative">
+                                {#if tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
+                                    {@const fateId = tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
+                                    {@const ceName = OCCULT_ENCOUNTERS[fateId]?.name?.[$currentLanguage] || OCCULT_ENCOUNTERS[fateId]?.name?.en || "Unknown CE"}
+                                    <span class="flex items-center gap-2">
+                                        <span class={`w-2 h-2 rounded-full ${tracker.is_ce_active ? 'bg-green-500' : 'bg-gray-500'}`} title={tracker.is_ce_active ? 'Currently Active' : 'Not Active'}></span>
+                                        {ceName}
+                                    </span>
+                                {:else}
+                                    None
+                                {/if}
+                                <a
+                                    href={`${base}/${tracker.tracker_id}`}
+                                    class="absolute inset-0 z-10"
+                                    aria-label={`View tracker ${tracker.tracker_id}`}
+                                ></a>
                             </td>
                         </tr>
                     {/each}
