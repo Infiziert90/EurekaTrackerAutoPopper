@@ -2,7 +2,7 @@
     import { onDestroy, onMount } from "svelte";
     import { page } from "$app/stores";
     import { base } from "$app/paths";
-    import { TOWER_SPAWN_TIMER, OCCULT_RESPAWN,OCCULT_ENCOUNTERS, OCCULT_FATES } from "$lib/const";
+    import { TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS } from "$lib/const";
     import { currentLanguage } from "$lib/stores";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid } from "@lucide/svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
@@ -11,9 +11,6 @@
     import { calculateOccultRespawn, formatSeconds } from "$lib/utils";
 
     const uid = $page.params.uid;
-    const BASE_URL = "https://infi.ovh/api/";
-    const BASE_ANON_KEY =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiJ9.Ur6wgi_rD4dr3uLLvbLoaEvfLCu4QFWdrF-uHRtbl_s";
 
 
     let trackerResults = $state([]);
@@ -32,13 +29,9 @@
 
             // FETCH TRACKER DATA
             const response = await fetch(
-                `${BASE_URL}OccultTrackerV2?tracker_id=eq.${uid}`,
+                `${BASE_URL}?tracker_id=eq.${uid}`,
                 {
-                    headers: {
-                        apikey: BASE_ANON_KEY,
-                        Authorization: `Bearer ${BASE_ANON_KEY}`,
-                        Prefer: "return=representation",
-                    },
+                    headers: API_HEADERS,
                 },
             );
             if (!response.ok) {

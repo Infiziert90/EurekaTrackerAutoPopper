@@ -1,6 +1,17 @@
 export const OCCULT_RESPAWN = 1800; // 30 minutes
 export const TOWER_SPAWN_TIMER = 3600; // 1 hour
 
+// API Configuration
+export const BASE_URL = "https://infi.ovh/api/OccultTrackerV3";
+export const BASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiJ9.Ur6wgi_rD4dr3uLLvbLoaEvfLCu4QFWdrF-uHRtbl_s";
+
+// API Headers
+export const API_HEADERS = {
+    apikey: BASE_ANON_KEY,
+    Authorization: `Bearer ${BASE_ANON_KEY}`,
+    Prefer: "return=representation",
+};
+
 export const OCCULT_FATES = {
     // BUNNY FATES
     1976: { 
@@ -424,4 +435,17 @@ export const ITEM = {
         },
         img: "ui/icon/026000/026681.tex"
     },
+}
+
+const SAMPLE_SOUTH_HORN_TRACKER = {
+	"0": {
+        // id, last_update and tracker_id are to be generated when making a new tracker
+		// "id": 123,
+		// "last_update": 1753547632, 
+		// "tracker_id": "C2NhvIC4",
+        "tracker_type": 2,
+		"last_fate": "",
+		"encounter_history": "[{\"fate_id\":33,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":34,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":35,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":36,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":37,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":38,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":39,\"spawn_time\":-1,\"death_time\":0,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":40,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[7509,7982],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":41,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":42,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":43,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":44,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":45,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":46,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":47,\"spawn_time\":1753543309,\"death_time\":1753543782,\"last_seen\":1753543782,\"respawn_times\":[7430,8132],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":48,\"spawn_time\":1753543129,\"death_time\":1753543430,\"last_seen\":1753543430,\"respawn_times\":[2102,2113,1870,1862,2028,1981,1980,1922,2006,2041,2080],\"killed_fates\":13,\"killed_ces\":5}]",
+		"pot_history": "[{\"fate_id\":1976,\"spawn_time\":1753544944,\"death_time\":0,\"last_seen\":1753545326,\"respawn_times\":[3460,3472,3451,3449,3502,3234],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1977,\"spawn_time\":1753546748,\"death_time\":0,\"last_seen\":1753547631,\"respawn_times\":[3603,3499,3395,3527,3356,3454,3341,3360],\"killed_fates\":0,\"killed_ces\":0}]"
+	}
 }
