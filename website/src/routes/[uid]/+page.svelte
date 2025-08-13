@@ -257,7 +257,7 @@
                     </thead>
                     <tbody>
                         {#each trackerResults.encounter_history as encounter}
-                            <tr class={encounter.death_time < encounter.spawn_time ? 'bg-amber-800/90' : 'bg-slate-900/90'}>
+                            <tr class={encounter.death_time < encounter.spawn_time ? 'bg-green-800/90' : 'bg-slate-900/90'}>
 
                                 <td class="px-2 w-1/2">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
                                 <td class="px-2 w-1/3 hidden md:table-cell">
