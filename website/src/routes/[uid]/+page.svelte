@@ -257,7 +257,7 @@
                     </thead>
                     <tbody>
                         {#each trackerResults.encounter_history as encounter}
-                            <tr class={encounter.death_time < encounter.spawn_time ? 'bg-green-800/90' : 'bg-slate-900/90'}>
+                            <tr class={encounter.death_time < encounter.spawn_time && encounter.death_time !== -1 ? 'bg-green-800/90' : 'bg-slate-900/90'}>
 
                                 <td class="px-2 w-1/2">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
                                 <td class="px-2 w-1/3 hidden md:table-cell">
@@ -270,7 +270,7 @@
                                 <td class="px-2 w-1/6 text-end">
                                     <p class="text-nowrap">
                                         <span class="hidden md:inline">
-                                            {encounter.death_time < encounter.spawn_time ? '(Alive)' : ''}
+                                            {encounter.death_time < encounter.spawn_time && encounter.death_time !== -1 ? '(Alive)' : ''}
                                         </span>
                                         {#if encounter.last_seen != -1}
                                             <AutoTimeFormatted timestamp={encounter.last_seen} />

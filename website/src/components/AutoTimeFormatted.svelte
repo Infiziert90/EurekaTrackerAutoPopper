@@ -8,6 +8,12 @@
     let interval;
 
     function updateTime() {
+        // If seconds or timestamp is set to -1, then we want to return 'Never'
+        if (seconds === -1 || timestamp === -1) {
+            finalString = 'Never';
+            return;
+        }
+
         // Calculate delta every time to get the current time difference
         let delta;
 

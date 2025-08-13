@@ -56,7 +56,7 @@
                 if (tracker.encounter_history) {
                     try {
                         const encounterHistory = JSON.parse(tracker.encounter_history);
-                        // Find the first CE that is currently active (death_time < spawn_time)
+                        // Find the first CE that is currently active (death_time < spawn_time AND also different than -1)
                         const activeCe = encounterHistory.find(
                             (ce) => ce.death_time < ce.spawn_time
                         );
@@ -114,7 +114,7 @@
 </script>
 
 <svelte:head>
-	<title>Occult Tracker - Recent Trackers</title>
+	<title>Occult Tracker - Trackers List</title>
 </svelte:head>
 
 <div class="bg-slate-950 p-2 mb-2">
@@ -150,18 +150,18 @@
         </div>
     {:else}
         <div class="max-w-6xl mx-auto mb-8">
-            <table class="w-full">
+            <table class="table-fixed w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
                 <thead>
                     <tr>
-                        <th>Tracker ID</th>
-                        <th>Last Updated</th>
-                        <th>Last/Current CE</th>
+                        <th class="text-left px-2 w-1/4">Tracker ID</th>
+                        <th class="text-left px-2 w-1/4">Last Updated</th>
+                        <th class="text-left px-2 w-2/4">Last/Current CE</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each trackers as tracker}
-                        <tr class="relative group cursor-pointer hover:bg-slate-800 transition-colors duration-200">
-                            <td class="relative">
+                        <tr class="relative group cursor-pointer bg-slate-900/90 hover:bg-slate-800 transition-colors duration-200">
+                            <td class="relative px-2 w-1/4">
                                 {tracker.tracker_id}
                                 <a
                                     href={`${base}/${tracker.tracker_id}`}
@@ -169,7 +169,7 @@
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
                             </td>
-                            <td class="relative">
+                            <td class="relative px-2 w-1/4">
                                 <AutoTimeFormatted timestamp={tracker.last_update} format="relative" />
                                 <a
                                     href={`${base}/${tracker.tracker_id}`}
@@ -177,7 +177,7 @@
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
                             </td>
-                            <td class="relative">
+                            <td class="relative px-2 w-2/4">
                                 {#if tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
                                     {@const fateId = tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
                                     {@const ceName = OCCULT_ENCOUNTERS[fateId]?.name?.[$currentLanguage] || OCCULT_ENCOUNTERS[fateId]?.name?.en || "Unknown CE"}
