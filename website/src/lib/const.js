@@ -437,6 +437,88 @@ export const ITEM = {
     },
 }
 
+// Language strings for tracker controls
+export const TRACKER_CONTROLS = {
+    unlocked: {
+        "en": "Tracker Controls Unlocked",
+        "fr": "Contrôles du Traqueur Déverrouillés",
+        "ja": "トラッカー制御が解除されました",
+        "de": "Tracker-Steuerung entsperrt"
+    },
+    enterPassword: {
+        "en": "Enter Password to Unlock Controls",
+        "fr": "Entrez le mot de passe pour déverrouiller les contrôles",
+        "ja": "パスワードを入力して制御を解除",
+        "de": "Passwort eingeben, um Steuerung zu entsperren"
+    },
+    passwordPlaceholder: {
+        "en": "Enter tracker password",
+        "fr": "Entrez le mot de passe du traqueur",
+        "ja": "トラッカーパスワードを入力",
+        "de": "Tracker-Passwort eingeben"
+    },
+    unlock: {
+        "en": "Unlock",
+        "fr": "Déverrouiller",
+        "ja": "解除",
+        "de": "Entsperren"
+    },
+    controls: {
+        "en": "Controls",
+        "fr": "Contrôles",
+        "ja": "制御",
+        "de": "Steuerung"
+    },
+    spawned: {
+        "en": "Spawned",
+        "fr": "Apparu",
+        "ja": "出現",
+        "de": "Erschienen"
+    },
+    dead: {
+        "en": "Dead",
+        "fr": "Mort",
+        "ja": "死亡",
+        "de": "Tot"
+    },
+    locked: {
+        "en": "Locked",
+        "fr": "Verrouillé",
+        "ja": "ロック",
+        "de": "Gesperrt"
+    },
+    mobSpawnedSuccess: {
+        "en": "Mob marked as spawned successfully!",
+        "fr": "Mob marqué comme apparu avec succès !",
+        "ja": "モブが出現としてマークされました！",
+        "de": "Mob erfolgreich als erschienen markiert!"
+    },
+    mobDeadSuccess: {
+        "en": "Mob marked as dead successfully!",
+        "fr": "Mob marqué comme mort avec succès !",
+        "ja": "モブが死亡としてマークされました！",
+        "de": "Mob erfolgreich als tot markiert!"
+    },
+    updateFailed: {
+        "en": "Failed to update tracker data",
+        "fr": "Échec de la mise à jour des données du traqueur",
+        "ja": "トラッカーデータの更新に失敗しました",
+        "de": "Fehler beim Aktualisieren der Tracker-Daten"
+    },
+    updateError: {
+        "en": "Error updating tracker data",
+        "fr": "Erreur lors de la mise à jour des données du traqueur",
+        "ja": "トラッカーデータの更新中にエラーが発生しました",
+        "de": "Fehler beim Aktualisieren der Tracker-Daten"
+    },
+    logout: {
+        "en": "Logout",
+        "fr": "Déconnexion",
+        "ja": "ログアウト",
+        "de": "Abmelden"
+    }
+}
+
 export const SAMPLE_SOUTH_HORN_TRACKER = {
     // id, last_update and tracker_id are to be generated when making a new tracker
     //"id": 0000,
@@ -445,7 +527,7 @@ export const SAMPLE_SOUTH_HORN_TRACKER = {
     "password": "",
     "tracker_type": 2,
     "last_fate": "",
-    "encounter_history": "[{\"fate_id\":33,\"spawn_time\":-1,\"death_time\":0,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":34,\"spawn_time\":1755091275,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":35,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":36,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":37,\"spawn_time\":-1,\"death_time\":0,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":38,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":39,\"spawn_time\":-1,\"death_time\":0,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":40,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":41,\"spawn_time\":-1,\"death_time\":0,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":42,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":43,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":44,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":45,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":46,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":47,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":48,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0}]",
+    "encounter_history": "[{\"fate_id\":33,\"spawn_time\":-1,\"death_time\":0,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":34,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":35,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":36,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":37,\"spawn_time\":-1,\"death_time\":0,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":38,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":39,\"spawn_time\":-1,\"death_time\":0,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":40,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":41,\"spawn_time\":-1,\"death_time\":0,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":42,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":43,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":44,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":45,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":46,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":47,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":48,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0}]",
     "fate_history": "[{\"fate_id\":1962,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1963,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1964,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1965,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1966,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1967,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[2041,2042,1528],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1968,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1969,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1970,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1971,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1972,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0}]",
     "pot_history": "[{\"fate_id\":1976,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0},{\"fate_id\":1977,\"spawn_time\":-1,\"death_time\":-1,\"last_seen\":-1,\"respawn_times\":[],\"killed_fates\":0,\"killed_ces\":0}]",
 }

@@ -25,7 +25,7 @@
         try {
             // Create the tracker data based on the sample structure
             const trackerData = {
-                ...SAMPLE_SOUTH_HORN_TRACKER["0"],
+                ...SAMPLE_SOUTH_HORN_TRACKER,
                 password: formData.password
             };
             
@@ -61,7 +61,6 @@
     function resetForm() {
         result = null;
         formData.password = '';
-        formData.trackerType = 2;
     }
 </script>
 
