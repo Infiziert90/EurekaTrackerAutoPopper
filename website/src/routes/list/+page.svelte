@@ -48,6 +48,10 @@
                 let isCeActive = false;
                 let activeCeFateId = null;
                 let recentCeFateId = null;
+                
+                let isFateActive = false;
+                let activeFateId = null;
+                let recentFateId = null;
 
                 // Cap the last_update timestamp to current time if it's in the future
                 const cappedLastUpdate = Math.min(tracker.last_update, currentTime);
@@ -81,12 +85,44 @@
                     }
                 }
 
+                // Try to parse fate_history to get the last active fate
+                if (tracker.fate_history) {
+                    try {
+                        const fateHistory = JSON.parse(tracker.fate_history);
+                        // Find the first fate that is currently active (death_time < spawn_time AND also different than -1)
+                        const activeFate = fateHistory.find(
+                            (fate) => fate.death_time < fate.spawn_time
+                        );
+                        if (activeFate) {
+                            activeFateId = activeFate.fate_id;
+                            isFateActive = true;
+                        } else {
+                            // If no active fate, find the most recently seen fate
+                            const recentFate = fateHistory
+                                .filter(fate => fate.last_seen > 0)
+                                .sort((a, b) => b.last_seen - a.last_seen)[0];
+                            if (recentFate) {
+                                recentFateId = recentFate.fate_id;
+                                isFateActive = false;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn(
+                            "Failed to parse fate_history for tracker:",
+                            tracker.tracker_id,
+                        );
+                    }
+                }
+
                 return {
                     ...tracker,
                     last_update: cappedLastUpdate,
                     active_ce_fate_id: activeCeFateId,
                     recent_ce_fate_id: recentCeFateId,
                     is_ce_active: isCeActive,
+                    active_fate_id: activeFateId,
+                    recent_fate_id: recentFateId,
+                    is_fate_active: isFateActive,
                 };
             });
         } catch (err) {
@@ -153,9 +189,10 @@
             <table class="table-fixed w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
                 <thead>
                     <tr>
-                        <th class="text-left px-2 w-1/4">Tracker ID</th>
-                        <th class="text-left px-2 w-1/4">Last Updated</th>
-                        <th class="text-left px-2 w-2/4">Last/Current CE</th>
+                        <th class="text-left px-2 w-1/6">Tracker ID</th>
+                        <th class="text-left px-2 w-1/6">Last Updated</th>
+                        <th class="text-left px-2 w-2/6">Last/Current CE</th>
+                        <th class="text-left px-2 w-2/6">Last/Current Fate</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -184,6 +221,23 @@
                                     <span class="flex items-center gap-2">
                                         <span class={`w-2 h-2 rounded-full ${tracker.is_ce_active ? 'bg-green-500' : 'bg-gray-500'}`} title={tracker.is_ce_active ? 'Currently Active' : 'Not Active'}></span>
                                         {ceName}
+                                    </span>
+                                {:else}
+                                    None
+                                {/if}
+                                <a
+                                    href={`${base}/${tracker.tracker_id}`}
+                                    class="absolute inset-0 z-10"
+                                    aria-label={`View tracker ${tracker.tracker_id}`}
+                                ></a>
+                            </td>
+                            <td class="relative px-2 w-2/4">
+                                {#if tracker.active_fate_id || tracker.recent_fate_id}
+                                    {@const fateId = tracker.active_fate_id || tracker.recent_fate_id}
+                                    {@const fateName = OCCULT_FATES[fateId]?.name?.[$currentLanguage] || OCCULT_FATES[fateId]?.name?.en || "Unknown Fate"}
+                                    <span class="flex items-center gap-2">
+                                        <span class={`w-2 h-2 rounded-full ${tracker.is_fate_active ? 'bg-green-500' : 'bg-gray-500'}`} title={tracker.is_fate_active ? 'Currently Active' : 'Not Active'}></span>
+                                        {fateName}
                                     </span>
                                 {:else}
                                     None

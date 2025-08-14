@@ -15,6 +15,7 @@
     let trackerResults = $state([]);
     let bunny = $state(null); // The next pot fate to spawn, named "bunny" to match the Dalamud plugin
     var activeCE = $state(null);
+    var activeFate = $state(null);
     var activeBunny = $state(null);
     let fetchInterval = $state(null);
     let isLoading = $state(true);
@@ -98,22 +99,22 @@
                 })
             });
             
-                         if (response.ok) {
-                 updateMessage = TRACKER_CONTROLS.mobSpawnedSuccess[$currentLanguage];
-                 updateMessageType = "success";
+            if (response.ok) {
+                updateMessage = TRACKER_CONTROLS.mobSpawnedSuccess[$currentLanguage];
+                updateMessageType = "success";
                  
-                 // Update the current display data immediately for better UX
-                 const currentEncounter = trackerResults.encounter_history.find(e => e.fate_id === encounter.fate_id);
-                 if (currentEncounter) {
-                     currentEncounter.spawn_time = Math.floor(Date.now() / 1000);
-                     currentEncounter.death_time = -1; // Ensure death_time is -1 when spawning
-                     currentEncounter.last_seen = currentEncounter.spawn_time;
-                     currentEncounter.alive = true;
-                 }
-                 
-                 // Refresh the data after successful update
-                 await fetchTrackerData();
-             } else {
+                // Update the current display data immediately for better UX
+                const currentEncounter = trackerResults.encounter_history.find(e => e.fate_id === encounter.fate_id);
+                if (currentEncounter) {
+                    currentEncounter.spawn_time = Math.floor(Date.now() / 1000);
+                    currentEncounter.death_time = -1; // Ensure death_time is -1 when spawning
+                    currentEncounter.last_seen = currentEncounter.spawn_time;
+                    currentEncounter.alive = true;
+                }
+                
+                // Refresh the data after successful update
+                await fetchTrackerData();
+            } else {
                 updateMessage = TRACKER_CONTROLS.updateFailed[$currentLanguage];
                 updateMessageType = "error";
                 console.error('Failed to update tracker data');
@@ -167,21 +168,21 @@
                 })
             });
             
-                         if (response.ok) {
-                 updateMessage = TRACKER_CONTROLS.mobDeadSuccess[$currentLanguage];
-                 updateMessageType = "success";
-                 
-                 // Update the current display data immediately for better UX
-                 const currentEncounter = trackerResults.encounter_history.find(e => e.fate_id === encounter.fate_id);
-                 if (currentEncounter) {
-                     currentEncounter.death_time = Math.floor(Date.now() / 1000);
-                     currentEncounter.last_seen = currentEncounter.death_time;
-                     currentEncounter.alive = false;
-                 }
-                 
-                 // Refresh the data after successful update
-                 await fetchTrackerData();
-             } else {
+            if (response.ok) {
+                updateMessage = TRACKER_CONTROLS.mobDeadSuccess[$currentLanguage];
+                updateMessageType = "success";
+                
+                // Update the current display data immediately for better UX
+                const currentEncounter = trackerResults.encounter_history.find(e => e.fate_id === encounter.fate_id);
+                if (currentEncounter) {
+                    currentEncounter.death_time = Math.floor(Date.now() / 1000);
+                    currentEncounter.last_seen = currentEncounter.death_time;
+                    currentEncounter.alive = false;
+                }
+                
+                // Refresh the data after successful update
+                await fetchTrackerData();
+            } else {
                 updateMessage = TRACKER_CONTROLS.updateFailed[$currentLanguage];
                 updateMessageType = "error";
                 console.error('Failed to update tracker data');
@@ -265,6 +266,31 @@
                 }
             } else {
                 trackerResults.encounter_history = [];
+            }
+
+            activeFate = null;
+
+            // Safely parse fate_history with null check
+            if (trackerResults.fate_history) {
+                try {
+                    trackerResults.fate_history = JSON.parse(trackerResults.fate_history);
+                    if (Array.isArray(trackerResults.fate_history)) {
+                        trackerResults.fate_history.forEach(fate => {
+                            fate.name = OCCULT_FATES[fate.fate_id].name[$currentLanguage];
+                            fate.alive = fate.death_time < fate.spawn_time;
+                        });
+
+                        // If any fate is alive, set activeFate to the first one we find
+                        if (trackerResults.fate_history.some(fate => fate.alive)) {
+                            activeFate = trackerResults.fate_history.find(fate => fate.alive);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error parsing fate_history:', err);
+                    trackerResults.fate_history = [];
+                }
+            } else {
+                trackerResults.fate_history = [];
             }
 
             activeBunny = null;
@@ -443,7 +469,7 @@
                                     <Unlock class="w-4 h-4" />
                                     <span>Unlocked</span>
                                     <button
-                                        on:click={logout}
+                                        onclick={logout}
                                         class="text-red-400 hover:text-red-300 text-xs underline"
                                         title={TRACKER_CONTROLS.logout[$currentLanguage]}
                                     >
@@ -456,10 +482,10 @@
                                     bind:value={passwordInput}
                                     placeholder={TRACKER_CONTROLS.passwordPlaceholder[$currentLanguage]}
                                     class="bg-slate-700 px-2 py-1 rounded border border-slate-600 focus:border-blue-400 focus:outline-none text-sm w-32"
-                                    on:keydown={(e) => e.key === 'Enter' && unlockWithPassword()}
+                                    onkeydown={(e) => e.key === 'Enter' && unlockWithPassword()}
                                 />
                                 <button
-                                    on:click={unlockWithPassword}
+                                    onclick={unlockWithPassword}
                                     class="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-white text-xs font-medium transition-colors"
                                 >
                                     {TRACKER_CONTROLS.unlock[$currentLanguage]}
@@ -478,7 +504,7 @@
                 <!-- Forked Tower: Blood -->
                 <div class="bg-slate-800/90 p-4">
                     <h2 class="text-2xl font-extrabold">
-                        <img src={`${base}/icons/forked_tower.png`} alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
+                        <img src="https://v2.xivapi.com/api/asset?path=ui/icon/063000/063978_hr1.tex&format=webp" alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
                         {OCCULT_ENCOUNTERS[48].name[$currentLanguage]}
                     </h2>
 
@@ -536,7 +562,7 @@
                 <!-- Pot Fate-->
                 <div class="bg-slate-800/90 p-4">
                     <h2 class="text-2xl font-extrabold">
-                        <img src={`${base}/icons/bunny.png`} alt="Pot Fate Icon" class="w-16 h-16 inline-block mr-2" />
+                        <img src="https://v2.xivapi.com/api/asset?path=ui/icon/060000/060958_hr1.tex&format=webp" alt="Pot Fate Icon" class="w-16 h-16 inline-block mr-2" />
                         Pot Fate
                     </h2>
 
@@ -571,7 +597,7 @@
             <!-- Encounter History -->    
             <div class="max-w-6xl w-full mx-auto mb-4">
                 <h2 class="text-2xl font-extrabold">
-                    <img src={`${base}/icons/ce.png`} alt="Critical Encounter Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
+                    <img src="https://v2.xivapi.com/api/asset?path=ui/icon/063000/063909.tex&format=webp" alt="Critical Encounter Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
                     Encounter History
                 </h2>
                 <table class="table-fixed w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
@@ -614,7 +640,7 @@
                                             {#if isPasswordUnlocked}
                                                 {#if encounter.spawn_time !== -1 && encounter.death_time < encounter.spawn_time}
                                                     <button
-                                                        on:click={() => handleMobDead(encounter)}
+                                                        onclick={() => handleMobDead(encounter)}
                                                         disabled={isUpdating}
                                                         class="px-2 py-1 rounded text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
                                                             isUpdating ? 'bg-slate-600' : 'bg-red-600 hover:bg-red-700'
@@ -628,7 +654,7 @@
                                                     </button>
                                                 {:else}
                                                 <button
-                                                on:click={() => handleMobSpawned(encounter)}
+                                                onclick={() => handleMobSpawned(encounter)}
                                                 disabled={isUpdating}
                                                 class="px-2 py-1 rounded text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
                                                     isUpdating ? 'bg-slate-600' : 'bg-green-600 hover:bg-green-700'
@@ -655,6 +681,101 @@
                             <tr class="bg-slate-900/90">
                                 <td colspan={trackerType === 2 ? 4 : 3} class="px-2 py-4 text-center text-slate-400">
                                     No encounter history available
+                                </td>
+                            </tr>
+                        {/if}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Fate History -->
+            <div class="max-w-6xl w-full mx-auto mb-4">
+                <h2 class="text-2xl font-extrabold">
+                    <img src="https://v2.xivapi.com/api/asset?path=ui/icon/060000/060502_hr1.tex&format=webp" alt="Fate Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
+                    Fate History
+                </h2>
+
+                <table class="table-fixed w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
+                    <thead>
+                        <tr class="text-left">
+                            <th class="px-2 w-1/2">Fate</th>
+                            <th class="px-2 w-1/3 hidden md:table-cell">Drops</th>
+                            <th class="px-2 w-1/6 text-end">Last Seen</th>
+                            {#if trackerType === 2}
+                                <th class="px-2 w-1/6 text-center">{TRACKER_CONTROLS.controls[$currentLanguage]}</th>
+                            {/if}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#if trackerResults.fate_history && trackerResults.fate_history.length > 0}
+                            {#each trackerResults.fate_history as fate}
+                                <tr class={fate.spawn_time !== -1 && fate.death_time < fate.spawn_time ? 'bg-green-800/90' : 'bg-slate-900/90'}>
+                                    <td class="px-2 w-1/2">{OCCULT_FATES[fate.fate_id].name[$currentLanguage] || fate.fate_id}</td>
+                                    <td class="px-2 w-1/3 hidden md:table-cell">
+                                        <div class="flex flex-wrap gap-1">
+                                            {#each OCCULT_FATES[fate.fate_id].drops as drop}
+                                                <ItemIcon itemId={drop} />
+                                            {/each}
+                                        </div>
+                                    </td>
+                                    <td class="px-2 w-1/6 text-end">
+                                        <p class="text-nowrap">
+                                            <span class="hidden md:inline">
+                                                {fate.spawn_time !== -1 && fate.death_time < fate.spawn_time ? '(Alive)' : ''}
+                                             </span>
+                                            {#if fate.last_seen != -1}
+                                                <AutoTimeFormatted timestamp={fate.last_seen} />
+                                            {:else}
+                                                N/A
+                                            {/if}
+                                        </p>
+                                    </td>
+                                    {#if trackerType === 2}
+                                        <td class="px-2 w-1/6 text-center">
+                                            {#if isPasswordUnlocked}
+                                                {#if fate.spawn_time !== -1 && fate.death_time < fate.spawn_time}
+                                                    <button
+                                                        onclick={() => handleFateDead(fate)}
+                                                        disabled={isUpdating}
+                                                        class="px-2 py-1 rounded text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                            isUpdating ? 'bg-slate-600' : 'bg-red-600 hover:bg-red-700'
+                                                        }"
+                                                        title="Mark fate as dead"
+                                                    >
+                                                        {#if isUpdating}
+                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline mr-1" />
+                                                        {/if}
+                                                        {TRACKER_CONTROLS.dead[$currentLanguage]}
+                                                    </button>
+                                                {:else}
+                                                <button
+                                                    onclick={() => handleFateSpawned(fate)}
+                                                    disabled={isUpdating}
+                                                    class="px-2 py-1 rounded text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                        isUpdating ? 'bg-slate-600' : 'bg-green-600 hover:bg-green-700'
+                                                    }"
+                                                    title="Mark fate as spawned"
+                                                >
+                                                    {#if isUpdating}
+                                                        <LoaderPinwheel class="w-3 h-3 animate-spin inline mr-1" />
+                                                    {/if}
+                                                    {TRACKER_CONTROLS.spawned[$currentLanguage]}
+                                                </button>
+                                                {/if}
+                                            {:else}
+                                                <div class="text-slate-500 text-xs flex items-center justify-center">
+                                                    <Lock class="w-4 h-4 me-2" />
+                                                    {TRACKER_CONTROLS.locked[$currentLanguage]}
+                                                </div>
+                                            {/if}
+                                        </td>
+                                    {/if}
+                                </tr>
+                            {/each}
+                        {:else}
+                            <tr class="bg-slate-900/90">
+                                <td colspan={2} class="px-2 py-4 text-center text-slate-400">
+                                    No fate history available
                                 </td>
                             </tr>
                         {/if}

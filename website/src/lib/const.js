@@ -13,6 +13,118 @@ export const API_HEADERS = {
 };
 
 export const OCCULT_FATES = {
+    // BASIC FATES
+    1962: {
+        name: {
+            "en": "Rough Waters",
+            "fr": "Défi : pas de vagues",
+            "ja": "波起こしの海魔「ナンム」",
+            "de": "Die Wogen glätten"
+        },
+        drops: [47744],
+        encounter_id: 28,
+    },
+    1963: {
+        name: {
+            "en": "The Golden Guardian",
+            "fr": "Défi : tombe vingt-quatre carats",
+            "ja": "金色の怪石「ゴールデンブロックス」",
+            "de": "Brocken statt Barren"
+        },
+        drops: [47744],
+        encounter_id: 14,
+    },
+    1964: {
+        name: {
+            "en": "King of the Crescent",
+            "fr": "Défi : la bête sadique",
+            "ja": "悲鳴の蒐集者「ロプロス」",
+            "de": "Geißel Kreszentias"
+        },
+        drops: [47749],
+        encounter_id: 10,
+    },
+    1965: {
+        name: {
+            "en": "The Winged Terror",
+            "fr": "Défi : je fus zu",
+            "ja": "甲板の掃除人「巨大鳥」",
+            "de": "Dämonenvogel am Spieß"
+        },
+        drops: [47747],
+        encounter_id: 27,
+    },
+    1966: {
+        name: {
+            "en": "An Unending Duty",
+            "fr": "Défi : pierre de tonnerre",
+            "ja": "神罰の石獣「シジフォス」",
+            "de": "Los, Sisyphos, Donnerblitz!"
+        },
+        drops: [47746],
+        encounter_id: 26,
+    },
+    1967: {
+        name: {
+            "en": "Brain Drain",
+            "fr": "Défi : le poison de l'évolution",
+            "ja": "進化せし怪蛇「アドバンスドエイビス」",
+            "de": "Aspho ... asphy ... scheintot!"
+        },
+        drops: [47747],
+        encounter_id: 24,
+    },
+    1968: {
+        name: {
+            "en": "A Delicate Balance",
+            "fr": "Défi : humidité zéro",
+            "ja": "湿度の狩手「ディヒューミディファイア」",
+            "de": "Kampf um Leben und Schweiß"
+        },
+        drops: [47745],
+        encounter_id: 25,   
+    },
+    1969: {
+        name: {
+            "en": "Sworn to Soil",
+            "fr": "Défi : rester de boue",
+            "ja": "Kampf um Leben und Boden unter den Füßen",
+            "de": "土壌の守り手「マッドマッド」"
+        },
+        drops: [47745],
+        encounter_id: 18,
+    },
+    1970: {
+        name: {
+            "en": "A Prying Eye",
+            "fr": "Défi : un œil sur l'île",
+            "ja": "監視の瞳「アイルオブザーバー」",
+            "de": "Wächter des Lebens"
+        },
+        drops: [47744],
+        encounter_id: 29,
+    },
+    1971: {
+        name: {
+            "en": "Fatal Allure",
+            "fr": "Défi : la belle mort",
+            "ja": "美しき呪殺者「イグゼクレーター」",
+            "de": "Tückische Schönheit"
+        },
+        drops: [47749],
+        encounter_id: 17,
+    },
+    1972: {
+        name: {
+            "en": "Serving Darkness",
+            "fr": "Défi : collecte mortelle",
+            "ja": "命の収奪者「ライフギャザラー」",
+            "de": "Seelen sammeln für den bösen Zweck"
+        },
+        drops: [47748],
+        encounter_id: 24,
+    },
+
     // BUNNY FATES
     1976: { 
         name: {
