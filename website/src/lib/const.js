@@ -611,6 +611,18 @@ export const TRACKER_CONTROLS = {
         "ja": "モブが死亡としてマークされました！",
         "de": "Mob erfolgreich als tot markiert!"
     },
+    fateSpawnedSuccess: {
+        "en": "Fate marked as spawned successfully!",
+        "fr": "Fate marquée comme apparue avec succès !",
+        "ja": "フェイトが出現としてマークされました！",
+        "de": "Fate erfolgreich als erschienen markiert!"
+    },
+    fateDeadSuccess: {
+        "en": "Fate marked as dead successfully!",
+        "fr": "Fate marquée comme morte avec succès !",
+        "ja": "フェイトが死亡としてマークされました！",
+        "de": "Fate erfolgreich als tot markiert!"
+    },
     updateFailed: {
         "en": "Failed to update tracker data",
         "fr": "Échec de la mise à jour des données du traqueur",

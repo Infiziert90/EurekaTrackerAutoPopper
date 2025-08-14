@@ -63,8 +63,8 @@
         passwordInput = "";
     }
 
-    // Function to handle mob spawned button click
-    async function handleMobSpawned(encounter) {
+    // Function to handle status updates for both mobs and fates
+    async function handleStatusUpdate({ encounter, type, status }) {
         if (!isPasswordUnlocked || !originalData) return;
         
         isUpdating = true;
@@ -74,19 +74,26 @@
             // Create a copy of the original data
             const updatedData = { ...originalData };
             
-            // Find the encounter in the encounter_history and update its spawn_time
-            const encounterHistory = JSON.parse(updatedData.encounter_history);
-            const targetEncounter = encounterHistory.find(e => e.fate_id === encounter.fate_id);
+            // Determine which history to update based on type
+            const historyKey = type === 'ce' ? 'encounter_history' : 'fate_history';
+            const history = JSON.parse(updatedData[historyKey]);
+            const targetItem = history.find(item => item.fate_id === encounter.fate_id);
             
-            if (targetEncounter) {
-                targetEncounter.spawn_time = Math.floor(Date.now() / 1000);
-                targetEncounter.death_time = -1; // Ensure death_time is -1 when spawning
-                targetEncounter.last_seen = targetEncounter.spawn_time;
-                updatedData.encounter_history = JSON.stringify(encounterHistory);
+            if (targetItem) {
+                if (status === 'spawned') {
+                    targetItem.spawn_time = Math.floor(Date.now() / 1000);
+                    targetItem.death_time = -1; // Ensure death_time is -1 when spawning
+                    targetItem.last_seen = targetItem.spawn_time;
+                } else if (status === 'dead') {
+                    targetItem.death_time = Math.floor(Date.now() / 1000);
+                    targetItem.last_seen = targetItem.death_time;
+                }
+                
+                updatedData[historyKey] = JSON.stringify(history);
                 updatedData.last_update = Math.floor(Date.now() / 1000);
             }
             
-            // Send only the encounter_history data
+            // Send only the updated history data
             const response = await fetch(BASE_URL, {
                 method: 'PATCH',
                 headers: {
@@ -94,22 +101,32 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    encounter_history: updatedData.encounter_history,
+                    [historyKey]: updatedData[historyKey],
                     last_update: updatedData.last_update
                 })
             });
             
             if (response.ok) {
-                updateMessage = TRACKER_CONTROLS.mobSpawnedSuccess[$currentLanguage];
+                const successKey = type === 'ce' 
+                    ? (status === 'spawned' ? 'mobSpawnedSuccess' : 'mobDeadSuccess')
+                    : (status === 'spawned' ? 'fateSpawnedSuccess' : 'fateDeadSuccess');
+                updateMessage = TRACKER_CONTROLS[successKey]?.[$currentLanguage] || 'Update successful';
                 updateMessageType = "success";
-                 
+                
                 // Update the current display data immediately for better UX
-                const currentEncounter = trackerResults.encounter_history.find(e => e.fate_id === encounter.fate_id);
-                if (currentEncounter) {
-                    currentEncounter.spawn_time = Math.floor(Date.now() / 1000);
-                    currentEncounter.death_time = -1; // Ensure death_time is -1 when spawning
-                    currentEncounter.last_seen = currentEncounter.spawn_time;
-                    currentEncounter.alive = true;
+                const currentHistory = trackerResults[historyKey];
+                const currentItem = currentHistory.find(item => item.fate_id === encounter.fate_id);
+                if (currentItem) {
+                    if (status === 'spawned') {
+                        currentItem.spawn_time = Math.floor(Date.now() / 1000);
+                        currentItem.death_time = -1;
+                        currentItem.last_seen = currentItem.spawn_time;
+                        currentItem.alive = true;
+                    } else if (status === 'dead') {
+                        currentItem.death_time = Math.floor(Date.now() / 1000);
+                        currentItem.last_seen = currentItem.death_time;
+                        currentItem.alive = false;
+                    }
                 }
                 
                 // Refresh the data after successful update
@@ -133,72 +150,21 @@
         }
     }
 
-    // Function to handle mob dead button click
+    // Wrapper functions for backward compatibility and cleaner calls
+    async function handleMobSpawned(encounter) {
+        await handleStatusUpdate({ encounter, type: 'ce', status: 'spawned' });
+    }
+
     async function handleMobDead(encounter) {
-        if (!isPasswordUnlocked || !originalData) return;
-        
-        isUpdating = true;
-        updateMessage = "";
-        
-        try {
-            // Create a copy of the original data
-            const updatedData = { ...originalData };
-            
-            // Find the encounter in the encounter_history and update its death_time
-            const encounterHistory = JSON.parse(updatedData.encounter_history);
-            const targetEncounter = encounterHistory.find(e => e.fate_id === encounter.fate_id);
-            
-            if (targetEncounter) {
-                targetEncounter.death_time = Math.floor(Date.now() / 1000);
-                targetEncounter.last_seen = targetEncounter.death_time;
-                updatedData.encounter_history = JSON.stringify(encounterHistory);
-                updatedData.last_update = Math.floor(Date.now() / 1000);
-            }
-            
-            // Send only the encounter_history data
-            const response = await fetch(BASE_URL, {
-                method: 'PATCH',
-                headers: {
-                    ...API_HEADERS,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    encounter_history: updatedData.encounter_history,
-                    last_update: updatedData.last_update
-                })
-            });
-            
-            if (response.ok) {
-                updateMessage = TRACKER_CONTROLS.mobDeadSuccess[$currentLanguage];
-                updateMessageType = "success";
-                
-                // Update the current display data immediately for better UX
-                const currentEncounter = trackerResults.encounter_history.find(e => e.fate_id === encounter.fate_id);
-                if (currentEncounter) {
-                    currentEncounter.death_time = Math.floor(Date.now() / 1000);
-                    currentEncounter.last_seen = currentEncounter.death_time;
-                    currentEncounter.alive = false;
-                }
-                
-                // Refresh the data after successful update
-                await fetchTrackerData();
-            } else {
-                updateMessage = TRACKER_CONTROLS.updateFailed[$currentLanguage];
-                updateMessageType = "error";
-                console.error('Failed to update tracker data');
-            }
-        } catch (err) {
-            updateMessage = TRACKER_CONTROLS.updateError[$currentLanguage];
-            updateMessageType = "error";
-            console.error('Error updating tracker data:', err);
-        } finally {
-            isUpdating = false;
-            // Clear message after 3 seconds
-            setTimeout(() => {
-                updateMessage = "";
-                updateMessageType = "";
-            }, 3000);
-        }
+        await handleStatusUpdate({ encounter, type: 'ce', status: 'dead' });
+    }
+
+    async function handleFateSpawned(fate) {
+        await handleStatusUpdate({ encounter: fate, type: 'fate', status: 'spawned' });
+    }
+
+    async function handleFateDead(fate) {
+        await handleStatusUpdate({ encounter: fate, type: 'fate', status: 'dead' });
     }
 
     // Fetch tracker data from API
