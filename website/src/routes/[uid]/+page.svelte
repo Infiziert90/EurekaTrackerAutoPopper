@@ -2,9 +2,9 @@
     import { onDestroy, onMount } from "svelte";
     import { page } from "$app/stores";
     import { base } from "$app/paths";
-    import { TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS, TRACKER_CONTROLS } from "$lib/const";
+    import { TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS } from "$lib/const";
     import { currentLanguage } from "$lib/stores";
-    import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock } from "@lucide/svelte";
+    import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull } from "@lucide/svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
     import ItemIcon from "../../components/ItemIcon.svelte";
@@ -55,13 +55,6 @@
             alert("Incorrect password");
         }
     }
-    
-    // Function to handle logout and clear stored password
-    function logout() {
-        isPasswordUnlocked = false;
-        localStorage.removeItem(`tracker_password_${uid}`);
-        passwordInput = "";
-    }
 
     // Function to handle status updates for both mobs and fates
     async function handleStatusUpdate({ encounter, type, status }) {
@@ -110,7 +103,7 @@
                 const successKey = type === 'ce' 
                     ? (status === 'spawned' ? 'mobSpawnedSuccess' : 'mobDeadSuccess')
                     : (status === 'spawned' ? 'fateSpawnedSuccess' : 'fateDeadSuccess');
-                updateMessage = TRACKER_CONTROLS[successKey]?.[$currentLanguage] || 'Update successful';
+                updateMessage = 'Update successful';
                 updateMessageType = "success";
                 
                 // Update the current display data immediately for better UX
@@ -132,12 +125,12 @@
                 // Refresh the data after successful update
                 await fetchTrackerData();
             } else {
-                updateMessage = TRACKER_CONTROLS.updateFailed[$currentLanguage];
+                updateMessage = 'Update failed';
                 updateMessageType = "error";
                 console.error('Failed to update tracker data');
             }
         } catch (err) {
-            updateMessage = TRACKER_CONTROLS.updateError[$currentLanguage];
+            updateMessage = 'Update failed';
             updateMessageType = "error";
             console.error('Error updating tracker data:', err);
         } finally {
@@ -423,7 +416,7 @@
                         />
                     </a>
                 </h1>
-                <div class="flex flex-col items-end gap-2">
+                <div class="flex flex-col items-center lg:items-end gap-2">
                     <p>Tracker ID: {uid}</p>
                     <LanguageSwitcher />
                     
@@ -434,27 +427,20 @@
                                 <div class="flex items-center gap-2 text-green-400 text-sm">
                                     <Unlock class="w-4 h-4" />
                                     <span>Unlocked</span>
-                                    <button
-                                        onclick={logout}
-                                        class="text-red-400 hover:text-red-300 text-xs underline"
-                                        title={TRACKER_CONTROLS.logout[$currentLanguage]}
-                                    >
-                                        {TRACKER_CONTROLS.logout[$currentLanguage]}
-                                    </button>
                                 </div>
                             {:else}
                                 <input
                                     type="password"
                                     bind:value={passwordInput}
-                                    placeholder={TRACKER_CONTROLS.passwordPlaceholder[$currentLanguage]}
-                                    class="bg-slate-700 px-2 py-1 rounded border border-slate-600 focus:border-blue-400 focus:outline-none text-sm w-32"
+                                    placeholder='•••••'
+                                    class="bg-slate-700 px-2 py-1 border border-slate-600 focus:border-blue-400 focus:outline-none text-sm w-32"
                                     onkeydown={(e) => e.key === 'Enter' && unlockWithPassword()}
                                 />
                                 <button
                                     onclick={unlockWithPassword}
-                                    class="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-white text-xs font-medium transition-colors"
+                                    class="bg-blue-600 hover:bg-blue-700 px-2 py-1 text-white text-xs font-medium transition-colors"
                                 >
-                                    {TRACKER_CONTROLS.unlock[$currentLanguage]}
+                                    <Lock class="w-4 h-4 inline-block mr-2" />
                                 </button>
                             {/if}
                         </div>
@@ -569,11 +555,11 @@
                 <table class="table-fixed w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
                     <thead>
                         <tr class="text-left">
-                            <th class="px-2 w-1/2">Encounter</th>
-                            <th class="px-2 w-1/3 hidden md:table-cell">Drops</th>
-                            <th class="px-2 w-1/6 text-end">Last Seen</th>
+                            <th class="px-2 w-2/5">Encounter</th>
+                            <th class="px-2 hidden md:table-cell">Drops</th>
+                            <th class="px-2 w-1/5 text-end">Last Seen</th>
                             {#if trackerType === 2}
-                                <th class="px-2 w-1/6 text-center">{TRACKER_CONTROLS.controls[$currentLanguage]}</th>
+                                <th class="px-2 w-[14%] md:w-14 text-center"></th>
                             {/if}
                         </tr>
                     </thead>
@@ -581,15 +567,15 @@
                         {#if trackerResults.encounter_history && trackerResults.encounter_history.length > 0}
                             {#each trackerResults.encounter_history as encounter}
                                 <tr class={encounter.spawn_time !== -1 && encounter.death_time < encounter.spawn_time ? 'bg-green-800/90' : 'bg-slate-900/90'}>
-                                    <td class="px-2 w-1/2">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
-                                    <td class="px-2 w-1/3 hidden md:table-cell">
+                                    <td class="px-2 w-2/5 truncate">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
+                                    <td class="px-2 hidden md:table-cell">
                                         <div class="flex flex-wrap gap-1">
                                             {#each OCCULT_ENCOUNTERS[encounter.fate_id].drops as drop}
                                                 <ItemIcon itemId={drop} />
                                             {/each}
                                         </div>
                                     </td>
-                                    <td class="px-2 w-1/6 text-end">
+                                    <td class="px-2 w-1/5 text-end">
                                         <p class="text-nowrap">
                                             <span class="hidden md:inline">
                                                  {encounter.spawn_time !== -1 && encounter.death_time < encounter.spawn_time ? '(Alive)' : ''}
@@ -602,41 +588,42 @@
                                         </p>
                                     </td>
                                     {#if trackerType === 2}
-                                        <td class="px-2 w-1/6 text-center">
+                                        <td class="px-2 w-[14%] md:w-14 text-center">
                                             {#if isPasswordUnlocked}
                                                 {#if encounter.spawn_time !== -1 && encounter.death_time < encounter.spawn_time}
                                                     <button
                                                         onclick={() => handleMobDead(encounter)}
                                                         disabled={isUpdating}
-                                                        class="px-2 py-1 rounded text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                        class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
                                                             isUpdating ? 'bg-slate-600' : 'bg-red-600 hover:bg-red-700'
                                                         }"
                                                         title="Mark mob as dead"
                                                     >
                                                         {#if isUpdating}
-                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline mr-1" />
+                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
+                                                        {:else}
+                                                            <Skull class="w-4 h-4 inline-block" />
                                                         {/if}
-                                                        {TRACKER_CONTROLS.dead[$currentLanguage]}
                                                     </button>
                                                 {:else}
-                                                <button
-                                                onclick={() => handleMobSpawned(encounter)}
-                                                disabled={isUpdating}
-                                                class="px-2 py-1 rounded text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
-                                                    isUpdating ? 'bg-slate-600' : 'bg-green-600 hover:bg-green-700'
-                                                }"
-                                                title="Mark mob as spawned"
-                                            >
-                                                {#if isUpdating}
-                                                    <LoaderPinwheel class="w-3 h-3 animate-spin inline mr-1" />
-                                                {/if}
-                                                {TRACKER_CONTROLS.spawned[$currentLanguage]}
-                                            </button>
+                                                    <button
+                                                        onclick={() => handleMobSpawned(encounter)}
+                                                        disabled={isUpdating}
+                                                        class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                            isUpdating ? 'bg-slate-600' : 'bg-green-600 hover:bg-green-700'
+                                                        }"
+                                                        title="Mark mob as spawned"
+                                                    >
+                                                        {#if isUpdating}
+                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
+                                                        {:else}
+                                                            POP
+                                                        {/if}
+                                                    </button>
                                                 {/if}
                                             {:else}
                                                 <div class="text-slate-500 text-xs flex items-center justify-center">
                                                     <Lock class="w-4 h-4 me-2" />
-                                                    {TRACKER_CONTROLS.locked[$currentLanguage]}
                                                 </div>
                                             {/if}
                                         </td>
@@ -664,11 +651,11 @@
                 <table class="table-fixed w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
                     <thead>
                         <tr class="text-left">
-                            <th class="px-2 w-1/2">Fate</th>
-                            <th class="px-2 w-1/3 hidden md:table-cell">Drops</th>
-                            <th class="px-2 w-1/6 text-end">Last Seen</th>
+                            <th class="px-2 w-2/5">Fate</th>
+                            <th class="px-2 hidden md:table-cell">Drops</th>
+                            <th class="px-2 w-1/5 text-end">Last Seen</th>
                             {#if trackerType === 2}
-                                <th class="px-2 w-1/6 text-center">{TRACKER_CONTROLS.controls[$currentLanguage]}</th>
+                                <th class="px-2 w-[14%] md:w-14 text-center"></th>
                             {/if}
                         </tr>
                     </thead>
@@ -676,15 +663,15 @@
                         {#if trackerResults.fate_history && trackerResults.fate_history.length > 0}
                             {#each trackerResults.fate_history as fate}
                                 <tr class={fate.spawn_time !== -1 && fate.death_time < fate.spawn_time ? 'bg-green-800/90' : 'bg-slate-900/90'}>
-                                    <td class="px-2 w-1/2">{OCCULT_FATES[fate.fate_id].name[$currentLanguage] || fate.fate_id}</td>
-                                    <td class="px-2 w-1/3 hidden md:table-cell">
+                                    <td class="px-2 w-2/5 truncate">{OCCULT_FATES[fate.fate_id].name[$currentLanguage]}</td>
+                                    <td class="px-2 hidden md:table-cell">
                                         <div class="flex flex-wrap gap-1">
                                             {#each OCCULT_FATES[fate.fate_id].drops as drop}
                                                 <ItemIcon itemId={drop} />
                                             {/each}
                                         </div>
                                     </td>
-                                    <td class="px-2 w-1/6 text-end">
+                                    <td class="px-2 w-1/5 text-end">
                                         <p class="text-nowrap">
                                             <span class="hidden md:inline">
                                                 {fate.spawn_time !== -1 && fate.death_time < fate.spawn_time ? '(Alive)' : ''}
@@ -697,41 +684,42 @@
                                         </p>
                                     </td>
                                     {#if trackerType === 2}
-                                        <td class="px-2 w-1/6 text-center">
+                                        <td class="px-2 w-[14%] md:w-14 text-center">
                                             {#if isPasswordUnlocked}
                                                 {#if fate.spawn_time !== -1 && fate.death_time < fate.spawn_time}
                                                     <button
                                                         onclick={() => handleFateDead(fate)}
                                                         disabled={isUpdating}
-                                                        class="px-2 py-1 rounded text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                        class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
                                                             isUpdating ? 'bg-slate-600' : 'bg-red-600 hover:bg-red-700'
                                                         }"
                                                         title="Mark fate as dead"
                                                     >
                                                         {#if isUpdating}
-                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline mr-1" />
+                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
+                                                        {:else}
+                                                            <Skull class="w-4 h-4 inline-block" />
                                                         {/if}
-                                                        {TRACKER_CONTROLS.dead[$currentLanguage]}
                                                     </button>
                                                 {:else}
                                                 <button
                                                     onclick={() => handleFateSpawned(fate)}
                                                     disabled={isUpdating}
-                                                    class="px-2 py-1 rounded text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                    class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
                                                         isUpdating ? 'bg-slate-600' : 'bg-green-600 hover:bg-green-700'
                                                     }"
                                                     title="Mark fate as spawned"
                                                 >
                                                     {#if isUpdating}
-                                                        <LoaderPinwheel class="w-3 h-3 animate-spin inline mr-1" />
+                                                        <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
+                                                    {:else}
+                                                        POP
                                                     {/if}
-                                                    {TRACKER_CONTROLS.spawned[$currentLanguage]}
                                                 </button>
                                                 {/if}
                                             {:else}
                                                 <div class="text-slate-500 text-xs flex items-center justify-center">
-                                                    <Lock class="w-4 h-4 me-2" />
-                                                    {TRACKER_CONTROLS.locked[$currentLanguage]}
+                                                    <Lock class="w-4 h-4" />
                                                 </div>
                                             {/if}
                                         </td>

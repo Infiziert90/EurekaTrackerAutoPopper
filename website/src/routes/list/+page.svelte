@@ -1,6 +1,7 @@
 <script>
     import { base } from "$app/paths";
     import { onMount, onDestroy } from "svelte";
+    import { Clock } from "@lucide/svelte";
     import { OCCULT_FATES, OCCULT_ENCOUNTERS, BASE_URL, API_HEADERS } from "$lib/const";
     import { currentLanguage } from "$lib/stores";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
@@ -11,13 +12,13 @@
     let error = $state(null);
     let refreshInterval = $state(null);
 
-    async function fetchRecentTrackers(hours = 1) {
+    async function fetchRecentTrackers() {
         try {
-            const oneHourAgo = Math.floor(
-                (Date.now() - hours * 60 * 60 * 1000) / 1000,
+            const thirtyMinutesAgo = Math.floor(
+                (Date.now() - 30 * 60 * 1000) / 1000,
             );
             const response = await fetch(
-                `${BASE_URL}?last_update=gte.${oneHourAgo}`,
+                `${BASE_URL}?last_update=gte.${thirtyMinutesAgo}`,
                 {
                     headers: API_HEADERS,
                 },
@@ -38,7 +39,7 @@
             loading = true;
             error = null;
 
-            const data = await fetchRecentTrackers(1);
+            const data = await fetchRecentTrackers();
             // sort by last_update
             data.sort((a, b) => b.last_update - a.last_update);
 
@@ -185,20 +186,25 @@
             <p>No trackers updated in the last hour.</p>
         </div>
     {:else}
-        <div class="max-w-6xl mx-auto mb-8">
-            <table class="table-fixed w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
+        <div class="w-full max-w-6xl mx-auto mb-8">
+            <table class="table-auto w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
                 <thead>
                     <tr>
-                        <th class="text-left px-2 w-1/6">Tracker ID</th>
-                        <th class="text-left px-2 w-1/6">Last Updated</th>
-                        <th class="text-left px-2 w-2/6">Last/Current CE</th>
-                        <th class="text-left px-2 w-2/6">Last/Current Fate</th>
+                        <th class="text-left px-2">Tracker ID</th>
+                        <th class="text-left truncate px-2">
+                            <span class="inline md:hidden text-center">
+                                <Clock class="w-4 h-4 inline-block" />
+                            </span>
+                            <span class="hidden md:inline">Last Updated</span>
+                        </th>
+                        <th class="text-left hidden sm:table-cell truncate px-2">Last/Current CE</th>
+                        <th class="text-left hidden md:table-cell truncate px-2">Last/Current Fate</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each trackers as tracker}
                         <tr class="relative group cursor-pointer bg-slate-900/90 hover:bg-slate-800 transition-colors duration-200">
-                            <td class="relative px-2 w-1/4">
+                            <td class="relative px-2">
                                 {tracker.tracker_id}
                                 <a
                                     href={`${base}/${tracker.tracker_id}`}
@@ -206,15 +212,15 @@
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
                             </td>
-                            <td class="relative px-2 w-1/4">
-                                <AutoTimeFormatted timestamp={tracker.last_update} format="relative" />
+                            <td class="relative px-2 truncate">
+                                <AutoTimeFormatted timestamp={tracker.last_update} format="relative" disableUpdate={true} />
                                 <a
                                     href={`${base}/${tracker.tracker_id}`}
                                     class="absolute inset-0 z-10"
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
                             </td>
-                            <td class="relative px-2 w-2/4">
+                            <td class="hidden sm:table-cell relative px-2 truncate">
                                 {#if tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
                                     {@const fateId = tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
                                     {@const ceName = OCCULT_ENCOUNTERS[fateId]?.name?.[$currentLanguage] || OCCULT_ENCOUNTERS[fateId]?.name?.en || "Unknown CE"}
@@ -231,7 +237,7 @@
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
                             </td>
-                            <td class="relative px-2 w-2/4">
+                            <td class="hidden md:table-cell relative px-2 truncate">
                                 {#if tracker.active_fate_id || tracker.recent_fate_id}
                                     {@const fateId = tracker.active_fate_id || tracker.recent_fate_id}
                                     {@const fateName = OCCULT_FATES[fateId]?.name?.[$currentLanguage] || OCCULT_FATES[fateId]?.name?.en || "Unknown Fate"}

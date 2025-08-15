@@ -1,3 +1,20 @@
+
+
+<script>
+    import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
+    import { currentLanguage } from '$lib/stores';
+    import LanguageSwitcher from '../components/LanguageSwitcher.svelte';
+    import { Plus, List } from "@lucide/svelte";
+
+    // on form submit, go to /[trackerId]
+    function handleSubmit(event) {
+        event.preventDefault();
+        const trackerId = event.target.trackerId.value;
+        goto(`${base}/${trackerId}`);
+    }
+</script>
+
 <svelte:head>
 	<title>Occult Tracker</title>
 </svelte:head>
@@ -32,7 +49,7 @@
             </button>
         </form>
 
-        <div class="grid grid-cols-2 gap-4 mt-4 max-w-lg w-full mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 max-w-lg w-full mx-auto">
             <a href={`${base}/new`} class="flex items-center justify-center bg-slate-700/90 px-4 py-2 text-white hover:bg-slate-800/80 transition-colors duration-200 cursor-pointer">
                 <Plus class="w-4 h-4 inline-block mr-2" />
                 New Tracker
@@ -44,18 +61,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    import { goto } from '$app/navigation';
-    import { base } from '$app/paths';
-    import { currentLanguage } from '$lib/stores';
-    import LanguageSwitcher from '../components/LanguageSwitcher.svelte';
-    import { Plus, List } from "@lucide/svelte";
-
-    // on form submit, go to /[trackerId]
-    function handleSubmit(event) {
-        event.preventDefault();
-        const trackerId = event.target.trackerId.value;
-        goto(`${base}/${trackerId}`);
-    }
-</script>

@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { formatSeconds } from '$lib/utils';
 
-    let { timestamp, seconds, format = 'simple' } = $props();
+    let { timestamp, seconds, format = 'simple', disableUpdate = false } = $props();
 
     let finalString = $state('');
     let interval;
@@ -30,11 +30,15 @@
 
     onMount(() => {
         updateTime();
-        interval = setInterval(updateTime, 1000);
+        if (!disableUpdate) {
+            interval = setInterval(updateTime, 1000);
+        }
     });
 
     onDestroy(() => {
-        clearInterval(interval);
+        if (interval) {
+            clearInterval(interval);
+        }
     });
 </script>
 
