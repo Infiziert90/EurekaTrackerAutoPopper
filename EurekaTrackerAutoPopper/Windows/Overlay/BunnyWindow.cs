@@ -13,7 +13,7 @@ public class BunnyWindow : Window, IDisposable
 {
     private const int MinRespawn = 530;
     private const int MaxRespawn = 1000;
-    private const int OccultRespawn = 1800;
+    private const int OccultRespawn = 1805;
 
     private readonly Plugin Plugin;
 
@@ -86,7 +86,7 @@ public class BunnyWindow : Window, IDisposable
                 ImGuiHelpers.ScaledDummy(5);
             }
 
-            ImGui.TextUnformatted($"Fate: {bunny.Name}{bunny.Position}");
+            ImGui.TextUnformatted($"{bunny.Name}{bunny.Position}");
             if (bunny.Alive)
             {
                 ImGui.TextColored(ImGuiColors.HealerGreen, Language.BunnyWindowStatusAlive);
@@ -102,12 +102,15 @@ public class BunnyWindow : Window, IDisposable
                         : CalculateOccultRespawn(bunny);
 
                     if (min.TotalSeconds > 0)
-                        ImGui.TextUnformatted(Utils.TimeToFormatted(min));
+                        ImGui.TextUnformatted(Utils.TimeToClockFormat(min));
                     else
                         ImGui.TextColored(ImGuiColors.ParsedGold, Language.BunnyWindowRespawningsoon);
 
-                    ImGui.SameLine();
-                    ImGui.TextUnformatted($"(max {Utils.TimeToFormatted(max)})");
+                    if (min != max)
+                    {
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"(max {Utils.TimeToClockFormat(max)})");
+                    }
                 }
                 else
                 {

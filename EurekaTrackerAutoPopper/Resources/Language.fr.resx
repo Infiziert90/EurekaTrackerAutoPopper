@@ -260,6 +260,12 @@
   <data name="ConfigTooltipBunnyWindow" xml:space="preserve">
         <value>Ou utiliser la commande '/elbunny'.</value>
     </data>
+  <data name="ConfigOptionAutoPots" xml:space="preserve">
+        <value>Switch To Pot Markers Automatically</value>
+    </data>
+  <data name="ConfigTooltipAutoPots" xml:space="preserve">
+        <value>Automatically display pot treasure locations on the map when you have a pot following you.</value>
+    </data>
   <data name="ConfigTooltipClearMemory" xml:space="preserve">
         <value>Retirer les trésors repérés et les carottes, après X secondes sans être vus afin que les notifications puissent réapparaître.</value>
     </data>
@@ -297,7 +303,7 @@
         <value>Impossible de lire les logs.</value>
     </data>
   <data name="LogWrongTab" xml:space="preserve">
-        <value>Veuillez ouvrir votre carnet d'objectif dans la catégorie "Autres".</value>
+        <value>Veuillez ouvrir votre carnet d'objectifs dans la catégorie « Missions d'exploration ».</value>
     </data>
   <data name="LogWrongTabNote" xml:space="preserve">
         <value>Impossible de détecter la progression de Eurêka.</value>
@@ -652,7 +658,7 @@ Temps de recharge de 5s après chaque utilisation.</value>
         <value>Où puis-je rejoindre une incursion ? (Cliquez sur le nom)</value>
     </data>
   <data name="ForkedTowerInfoPlayerCount" xml:space="preserve">
-        <value>Nombre de joueurs sur la plateforme : {0}</value>
+        <value>Joueurs sur la plateforme (niveau 20 ou plus) : {0}</value>
     </data>
   <data name="ForkedTowerInfoPlayerListCollapseable" xml:space="preserve">
         <value>Liste de joueurs</value>
@@ -665,5 +671,14 @@ Temps de recharge de 5s après chaque utilisation.</value>
     </data>
   <data name="OccultTowerActiveIndicator" xml:space="preserve">
         <value> (active)</value>
+    </data>
+  <data name="ButtonOpenHelper" xml:space="preserve">
+        <value>Ouvrir la fenêtre d'aide</value>
+    </data>
+  <data name="MarketSetReroll" xml:space="preserve">
+        <value>Second Chance</value>
+    </data>
+  <data name="MarkerSetPotReroll" xml:space="preserve">
+        <value>Pot And Second Chance</value>
     </data>
 </root>

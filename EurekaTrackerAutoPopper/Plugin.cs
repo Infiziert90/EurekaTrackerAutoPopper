@@ -749,7 +749,7 @@ public class Plugin : IDalamudPlugin
             if (Configuration.AutoSwitchToOccultPots && SavedOccultMarkerSets is null)
             {
                 SavedOccultMarkerSets = MarkerSetToPlace;
-                PlaceOccultMarkerSet(OccultMarkerSets.Pot, true);
+                PlaceOccultMarkerSet(OccultMarkerSets.PotAndReroll, true);
             }
         }
         else
@@ -831,6 +831,14 @@ public class Plugin : IDalamudPlugin
             case OccultMarkerSets.Pot:
                 AddOccultPotLocations();
                 break;
+            case OccultMarkerSets.Reroll:
+                AddOccultRerollLocations();
+                break;
+            case OccultMarkerSets.PotAndReroll:
+                AddOccultPotLocations();
+                AddOccultRerollLocations();
+                MarkerSetToPlace = SharedMarketSet.OccultPotReroll;
+                break;
             case OccultMarkerSets.Bunny:
                 AddOccultBunnyPositions();
                 break;
@@ -899,6 +907,13 @@ public class Plugin : IDalamudPlugin
         MarkerSetToPlace = SharedMarketSet.OccultPot;
         foreach (var worldPos in OccultChests.PotPosition[ClientState.TerritoryType])
             SetMarkers(worldPos, worldPos, 60354);
+    }
+
+    private void AddOccultRerollLocations()
+    {
+        MarkerSetToPlace = SharedMarketSet.OccultReroll;
+        foreach (var worldPos in OccultChests.RerollPosition[ClientState.TerritoryType])
+            SetMarkers(worldPos, worldPos, 61473);
     }
 
     private void AddOccultBunnyPositions()

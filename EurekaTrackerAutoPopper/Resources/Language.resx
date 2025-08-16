@@ -676,4 +676,10 @@ A cooldown of 5s applies after each use.</value>
     <data name="ButtonOpenHelper" xml:space="preserve">
         <value>Open Helper Window</value>
     </data>
+    <data name="MarketSetReroll" xml:space="preserve">
+        <value>Second Chance</value>
+    </data>
+    <data name="MarkerSetPotReroll" xml:space="preserve">
+        <value>Pot And Second Chance</value>
+    </data>
 </root>

@@ -14,6 +14,8 @@ public enum SharedMarketSet
     OccultBronze = 5,
     OccultSilver = 6,
     OccultTreasureCarrots = 7,
+    OccultReroll = 8,
+    OccultPotReroll = 9,
 }
 
 public enum OccultMarkerSets
@@ -25,6 +27,8 @@ public enum OccultMarkerSets
     OnlyBronze = 4,
     OnlySilver = 5,
     TreasureAndCarrots = 6,
+    Reroll = 7,
+    PotAndReroll = 8,
 }
 
 public enum Territory : uint
@@ -61,6 +65,8 @@ public static class EnumExtensions
             OccultMarkerSets.OnlyBronze => Language.MarkerSetOnlyBronze,
             OccultMarkerSets.OnlySilver => Language.MarkerSetOnlySilver,
             OccultMarkerSets.TreasureAndCarrots => Language.MarkerSetCombined,
+            OccultMarkerSets.Reroll => Language.MarketSetReroll,
+            OccultMarkerSets.PotAndReroll => Language.MarkerSetPotReroll,
             _ => "Unknown",
         };
     }
@@ -76,6 +82,8 @@ public static class EnumExtensions
             SharedMarketSet.OccultBronze => OccultMarkerSets.OnlyBronze,
             SharedMarketSet.OccultSilver => OccultMarkerSets.OnlySilver,
             SharedMarketSet.OccultTreasureCarrots => OccultMarkerSets.TreasureAndCarrots,
+            SharedMarketSet.OccultReroll => OccultMarkerSets.Reroll,
+            SharedMarketSet.OccultPotReroll => OccultMarkerSets.PotAndReroll,
             _ =>  OccultMarkerSets.None,
         };
     }

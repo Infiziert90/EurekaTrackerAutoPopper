@@ -12,11 +12,7 @@ public static class Helper
 {
     public const float SeparatorPadding = 1.0f;
     public static float GetSeparatorPaddingHeight => SeparatorPadding * ImGuiHelpers.GlobalScale;
-
-    public static float CalculateChildHeight()
-    {
-        return ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().WindowPadding.Y + GetSeparatorPaddingHeight;
-    }
+    public static float CalculateChildHeight() => ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().WindowPadding.Y + GetSeparatorPaddingHeight;
 
     private static readonly int[] SoundEffects = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52];
     public static bool AddSoundOption(int id, string text, ref bool playSound, ref int soundEffect)

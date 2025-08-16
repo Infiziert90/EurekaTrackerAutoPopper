@@ -71,7 +71,7 @@ public class FastSwitchOverlay : Window, IDisposable
         ImGui.TextUnformatted("Switch To:");
         ImGui.SameLine();
         ImGui.SetNextItemWidth(175.0f * ImGuiHelpers.GlobalScale);
-        using var combo = ImRaii.Combo("##SwitchMarkersToCombo", Plugin.MarkerSetToPlace.ToOccultSet().ToName());
+        using var combo = ImRaii.Combo("##SwitchMarkersToCombo", Plugin.MarkerSetToPlace.ToOccultSet().ToName(), ImGuiComboFlags.HeightLarge);
         if (!combo.Success)
             return;
 

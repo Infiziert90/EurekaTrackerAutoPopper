@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace EurekaTrackerAutoPopper;
@@ -85,118 +86,125 @@ public static class OccultChests
     public static readonly Dictionary<uint, List<Vector3>> PotPosition = new()
     {
         { 1252, [
-            new Vector3(67.45271f, 69.477974f, 745.8658f), // Counter: 75
-            new Vector3(74.73397f, 110.494316f, -394.1289f), // Counter: 75
-            new Vector3(-554.6146f, 99.01769f, -309.1231f), // Counter: 73
-            new Vector3(-195.4419f, 110.15342f, -287.8911f), // Counter: 70
-            new Vector3(107.0611f, 105.699875f, 146.7059f), // Counter: 69
-            new Vector3(393.0191f, 104f, -124.1651f), // Counter: 69
-            new Vector3(263.2559f, 100.38499f, 326.6834f), // Counter: 69
-            new Vector3(571.5841f, 51.451305f, -813.1642f), // Counter: 68
-            new Vector3(-165.2374f, 95.33837f, 437.4505f), // Counter: 68
-            new Vector3(-60.72729f, 69.687035f, 828.4997f), // Counter: 66
-            new Vector3(341.4413f, 95.99999f, 194.7507f), // Counter: 66
-            new Vector3(587.7039f, 78.8956f, -545.8168f), // Counter: 66
-            new Vector3(-829.598f, 62.66814f, 66.82948f), // Counter: 65
-            new Vector3(80.19762f, 101.27949f, 391.2263f), // Counter: 64
-            new Vector3(-382.4396f, 109.30187f, -378.3482f), // Counter: 63
-            new Vector3(606.4641f, 108.07402f, 184.8517f), // Counter: 63
-            new Vector3(69.70596f, 111.56108f, -239.064f), // Counter: 62
-            new Vector3(825.9521f, 70f, 772.4054f), // Counter: 62
-            new Vector3(-312.2778f, 103.19944f, -35.25348f), // Counter: 62
-            new Vector3(-459.1735f, 93.57443f, 5.054043f), // Counter: 62
-            new Vector3(878.1131f, 108.28959f, -91.1057f), // Counter: 60
-            new Vector3(393.2685f, 57.545956f, 844.6924f), // Counter: 60
-            new Vector3(-836.7586f, 106.999985f, 597.2944f), // Counter: 59
-            new Vector3(-734.1434f, 170.99998f, 683.7238f), // Counter: 58
-            new Vector3(301.8741f, 103.784424f, 70.59854f), // Counter: 57
-            new Vector3(17.60418f, 65.93209f, 674.6207f), // Counter: 57
-            new Vector3(-676.6202f, 128.57442f, 1.531581f), // Counter: 57
-            new Vector3(-216.372f, 5.4469404f, -510.1361f), // Counter: 57
-            new Vector3(-746.1318f, 172.00023f, 828.8809f), // Counter: 56
-            new Vector3(-324.2736f, 121f, 203.2017f), // Counter: 56
-            new Vector3(-54.69518f, 99.40573f, 405.0261f), // Counter: 56
-            new Vector3(440.8355f, 70.3f, 876.4097f), // Counter: 56
-            new Vector3(423.3505f, 70.3f, 578.9013f), // Counter: 56
-            new Vector3(-333.3444f, 2.9999998f, -861.1722f), // Counter: 55
-            new Vector3(-798.7886f, 84.22545f, -4.822005f), // Counter: 55
-            new Vector3(-386.437f, 98.60658f, -221.7847f), // Counter: 55
-            new Vector3(-313.2906f, 108.10962f, 70.76207f), // Counter: 54
-            new Vector3(-836.1612f, 107f, 770.2822f), // Counter: 54
-            new Vector3(200.1241f, 56f, 624.2285f), // Counter: 54
-            new Vector3(891.2597f, 120f, -20.672f), // Counter: 54
-            new Vector3(330.8659f, 6.7168036f, -654.5339f), // Counter: 53
-            new Vector3(-38.97946f, 102.073296f, -175.4589f), // Counter: 52
-            new Vector3(-603.3457f, 139f, 858.6771f), // Counter: 52
-            new Vector3(-188.1745f, 2.999999f, -717.2005f), // Counter: 51
-            new Vector3(-645.3027f, 135.69208f, -73.54771f), // Counter: 51
-            new Vector3(662.4388f, 120f, 161.1339f), // Counter: 51
-            new Vector3(803.6609f, 95.99998f, -354.1809f), // Counter: 51
-            new Vector3(-660.5336f, 98f, -216.7666f), // Counter: 50
-            new Vector3(684.4223f, 96.10129f, -165.4811f), // Counter: 50
-            new Vector3(-713.6796f, 203f, 710.08f), // Counter: 49
-            new Vector3(-476.3011f, 101.44228f, -86.69939f), // Counter: 49
-            new Vector3(-534.6993f, 2.999998f, -651.6244f), // Counter: 48
-            new Vector3(705.2716f, 68.143616f, 358.6714f), // Counter: 48
-            new Vector3(224.7233f, 68.7328f, 518.668f), // Counter: 47
-            new Vector3(19.73968f, 26.045855f, -420.977f), // Counter: 46
-            new Vector3(570.2421f, 64.66201f, 272.1734f), // Counter: 46
-            new Vector3(781.2514f, 70f, 560.0701f), // Counter: 41
-            new Vector3(-386.5904f, -0.13994062f, -461.0976f), // Counter: 39
-            new Vector3(-730.5441f, 107.694275f, -371.4776f), // Counter: 33
-            new Vector3(-810.8279f, 114.053925f, -226.8324f), // Counter: 26
-            new Vector3(-676.4631f, 5f, -769.7955f), // Counter: 15
-            new Vector3(-732.2048f, 139f, 828.8491f), // Counter: 15
-            new Vector3(-708.6777f, 171f, 669.5714f), // Counter: 14
-            new Vector3(-625.7809f, 171f, 810.8691f), // Counter: 13
-            new Vector3(-659.1158f, 12.198493f, -508.7968f), // Counter: 12
-            new Vector3(-842.8967f, 75.76903f, -125.0559f), // Counter: 11
-            new Vector3(-680.0345f, 201f, 739.9117f), // Counter: 11
-            new Vector3(-793.0552f, 5f, -777.3126f), // Counter: 10
-            new Vector3(-718.0424f, 5f, -633.8791f), // Counter: 9
-            new Vector3(-886.4718f, 107f, 712.4964f), // Counter: 9
-            new Vector3(-840.8771f, 107.26465f, -250.273f), // Counter: 8
-            new Vector3(-803.5182f, 3f, -602.7497f), // Counter: 8
-            new Vector3(-813.9943f, 5f, -663.3634f), // Counter: 8
-            new Vector3(-823.9183f, 140.00032f, 677.6934f), // Counter: 7
-            new Vector3(-776.6315f, 5f, -486.978f), // Counter: 7
-            new Vector3(-868.8489f, 67.5054f, -59.44909f), // Counter: 6
-            new Vector3(-708.687f, 141.16982f, -139.3283f), // Counter: 6
-            new Vector3(-758.8058f, 127.66496f, -183.164f), // Counter: 6
-            new Vector3(-785.997f, 162.39513f, 790.5948f), // Counter: 5
-            new Vector3(-796.66f, 114.15647f, -228.9318f), // Counter: 5
-            ] // 80
+            new Vector3(571.5841f, 51.451305f, -813.1642f), // Counter: 528 // Treasures: Bronze: 291,Silver: 203,Gold: 34
+            new Vector3(-195.4419f, 110.15342f, -287.8911f), // Counter: 512 // Treasures: Bronze: 257,Silver: 217,Gold: 38
+            new Vector3(74.73397f, 110.494316f, -394.1289f), // Counter: 495 // Treasures: Bronze: 232,Silver: 206,Gold: 57
+            new Vector3(-554.6146f, 99.01769f, -309.1231f), // Counter: 490 // Treasures: Bronze: 268,Silver: 173,Gold: 49
+            new Vector3(-386.437f, 98.60658f, -221.7847f), // Counter: 487 // Treasures: Bronze: 261,Silver: 175,Gold: 51
+            new Vector3(606.4641f, 108.07402f, 184.8517f), // Counter: 478 // Treasures: Bronze: 213,Silver: 219,Gold: 46
+            new Vector3(662.4388f, 120f, 161.1339f), // Counter: 472 // Treasures: Bronze: 240,Silver: 181,Gold: 51
+            new Vector3(587.7039f, 78.8956f, -545.8168f), // Counter: 470 // Treasures: Bronze: 248,Silver: 172,Gold: 50
+            new Vector3(891.2597f, 120f, -20.672f), // Counter: 470 // Treasures: Bronze: 249,Silver: 181,Gold: 40
+            new Vector3(803.6609f, 95.99998f, -354.1809f), // Counter: 469 // Treasures: Bronze: 229,Silver: 189,Gold: 51
+            new Vector3(-836.7586f, 106.999985f, 597.2944f), // Counter: 468 // Treasures: Bronze: 239,Silver: 179,Gold: 50
+            new Vector3(878.1131f, 108.28959f, -91.1057f), // Counter: 467 // Treasures: Bronze: 222,Silver: 197,Gold: 48
+            new Vector3(-312.2778f, 103.19944f, -35.25348f), // Counter: 467 // Treasures: Bronze: 236,Silver: 196,Gold: 35
+            new Vector3(341.4413f, 95.99999f, 194.7507f), // Counter: 466 // Treasures: Bronze: 221,Silver: 199,Gold: 46
+            new Vector3(107.0611f, 105.699875f, 146.7059f), // Counter: 464 // Treasures: Bronze: 221,Silver: 208,Gold: 35
+            new Vector3(825.9521f, 70f, 772.4054f), // Counter: 463 // Treasures: Bronze: 230,Silver: 184,Gold: 49
+            new Vector3(-216.372f, 5.4469404f, -510.1361f), // Counter: 463 // Treasures: Bronze: 242,Silver: 179,Gold: 42
+            new Vector3(570.2421f, 64.66201f, 272.1734f), // Counter: 459 // Treasures: Bronze: 214,Silver: 196,Gold: 49
+            new Vector3(67.45271f, 69.477974f, 745.8658f), // Counter: 458 // Treasures: Bronze: 226,Silver: 170,Gold: 62
+            new Vector3(69.70596f, 111.56108f, -239.064f), // Counter: 457 // Treasures: Bronze: 239,Silver: 172,Gold: 46
+            new Vector3(301.8741f, 103.784424f, 70.59854f), // Counter: 452 // Treasures: Bronze: 234,Silver: 173,Gold: 45
+            new Vector3(684.4223f, 96.10129f, -165.4811f), // Counter: 451 // Treasures: Bronze: 227,Silver: 182,Gold: 42
+            new Vector3(-165.2374f, 95.33837f, 437.4505f), // Counter: 448 // Treasures: Bronze: 218,Silver: 186,Gold: 44
+            new Vector3(-38.97946f, 102.073296f, -175.4589f), // Counter: 448 // Treasures: Bronze: 220,Silver: 188,Gold: 40
+            new Vector3(17.60418f, 65.93209f, 674.6207f), // Counter: 448 // Treasures: Bronze: 227,Silver: 183,Gold: 38
+            new Vector3(-459.1735f, 93.57443f, 5.054043f), // Counter: 448 // Treasures: Bronze: 219,Silver: 193,Gold: 36
+            new Vector3(-60.72729f, 69.687035f, 828.4997f), // Counter: 446 // Treasures: Bronze: 240,Silver: 162,Gold: 44
+            new Vector3(-333.3444f, 2.9999998f, -861.1722f), // Counter: 445 // Treasures: Bronze: 224,Silver: 187,Gold: 34
+            new Vector3(-188.1745f, 2.999999f, -717.2005f), // Counter: 445 // Treasures: Bronze: 218,Silver: 180,Gold: 47
+            new Vector3(-476.3011f, 101.44228f, -86.69939f), // Counter: 444 // Treasures: Bronze: 227,Silver: 174,Gold: 43
+            new Vector3(393.2685f, 57.545956f, 844.6924f), // Counter: 442 // Treasures: Bronze: 219,Silver: 190,Gold: 33
+            new Vector3(330.8659f, 6.7168036f, -654.5339f), // Counter: 442 // Treasures: Bronze: 230,Silver: 167,Gold: 45
+            new Vector3(-54.69518f, 99.40573f, 405.0261f), // Counter: 442 // Treasures: Bronze: 224,Silver: 172,Gold: 46
+            new Vector3(393.0191f, 104f, -124.1651f), // Counter: 441 // Treasures: Bronze: 225,Silver: 181,Gold: 35
+            new Vector3(-313.2906f, 108.10962f, 70.76207f), // Counter: 441 // Treasures: Bronze: 215,Silver: 179,Gold: 47
+            new Vector3(80.19762f, 101.27949f, 391.2263f), // Counter: 440 // Treasures: Bronze: 217,Silver: 181,Gold: 42
+            new Vector3(-534.6993f, 2.999998f, -651.6244f), // Counter: 439 // Treasures: Bronze: 223,Silver: 178,Gold: 38
+            new Vector3(705.2716f, 68.143616f, 358.6714f), // Counter: 437 // Treasures: Bronze: 212,Silver: 181,Gold: 44
+            new Vector3(19.73968f, 26.045855f, -420.977f), // Counter: 435 // Treasures: Bronze: 200,Silver: 188,Gold: 47
+            new Vector3(-798.7886f, 84.22545f, -4.822005f), // Counter: 434 // Treasures: Bronze: 215,Silver: 174,Gold: 45
+            new Vector3(263.2559f, 100.38499f, 326.6834f), // Counter: 434 // Treasures: Bronze: 210,Silver: 182,Gold: 42
+            new Vector3(440.8355f, 70.3f, 876.4097f), // Counter: 433 // Treasures: Bronze: 213,Silver: 182,Gold: 382
+            new Vector3(200.1241f, 56f, 624.2285f), // Counter: 432 // Treasures: Bronze: 209,Silver: 173,Gold: 50
+            new Vector3(-829.598f, 62.66814f, 66.82948f), // Counter: 429 // Treasures: Bronze: 224,Silver: 163,Gold: 42
+            new Vector3(-382.4396f, 109.30187f, -378.3482f), // Counter: 427 // Treasures: Bronze: 217,Silver: 164,Gold: 46
+            new Vector3(-603.3457f, 139f, 858.6771f), // Counter: 426 // Treasures: Bronze: 204,Silver: 177,Gold: 45
+            new Vector3(-734.1434f, 170.99998f, 683.7238f), // Counter: 425 // Treasures: Bronze: 229,Silver: 169,Gold: 27
+            new Vector3(-324.2736f, 121f, 203.2017f), // Counter: 425 // Treasures: Bronze: 217,Silver: 164,Gold: 44
+            new Vector3(423.3505f, 70.3f, 578.9013f), // Counter: 423 // Treasures: Bronze: 209,Silver: 169,Gold: 45
+            new Vector3(224.7233f, 68.7328f, 518.668f), // Counter: 422 // Treasures: Bronze: 226,Silver: 153,Gold: 43
+            new Vector3(-836.1612f, 107f, 770.2822f), // Counter: 421 // Treasures: Bronze: 222,Silver: 155,Gold: 44
+            new Vector3(-660.5336f, 98f, -216.7666f), // Counter: 420 // Treasures: Bronze: 194,Silver: 181,Gold: 45
+            new Vector3(-645.3027f, 135.69208f, -73.54771f), // Counter: 419 // Treasures: Bronze: 213,Silver: 171,Gold: 35
+            new Vector3(-676.6202f, 128.57442f, 1.531581f), // Counter: 412 // Treasures: Bronze: 204,Silver: 159,Gold: 49
+            new Vector3(781.2514f, 70f, 560.0701f), // Counter: 410 // Treasures: Bronze: 196,Silver: 178,Gold: 36
+            new Vector3(-386.5904f, -0.13994062f, -461.0976f), // Counter: 410 // Treasures: Bronze: 208,Silver: 170,Gold: 32
+            new Vector3(-713.6796f, 203f, 710.08f), // Counter: 409 // Treasures: Bronze: 192,Silver: 164,Gold: 53
+            new Vector3(-746.1318f, 172.00023f, 828.8809f), // Counter: 398 // Treasures: Bronze: 202,Silver: 165,Gold: 3139
+            new Vector3(-730.5441f, 107.694275f, -371.4776f), // Counter: 315 // Treasures: Bronze: 164,Silver: 115,Gold: 363
+            new Vector3(-810.8279f, 114.053925f, -226.8324f), // Counter: 279 // Treasures: Bronze: 123,Silver: 128,Gold: 286
+            ] // 60
+        },
+    };
+
+    public static readonly Dictionary<uint, List<Vector3>> RerollPosition = new()
+    {
+        { 1252, [
+            new Vector3(-676.4631f, 5f, -769.7955f), // Counter: 123 // Treasures: Gold: 123
+            new Vector3(-823.9183f, 140.00032f, 677.6934f), // Counter: 118 // Treasures: Gold: 118
+            new Vector3(-886.4718f, 107f, 712.4964f), // Counter: 118 // Treasures: Gold: 118
+            new Vector3(-625.7809f, 171f, 810.8691f), // Counter: 114 // Treasures: Gold: 114
+            new Vector3(-813.9943f, 5f, -663.3634f), // Counter: 108 // Treasures: Gold: 108
+            new Vector3(-842.8967f, 75.76903f, -125.0559f), // Counter: 107 // Treasures: Gold: 107
+            new Vector3(-680.0345f, 201f, 739.9117f), // Counter: 107 // Treasures: Gold: 107
+            new Vector3(-793.0552f, 5f, -777.3126f), // Counter: 106 // Treasures: Gold: 106
+            new Vector3(-708.6777f, 171f, 669.5714f), // Counter: 105 // Treasures: Gold: 105
+            new Vector3(-718.0424f, 5f, -633.8791f), // Counter: 105 // Treasures: Gold: 105
+            new Vector3(-868.8489f, 67.5054f, -59.44909f), // Counter: 100 // Treasures: Gold: 100
+            new Vector3(-803.5182f, 3f, -602.7497f), // Counter: 96 // Treasures: Gold: 96
+            new Vector3(-732.2048f, 139f, 828.8491f), // Counter: 95 // Treasures: Gold: 95
+            new Vector3(-659.1158f, 12.198493f, -508.7968f), // Counter: 95 // Treasures: Gold: 95
+            new Vector3(-785.997f, 162.39513f, 790.5948f), // Counter: 95 // Treasures: Gold: 95
+            new Vector3(-840.8771f, 107.26465f, -250.273f), // Counter: 90 // Treasures: Gold: 90
+            new Vector3(-708.687f, 141.16982f, -139.3283f), // Counter: 85 // Treasures: Gold: 85
+            new Vector3(-796.66f, 114.15647f, -228.9318f), // Counter: 83 // Treasures: Gold: 83
+            new Vector3(-776.6315f, 5f, -486.978f), // Counter: 80 // Treasures: Gold: 80
+            new Vector3(-758.8058f, 127.66496f, -183.164f), // Counter: 77 // Treasures: Gold: 77
+            ] // 20
         },
     };
 
     public static readonly Dictionary<uint, List<Vector3>> BunnyPosition = new()
     {
         { 1252, [
-            new Vector3(-439.0463f, 115.82392f, 184.4665f), // Counter: 12
-            new Vector3(-727.8528f, 81.47683f, 328.9311f), // Counter: 12
-            new Vector3(-701.8768f, 201f, 718.7181f), // Counter: 11
-            new Vector3(-743.601f, 96.39003f, 84.43998f), // Counter: 10
-            new Vector3(248.9159f, 55.999996f, 791.1138f), // Counter: 10
-            new Vector3(-174.0473f, 121.00001f, 107.6488f), // Counter: 10
-            new Vector3(-575.6361f, 162.39511f, 668.7043f), // Counter: 10
-            new Vector3(-273.0878f, 75f, 850.0336f), // Counter: 10
-            new Vector3(650.2321f, 108f, 141.1927f), // Counter: 9
-            new Vector3(-84.73673f, 2.999999f, -796.0166f), // Counter: 8
-            new Vector3(-843.8602f, 83.657074f, -36.78173f), // Counter: 8
-            new Vector3(-400.528f, 2.999999f, -518.3032f), // Counter: 7
-            new Vector3(827.2007f, 108f, -156.4444f), // Counter: 7
-            new Vector3(772.3591f, 70.3f, 531.1259f), // Counter: 7
-            new Vector3(845.5334f, 98f, 777.4331f), // Counter: 7
-            new Vector3(720.4133f, 120f, 271.05f), // Counter: 7
-            new Vector3(865.0009f, 95.99958f, -214.6744f), // Counter: 6
-            new Vector3(283.6546f, 55.999996f, 587.3107f), // Counter: 6
-            new Vector3(-710.266f, 3f, -451.5128f), // Counter: 6
-            new Vector3(-806.5123f, 107f, 887.6146f), // Counter: 4
-            new Vector3(-771.6308f, 5f, -694.0016f), // Counter: 4
-            new Vector3(-490.3187f, 3f, -741.0153f), // Counter: 4
-            new Vector3(466.2025f, 70.3f, 563.2519f), // Counter: 4
-            new Vector3(477.4074f, 96.10128f, 138.6543f), // Counter: 3
-            new Vector3(-554.0244f, 110.698654f, -365.897f), // Counter: 3
+            new Vector3(283.6546f, 55.999996f, 587.3107f), // Counter: 230
+            new Vector3(-439.0463f, 115.82392f, 184.4665f), // Counter: 217
+            new Vector3(477.4074f, 96.10128f, 138.6543f), // Counter: 213
+            new Vector3(-743.601f, 96.39003f, 84.43998f), // Counter: 211
+            new Vector3(-575.6361f, 162.39511f, 668.7043f), // Counter: 208
+            new Vector3(865.0009f, 95.99958f, -214.6744f), // Counter: 204
+            new Vector3(248.9159f, 55.999996f, 791.1138f), // Counter: 197
+            new Vector3(-490.3187f, 3f, -741.0153f), // Counter: 197
+            new Vector3(720.4133f, 120f, 271.05f), // Counter: 196
+            new Vector3(466.2025f, 70.3f, 563.2519f), // Counter: 196
+            new Vector3(-701.8768f, 201f, 718.7181f), // Counter: 192
+            new Vector3(-273.0878f, 75f, 850.0336f), // Counter: 188
+            new Vector3(650.2321f, 108f, 141.1927f), // Counter: 186
+            new Vector3(827.2007f, 108f, -156.4444f), // Counter: 182
+            new Vector3(845.5334f, 98f, 777.4331f), // Counter: 182
+            new Vector3(772.3591f, 70.3f, 531.1259f), // Counter: 177
+            new Vector3(-84.73673f, 2.999999f, -796.0166f), // Counter: 176
+            new Vector3(-843.8602f, 83.657074f, -36.78173f), // Counter: 176
+            new Vector3(-727.8528f, 81.47683f, 328.9311f), // Counter: 175
+            new Vector3(-400.528f, 2.999999f, -518.3032f), // Counter: 174
+            new Vector3(-806.5123f, 107f, 887.6146f), // Counter: 170
+            new Vector3(-174.0473f, 121.00001f, 107.6488f), // Counter: 166
+            new Vector3(-771.6308f, 5f, -694.0016f), // Counter: 160
+            new Vector3(-710.266f, 3f, -451.5128f), // Counter: 148
+            new Vector3(-554.0244f, 110.698654f, -365.897f), // Counter: 144
             ] // 25
         },
     };
@@ -204,10 +212,10 @@ public static class OccultChests
     public static Vector3 CalculateDistance(uint territoryId, Vector3 player)
     {
         var bestPos = (Dif: InRange, Pos: Vector3.Zero);
-        if (!PotPosition.TryGetValue(territoryId, out var positions))
+        if (!PotPosition.TryGetValue(territoryId, out var positions) || !RerollPosition.TryGetValue(territoryId, out var rerollPositions))
             return bestPos.Pos;
 
-        foreach (var pos in positions)
+        foreach (var pos in positions.Concat(rerollPositions))
         {
             var dif = Utils.GetDistance(player, pos);
             if (dif < bestPos.Dif)

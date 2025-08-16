@@ -1222,11 +1222,29 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pot And Second Chance.
+        /// </summary>
+        internal static string MarkerSetPotReroll {
+            get {
+                return ResourceManager.GetString("MarkerSetPotReroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Treasure.
         /// </summary>
         internal static string MarkerSetTreasure {
             get {
                 return ResourceManager.GetString("MarkerSetTreasure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Second Chance.
+        /// </summary>
+        internal static string MarketSetReroll {
+            get {
+                return ResourceManager.GetString("MarketSetReroll", resourceCulture);
             }
         }
         
