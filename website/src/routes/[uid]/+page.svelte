@@ -4,7 +4,7 @@
     import { base } from "$app/paths";
     import { TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS } from "$lib/const";
     import { currentLanguage } from "$lib/stores";
-    import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull } from "@lucide/svelte";
+    import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull, Link, Clipboard } from "@lucide/svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
     import ItemIcon from "../../components/ItemIcon.svelte";
@@ -23,7 +23,6 @@
     
     // New state variables for tracker type 2 functionality
     let isPasswordUnlocked = $state(false);
-    let passwordInput = $state("");
     let trackerType = $state(1);
     let originalData = $state(null);
     let isUpdating = $state(false);
@@ -33,14 +32,13 @@
     // URL password will be checked in onMount
     let urlPassword = null;
 
-    // Function to handle password authentication
+    // Function to handle password authentication using alert()
     function unlockWithPassword() {
-        if (passwordInput === trackerResults.password) {
+        const password = prompt("Enter tracker password:");
+        if (password === trackerResults.password) {
             isPasswordUnlocked = true;
             // Store password in localStorage for persistence
-            localStorage.setItem(`tracker_password_${uid}`, passwordInput);
-            // Clear the input field for security
-            passwordInput = "";
+            localStorage.setItem(`tracker_password_${uid}`, password);
             
             // Clean up URL password if it was used
             localStorage.removeItem(`url_password_${uid}`);
@@ -51,7 +49,7 @@
                 newUrl.searchParams.delete('password');
                 window.history.replaceState({}, '', newUrl);
             }
-        } else {
+        } else if (password !== null) {
             alert("Incorrect password");
         }
     }
@@ -160,6 +158,21 @@
         await handleStatusUpdate({ encounter: fate, type: 'fate', status: 'dead' });
     }
 
+    // Check if 
+    function isAlive(fate, now = Math.floor(Date.now() / 1000)) {
+        // If current time is before spawn, not alive
+        if (now < fate.spawn_time) return false;
+
+        // A death is valid only if it's after the spawn
+        const hasValidDeath = fate.death_time > fate.spawn_time;
+
+        // If no valid death time, alive once spawned
+        if (!hasValidDeath) return true;
+
+        // Alive if now is still before death_time
+        return now <= fate.death_time;
+    }
+
     // Fetch tracker data from API
     async function fetchTrackerData() {
         try {
@@ -206,7 +219,7 @@
                     if (Array.isArray(trackerResults.encounter_history)) {
                         trackerResults.encounter_history.forEach(encounter => {
                             encounter.name = OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage];
-                            encounter.alive = encounter.death_time < encounter.spawn_time;
+                            encounter.alive = isAlive(encounter);
 
                             // If any encounter is alive, set activeCE to the first one we find
                             if (encounter.alive && !activeCE) {
@@ -236,7 +249,7 @@
                     if (Array.isArray(trackerResults.fate_history)) {
                         trackerResults.fate_history.forEach(fate => {
                             fate.name = OCCULT_FATES[fate.fate_id].name[$currentLanguage];
-                            fate.alive = fate.death_time < fate.spawn_time;
+                            fate.alive = isAlive(fate);
                         });
 
                         // If any fate is alive, set activeFate to the first one we find
@@ -261,7 +274,7 @@
                     if (Array.isArray(trackerResults.pot_history)) {
                         trackerResults.pot_history.forEach(pot => {
                             pot.name = OCCULT_FATES[pot.fate_id].name[$currentLanguage];
-                            pot.alive = pot.death_time < pot.spawn_time;
+                            pot.alive = isAlive(pot);
                             
                             // If any pot is alive, set activeBunny to the first one we find
                             if (pot.alive && !activeBunny) {
@@ -280,18 +293,22 @@
             // Sort pot_history by last_seen (ascending), and get the nextSpawn and the lastAlive
             if (trackerResults.pot_history && trackerResults.pot_history.length > 0) {
                 trackerResults.pot_history.sort((a, b) => a.last_seen - b.last_seen);
+
                 const nextSpawn = trackerResults.pot_history[0];
                 const lastAlive = trackerResults.pot_history[trackerResults.pot_history.length - 1];
 
                 // If both are -1, then no pot has spawned
                 if (nextSpawn.last_seen == -1 && lastAlive.last_seen == -1) {
                     bunny = nextSpawn;
-                } else { 
-                    // Else, apply the time of the latest spawn to calculate the next spawn
+                // If our last alive is still active then show it
+                } else if (lastAlive.alive) {
+                    bunny = lastAlive;
+                // Else, apply the time of the latest spawn to calculate the next spawn
+                } else {
                     if (nextSpawn.last_seen == -1) {
                         // Set last_seen to 30 min previously
                         nextSpawn.last_seen = lastAlive.spawn_time - OCCULT_RESPAWN;
-                    }                
+                    }
 
                     nextSpawn.spawn_time = lastAlive.spawn_time;
                     bunny = nextSpawn;
@@ -315,15 +332,8 @@
         
         // Initialize password from URL or localStorage
         if (urlPassword) {
-            passwordInput = urlPassword;
             // Store URL password for later use when tracker data loads
             localStorage.setItem(`url_password_${uid}`, urlPassword);
-        } else {
-            // Try to restore from localStorage
-            const storedPassword = localStorage.getItem(`tracker_password_${uid}`);
-            if (storedPassword) {
-                passwordInput = storedPassword;
-            }
         }
         
         // Initial fetch
@@ -405,7 +415,7 @@
         </div>
     {:else}
         <div class="bg-slate-950 p-2 mb-2">
-            <div class="max-w-6xl px-8 mx-auto flex flex-col lg:flex-row items-center justify-between">
+            <div class="max-w-6xl px-8 mx-auto flex flex-col gap-5 lg:flex-row items-center justify-between">
                 <h1>
                     <a href={`${base}/`} aria-label="Occult Tracker">
                         <img
@@ -416,35 +426,57 @@
                         />
                     </a>
                 </h1>
-                <div class="flex flex-col items-center lg:items-end gap-2">
-                    <p>Tracker ID: {uid}</p>
-                    <LanguageSwitcher />
-                    
-                    <!-- Password Input for Tracker Type 2 -->
-                    {#if trackerType === 2}
-                        <div class="flex gap-2 items-center">
-                            {#if isPasswordUnlocked}
-                                <div class="flex items-center gap-2 text-green-400 text-sm">
-                                    <Unlock class="w-4 h-4" />
-                                    <span>Unlocked</span>
-                                </div>
-                            {:else}
-                                <input
-                                    type="password"
-                                    bind:value={passwordInput}
-                                    placeholder='•••••'
-                                    class="bg-slate-700 px-2 py-1 border border-slate-600 focus:border-blue-400 focus:outline-none text-sm w-32"
-                                    onkeydown={(e) => e.key === 'Enter' && unlockWithPassword()}
-                                />
-                                <button
-                                    onclick={unlockWithPassword}
-                                    class="bg-blue-600 hover:bg-blue-700 px-2 py-1 text-white text-xs font-medium transition-colors"
-                                >
-                                    <Lock class="w-4 h-4 inline-block mr-2" />
-                                </button>
+                <div class="flex grow flex-col lg:flex-row items-center lg:justify-between gap-2">
+                    <div>
+                        <table class="text-sm border-separate border-spacing-x-2 border-spacing-y-0.5 align-middle"><tbody>
+
+                            <!-- Tracker ID row -->
+                            <tr>
+                                <td>
+                                    ID: <span class="bg-white text-black px-1">{uid}</span>
+                                </td>
+                                <td>
+                                    <div class="flex items-center gap-2">
+                                        <button disabled class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <Clipboard class="w-4 h-4" />
+                                        </button>
+                                        <button disabled class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <Link class="w-4 h-4" />
+                                        </button>
+                                        {#if !isPasswordUnlocked}
+                                            <button onclick={unlockWithPassword} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                                <Lock class="w-4 h-4" />
+                                            </button>
+                                        {/if}
+                                    </div>
+                                </td>
+                            </tr>
+                            {#if isPasswordUnlocked && trackerResults.password}
+                                <tr>
+                                    <td>
+                                        Pwd: <span class="bg-white text-black px-1">{trackerResults.password}</span>
+                                    </td>
+                                    <td>
+                                        <button disabled class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <Clipboard class="w-4 h-4" />
+                                        </button>
+                                    </td>
+                                </tr>
                             {/if}
-                        </div>
-                    {/if}
+                        </tbody></table>
+                    </div>
+                    <div>
+                        
+                    <p>
+                        <!-- Password Input for Tracker Type 2 -->
+                        {#if trackerType === 2}
+                            <span class="inline-flex w-18">
+                               
+                            </span>
+                        {/if}
+                    </p>
+                    </div>
+                    <LanguageSwitcher />
                 </div>
             </div>
         </div>
@@ -494,7 +526,10 @@
                                     {#if activeCE || activeBunny}
                                         <p class="text-blue-400">Upcoming reductions:</p>
                                         <ul class="list-disc list-inside text-blue-400">
-                                            <!-- Display the active encounter and fate -->
+                                            <!-- Display the active fate, pot and encounter -->
+                                            {#if activeFate && activeFate.name}
+                                                <li> -1 minute ({activeFate.name})</li>
+                                            {/if}
                                             {#if activeBunny && activeBunny.name}
                                                 <li> -1 minute ({activeBunny.name})</li>
                                             {/if}
@@ -520,7 +555,7 @@
 
                     {#if bunny && bunny.fate_id}
                         <p>FATE: {OCCULT_FATES[bunny.fate_id].name[$currentLanguage]}</p>
-                        {#if bunny.death_time < bunny.spawn_time}
+                        {#if bunny.alive === true}
                             <p class="text-green-400">Alive</p>
                         {:else}
                             <p>Spawns in: <AutoTimeFormatted timestamp={calculateOccultRespawn(bunny, 'timestamp')} format="full" /></p>
