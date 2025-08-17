@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Newtonsoft.Json;
-using Serilog;
 
 namespace EurekaTrackerAutoPopper;
 
@@ -89,6 +88,9 @@ public class TrackerHandler
         [JsonProperty("tracker_type")]
         public byte TrackerType;
 
+        [JsonProperty("datacenter")]
+        public ushort Datacenter;
+
         [JsonProperty("encounter_history")]
         public string EncounterHistory;
 
@@ -104,6 +106,7 @@ public class TrackerHandler
         public NewTracker(uint dcId, uint fateId, int timestamp, Fates fateManager) : base(TableName)
         {
             TrackerType = 1;
+            Datacenter = (ushort)dcId;
 
             EncounterHistory = JsonConvert.SerializeObject(fateManager.OccultCriticalEncounters.Select(f => new ShareableFate(f)));
             FateHistory = JsonConvert.SerializeObject(fateManager.OccultFates.Select(f => new ShareableFate(f)));
@@ -142,6 +145,9 @@ public class TrackerHandler
 
         [JsonProperty("tracker_type")]
         public byte TrackerType;
+
+        [JsonProperty("datacenter")]
+        public ushort Datacenter;
 
         [JsonProperty("last_fate")]
         public string LastFateHash;
@@ -329,7 +335,7 @@ public class TrackerHandler
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to instance check after time delay.");
+            Plugin.Log.Error(ex, "Failed to instance check after time delay.");
 
             Reset();
         }
@@ -349,7 +355,7 @@ public class TrackerHandler
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to find instance.");
+            Plugin.Log.Error(ex, "Failed to find instance.");
             return null;
         }
     }
