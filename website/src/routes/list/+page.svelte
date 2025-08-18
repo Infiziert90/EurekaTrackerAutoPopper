@@ -1,8 +1,8 @@
 <script>
     import { base } from "$app/paths";
     import { onMount, onDestroy } from "svelte";
-    import { Clock } from "@lucide/svelte";
-    import { OCCULT_FATES, OCCULT_ENCOUNTERS, BASE_URL, API_HEADERS } from "$lib/const";
+    import { Clock, Globe } from "@lucide/svelte";
+    import { DATACENTER_NAMES, OCCULT_FATES, OCCULT_ENCOUNTERS, BASE_URL, API_HEADERS } from "$lib/const";
     import { currentLanguage } from "$lib/stores";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
@@ -154,7 +154,7 @@
 	<title>Occult Tracker - Trackers List</title>
 </svelte:head>
 
-<div class="bg-slate-950 p-2 mb-2">
+<div class="bg-slate-950 p-2 mb-2 sticky top-0 z-10 overscroll-pseudo-elt">
     <div
         class="max-w-6xl px-8 mx-auto flex flex-col lg:flex-row items-center justify-between"
     >
@@ -164,7 +164,7 @@
                     src={`${base}/logo.svg`}
                     alt="Occult Tracker"
                     height="80"
-                    class="h-20 w-auto"
+                    class="h-14 md:h-20 w-auto"
                 />
             </a>
         </h1>
@@ -186,7 +186,7 @@
             <p>No trackers updated in the last hour.</p>
         </div>
     {:else}
-        <div class="w-full max-w-6xl mx-auto mb-8">
+        <div class="w-full max-w-6xl mx-auto mb-4">
             <table class="table-auto w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
                 <thead>
                     <tr>
@@ -196,6 +196,12 @@
                                 <Clock class="w-4 h-4 inline-block" />
                             </span>
                             <span class="hidden md:inline">Last Updated</span>
+                        </th>
+                        <th class="text-left truncate px-2">
+                            <span class="inline md:hidden text-center">
+                                <Globe class="w-4 h-4 inline-block" />
+                            </span>
+                            <span class="hidden md:inline">Datacenter</span>
                         </th>
                         <th class="text-left hidden sm:table-cell truncate px-2">Last/Current CE</th>
                         <th class="text-left hidden md:table-cell truncate px-2">Last/Current Fate</th>
@@ -219,6 +225,9 @@
                                     class="absolute inset-0 z-10"
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
+                            </td>
+                            <td class="relative px-2 truncate">
+                                {DATACENTER_NAMES[tracker.datacenter]?.name || "Unknown"}
                             </td>
                             <td class="hidden sm:table-cell relative px-2 truncate">
                                 {#if tracker.active_ce_fate_id || tracker.recent_ce_fate_id}

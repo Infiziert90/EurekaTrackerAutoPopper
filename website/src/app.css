@@ -2,6 +2,7 @@
 
 :root {
     --font-sans: 'IBM Plex Sans JP', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    color-scheme: dark;
 }
 
 /* Needed for the automatic height of the body, with flex:1 */
@@ -9,9 +10,23 @@ html, body {
     height: 100%;
 }
 
-body {
+html {
     background-image: url('/bg.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Pseudo element that goes on top of the element its given, so that stretchy overscroll doesn't show the background on mobile devices */
+.overscroll-pseudo-elt::before {
+    content: '';
+    position: absolute;
+    top: -100vh;   /* move pseudo above the element */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-color: inherit;
+    pointer-events: none;
 }

@@ -2,7 +2,7 @@
     import { onDestroy, onMount } from "svelte";
     import { page } from "$app/stores";
     import { base } from "$app/paths";
-    import { TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS } from "$lib/const";
+    import { TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS, DATACENTER_NAMES } from "$lib/const";
     import { currentLanguage } from "$lib/stores";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull, Link, Clipboard } from "@lucide/svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
@@ -414,7 +414,7 @@
             {/if}
         </div>
     {:else}
-        <div class="bg-slate-950 p-2 mb-2">
+        <div class="bg-slate-950 p-2 mb-2 relative z-10 overscroll-pseudo-elt">
             <div class="max-w-6xl px-8 mx-auto flex flex-col gap-5 lg:flex-row items-center justify-between">
                 <h1>
                     <a href={`${base}/`} aria-label="Occult Tracker">
@@ -422,11 +422,11 @@
                             src={`${base}/logo.svg`}
                             alt="Occult Tracker"
                             height="80"
-                            class="h-20 w-auto"
+                            class="h-14 md:h-20 w-auto"
                         />
                     </a>
                 </h1>
-                <div class="flex grow flex-col lg:flex-row items-center lg:justify-between gap-2">
+                <div class="flex grow flex-row flex-wrap items-center justify-center lg:justify-between gap-2">
                     <div>
                         <table class="text-sm border-separate border-spacing-x-2 border-spacing-y-0.5 align-middle"><tbody>
 
@@ -451,6 +451,7 @@
                                     </div>
                                 </td>
                             </tr>
+                            <!-- Password row -->
                             {#if isPasswordUnlocked && trackerResults.password}
                                 <tr>
                                     <td>
@@ -463,6 +464,12 @@
                                     </td>
                                 </tr>
                             {/if}
+                            <!-- Datacenter row -->
+                            <tr>
+                                <td>
+                                    DC: <span class="bg-white text-black px-1">{DATACENTER_NAMES[trackerResults.datacenter]?.name || "Unknown"}</span>
+                                </td>
+                            </tr>
                         </tbody></table>
                     </div>
                     <div>

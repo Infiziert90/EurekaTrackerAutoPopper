@@ -12,6 +12,105 @@ export const API_HEADERS = {
     Prefer: "return=representation",
 };
 
+// Equivalent to the WorldDCGroupType Excel Sheet
+export const DATACENTER_NAMES = {
+    0: {
+        name: "Unknown",
+        selectable: true,
+    },
+    1: {
+        name: "Elemental",
+        selectable: true,
+        region: "Japan",
+    },
+    2: {
+        name: "Gaia",
+        selectable: true,
+        region: "Japan",
+    },
+    3: {
+        name: "Mana",
+        selectable: true,
+        region: "Japan"
+    },
+    4: {
+        name: "Aether",
+        selectable: true,
+        region: "North America"
+    },
+    5: {
+        name: "Primal",
+        selectable: true,
+        region: "North America",
+    },
+    6: {
+        name: "Chaos",
+        selectable: true,
+        region: "Europe",
+    },
+    7: {
+        name: "Light",
+        selectable: true,
+        region: "Europe",
+    },
+    8: {
+        name: "Crystal",
+        selectable: true,
+        region: "North America",
+    },
+    9: {
+        name: "Materia",
+        selectable: true,
+        region: "Oceania"
+    },
+    10: {
+        name: "Meteor",
+        selectable: true,
+        region: "Japan"
+    },
+    11: {
+        name: "Dynamis",
+        selectable: true,
+        region: "North America"
+    },
+    
+    // Unusual DCs, listed but not available to choose in manual trackers for now
+    12: {
+        name: "Shadow",
+        selectable: false,
+        region: "Europe"
+    },
+    13: {
+        name: "NA Cloud DC (Beta)",
+        selectable: false,
+        region: "North America"
+    },
+    99: {
+        name: "Beta",
+        selectable: false
+    },
+    101: {
+        name: "陆行鸟",
+        selectable: false
+    },
+    103: {
+        name: "猫小胖",
+        selectable: false
+    },
+    104: {
+        name: "豆豆柴",
+        selectable: false
+    },
+    151: {
+        name: "[empty]",
+        selectable: false
+    },
+    201: {
+        name: "Eorzea",
+        selectable: false
+    }
+}
+
 export const OCCULT_FATES = {
     // BASIC FATES
     1962: {
