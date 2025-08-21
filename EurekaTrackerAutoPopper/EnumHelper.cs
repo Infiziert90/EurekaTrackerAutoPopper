@@ -4,7 +4,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 
 namespace EurekaTrackerAutoPopper;
 
-public enum SharedMarketSet
+public enum SharedMarkerSet
 {
     None = 0,
     Eureka = 1,
@@ -16,6 +16,8 @@ public enum SharedMarketSet
     OccultTreasureCarrots = 7,
     OccultReroll = 8,
     OccultPotReroll = 9,
+    OccultPotNorth = 10,
+    OccultPotSouth = 11,
 }
 
 public enum OccultMarkerSets
@@ -29,6 +31,8 @@ public enum OccultMarkerSets
     TreasureAndCarrots = 6,
     Reroll = 7,
     PotAndReroll = 8,
+    PotNorth = 9,
+    PotSouth = 10,
 }
 
 public enum Territory : uint
@@ -50,8 +54,18 @@ public enum OccultAetheryte : uint
     Stonemarsh = 4947,
 }
 
+public enum LegendIcons
+{
+    PotIcon = 60354,
+    BronzeIcon = 60356,
+    SilverIcon = 60355,
+    RerollIcon = 61473,
+    CarrotIcon = 25207
+}
+
 public static class EnumExtensions
 {
+    public static readonly LegendIcons[] IconArray = Enum.GetValues<LegendIcons>();
     public static readonly OccultMarkerSets[] OccultSetArray = Enum.GetValues<OccultMarkerSets>();
 
     public static string ToName(this OccultMarkerSets set)
@@ -67,23 +81,40 @@ public static class EnumExtensions
             OccultMarkerSets.TreasureAndCarrots => Language.MarkerSetCombined,
             OccultMarkerSets.Reroll => Language.MarketSetReroll,
             OccultMarkerSets.PotAndReroll => Language.MarkerSetPotReroll,
+            OccultMarkerSets.PotNorth => Language.MarkerSetPotNorth,
+            OccultMarkerSets.PotSouth => Language.MarkerSetPotSouth,
             _ => "Unknown",
         };
     }
 
-    public static OccultMarkerSets ToOccultSet(this SharedMarketSet set)
+    public static string ToName(this LegendIcons set)
     {
         return set switch
         {
-            SharedMarketSet.None or SharedMarketSet.Eureka => OccultMarkerSets.None,
-            SharedMarketSet.OccultTreasure => OccultMarkerSets.Treasure,
-            SharedMarketSet.OccultPot => OccultMarkerSets.Pot,
-            SharedMarketSet.OccultBunny => OccultMarkerSets.Bunny,
-            SharedMarketSet.OccultBronze => OccultMarkerSets.OnlyBronze,
-            SharedMarketSet.OccultSilver => OccultMarkerSets.OnlySilver,
-            SharedMarketSet.OccultTreasureCarrots => OccultMarkerSets.TreasureAndCarrots,
-            SharedMarketSet.OccultReroll => OccultMarkerSets.Reroll,
-            SharedMarketSet.OccultPotReroll => OccultMarkerSets.PotAndReroll,
+            LegendIcons.PotIcon => Language.MarkerSetPot,
+            LegendIcons.CarrotIcon => Language.MarkerSetBunny,
+            LegendIcons.BronzeIcon => Language.MarkerSetOnlyBronze,
+            LegendIcons.SilverIcon => Language.MarkerSetOnlySilver,
+            LegendIcons.RerollIcon => Language.MarketSetReroll,
+            _ => "Unknown",
+        };
+    }
+
+    public static OccultMarkerSets ToOccultSet(this SharedMarkerSet set)
+    {
+        return set switch
+        {
+            SharedMarkerSet.None or SharedMarkerSet.Eureka => OccultMarkerSets.None,
+            SharedMarkerSet.OccultTreasure => OccultMarkerSets.Treasure,
+            SharedMarkerSet.OccultPot => OccultMarkerSets.Pot,
+            SharedMarkerSet.OccultBunny => OccultMarkerSets.Bunny,
+            SharedMarkerSet.OccultBronze => OccultMarkerSets.OnlyBronze,
+            SharedMarkerSet.OccultSilver => OccultMarkerSets.OnlySilver,
+            SharedMarkerSet.OccultTreasureCarrots => OccultMarkerSets.TreasureAndCarrots,
+            SharedMarkerSet.OccultReroll => OccultMarkerSets.Reroll,
+            SharedMarkerSet.OccultPotReroll => OccultMarkerSets.PotAndReroll,
+            SharedMarkerSet.OccultPotNorth => OccultMarkerSets.PotNorth,
+            SharedMarkerSet.OccultPotSouth => OccultMarkerSets.PotSouth,
             _ =>  OccultMarkerSets.None,
         };
     }

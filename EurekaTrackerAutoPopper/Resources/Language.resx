@@ -574,6 +574,9 @@ A cooldown of 5s applies after each use.</value>
     <data name="TabHeaderHelper" xml:space="preserve">
         <value>Helper</value>
     </data>
+    <data name="TabHeaderLegend" xml:space="preserve">
+        <value>Legend</value>
+    </data>
     <data name="OccultWindowNotInTerritory" xml:space="preserve">
         <value>You aren't in the occult territory, this window is not of any use.</value>
     </data>
@@ -599,7 +602,7 @@ A cooldown of 5s applies after each use.</value>
         <value>Bronze Treasure</value>
     </data>
     <data name="MarkerSetBunny" xml:space="preserve">
-        <value>Bunny Carrot Locations</value>
+        <value>Carrot Locations</value>
     </data>
     <data name="MarkerSetPot" xml:space="preserve">
         <value>Pot Locations</value>
@@ -677,9 +680,15 @@ A cooldown of 5s applies after each use.</value>
         <value>Open Helper Window</value>
     </data>
     <data name="MarketSetReroll" xml:space="preserve">
-        <value>Second Chance</value>
+        <value>Second Chance Locations</value>
     </data>
     <data name="MarkerSetPotReroll" xml:space="preserve">
         <value>Pot And Second Chance</value>
+    </data>
+    <data name="MarkerSetPotNorth" xml:space="preserve">
+        <value>Pot North Locations</value>
+    </data>
+    <data name="MarkerSetPotSouth" xml:space="preserve">
+        <value>Pot South Locations</value>
     </data>
 </root>

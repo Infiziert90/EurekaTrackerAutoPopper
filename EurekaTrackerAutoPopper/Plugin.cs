@@ -30,6 +30,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using Dalamud.Bindings.ImGui;
+using EurekaTrackerAutoPopper.Audio;
 
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
@@ -65,6 +66,7 @@ public class Plugin : IDalamudPlugin
     public readonly Library Library;
     public readonly Fates Fates;
     public readonly TrackerHandler TrackerHandler;
+    public readonly AlarmClock AlarmClock;
 
     public bool PlayerInEureka;
     public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
@@ -82,8 +84,8 @@ public class Plugin : IDalamudPlugin
     private readonly Timer PreviewTimer = new(5 * 1000);
 
     // Selected Map Markers
-    public SharedMarketSet MarkerSetToPlace = SharedMarketSet.None;
-    public SharedMarketSet? SavedOccultMarkerSets;
+    public SharedMarkerSet MarkerSetToPlace = SharedMarkerSet.None;
+    public SharedMarkerSet? SavedOccultMarkerSets;
 
     public Plugin()
     {
@@ -94,6 +96,7 @@ public class Plugin : IDalamudPlugin
 
         Fates = new Fates(this);
         TrackerHandler = new TrackerHandler(this);
+        AlarmClock = new AlarmClock();
 
         MainWindow = new MainWindow(this);
         OccultWindow = new OccultWindow(this);
@@ -190,7 +193,7 @@ public class Plugin : IDalamudPlugin
 
     private unsafe void RefreshMapMarker(AddonEvent type, AddonArgs args)
     {
-        if (MarkerSetToPlace != SharedMarketSet.Eureka)
+        if (MarkerSetToPlace != SharedMarkerSet.Eureka)
             return;
 
         // Check the players territory type
@@ -828,16 +831,25 @@ public class Plugin : IDalamudPlugin
             case OccultMarkerSets.Treasure:
                 AddOccultTreasureLocations();
                 break;
+            case OccultMarkerSets.PotNorth:
+                AddOccultPotNorthLocations();
+                break;
+            case OccultMarkerSets.PotSouth:
+                AddOccultPotSouthLocations();
+                break;
             case OccultMarkerSets.Pot:
-                AddOccultPotLocations();
+                AddOccultPotNorthLocations();
+                AddOccultPotSouthLocations();
+                MarkerSetToPlace = SharedMarkerSet.OccultPot;
                 break;
             case OccultMarkerSets.Reroll:
                 AddOccultRerollLocations();
                 break;
             case OccultMarkerSets.PotAndReroll:
-                AddOccultPotLocations();
+                AddOccultPotNorthLocations();
+                AddOccultPotSouthLocations();
                 AddOccultRerollLocations();
-                MarkerSetToPlace = SharedMarketSet.OccultPotReroll;
+                MarkerSetToPlace = SharedMarkerSet.OccultPotReroll;
                 break;
             case OccultMarkerSets.Bunny:
                 AddOccultBunnyPositions();
@@ -851,14 +863,14 @@ public class Plugin : IDalamudPlugin
             case OccultMarkerSets.TreasureAndCarrots:
                 AddOccultTreasureLocations();
                 AddOccultBunnyPositions();
-                MarkerSetToPlace = SharedMarketSet.OccultTreasureCarrots;
+                MarkerSetToPlace = SharedMarkerSet.OccultTreasureCarrots;
                 break;
         }
     }
 
     private void AddChestsLocationsMap()
     {
-        MarkerSetToPlace = SharedMarketSet.Eureka;
+        MarkerSetToPlace = SharedMarkerSet.Eureka;
         foreach (var worldPos in BunnyChests.Positions[ClientState.TerritoryType])
         {
             var mapPos = worldPos;
@@ -871,7 +883,7 @@ public class Plugin : IDalamudPlugin
 
     private void AddFairyLocationsMap()
     {
-        MarkerSetToPlace = SharedMarketSet.Eureka;
+        MarkerSetToPlace = SharedMarkerSet.Eureka;
         foreach (var (fairy, idx) in Library.ExistingFairies.Select((val, i) => (val, i)))
         {
             if (idx == 3)
@@ -888,7 +900,7 @@ public class Plugin : IDalamudPlugin
 
     private void AddOccultTreasureLocations()
     {
-        MarkerSetToPlace = SharedMarketSet.OccultTreasure;
+        MarkerSetToPlace = SharedMarkerSet.OccultTreasure;
         foreach (var (worldPos, iconType) in OccultChests.TreasurePosition[ClientState.TerritoryType])
         {
             var icon = iconType switch
@@ -902,37 +914,44 @@ public class Plugin : IDalamudPlugin
         }
     }
 
-    private void AddOccultPotLocations()
+    private void AddOccultPotNorthLocations()
     {
-        MarkerSetToPlace = SharedMarketSet.OccultPot;
-        foreach (var worldPos in OccultChests.PotPosition[ClientState.TerritoryType])
+        MarkerSetToPlace = SharedMarkerSet.OccultPotNorth;
+        foreach (var worldPos in OccultChests.PotNorthPosition[ClientState.TerritoryType])
+            SetMarkers(worldPos, worldPos, 60354);
+    }
+
+    private void AddOccultPotSouthLocations()
+    {
+        MarkerSetToPlace = SharedMarkerSet.OccultPotSouth;
+        foreach (var worldPos in OccultChests.PotSouthPosition[ClientState.TerritoryType])
             SetMarkers(worldPos, worldPos, 60354);
     }
 
     private void AddOccultRerollLocations()
     {
-        MarkerSetToPlace = SharedMarketSet.OccultReroll;
+        MarkerSetToPlace = SharedMarkerSet.OccultReroll;
         foreach (var worldPos in OccultChests.RerollPosition[ClientState.TerritoryType])
             SetMarkers(worldPos, worldPos, 61473);
     }
 
     private void AddOccultBunnyPositions()
     {
-        MarkerSetToPlace = SharedMarketSet.OccultBunny;
+        MarkerSetToPlace = SharedMarkerSet.OccultBunny;
         foreach (var worldPos in OccultChests.BunnyPosition[ClientState.TerritoryType])
             SetMarkers(worldPos, worldPos, 25207);
     }
 
     private void AddOccultBronzeLocations()
     {
-        MarkerSetToPlace = SharedMarketSet.OccultBronze;
+        MarkerSetToPlace = SharedMarkerSet.OccultBronze;
         foreach (var (worldPos, _) in OccultChests.TreasurePosition[ClientState.TerritoryType].Where(pair => pair.Item2 == 1596))
             SetMarkers(worldPos, worldPos, 60356u);
     }
 
     private void AddOccultSilverLocations()
     {
-        MarkerSetToPlace = SharedMarketSet.OccultSilver;
+        MarkerSetToPlace = SharedMarkerSet.OccultSilver;
         foreach (var (worldPos, _) in OccultChests.TreasurePosition[ClientState.TerritoryType].Where(pair => pair.Item2 == 1597))
             SetMarkers(worldPos, worldPos, 60355u);
     }
@@ -940,7 +959,7 @@ public class Plugin : IDalamudPlugin
 
     public unsafe void RemoveMapMarker()
     {
-        MarkerSetToPlace = SharedMarketSet.None;
+        MarkerSetToPlace = SharedMarkerSet.None;
         AgentMap.Instance()->ResetMapMarkers();
         AgentMap.Instance()->ResetMiniMapMarkers();
     }

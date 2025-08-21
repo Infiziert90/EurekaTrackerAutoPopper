@@ -6,6 +6,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using EurekaTrackerAutoPopper.Resources;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Textures;
 
 namespace EurekaTrackerAutoPopper.Windows.MainWindow;
 
@@ -28,6 +29,8 @@ public partial class MainWindow
         TabPot();
 
         TabHelper();
+
+        TabLegend();
     }
 
     private void TabNotification()
@@ -181,6 +184,16 @@ public partial class MainWindow
                 changed |= ImGui.Checkbox(Language.ConfigOptionAutoPots, ref Plugin.Configuration.AutoSwitchToOccultPots);
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipAutoPots);
 
+                if (ImGui.Button("Play Alarm"))
+                {
+                    Plugin.AlarmClock.StartAlarm();
+                }
+
+                if (ImGui.Button("Stop Alarm"))
+                {
+                    Plugin.AlarmClock.StopAlarm();
+                }
+
                 if (changed)
                     Plugin.Configuration.Save();
             }
@@ -252,5 +265,31 @@ public partial class MainWindow
                     Plugin.OccultWindow.Toggle();
             }
         }
+    }
+
+    private static readonly Vector2 LegendIconSize = new(24, 24);
+    private void TabLegend()
+    {
+        using var tabItem = ImRaii.TabItem($"{Language.TabHeaderLegend}##LegendTab");
+        if (!tabItem.Success)
+            return;
+
+        using var table = ImRaii.Table("legendTable", 2, ImGuiTableFlags.RowBg);
+        if (!table.Success)
+            return;
+
+        ImGui.TableSetupColumn("##icon", ImGuiTableColumnFlags.WidthFixed, LegendIconSize.X * ImGuiHelpers.GlobalScale);
+        ImGui.TableSetupColumn("##name");
+
+        foreach (var icon in EnumExtensions.IconArray)
+        {
+            ImGui.TableNextColumn();
+            var texture = Plugin.TextureManager.GetFromGameIcon(new GameIconLookup((uint)icon)).GetWrapOrEmpty();
+            ImGui.Image(texture.Handle, LegendIconSize * ImGuiHelpers.GlobalScale);
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted(icon.ToName());
+        }
+
     }
 }

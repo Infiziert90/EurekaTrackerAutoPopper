@@ -1168,7 +1168,7 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bunny Carrot Locations.
+        ///   Looks up a localized string similar to Carrot Locations.
         /// </summary>
         internal static string MarkerSetBunny {
             get {
@@ -1222,11 +1222,29 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pot North Locations.
+        /// </summary>
+        internal static string MarkerSetPotNorth {
+            get {
+                return ResourceManager.GetString("MarkerSetPotNorth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pot And Second Chance.
         /// </summary>
         internal static string MarkerSetPotReroll {
             get {
                 return ResourceManager.GetString("MarkerSetPotReroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pot South Locations.
+        /// </summary>
+        internal static string MarkerSetPotSouth {
+            get {
+                return ResourceManager.GetString("MarkerSetPotSouth", resourceCulture);
             }
         }
         
@@ -1240,7 +1258,7 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Second Chance.
+        ///   Looks up a localized string similar to Second Chance Locations.
         /// </summary>
         internal static string MarketSetReroll {
             get {
@@ -1956,6 +1974,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string TabHeaderHelper {
             get {
                 return ResourceManager.GetString("TabHeaderHelper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Legend.
+        /// </summary>
+        internal static string TabHeaderLegend {
+            get {
+                return ResourceManager.GetString("TabHeaderLegend", resourceCulture);
             }
         }
         
