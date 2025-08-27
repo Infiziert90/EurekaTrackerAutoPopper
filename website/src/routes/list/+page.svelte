@@ -3,6 +3,7 @@
     import { onMount, onDestroy } from "svelte";
     import { Clock, Globe } from "@lucide/svelte";
     import { DATACENTER_NAMES, OCCULT_FATES, OCCULT_ENCOUNTERS, BASE_URL, API_HEADERS } from "$lib/const";
+    import { calculatePotStatus, calculateOccultRespawn } from "$lib/utils";
     import { currentLanguage } from "$lib/stores";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
@@ -58,6 +59,35 @@
 
                 // Cap the last_update timestamp to current time if it's in the future
                 const cappedLastUpdate = Math.min(tracker.last_update, currentTime);
+                
+                // Process pot status
+                let potStatus = null;
+                let potStatusText = null;
+                if (tracker.pot_history) {
+                    try {
+                        const potHistory = JSON.parse(tracker.pot_history);
+                        const potData = calculatePotStatus(potHistory);
+                        if (potData.bunny) {
+                            potStatus = potData.bunny;
+                            if (potData.bunny.alive === true) {
+                                potStatusText = "Alive";
+                            } else {
+                                const respawnTime = calculateOccultRespawn(potData.bunny, 'timestamp');
+                                const now = Math.floor(Date.now() / 1000);
+                                if (respawnTime <= now) {
+                                    potStatusText = "Soon";
+                                } else {
+                                    potStatusText = respawnTime;
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.warn(
+                            "Failed to parse pot_history for tracker:",
+                            tracker.tracker_id,
+                        );
+                    }
+                }
 
                 // Try to parse encounter_history to get the last active CE
                 if (tracker.encounter_history) {
@@ -126,6 +156,8 @@
                     active_fate_id: activeFateId,
                     recent_fate_id: recentFateId,
                     is_fate_active: isFateActive,
+                    pot_status: potStatus,
+                    pot_status_text: potStatusText,
                 };
             });
         } catch (err) {
@@ -213,7 +245,7 @@
                 <tbody>
                     {#each trackers as tracker}
                         <tr class="relative group cursor-pointer bg-slate-900/90 hover:bg-slate-800 transition-colors duration-200">
-                            <td class="relative px-2">
+                            <td class="relative px-2 font-mono">
                                 {tracker.tracker_id}
                                 <a
                                     href={`${base}/${tracker.tracker_id}`}
@@ -255,7 +287,22 @@
                                 ></a>
                             </td>
                             <td class="hidden md:table-cell relative px-2 truncate">
-                                
+                                {#if tracker.pot_status_text}
+                                    {#if tracker.pot_status_text === "Alive"}
+                                        Alive
+                                    {:else if tracker.pot_status_text === "Soon"}
+                                        Soon
+                                    {:else}
+                                        In <AutoTimeFormatted timestamp={tracker.pot_status_text} format="relative" disableUpdate={true} />
+                                    {/if}
+                                {:else}
+                                    None
+                                {/if}
+                                <a
+                                    href={`${base}/${tracker.tracker_id}`}
+                                    class="absolute inset-0 z-10"
+                                    aria-label={`View tracker ${tracker.tracker_id}`}
+                                ></a>
                             </td>
                             <td class="hidden md:table-cell relative px-2 truncate">
                                 {#if tracker.active_fate_id || tracker.recent_fate_id}

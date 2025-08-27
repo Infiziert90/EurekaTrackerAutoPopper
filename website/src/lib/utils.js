@@ -15,6 +15,44 @@ export function calculateOccultRespawn(pot, returnType = 'seconds') {
     return returnType === 'seconds' ? remaining : target;
 }
 
+/*
+ * Calculates the pot status for occult trackers
+ * 
+ * @param {Array} potHistory - Array of pot fate objects
+ * @returns {Object} Object containing the next pot fate and its status
+ */
+export function calculatePotStatus(potHistory) {
+    if (!potHistory || potHistory.length === 0) {
+        return { bunny: null, status: null };
+    }
+
+    // Sort pot_history by last_seen (ascending), and get the nextSpawn and the lastAlive
+    const sortedHistory = [...potHistory].sort((a, b) => a.last_seen - b.last_seen);
+    
+    const nextSpawn = sortedHistory[0];
+    const lastAlive = sortedHistory[sortedHistory.length - 1];
+
+    let bunny = null;
+
+    // If both are -1, then no pot has spawned
+    if (nextSpawn.last_seen == -1 && lastAlive.last_seen == -1) {
+        bunny = nextSpawn;
+    // If our last alive is still active then show it
+    } else if (lastAlive.alive) {
+        bunny = lastAlive;
+    // Else, apply the time of the latest spawn to calculate the next spawn
+    } else {
+        if (nextSpawn.last_seen == -1) {
+            // Set last_seen to 30 min previously
+            nextSpawn.last_seen = lastAlive.spawn_time - OCCULT_RESPAWN;
+        }
+
+        nextSpawn.spawn_time = lastAlive.spawn_time;
+        bunny = nextSpawn;
+    }
+
+    return { bunny, status: bunny };
+}
 
 /*
  * Formats a number of seconds into a readable string

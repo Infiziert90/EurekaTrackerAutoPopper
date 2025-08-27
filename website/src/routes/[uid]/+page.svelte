@@ -8,7 +8,7 @@
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
     import ItemIcon from "../../components/ItemIcon.svelte";
-    import { calculateOccultRespawn, formatSeconds } from "$lib/utils";
+    import { calculateOccultRespawn, formatSeconds, calculatePotStatus } from "$lib/utils";
 
     const uid = $page.params.uid;
 
@@ -290,32 +290,9 @@
                 trackerResults.pot_history = [];
             }
 
-            // Sort pot_history by last_seen (ascending), and get the nextSpawn and the lastAlive
-            if (trackerResults.pot_history && trackerResults.pot_history.length > 0) {
-                trackerResults.pot_history.sort((a, b) => a.last_seen - b.last_seen);
-
-                const nextSpawn = trackerResults.pot_history[0];
-                const lastAlive = trackerResults.pot_history[trackerResults.pot_history.length - 1];
-
-                // If both are -1, then no pot has spawned
-                if (nextSpawn.last_seen == -1 && lastAlive.last_seen == -1) {
-                    bunny = nextSpawn;
-                // If our last alive is still active then show it
-                } else if (lastAlive.alive) {
-                    bunny = lastAlive;
-                // Else, apply the time of the latest spawn to calculate the next spawn
-                } else {
-                    if (nextSpawn.last_seen == -1) {
-                        // Set last_seen to 30 min previously
-                        nextSpawn.last_seen = lastAlive.spawn_time - OCCULT_RESPAWN;
-                    }
-
-                    nextSpawn.spawn_time = lastAlive.spawn_time;
-                    bunny = nextSpawn;
-                }
-            } else {
-                bunny = null;
-            }
+            // Calculate pot status using utility function
+            const potStatus = calculatePotStatus(trackerResults.pot_history);
+            bunny = potStatus.bunny;
 
         } catch (err) {
             console.error("Error fetching tracker data:", err);
@@ -433,7 +410,7 @@
                             <!-- Tracker ID row -->
                             <tr>
                                 <td>
-                                    ID: <span class="bg-white text-black px-1">{uid}</span>
+                                    ID: <span class="font-mono bg-white text-black px-1">{uid}</span>
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-2">
@@ -565,7 +542,13 @@
                         {#if bunny.alive === true}
                             <p class="text-green-400">Alive</p>
                         {:else}
-                            <p>Spawns in: <AutoTimeFormatted timestamp={calculateOccultRespawn(bunny, 'timestamp')} format="full" /></p>
+                            {@const respawnTime = calculateOccultRespawn(bunny, 'timestamp')}
+                            {@const now = Math.floor(Date.now() / 1000)}
+                            {#if respawnTime <= now}
+                                <p class="text-yellow-400">Soon</p>
+                            {:else}
+                                <p>Spawns in: <AutoTimeFormatted timestamp={respawnTime} format="full" /></p>
+                            {/if}
                         {/if}
                     {:else}
                         <p class="text-slate-400">No pot fate data available</p>
@@ -770,7 +753,7 @@
                             {/each}
                         {:else}
                             <tr class="bg-slate-900/90">
-                                <td colspan={2} class="px-2 py-4 text-center text-slate-400">
+                                <td colspan={trackerType === 2 ? 4 : 3} class="px-2 py-4 text-center text-slate-400">
                                     No fate history available
                                 </td>
                             </tr>
