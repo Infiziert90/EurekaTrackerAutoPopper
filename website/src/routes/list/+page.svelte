@@ -27,7 +27,9 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            return data;
+
+            // filter out trackers with a datacenter field set to 0
+            return data.filter(tracker => tracker.datacenter !== 0);
         } catch (error) {
             console.error("Error fetching recent trackers:", error);
             throw error;
@@ -204,6 +206,7 @@
                             <span class="hidden md:inline">Datacenter</span>
                         </th>
                         <th class="text-left hidden sm:table-cell truncate px-2">Last/Current CE</th>
+                        <th class="text-left hidden md:table-cell truncate px-2">Pot Status</th>
                         <th class="text-left hidden md:table-cell truncate px-2">Last/Current Fate</th>
                     </tr>
                 </thead>
@@ -228,6 +231,11 @@
                             </td>
                             <td class="relative px-2 truncate">
                                 {DATACENTER_NAMES[tracker.datacenter]?.name || "Unknown"}
+                                <a
+                                    href={`${base}/${tracker.tracker_id}`}
+                                    class="absolute inset-0 z-10"
+                                    aria-label={`View tracker ${tracker.tracker_id}`}
+                                ></a>
                             </td>
                             <td class="hidden sm:table-cell relative px-2 truncate">
                                 {#if tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
@@ -245,6 +253,9 @@
                                     class="absolute inset-0 z-10"
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
+                            </td>
+                            <td class="hidden md:table-cell relative px-2 truncate">
+                                
                             </td>
                             <td class="hidden md:table-cell relative px-2 truncate">
                                 {#if tracker.active_fate_id || tracker.recent_fate_id}

@@ -20,6 +20,7 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.525.0",
+		"melt": "^0.39.0",
 		"svelte-time": "^2.0.1"
 	}
 }

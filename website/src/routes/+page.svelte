@@ -5,6 +5,7 @@
     import { base } from '$app/paths';
     import { currentLanguage } from '$lib/stores';
     import LanguageSwitcher from '../components/LanguageSwitcher.svelte';
+    import ClickToCopyButton from '../components/ClickToCopyButton.svelte';
     import { Plus, List } from "@lucide/svelte";
 
     // on form submit, go to /[trackerId]
@@ -48,6 +49,8 @@
                 Enter
             </button>
         </form>
+
+        <!-- <ClickToCopyButton text="https://ffxiv-occult.com">hello</ClickToCopyButton> -->
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 max-w-lg w-full mx-auto">
             <a href={`${base}/new`} class="flex items-center justify-center bg-slate-700/90 px-4 py-2 text-white hover:bg-slate-800/80 transition-colors duration-200 cursor-pointer">
