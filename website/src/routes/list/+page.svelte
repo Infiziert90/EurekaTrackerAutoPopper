@@ -225,7 +225,7 @@
                 <thead>
                     <tr>
                         <th class="text-left px-2">Tracker ID</th>
-                        <th class="text-left truncate px-2">
+                        <th class="text-left hidden sm:table-cell truncate px-2">
                             <span class="inline md:hidden text-center">
                                 <Clock class="w-4 h-4 inline-block" />
                             </span>
@@ -238,13 +238,14 @@
                             <span class="hidden md:inline">Datacenter</span>
                         </th>
                         <th class="text-left hidden sm:table-cell truncate px-2">Last/Current CE</th>
-                        <th class="text-left hidden md:table-cell truncate px-2">Pot Status</th>
+                        <th class="text-left truncate px-2">Pot Status</th>
                         <th class="text-left hidden md:table-cell truncate px-2">Last/Current Fate</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each trackers as tracker}
                         <tr class="relative group cursor-pointer bg-slate-900/90 hover:bg-slate-800 transition-colors duration-200">
+                            <!-- Tracker ID -->
                             <td class="relative px-2 font-mono">
                                 {tracker.tracker_id}
                                 <a
@@ -253,7 +254,9 @@
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
                             </td>
-                            <td class="relative px-2 truncate">
+
+                            <!-- Last Updated -->
+                            <td class="relative hidden sm:table-cell px-2 truncate">
                                 <AutoTimeFormatted timestamp={tracker.last_update} format="relative" disableUpdate={true} />
                                 <a
                                     href={`${base}/${tracker.tracker_id}`}
@@ -261,6 +264,8 @@
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
                             </td>
+
+                            <!-- Datacenter -->
                             <td class="relative px-2 truncate">
                                 {DATACENTER_NAMES[tracker.datacenter]?.name || "Unknown"}
                                 <a
@@ -269,6 +274,8 @@
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
                             </td>
+
+                            <!-- Last/Current CE -->
                             <td class="hidden sm:table-cell relative px-2 truncate">
                                 {#if tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
                                     {@const fateId = tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
@@ -286,7 +293,9 @@
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
                             </td>
-                            <td class="hidden md:table-cell relative px-2 truncate">
+
+                            <!-- Pot Status -->
+                            <td class="relative px-2 truncate">
                                 {#if tracker.pot_status_text}
                                     {#if tracker.pot_status_text === "Alive"}
                                         Alive
@@ -304,6 +313,8 @@
                                     aria-label={`View tracker ${tracker.tracker_id}`}
                                 ></a>
                             </td>
+
+                            <!-- Last/Current Fate -->
                             <td class="hidden md:table-cell relative px-2 truncate">
                                 {#if tracker.active_fate_id || tracker.recent_fate_id}
                                     {@const fateId = tracker.active_fate_id || tracker.recent_fate_id}
