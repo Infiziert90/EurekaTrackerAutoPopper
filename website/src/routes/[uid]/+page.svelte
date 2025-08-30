@@ -66,7 +66,7 @@
             const updatedData = { ...originalData };
             
             // Determine which history to update based on type
-            const historyKey = type === 'ce' ? 'encounter_history' : 'fate_history';
+            const historyKey = type === 'ce' ? 'encounter_history' : type === 'fate' ? 'fate_history' : 'pot_history';
             const history = JSON.parse(updatedData[historyKey]);
             const targetItem = history.find(item => item.fate_id === encounter.fate_id);
             
@@ -100,7 +100,9 @@
             if (response.ok) {
                 const successKey = type === 'ce' 
                     ? (status === 'spawned' ? 'mobSpawnedSuccess' : 'mobDeadSuccess')
-                    : (status === 'spawned' ? 'fateSpawnedSuccess' : 'fateDeadSuccess');
+                    : type === 'fate' 
+                        ? (status === 'spawned' ? 'fateSpawnedSuccess' : 'fateDeadSuccess')
+                        : (status === 'spawned' ? 'potSpawnedSuccess' : 'potDeadSuccess');
                 updateMessage = 'Update successful';
                 updateMessageType = "success";
                 
@@ -158,6 +160,13 @@
         await handleStatusUpdate({ encounter: fate, type: 'fate', status: 'dead' });
     }
 
+    async function handlePotSpawned(pot) {
+        await handleStatusUpdate({ encounter: pot, type: 'pot', status: 'spawned' });
+    }
+
+    async function handlePotDead(pot) {
+        await handleStatusUpdate({ encounter: pot, type: 'pot', status: 'dead' });
+    }
 
 
     // Fetch tracker data from API
@@ -742,6 +751,102 @@
                             <tr class="bg-slate-900/90">
                                 <td colspan={trackerType === 2 ? 4 : 3} class="px-2 py-4 text-center text-slate-400">
                                     No fate history available
+                                </td>
+                            </tr>
+                        {/if}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pot History -->
+            <div class="max-w-6xl w-full mx-auto mb-4">
+                <h2 class="text-2xl font-extrabold">
+                    <img src="https://v2.xivapi.com/api/asset?path=ui/icon/060000/060958_hr1.tex&format=webp" alt="Pot Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
+                    Pot History
+                </h2>
+
+                <table class="table-fixed w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
+                    <thead>
+                        <tr class="text-left">
+                            <th class="px-2 w-2/5">Pot</th>
+                            <th class="px-2 hidden md:table-cell">Drops</th>
+                            <th class="px-2 w-1/5 text-end">Last Seen</th>
+                            {#if trackerType === 2}
+                                <th class="px-2 w-[14%] md:w-14 text-center"></th>
+                            {/if}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#if trackerResults.pot_history && trackerResults.pot_history.length > 0}
+                            {#each trackerResults.pot_history as pot}
+                                <tr class={pot.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
+                                    <td class="px-2 w-2/5 truncate">{OCCULT_FATES[pot.fate_id].name[$currentLanguage]} {OCCULT_FATES[pot.fate_id].suffix[$currentLanguage]}</td>
+                                    <td class="px-2 hidden md:table-cell">
+                                        <div class="flex flex-wrap gap-1">
+                                            {#each OCCULT_FATES[pot.fate_id].drops as drop}
+                                                <ItemIcon itemId={drop} />
+                                            {/each}
+                                        </div>
+                                    </td>
+                                    <td class="px-2 w-1/5 text-end">
+                                        <p class="text-nowrap">
+                                            <span class="hidden md:inline">
+                                                {pot.alive ? '(Alive)' : ''}
+                                             </span>
+                                            {#if pot.last_seen != -1}
+                                                <AutoTimeFormatted timestamp={pot.last_seen} />
+                                            {:else}
+                                                N/A
+                                            {/if}
+                                        </p>
+                                    </td>
+                                    {#if trackerType === 2}
+                                        <td class="px-2 w-[14%] md:w-14 text-center">
+                                            {#if isPasswordUnlocked}
+                                                {#if pot.alive}
+                                                    <button
+                                                        onclick={() => handlePotDead(pot)}
+                                                        disabled={isUpdating}
+                                                        class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                            isUpdating ? 'bg-slate-600' : 'bg-red-600 hover:bg-red-700'
+                                                        }"
+                                                        title="Mark pot as dead"
+                                                    >
+                                                        {#if isUpdating}
+                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
+                                                        {:else}
+                                                            <Skull class="w-4 h-4 inline-block" />
+                                                        {/if}
+                                                    </button>
+                                                {:else}
+                                                <button
+                                                    onclick={() => handlePotSpawned(pot)}
+                                                    disabled={isUpdating}
+                                                    class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                        isUpdating ? 'bg-slate-600' : 'bg-green-600 hover:bg-green-700'
+                                                    }"
+                                                    title="Mark pot as spawned"
+                                                >
+                                                    {#if isUpdating}
+                                                        <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
+                                                    {:else}
+                                                        POP
+                                                    {/if}
+                                                </button>
+                                                {/if}
+                                            {:else}
+                                                <div class="text-slate-500 text-xs flex items-center justify-center">
+                                                    <Lock class="w-4 h-4" />
+                                                </div>
+                                            {/if}
+                                        </td>
+                                    {/if}
+                                </tr>
+                            {/each}
+                        {:else}
+                            <tr class="bg-slate-900/90">
+                                <td colspan={trackerType === 2 ? 4 : 3} class="px-2 py-4 text-center text-slate-400">
+                                    No pot history available
                                 </td>
                             </tr>
                         {/if}
