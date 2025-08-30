@@ -232,6 +232,12 @@ export const OCCULT_FATES = {
             "ja": "しあわせのマジックポット",
             "de": "Freude im Pott"
         },
+        suffix: {
+            "en": "(North)",
+            "fr": "(Nord)",
+            "ja": "(北)",
+            "de": "(Nord)"
+        },
         drops: [47749,47738],
         encounter_id: 40,
     },
@@ -241,6 +247,12 @@ export const OCCULT_FATES = {
             "fr": "Mauvais œil pour les pots",
             "ja": "カチカチのマジックポット",
             "de": "Wunder im Pott"
+        },
+        suffix: {
+            "en": "(South)",
+            "fr": "(Sud)",
+            "ja": "(南)",
+            "de": "(Süden)"
         },
         drops: [47745,47737],
         encounter_id: 18,

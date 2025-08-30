@@ -1,4 +1,60 @@
-import { OCCULT_RESPAWN } from "$lib/const";
+import { OCCULT_RESPAWN, OCCULT_FATES, OCCULT_ENCOUNTERS } from "$lib/const";
+
+/*
+ * Checks if a fate/encounter is currently alive based on spawn and death times
+ * 
+ * @param {Object} fate - The fate/encounter object with spawn_time and death_time properties
+ * @param {number} now - Current timestamp in seconds (defaults to current time)
+ * @returns {boolean} True if the fate/encounter is alive, false otherwise
+ */
+export function isAlive(fate, now = Math.floor(Date.now() / 1000)) {
+    // Helper to format timestamps as readable strings
+    function formatTimestamp(ts) {
+        if (!ts || ts < 0) return "N/A";
+        const date = new Date(ts * 1000);
+        return date.toLocaleString('fr-FR');
+    }
+
+    try {
+        console.log(`[isAlive ${fate.fate_id}] isAlive called with fate:`, OCCULT_FATES[fate.fate_id].name['fr']);
+    } catch (e) {
+    }
+    try {
+        console.log(`[isAlive ${fate.fate_id}] isAlive called with fate:`, OCCULT_ENCOUNTERS[fate.fate_id].name['fr']);
+    } catch (e) {
+    }
+    console.log(`[isAlive ${fate.fate_id}] spawn_time: ${formatTimestamp(fate.spawn_time)}`);
+    console.log(`[isAlive ${fate.fate_id}] death_time: ${formatTimestamp(fate.death_time)}`);
+    console.log(`[isAlive ${fate.fate_id}] last_seen: ${formatTimestamp(fate.last_seen)}`);
+
+    
+    // A death is valid only if it's after the spawn
+    const hasValidDeath = fate.death_time > fate.spawn_time;
+
+    // If no valid death time, alive once spawned
+    if (!hasValidDeath) {
+        console.log(
+            `[isAlive ${fate.fate_id}] Alive : no valid death_time (${formatTimestamp(fate.death_time)}) after spawn_time (${formatTimestamp(fate.spawn_time)}) for fate_id ${fate.fate_id}`
+        );
+        return true;
+    }
+
+    // If current time is before spawn, not alive
+    console.log(`[isAlive ${fate.fate_id}] checking if now < spawn_time : ${formatTimestamp(now)} < ${formatTimestamp(fate.spawn_time)}`);
+    if (now < fate.spawn_time) {
+        console.log(
+            `[isAlive ${fate.fate_id}] Not Alive : now (${formatTimestamp(now)}) < spawn_time (${formatTimestamp(fate.spawn_time)}) for fate_id ${fate.fate_id}`
+        );
+        return false;
+    }
+
+    // Alive if now is still before death_time
+    const alive = now <= fate.death_time;
+    console.log(
+        `[isAlive ${fate.fate_id}] ${alive ? "Alive" : "Not alive"}: now (${formatTimestamp(now)}) ${alive ? "<=" : ">"} death_time (${formatTimestamp(fate.death_time)}) for fate_id ${fate.fate_id}`
+    );
+    return alive;
+}
 
 /*
  * Calculates the respawn time of pot fates in Occult Crescent, which is exactly 30 minutes after the last one spawned

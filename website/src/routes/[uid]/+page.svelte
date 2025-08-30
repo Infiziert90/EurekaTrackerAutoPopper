@@ -8,7 +8,7 @@
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
     import ItemIcon from "../../components/ItemIcon.svelte";
-    import { calculateOccultRespawn, formatSeconds, calculatePotStatus } from "$lib/utils";
+    import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive } from "$lib/utils";
 
     const uid = $page.params.uid;
 
@@ -158,20 +158,7 @@
         await handleStatusUpdate({ encounter: fate, type: 'fate', status: 'dead' });
     }
 
-    // Check if 
-    function isAlive(fate, now = Math.floor(Date.now() / 1000)) {
-        // If current time is before spawn, not alive
-        if (now < fate.spawn_time) return false;
 
-        // A death is valid only if it's after the spawn
-        const hasValidDeath = fate.death_time > fate.spawn_time;
-
-        // If no valid death time, alive once spawned
-        if (!hasValidDeath) return true;
-
-        // Alive if now is still before death_time
-        return now <= fate.death_time;
-    }
 
     // Fetch tracker data from API
     async function fetchTrackerData() {
@@ -480,7 +467,7 @@
                     {#if trackerResults.encounter_history && trackerResults.encounter_history.length > 0}
                         {#each trackerResults.encounter_history as encounter}
                             {#if encounter.fate_id === 48}
-                                {#if encounter.death_time < encounter.spawn_time}
+                                {#if encounter.alive}
                                     <p class="text-green-400">Tower is up and recruiting!</p>
                                 {:else}
                                     <p>Last seen: <AutoTimeFormatted timestamp={encounter.last_seen} /></p>
@@ -538,7 +525,7 @@
                     </h2>
 
                     {#if bunny && bunny.fate_id}
-                        <p>FATE: {OCCULT_FATES[bunny.fate_id].name[$currentLanguage]}</p>
+                        <p>FATE: {OCCULT_FATES[bunny.fate_id].name[$currentLanguage]} {OCCULT_FATES[bunny.fate_id].suffix[$currentLanguage]}</p>
                         {#if bunny.alive === true}
                             <p class="text-green-400">Alive</p>
                         {:else}
@@ -591,7 +578,7 @@
                     <tbody>
                         {#if trackerResults.encounter_history && trackerResults.encounter_history.length > 0}
                             {#each trackerResults.encounter_history as encounter}
-                                <tr class={encounter.spawn_time !== -1 && encounter.death_time < encounter.spawn_time ? 'bg-green-800/90' : 'bg-slate-900/90'}>
+                                <tr class={encounter.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
                                     <td class="px-2 w-2/5 truncate">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
                                     <td class="px-2 hidden md:table-cell">
                                         <div class="flex flex-wrap gap-1">
@@ -603,7 +590,7 @@
                                     <td class="px-2 w-1/5 text-end">
                                         <p class="text-nowrap">
                                             <span class="hidden md:inline">
-                                                 {encounter.spawn_time !== -1 && encounter.death_time < encounter.spawn_time ? '(Alive)' : ''}
+                                                 {encounter.alive ? '(Alive)' : ''}
                                              </span>
                                             {#if encounter.last_seen != -1}
                                                 <AutoTimeFormatted timestamp={encounter.last_seen} />
@@ -615,7 +602,7 @@
                                     {#if trackerType === 2}
                                         <td class="px-2 w-[14%] md:w-14 text-center">
                                             {#if isPasswordUnlocked}
-                                                {#if encounter.spawn_time !== -1 && encounter.death_time < encounter.spawn_time}
+                                                {#if encounter.alive}
                                                     <button
                                                         onclick={() => handleMobDead(encounter)}
                                                         disabled={isUpdating}
@@ -687,7 +674,7 @@
                     <tbody>
                         {#if trackerResults.fate_history && trackerResults.fate_history.length > 0}
                             {#each trackerResults.fate_history as fate}
-                                <tr class={fate.spawn_time !== -1 && fate.death_time < fate.spawn_time ? 'bg-green-800/90' : 'bg-slate-900/90'}>
+                                <tr class={fate.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
                                     <td class="px-2 w-2/5 truncate">{OCCULT_FATES[fate.fate_id].name[$currentLanguage]}</td>
                                     <td class="px-2 hidden md:table-cell">
                                         <div class="flex flex-wrap gap-1">
@@ -699,7 +686,7 @@
                                     <td class="px-2 w-1/5 text-end">
                                         <p class="text-nowrap">
                                             <span class="hidden md:inline">
-                                                {fate.spawn_time !== -1 && fate.death_time < fate.spawn_time ? '(Alive)' : ''}
+                                                {fate.alive ? '(Alive)' : ''}
                                              </span>
                                             {#if fate.last_seen != -1}
                                                 <AutoTimeFormatted timestamp={fate.last_seen} />
@@ -711,7 +698,7 @@
                                     {#if trackerType === 2}
                                         <td class="px-2 w-[14%] md:w-14 text-center">
                                             {#if isPasswordUnlocked}
-                                                {#if fate.spawn_time !== -1 && fate.death_time < fate.spawn_time}
+                                                {#if fate.alive}
                                                     <button
                                                         onclick={() => handleFateDead(fate)}
                                                         disabled={isUpdating}

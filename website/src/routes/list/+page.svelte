@@ -3,7 +3,7 @@
     import { onMount, onDestroy } from "svelte";
     import { Clock, Globe } from "@lucide/svelte";
     import { DATACENTER_NAMES, OCCULT_FATES, OCCULT_ENCOUNTERS, BASE_URL, API_HEADERS } from "$lib/const";
-    import { calculatePotStatus, calculateOccultRespawn } from "$lib/utils";
+    import { calculatePotStatus, calculateOccultRespawn, isAlive } from "$lib/utils";
     import { currentLanguage } from "$lib/stores";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
@@ -66,6 +66,10 @@
                 if (tracker.pot_history) {
                     try {
                         const potHistory = JSON.parse(tracker.pot_history);
+                        // Set alive property on all pots
+                        potHistory.forEach(pot => {
+                            pot.alive = isAlive(pot);
+                        });
                         const potData = calculatePotStatus(potHistory);
                         if (potData.bunny) {
                             potStatus = potData.bunny;
@@ -93,9 +97,13 @@
                 if (tracker.encounter_history) {
                     try {
                         const encounterHistory = JSON.parse(tracker.encounter_history);
-                        // Find the first CE that is currently active (death_time < spawn_time AND also different than -1)
+                        // Set alive property on all encounters
+                        encounterHistory.forEach(ce => {
+                            ce.alive = isAlive(ce);
+                        });
+                        // Find the first CE that is currently active
                         const activeCe = encounterHistory.find(
-                            (ce) => ce.death_time < ce.spawn_time
+                            (ce) => ce.alive
                         );
                         if (activeCe) {
                             activeCeFateId = activeCe.fate_id;
@@ -122,9 +130,13 @@
                 if (tracker.fate_history) {
                     try {
                         const fateHistory = JSON.parse(tracker.fate_history);
-                        // Find the first fate that is currently active (death_time < spawn_time AND also different than -1)
+                        // Set alive property on all fates
+                        fateHistory.forEach(fate => {
+                            fate.alive = isAlive(fate);
+                        });
+                        // Find the first fate that is currently active
                         const activeFate = fateHistory.find(
-                            (fate) => fate.death_time < fate.spawn_time
+                            (fate) => fate.alive
                         );
                         if (activeFate) {
                             activeFateId = activeFate.fate_id;
