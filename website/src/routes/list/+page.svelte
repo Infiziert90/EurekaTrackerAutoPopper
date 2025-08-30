@@ -37,141 +37,145 @@
         }
     }
 
+    async function processTrackerData(data) {
+        // sort by last_update
+        data.sort((a, b) => b.last_update - a.last_update);
+
+        // Process the data to add last_ce information and cap timestamps
+        const currentTime = Math.floor(Date.now() / 1000);
+        return data.map((tracker) => {
+            let isCeActive = false;
+            let activeCeFateId = null;
+            let recentCeFateId = null;
+            
+            let isFateActive = false;
+            let activeFateId = null;
+            let recentFateId = null;
+
+            // Cap the last_update timestamp to current time if it's in the future
+            const cappedLastUpdate = Math.min(tracker.last_update, currentTime);
+            
+            // Process pot status
+            let potStatus = null;
+            let potStatusText = null;
+            if (tracker.pot_history) {
+                try {
+                    const potHistory = JSON.parse(tracker.pot_history);
+                    // Set alive property on all pots
+                    potHistory.forEach(pot => {
+                        pot.alive = isAlive(pot);
+                    });
+                    const potData = calculatePotStatus(potHistory);
+                    if (potData.bunny) {
+                        potStatus = potData.bunny;
+                        if (potData.bunny.alive === true) {
+                            potStatusText = "Alive";
+                        } else {
+                            const respawnTime = calculateOccultRespawn(potData.bunny, 'timestamp');
+                            const now = Math.floor(Date.now() / 1000);
+                            if (respawnTime <= now) {
+                                potStatusText = "Soon";
+                            } else {
+                                potStatusText = respawnTime;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn(
+                        "Failed to parse pot_history for tracker:",
+                        tracker.tracker_id,
+                    );
+                }
+            }
+
+            // Try to parse encounter_history to get the last active CE
+            if (tracker.encounter_history) {
+                try {
+                    const encounterHistory = JSON.parse(tracker.encounter_history);
+                    // Set alive property on all encounters
+                    encounterHistory.forEach(ce => {
+                        ce.alive = isAlive(ce);
+                    });
+                    // Find the first CE that is currently active
+                    const activeCe = encounterHistory.find(
+                        (ce) => ce.alive
+                    );
+                    if (activeCe) {
+                        activeCeFateId = activeCe.fate_id;
+                        isCeActive = true;
+                    } else {
+                        // If no active CE, find the most recently seen CE
+                        const recentCe = encounterHistory
+                            .filter(ce => ce.last_seen > 0)
+                            .sort((a, b) => b.last_seen - a.last_seen)[0];
+                        if (recentCe) {
+                            recentCeFateId = recentCe.fate_id;
+                            isCeActive = false;
+                        }
+                    }
+                } catch (e) {
+                    console.warn(
+                        "Failed to parse encounter_history for tracker:",
+                        tracker.tracker_id,
+                    );
+                }
+            }
+
+            // Try to parse fate_history to get the last active fate
+            if (tracker.fate_history) {
+                try {
+                    const fateHistory = JSON.parse(tracker.fate_history);
+                    // Set alive property on all fates
+                    fateHistory.forEach(fate => {
+                        fate.alive = isAlive(fate);
+                    });
+                    // Find the first fate that is currently active
+                    const activeFate = fateHistory.find(
+                        (fate) => fate.alive
+                    );
+                    if (activeFate) {
+                        activeFateId = activeFate.fate_id;
+                        isFateActive = true;
+                    } else {
+                        // If no active fate, find the most recently seen fate
+                        const recentFate = fateHistory
+                            .filter(fate => fate.last_seen > 0)
+                            .sort((a, b) => b.last_seen - a.last_seen)[0];
+                        if (recentFate) {
+                            recentFateId = recentFate.fate_id;
+                            isFateActive = false;
+                        }
+                    }
+                } catch (e) {
+                    console.warn(
+                        "Failed to parse fate_history for tracker:",
+                        tracker.tracker_id,
+                    );
+                }
+            }
+
+            return {
+                ...tracker,
+                last_update: cappedLastUpdate,
+                active_ce_fate_id: activeCeFateId,
+                recent_ce_fate_id: recentCeFateId,
+                is_ce_active: isCeActive,
+                active_fate_id: activeFateId,
+                recent_fate_id: recentFateId,
+                is_fate_active: isFateActive,
+                pot_status: potStatus,
+                pot_status_text: potStatusText,
+            };
+        });
+    }
+
     async function loadRecentTrackers() {
         try {
             loading = true;
             error = null;
 
             const data = await fetchRecentTrackers();
-            // sort by last_update
-            data.sort((a, b) => b.last_update - a.last_update);
-
-            // Process the data to add last_ce information and cap timestamps
-            const currentTime = Math.floor(Date.now() / 1000);
-            trackers = data.map((tracker) => {
-                let isCeActive = false;
-                let activeCeFateId = null;
-                let recentCeFateId = null;
-                
-                let isFateActive = false;
-                let activeFateId = null;
-                let recentFateId = null;
-
-                // Cap the last_update timestamp to current time if it's in the future
-                const cappedLastUpdate = Math.min(tracker.last_update, currentTime);
-                
-                // Process pot status
-                let potStatus = null;
-                let potStatusText = null;
-                if (tracker.pot_history) {
-                    try {
-                        const potHistory = JSON.parse(tracker.pot_history);
-                        // Set alive property on all pots
-                        potHistory.forEach(pot => {
-                            pot.alive = isAlive(pot);
-                        });
-                        const potData = calculatePotStatus(potHistory);
-                        if (potData.bunny) {
-                            potStatus = potData.bunny;
-                            if (potData.bunny.alive === true) {
-                                potStatusText = "Alive";
-                            } else {
-                                const respawnTime = calculateOccultRespawn(potData.bunny, 'timestamp');
-                                const now = Math.floor(Date.now() / 1000);
-                                if (respawnTime <= now) {
-                                    potStatusText = "Soon";
-                                } else {
-                                    potStatusText = respawnTime;
-                                }
-                            }
-                        }
-                    } catch (e) {
-                        console.warn(
-                            "Failed to parse pot_history for tracker:",
-                            tracker.tracker_id,
-                        );
-                    }
-                }
-
-                // Try to parse encounter_history to get the last active CE
-                if (tracker.encounter_history) {
-                    try {
-                        const encounterHistory = JSON.parse(tracker.encounter_history);
-                        // Set alive property on all encounters
-                        encounterHistory.forEach(ce => {
-                            ce.alive = isAlive(ce);
-                        });
-                        // Find the first CE that is currently active
-                        const activeCe = encounterHistory.find(
-                            (ce) => ce.alive
-                        );
-                        if (activeCe) {
-                            activeCeFateId = activeCe.fate_id;
-                            isCeActive = true;
-                        } else {
-                            // If no active CE, find the most recently seen CE
-                            const recentCe = encounterHistory
-                                .filter(ce => ce.last_seen > 0)
-                                .sort((a, b) => b.last_seen - a.last_seen)[0];
-                            if (recentCe) {
-                                recentCeFateId = recentCe.fate_id;
-                                isCeActive = false;
-                            }
-                        }
-                    } catch (e) {
-                        console.warn(
-                            "Failed to parse encounter_history for tracker:",
-                            tracker.tracker_id,
-                        );
-                    }
-                }
-
-                // Try to parse fate_history to get the last active fate
-                if (tracker.fate_history) {
-                    try {
-                        const fateHistory = JSON.parse(tracker.fate_history);
-                        // Set alive property on all fates
-                        fateHistory.forEach(fate => {
-                            fate.alive = isAlive(fate);
-                        });
-                        // Find the first fate that is currently active
-                        const activeFate = fateHistory.find(
-                            (fate) => fate.alive
-                        );
-                        if (activeFate) {
-                            activeFateId = activeFate.fate_id;
-                            isFateActive = true;
-                        } else {
-                            // If no active fate, find the most recently seen fate
-                            const recentFate = fateHistory
-                                .filter(fate => fate.last_seen > 0)
-                                .sort((a, b) => b.last_seen - a.last_seen)[0];
-                            if (recentFate) {
-                                recentFateId = recentFate.fate_id;
-                                isFateActive = false;
-                            }
-                        }
-                    } catch (e) {
-                        console.warn(
-                            "Failed to parse fate_history for tracker:",
-                            tracker.tracker_id,
-                        );
-                    }
-                }
-
-                return {
-                    ...tracker,
-                    last_update: cappedLastUpdate,
-                    active_ce_fate_id: activeCeFateId,
-                    recent_ce_fate_id: recentCeFateId,
-                    is_ce_active: isCeActive,
-                    active_fate_id: activeFateId,
-                    recent_fate_id: recentFateId,
-                    is_fate_active: isFateActive,
-                    pot_status: potStatus,
-                    pot_status_text: potStatusText,
-                };
-            });
+            trackers = await processTrackerData(data);
         } catch (err) {
             console.error("Error loading recent trackers:", err);
             error = err.message;
@@ -180,13 +184,22 @@
         }
     }
 
+    async function refreshTrackers() {
+        try {
+            error = null;
+            const data = await fetchRecentTrackers();
+            trackers = await processTrackerData(data);
+        } catch (err) {
+            console.error("Error refreshing trackers:", err);
+            // Don't show error for background refreshes, just log it
+        }
+    }
+
     onMount(() => {
         loadRecentTrackers();
         
         // Set up auto-refresh every minute
-        refreshInterval = setInterval(() => {
-            loadRecentTrackers();
-        }, 60000); // 60 seconds
+        refreshInterval = setInterval(refreshTrackers, 60000); // 60 seconds
     });
 
     onDestroy(() => {
@@ -249,8 +262,8 @@
                             </span>
                             <span class="hidden md:inline">Datacenter</span>
                         </th>
-                        <th class="text-left hidden sm:table-cell truncate px-2">Last/Current CE</th>
                         <th class="text-left truncate px-2">Pot Status</th>
+                        <th class="text-left hidden sm:table-cell truncate px-2">Last/Current CE</th>
                         <th class="text-left hidden md:table-cell truncate px-2">Last/Current Fate</th>
                     </tr>
                 </thead>
@@ -287,25 +300,6 @@
                                 ></a>
                             </td>
 
-                            <!-- Last/Current CE -->
-                            <td class="hidden sm:table-cell relative px-2 truncate">
-                                {#if tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
-                                    {@const fateId = tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
-                                    {@const ceName = OCCULT_ENCOUNTERS[fateId]?.name?.[$currentLanguage] || OCCULT_ENCOUNTERS[fateId]?.name?.en || "Unknown CE"}
-                                    <span class="flex items-center gap-2">
-                                        <span class={`w-2 h-2 rounded-full ${tracker.is_ce_active ? 'bg-green-500' : 'bg-gray-500'}`} title={tracker.is_ce_active ? 'Currently Active' : 'Not Active'}></span>
-                                        {ceName}
-                                    </span>
-                                {:else}
-                                    None
-                                {/if}
-                                <a
-                                    href={`${base}/${tracker.tracker_id}`}
-                                    class="absolute inset-0 z-10"
-                                    aria-label={`View tracker ${tracker.tracker_id}`}
-                                ></a>
-                            </td>
-
                             <!-- Pot Status -->
                             <td class="relative px-2 truncate">
                                 {#if tracker.pot_status_text}
@@ -316,6 +310,25 @@
                                     {:else}
                                         In <AutoTimeFormatted timestamp={tracker.pot_status_text} format="relative" disableUpdate={true} />
                                     {/if}
+                                {:else}
+                                    None
+                                {/if}
+                                <a
+                                    href={`${base}/${tracker.tracker_id}`}
+                                    class="absolute inset-0 z-10"
+                                    aria-label={`View tracker ${tracker.tracker_id}`}
+                                ></a>
+                            </td>
+
+                            <!-- Last/Current CE -->
+                            <td class="hidden sm:table-cell relative px-2 truncate">
+                                {#if tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
+                                    {@const fateId = tracker.active_ce_fate_id || tracker.recent_ce_fate_id}
+                                    {@const ceName = OCCULT_ENCOUNTERS[fateId]?.name?.[$currentLanguage] || OCCULT_ENCOUNTERS[fateId]?.name?.en || "Unknown CE"}
+                                    <span class="flex items-center gap-2">
+                                        <span class={`w-2 h-2 rounded-full ${tracker.is_ce_active ? 'bg-green-500' : 'bg-gray-500'}`} title={tracker.is_ce_active ? 'Currently Active' : 'Not Active'}></span>
+                                        {ceName}
+                                    </span>
                                 {:else}
                                     None
                                 {/if}
