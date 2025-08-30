@@ -51,7 +51,7 @@ export function calculatePotStatus(potHistory) {
         bunny = nextSpawn;
     }
 
-    return { bunny, status: bunny };
+    return { bunny };
 }
 
 /*
