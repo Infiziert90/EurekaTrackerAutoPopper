@@ -29,8 +29,8 @@
             }
             const data = await response.json();
 
-            // filter out trackers with a datacenter field set to 0
-            return data.filter(tracker => tracker.datacenter !== 0);
+            // filter out trackers with a datacenter field set to 0, and keep the first 50
+            return data.filter(tracker => tracker.datacenter !== 0).slice(0, 50);
         } catch (error) {
             console.error("Error fetching recent trackers:", error);
             throw error;
@@ -233,15 +233,15 @@
 
 <div class="px-4">
     {#if loading}
-        <div class="text-white mb-8">
+        <div class="text-white mb-8 text-center px-20 py-10 bg-slate-950 w-fit mx-auto rounded">
             <p>Loading recent trackers...</p>
         </div>
     {:else if error}
-        <div class="text-red-400 mb-8">
+        <div class="text-red-400 mb-8 text-center px-20 py-10 bg-slate-950 w-fit mx-auto rounded">
             <p>Error: {error}</p>
         </div>
     {:else if trackers.length === 0}
-        <div class="text-white mb-8">
+        <div class="text-white mb-8 text-center px-20 py-10 bg-slate-950 w-fit mx-auto rounded">
             <p>No trackers updated in the last hour.</p>
         </div>
     {:else}

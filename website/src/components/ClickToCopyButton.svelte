@@ -1,14 +1,10 @@
 <script>
-    import { Tooltip } from "melt/builders";
-    let { text, children, ...rest } = $props();
+    import { Tooltip } from "flowbite-svelte";
+
+    let { text, title, children, class: className = '', ...rest } = $props();
     let tooltipString = $state(text || 'Click to copy');
 
     let tooltipTextUpdateTimeout;
-
-    const tooltip = new Tooltip({
-        openDelay: 0,
-        closeOnPointerDown: false
-    });
 
     function handleClick() {
         navigator.clipboard.writeText(text);
@@ -17,15 +13,22 @@
         clearTimeout(tooltipTextUpdateTimeout);
 
         tooltipTextUpdateTimeout = setTimeout(() => {
-            tooltipString = text || 'Click to copy';
+            tooltipString = title || text || 'Click to copy';
         }, 1000);
     }
 </script>
 
-<button {...tooltip.trigger} onclick={handleClick} {...rest}>
+<button 
+    {...rest}
+    onclick={handleClick} 
+    class="{className}" 
+
+>
     {@render children()}
 </button>
-<div {...tooltip.content} class="bg-black/80 rounded-md px-2 py-1 text-white text-xs ">
-    <div {...tooltip.arrow}></div>
-    <p>{tooltipString}</p>
-</div>
+<Tooltip
+    arrow={false}
+    class="bg-black/80 rounded-md text-white text-xs px-2 py-1 border border-white/20"
+>
+    {tooltipString}
+</Tooltip>
