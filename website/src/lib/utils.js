@@ -27,6 +27,12 @@ export function isAlive(fate, now = Math.floor(Date.now() / 1000)) {
     console.log(`[isAlive ${fate.fate_id}] death_time: ${formatTimestamp(fate.death_time)}`);
     console.log(`[isAlive ${fate.fate_id}] last_seen: ${formatTimestamp(fate.last_seen)}`);
 
+    // if both spawn_time and death_time are -1, then the fate/encounter has just been initialized - so it's not alive
+    if (fate.spawn_time === -1 && fate.death_time === -1) {
+        console.log(`[isAlive ${fate.fate_id}] Not Alive : spawn_time and death_time are -1 for fate_id ${fate.fate_id}`);
+        return false;
+    }
+
     
     // A death is valid only if it's after the spawn
     const hasValidDeath = fate.death_time > fate.spawn_time;

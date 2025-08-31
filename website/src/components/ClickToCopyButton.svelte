@@ -1,12 +1,12 @@
 <script>
     import { Tooltip } from "melt/builders";
-    let { text, children } = $props();
+    let { text, children, ...rest } = $props();
     let tooltipString = $state(text || 'Click to copy');
 
     let tooltipTextUpdateTimeout;
 
     const tooltip = new Tooltip({
-        openDelay: 30,
+        openDelay: 0,
         closeOnPointerDown: false
     });
 
@@ -22,11 +22,10 @@
     }
 </script>
 
-<button {...tooltip.trigger} onclick={handleClick}>
+<button {...tooltip.trigger} onclick={handleClick} {...rest}>
     {@render children()}
 </button>
-<div {...tooltip.content}>
+<div {...tooltip.content} class="bg-black/80 rounded-md px-2 py-1 text-white text-xs ">
     <div {...tooltip.arrow}></div>
     <p>{tooltipString}</p>
 </div>
-  

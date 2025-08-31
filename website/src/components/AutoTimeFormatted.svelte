@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { formatSeconds } from '$lib/utils';
 
-    let { timestamp, seconds, format = 'simple', disableUpdate = false } = $props();
+    let { timestamp, seconds, format = 'simple', disableUpdate = false, noNegative = false } = $props();
 
     let finalString = $state('');
     let interval;
@@ -11,6 +11,12 @@
         // If seconds or timestamp is set to -1, then we want to return 'Never'
         if (seconds === -1 || timestamp === -1) {
             finalString = 'Never';
+            return;
+        }
+
+        // If we set noNegative to true, then we want to return 'soon' if the timestamp is in the future
+        if (noNegative && timestamp > new Date().getTime() / 1000) {
+            finalString = 'Soon';
             return;
         }
 

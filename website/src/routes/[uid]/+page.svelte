@@ -5,9 +5,10 @@
     import { TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS, DATACENTER_NAMES } from "$lib/const";
     import { currentLanguage } from "$lib/stores";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull, Link, Clipboard } from "@lucide/svelte";
-    import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
+    import ClickToCopyButton from "../../components/ClickToCopyButton.svelte";
     import ItemIcon from "../../components/ItemIcon.svelte";
+    import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive } from "$lib/utils";
 
     const uid = $page.params.uid;
@@ -401,7 +402,7 @@
                 </h1>
                 <div class="flex grow flex-row flex-wrap items-center justify-center lg:justify-between gap-2">
                     <div>
-                        <table class="text-sm border-separate border-spacing-x-2 border-spacing-y-0.5 align-middle"><tbody>
+                        <table class="text-sm border-separate border-spacing-x-4 border-spacing-y-0.5 align-middle"><tbody>
 
                             <!-- Tracker ID row -->
                             <tr>
@@ -410,13 +411,13 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-2">
-                                        <button disabled class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <ClickToCopyButton text={uid} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                             <Clipboard class="w-4 h-4" />
-                                        </button>
-                                        <button disabled class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                        </ClickToCopyButton>
+                                        <ClickToCopyButton text={`${base}/${uid}`} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                             <Link class="w-4 h-4" />
-                                        </button>
-                                        {#if !isPasswordUnlocked}
+                                        </ClickToCopyButton>
+                                        {#if trackerType === 2 && !isPasswordUnlocked}
                                             <button onclick={unlockWithPassword} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                                 <Lock class="w-4 h-4" />
                                             </button>
@@ -431,9 +432,9 @@
                                         Pwd: <span class="bg-white text-black px-1">{trackerResults.password}</span>
                                     </td>
                                     <td>
-                                        <button disabled class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <ClickToCopyButton text={trackerResults.password} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                             <Clipboard class="w-4 h-4" />
-                                        </button>
+                                        </ClickToCopyButton>
                                     </td>
                                 </tr>
                             {/if}
@@ -444,17 +445,6 @@
                                 </td>
                             </tr>
                         </tbody></table>
-                    </div>
-                    <div>
-                        
-                    <p>
-                        <!-- Password Input for Tracker Type 2 -->
-                        {#if trackerType === 2}
-                            <span class="inline-flex w-18">
-                               
-                            </span>
-                        {/if}
-                    </p>
                     </div>
                     <LanguageSwitcher />
                 </div>
@@ -503,7 +493,7 @@
                                         {/if}
                                     </p>
                                     
-                                    {#if activeCE || activeBunny}
+                                    {#if activeFate || activeBunny || activeCE}
                                         <p class="text-blue-400">Upcoming reductions:</p>
                                         <ul class="list-disc list-inside text-blue-400">
                                             <!-- Display the active fate, pot and encounter -->
@@ -548,6 +538,48 @@
                         {/if}
                     {:else}
                         <p class="text-slate-400">No pot fate data available</p>
+                    {/if}
+
+                    <!-- Add buttons to mark pot as dead or spawned -->
+                    {#if isPasswordUnlocked}
+                        <!-- Pot History -->
+                        <div class="flex flex-row gap-2 mt-2">
+                            {#if trackerResults.pot_history && trackerResults.pot_history.length > 0}
+                                {#each trackerResults.pot_history as pot}
+                                    {#if pot.alive}
+                                        <button
+                                            onclick={() => handlePotDead(pot)}
+                                            disabled={isUpdating}
+                                            class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                isUpdating ? 'bg-slate-600' : 'bg-red-600 hover:bg-red-700'
+                                            }"
+                                            title="Mark pot as dead"
+                                        >
+                                            {#if isUpdating}
+                                                <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
+                                            {:else}
+                                                KILL {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}
+                                            {/if}
+                                        </button>
+                                    {:else}
+                                        <button
+                                            onclick={() => handlePotSpawned(pot)}
+                                            disabled={isUpdating}
+                                            class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                isUpdating ? 'bg-slate-600' : 'bg-green-600 hover:bg-green-700'
+                                            }"
+                                            title="Mark pot as spawned"
+                                        >
+                                            {#if isUpdating}
+                                                <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
+                                            {:else}
+                                                POP {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}
+                                            {/if}
+                                        </button>
+                                    {/if}
+                                {/each}
+                            {/if}
+                        </div>
                     {/if}
                 </div>
             </div>
@@ -751,102 +783,6 @@
                             <tr class="bg-slate-900/90">
                                 <td colspan={trackerType === 2 ? 4 : 3} class="px-2 py-4 text-center text-slate-400">
                                     No fate history available
-                                </td>
-                            </tr>
-                        {/if}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pot History -->
-            <div class="max-w-6xl w-full mx-auto mb-4">
-                <h2 class="text-2xl font-extrabold">
-                    <img src="https://v2.xivapi.com/api/asset?path=ui/icon/060000/060958_hr1.tex&format=webp" alt="Pot Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
-                    Pot History
-                </h2>
-
-                <table class="table-fixed w-full border-separate border-spacing-y-0.5 text-sm md:text-base">
-                    <thead>
-                        <tr class="text-left">
-                            <th class="px-2 w-2/5">Pot</th>
-                            <th class="px-2 hidden md:table-cell">Drops</th>
-                            <th class="px-2 w-1/5 text-end">Last Seen</th>
-                            {#if trackerType === 2}
-                                <th class="px-2 w-[14%] md:w-14 text-center"></th>
-                            {/if}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#if trackerResults.pot_history && trackerResults.pot_history.length > 0}
-                            {#each trackerResults.pot_history as pot}
-                                <tr class={pot.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
-                                    <td class="px-2 w-2/5 truncate">{OCCULT_FATES[pot.fate_id].name[$currentLanguage]} {OCCULT_FATES[pot.fate_id].suffix[$currentLanguage]}</td>
-                                    <td class="px-2 hidden md:table-cell">
-                                        <div class="flex flex-wrap gap-1">
-                                            {#each OCCULT_FATES[pot.fate_id].drops as drop}
-                                                <ItemIcon itemId={drop} />
-                                            {/each}
-                                        </div>
-                                    </td>
-                                    <td class="px-2 w-1/5 text-end">
-                                        <p class="text-nowrap">
-                                            <span class="hidden md:inline">
-                                                {pot.alive ? '(Alive)' : ''}
-                                             </span>
-                                            {#if pot.last_seen != -1}
-                                                <AutoTimeFormatted timestamp={pot.last_seen} />
-                                            {:else}
-                                                N/A
-                                            {/if}
-                                        </p>
-                                    </td>
-                                    {#if trackerType === 2}
-                                        <td class="px-2 w-[14%] md:w-14 text-center">
-                                            {#if isPasswordUnlocked}
-                                                {#if pot.alive}
-                                                    <button
-                                                        onclick={() => handlePotDead(pot)}
-                                                        disabled={isUpdating}
-                                                        class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
-                                                            isUpdating ? 'bg-slate-600' : 'bg-red-600 hover:bg-red-700'
-                                                        }"
-                                                        title="Mark pot as dead"
-                                                    >
-                                                        {#if isUpdating}
-                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
-                                                        {:else}
-                                                            <Skull class="w-4 h-4 inline-block" />
-                                                        {/if}
-                                                    </button>
-                                                {:else}
-                                                <button
-                                                    onclick={() => handlePotSpawned(pot)}
-                                                    disabled={isUpdating}
-                                                    class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
-                                                        isUpdating ? 'bg-slate-600' : 'bg-green-600 hover:bg-green-700'
-                                                    }"
-                                                    title="Mark pot as spawned"
-                                                >
-                                                    {#if isUpdating}
-                                                        <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
-                                                    {:else}
-                                                        POP
-                                                    {/if}
-                                                </button>
-                                                {/if}
-                                            {:else}
-                                                <div class="text-slate-500 text-xs flex items-center justify-center">
-                                                    <Lock class="w-4 h-4" />
-                                                </div>
-                                            {/if}
-                                        </td>
-                                    {/if}
-                                </tr>
-                            {/each}
-                        {:else}
-                            <tr class="bg-slate-900/90">
-                                <td colspan={trackerType === 2 ? 4 : 3} class="px-2 py-4 text-center text-slate-400">
-                                    No pot history available
                                 </td>
                             </tr>
                         {/if}
