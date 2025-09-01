@@ -5,7 +5,7 @@
 </script>
 
 <div class="flex flex-col min-h-dvh h-full bg-slate-950/80 text-white">
-	<main class="flex-1 overflow-y-auto">
+	<main id="main-content" class="flex-1 overflow-y-auto scrollbar-g">
 		{@render children()}
 	</main>
 	

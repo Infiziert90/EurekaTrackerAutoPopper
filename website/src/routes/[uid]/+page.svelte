@@ -9,6 +9,7 @@
     import ClickToCopyButton from "../../components/ClickToCopyButton.svelte";
     import ItemIcon from "../../components/ItemIcon.svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
+    import PasswordButton from "../../components/PasswordButton.svelte";
     import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive } from "$lib/utils";
 
     const uid = $page.params.uid;
@@ -421,6 +422,9 @@
                                             <button onclick={unlockWithPassword} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                                 <Lock class="w-4 h-4" />
                                             </button>
+                                            <PasswordButton class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                                <Lock class="w-4 h-4" />
+                                            </PasswordButton>
                                         {/if}
                                     </div>
                                 </td>

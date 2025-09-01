@@ -28,7 +28,7 @@
 </button>
 <Tooltip
     arrow={false}
-    class="bg-black/80 rounded-md text-white text-xs px-2 py-1 border border-white/20"
+    class="bg-black/80 rounded-md text-white text-xs p-1.5 border border-white/20"
 >
     {tooltipString}
 </Tooltip>

@@ -4,27 +4,11 @@
     --font-sans: 'IBM Plex Sans JP', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
     color-scheme: dark;
-
-
-    --tooltip-arrow-size: 0px;
-    --tooltip-background-color: rgba(0, 0, 0, 0.9);
-    --tooltip-border-radius: 4px;
-    --tooltip-box-shadow: 0 1px 20px rgba(0, 0, 0, 0.25);
-    --tooltip-font-family: var(--font-sans);
-    --tooltip-font-size: 11px;
-    --tooltip-font-weight: 500;
-    --tooltip-line-height: 1.25rem;
-    --tooltip-color: #fff;
-    --tooltip-offset-x: 12px;
-    --tooltip-offset-y: 12px;
-    --tooltip-padding: 12px;
-    --tooltip-white-space-hidden: nowrap;
-    --tooltip-white-space-shown: normal;
-    --tooltip-z-index: 100;
 }
 
 /* Needed for the automatic height of the body, with flex:1 */
-html, body {
+html,
+body {
     height: 100%;
 }
 
@@ -34,13 +18,16 @@ html {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+
+    scrollbar-color: var(--color-slate-400) var(--color-slate-950);
 }
 
 /* Pseudo element that goes on top of the element its given, so that stretchy overscroll doesn't show the background on mobile devices */
 .overscroll-pseudo-elt::before {
     content: '';
     position: absolute;
-    top: -100vh;   /* move pseudo above the element */
+    top: -100vh;
+    /* move pseudo above the element */
     left: 0;
     right: 0;
     bottom: 0;
@@ -48,4 +35,3 @@ html {
     background-color: inherit;
     pointer-events: none;
 }
-
