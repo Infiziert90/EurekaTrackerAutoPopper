@@ -34,25 +34,21 @@
     // URL password will be checked in onMount
     let urlPassword = null;
 
-    // Function to handle password authentication using alert()
-    function unlockWithPassword() {
-        const password = prompt("Enter tracker password:");
-        if (password === trackerResults.password) {
-            isPasswordUnlocked = true;
-            // Store password in localStorage for persistence
-            localStorage.setItem(`tracker_password_${uid}`, password);
-            
-            // Clean up URL password if it was used
-            localStorage.removeItem(`url_password_${uid}`);
-            
-            // Remove password from URL if present
-            if (urlPassword) {
-                const newUrl = new URL(window.location);
-                newUrl.searchParams.delete('password');
-                window.history.replaceState({}, '', newUrl);
-            }
-        } else if (password !== null) {
-            alert("Incorrect password");
+    // Function to handle password authentication from PasswordButton
+    function handlePasswordCorrect(event) {
+        const { password } = event.detail;
+        isPasswordUnlocked = true;
+        // Store password in localStorage for persistence
+        localStorage.setItem(`tracker_password_${uid}`, password);
+        
+        // Clean up URL password if it was used
+        localStorage.removeItem(`url_password_${uid}`);
+        
+        // Remove password from URL if present
+        if (urlPassword) {
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.delete('password');
+            window.history.replaceState({}, '', newUrl);
         }
     }
 
@@ -418,13 +414,20 @@
                                         <ClickToCopyButton text={`${base}/${uid}`} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                             <Link class="w-4 h-4" />
                                         </ClickToCopyButton>
-                                        {#if trackerType === 2 && !isPasswordUnlocked}
-                                            <button onclick={unlockWithPassword} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-                                                <Lock class="w-4 h-4" />
-                                            </button>
-                                            <PasswordButton class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-                                                <Lock class="w-4 h-4" />
-                                            </PasswordButton>
+                                        {#if trackerType === 2}
+                                            {#if !isPasswordUnlocked}
+                                                <PasswordButton 
+                                                    expectedPassword={trackerResults.password}
+                                                    on:passwordCorrect={handlePasswordCorrect}
+                                                    class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    <Lock class="w-4 h-4" />
+                                                </PasswordButton>
+                                            {:else}
+                                                <div class="text-green-400" title="Tracker unlocked">
+                                                    <Unlock class="w-4 h-4" />
+                                                </div>
+                                            {/if}
                                         {/if}
                                     </div>
                                 </td>
