@@ -5,5 +5,5 @@ import path from 'path';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
-	base: process.argv.includes('dev') ? '' : '/EurekaTrackerAutoPopper/'
+	base: ''
 });
