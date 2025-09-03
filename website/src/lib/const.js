@@ -73,7 +73,7 @@ export const DATACENTER_NAMES = {
         selectable: true,
         region: "North America"
     },
-    
+
     // Unusual DCs, listed but not available to choose in manual trackers for now
     12: {
         name: "Shadow",
@@ -181,14 +181,14 @@ export const OCCULT_FATES = {
             "de": "Kampf um Leben und Schweiß"
         },
         drops: [47745],
-        encounter_id: 25,   
+        encounter_id: 25,
     },
     1969: {
         name: {
             "en": "Sworn to Soil",
             "fr": "Défi : rester de boue",
-            "ja": "Kampf um Leben und Boden unter den Füßen",
-            "de": "土壌の守り手「マッドマッド」"
+            "ja": "土壌の守り手「マッドマッド」",
+            "de": "Kampf um Leben und Boden unter den Füßen"
         },
         drops: [47745],
         encounter_id: 18,
@@ -225,7 +225,7 @@ export const OCCULT_FATES = {
     },
 
     // BUNNY FATES
-    1976: { 
+    1976: {
         name: {
             "en": "Pleading Pots",
             "fr": "Pas de pot pour les pots",
@@ -241,7 +241,7 @@ export const OCCULT_FATES = {
         drops: [47749,47738],
         encounter_id: 40,
     },
-    1977: { 
+    1977: {
         name: {
             "en": "Persistent Pots",
             "fr": "Mauvais œil pour les pots",
@@ -481,7 +481,7 @@ export const ITEM = {
         },
         img: "ui/icon/026000/026029.tex"
     },
-    
+
     // FIELD NOTES
     47728: {
         name: {
