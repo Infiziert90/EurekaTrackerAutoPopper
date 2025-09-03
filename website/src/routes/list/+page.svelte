@@ -47,14 +47,14 @@
             let isCeActive = false;
             let activeCeFateId = null;
             let recentCeFateId = null;
-            
+
             let isFateActive = false;
             let activeFateId = null;
             let recentFateId = null;
 
             // Cap the last_update timestamp to current time if it's in the future
             const cappedLastUpdate = Math.min(tracker.last_update, currentTime);
-            
+
             // Process pot status
             let potStatus = null;
             let potStatusText = null;
@@ -197,7 +197,7 @@
 
     onMount(() => {
         loadRecentTrackers();
-        
+
         // Set up auto-refresh every minute
         refreshInterval = setInterval(refreshTrackers, 60000); // 60 seconds
     });
@@ -282,7 +282,7 @@
 
                             <!-- Last Updated -->
                             <td class="relative hidden sm:table-cell px-2 truncate">
-                                <AutoTimeFormatted timestamp={tracker.last_update} format="relative" disableUpdate={true} />
+                                <AutoTimeFormatted timestamp={tracker.last_update} format="relative" disableUpdate={false} />
                                 <a
                                     href={`${base}/${tracker.tracker_id}`}
                                     class="absolute inset-0 z-10"
@@ -308,7 +308,7 @@
                                     {:else if tracker.pot_status_text === "Soon"}
                                         Soon
                                     {:else}
-                                        In <AutoTimeFormatted timestamp={tracker.pot_status_text} format="relative" disableUpdate={true} />
+                                        <AutoTimeFormatted timestamp={tracker.pot_status_text} format="relative" disableUpdate={false} />
                                     {/if}
                                 {:else}
                                     None
