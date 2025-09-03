@@ -274,11 +274,12 @@ public class OccultWindow : Window, IDisposable
 
         using (ImRaii.PushFont(UiBuilder.IconFont))
         {
-            ImGui.Button(FontAwesomeIcon.Globe.ToIconString());
+            if (ImGui.Button(FontAwesomeIcon.Globe.ToIconString()))
+                Util.OpenLink($"https://tracker.infi.ovh/{Plugin.TrackerHandler.ConnectedTo}");
         }
 
         if (ImGui.IsItemHovered())
-            Helper.Tooltip("Open tracker website. (coming soon)");
+            Helper.Tooltip("Open tracker website.");
 
         ImGui.AlignTextToFramePadding();
         Helper.TextColored(ImGuiColors.HealerGreen, "Password: ");
