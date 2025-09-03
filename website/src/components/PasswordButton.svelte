@@ -1,4 +1,5 @@
 <script>
+    // https://www.sajadevo.com/blog/building-a-native-html-dialog was used to help create this component
     import { Tooltip } from "flowbite-svelte";
     import { X, AlertCircle } from "@lucide/svelte";
     import { createEventDispatcher } from "svelte";

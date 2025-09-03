@@ -5,6 +5,7 @@
     import { TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS, DATACENTER_NAMES } from "$lib/const";
     import { currentLanguage } from "$lib/stores";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull, Link, Clipboard } from "@lucide/svelte";
+    import toast, {Toaster} from 'svelte-5-french-toast'
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
     import ClickToCopyButton from "../../components/ClickToCopyButton.svelte";
     import ItemIcon from "../../components/ItemIcon.svelte";
@@ -28,8 +29,7 @@
     let trackerType = $state(1);
     let originalData = $state(null);
     let isUpdating = $state(false);
-    let updateMessage = $state("");
-    let updateMessageType = $state(""); // "success" or "error"
+
     
     // URL password will be checked in onMount
     let urlPassword = null;
@@ -56,53 +56,48 @@
     async function handleStatusUpdate({ encounter, type, status }) {
         if (!isPasswordUnlocked || !originalData) return;
         
-        isUpdating = true;
-        updateMessage = "";
-        
-        try {
-            // Create a copy of the original data
-            const updatedData = { ...originalData };
+        const updatePromise = async () => {
+            isUpdating = true;
             
-            // Determine which history to update based on type
-            const historyKey = type === 'ce' ? 'encounter_history' : type === 'fate' ? 'fate_history' : 'pot_history';
-            const history = JSON.parse(updatedData[historyKey]);
-            const targetItem = history.find(item => item.fate_id === encounter.fate_id);
-            
-            if (targetItem) {
-                if (status === 'spawned') {
-                    targetItem.spawn_time = Math.floor(Date.now() / 1000);
-                    targetItem.death_time = -1; // Ensure death_time is -1 when spawning
-                    targetItem.last_seen = targetItem.spawn_time;
-                } else if (status === 'dead') {
-                    targetItem.death_time = Math.floor(Date.now() / 1000);
-                    targetItem.last_seen = targetItem.death_time;
+            try {
+                // Create a copy of the original data
+                const updatedData = { ...originalData };
+                
+                // Determine which history to update based on type
+                const historyKey = type === 'ce' ? 'encounter_history' : type === 'fate' ? 'fate_history' : 'pot_history';
+                const history = JSON.parse(updatedData[historyKey]);
+                const targetItem = history.find(item => item.fate_id === encounter.fate_id);
+                
+                if (targetItem) {
+                    if (status === 'spawned') {
+                        targetItem.spawn_time = Math.floor(Date.now() / 1000);
+                        targetItem.death_time = -1; // Ensure death_time is -1 when spawning
+                        targetItem.last_seen = targetItem.spawn_time;
+                    } else if (status === 'dead') {
+                        targetItem.death_time = Math.floor(Date.now() / 1000);
+                        targetItem.last_seen = targetItem.death_time;
+                    }
+                    
+                    updatedData[historyKey] = JSON.stringify(history);
+                    updatedData.last_update = Math.floor(Date.now() / 1000);
                 }
                 
-                updatedData[historyKey] = JSON.stringify(history);
-                updatedData.last_update = Math.floor(Date.now() / 1000);
-            }
-            
-            // Send only the updated history data
-            const response = await fetch(BASE_URL, {
-                method: 'PATCH',
-                headers: {
-                    ...API_HEADERS,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    [historyKey]: updatedData[historyKey],
-                    last_update: updatedData.last_update
-                })
-            });
-            
-            if (response.ok) {
-                const successKey = type === 'ce' 
-                    ? (status === 'spawned' ? 'mobSpawnedSuccess' : 'mobDeadSuccess')
-                    : type === 'fate' 
-                        ? (status === 'spawned' ? 'fateSpawnedSuccess' : 'fateDeadSuccess')
-                        : (status === 'spawned' ? 'potSpawnedSuccess' : 'potDeadSuccess');
-                updateMessage = 'Update successful';
-                updateMessageType = "success";
+                // Send only the updated history data
+                const response = await fetch(BASE_URL, {
+                    method: 'PATCH',
+                    headers: {
+                        ...API_HEADERS,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        [historyKey]: updatedData[historyKey],
+                        last_update: updatedData.last_update
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to update tracker data');
+                }
                 
                 // Update the current display data immediately for better UX
                 const currentHistory = trackerResults[historyKey];
@@ -122,23 +117,18 @@
                 
                 // Refresh the data after successful update
                 await fetchTrackerData();
-            } else {
-                updateMessage = 'Update failed';
-                updateMessageType = "error";
-                console.error('Failed to update tracker data');
+            } finally {
+                isUpdating = false;
             }
-        } catch (err) {
-            updateMessage = 'Update failed';
-            updateMessageType = "error";
-            console.error('Error updating tracker data:', err);
-        } finally {
-            isUpdating = false;
-            // Clear message after 3 seconds
-            setTimeout(() => {
-                updateMessage = "";
-                updateMessageType = "";
-            }, 3000);
-        }
+        };
+
+        toast.promise(updatePromise(), {
+            loading: 'Updating...',
+            success: 'Update successful!',
+            error: 'Update failed.',
+        }, {
+            position: 'top-right',
+        });
     }
 
     // Wrapper functions for backward compatibility and cleaner calls
@@ -350,7 +340,7 @@
 <svelte:head>
 	<title>Occult Tracker - {uid}</title>
 </svelte:head>
-
+<Toaster />
 <div
     class="flex flex-col h-full w-full {isLoading && trackerResults.length === 0 || error || trackerResults.length === 0 ? 'justify-center' : ''}"
 >
@@ -562,11 +552,7 @@
                                             }"
                                             title="Mark pot as dead"
                                         >
-                                            {#if isUpdating}
-                                                <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
-                                            {:else}
-                                                KILL {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}
-                                            {/if}
+                                            KILL {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}
                                         </button>
                                     {:else}
                                         <button
@@ -577,11 +563,7 @@
                                             }"
                                             title="Mark pot as spawned"
                                         >
-                                            {#if isUpdating}
-                                                <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
-                                            {:else}
-                                                POP {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}
-                                            {/if}
+                                            POP {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}
                                         </button>
                                     {/if}
                                 {/each}
@@ -591,20 +573,7 @@
                 </div>
             </div>
 
-            <!-- Status Message for Tracker Type 2 -->
-            {#if trackerType === 2 && updateMessage}
-                <div class="max-w-6xl w-full mx-auto mb-4">
-                    <div class="bg-slate-800/90 p-4">
-                        <div class="text-sm font-medium {
-                            updateMessageType === 'success' ? 'bg-green-600/20 text-green-400 border border-green-600/30' :
-                            updateMessageType === 'error' ? 'bg-red-600/20 text-red-400 border border-red-600/30' :
-                            'bg-blue-600/20 text-blue-400 border border-blue-600/30'
-                        } p-2 rounded">
-                            {updateMessage}
-                        </div>
-                    </div>
-                </div>
-            {/if}
+
 
             <!-- Encounter History -->    
             <div class="max-w-6xl w-full mx-auto mb-4">
@@ -659,11 +628,7 @@
                                                         }"
                                                         title="Mark mob as dead"
                                                     >
-                                                        {#if isUpdating}
-                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
-                                                        {:else}
-                                                            <Skull class="w-4 h-4 inline-block" />
-                                                        {/if}
+                                                        <Skull class="w-4 h-4 inline-block" />
                                                     </button>
                                                 {:else}
                                                     <button
@@ -674,11 +639,7 @@
                                                         }"
                                                         title="Mark mob as spawned"
                                                     >
-                                                        {#if isUpdating}
-                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
-                                                        {:else}
-                                                            POP
-                                                        {/if}
+                                                        POP
                                                     </button>
                                                 {/if}
                                             {:else}
@@ -755,11 +716,7 @@
                                                         }"
                                                         title="Mark fate as dead"
                                                     >
-                                                        {#if isUpdating}
-                                                            <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
-                                                        {:else}
-                                                            <Skull class="w-4 h-4 inline-block" />
-                                                        {/if}
+                                                        <Skull class="w-4 h-4 inline-block" />
                                                     </button>
                                                 {:else}
                                                 <button
@@ -770,11 +727,7 @@
                                                     }"
                                                     title="Mark fate as spawned"
                                                 >
-                                                    {#if isUpdating}
-                                                        <LoaderPinwheel class="w-3 h-3 animate-spin inline" />
-                                                    {:else}
-                                                        POP
-                                                    {/if}
+                                                    POP
                                                 </button>
                                                 {/if}
                                             {:else}
