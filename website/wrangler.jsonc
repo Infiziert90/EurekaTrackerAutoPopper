@@ -5,5 +5,14 @@
     "assets": {
         "directory": ".svelte-kit/cloudflare",
         "binding": "ASSETS"
-    }
+    },
+    "observability": {
+      "enabled": true
+    },
+    "routes": [
+      {
+        "pattern": "tracker.infi.ovh",
+        "custom_domain": true
+      }
+    ]
 }
