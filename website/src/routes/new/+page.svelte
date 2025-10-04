@@ -66,7 +66,11 @@
             
             // Automatically navigate to the tracker page if we have a tracker_id
             if (result && result.tracker_id) {
-                await goto(`${base}/${result.tracker_id}?password=${formData.password}`);
+                // Save password in localStorage before navigation
+                localStorage.setItem(`tracker_password_${result.tracker_id}`, formData.password);
+                
+                // Navigate to tracker page without password in URL
+                await goto(`${base}/${result.tracker_id}`);
             }
             
         } catch (error) {
