@@ -12,14 +12,66 @@
     let loading = $state(true);
     let error = $state(null);
     let refreshInterval = $state(null);
+    let selectedDatacenter = $state("");
+
+    // Group datacenters by region for the select dropdown
+    // Build a mapping of datacenter regions to their selectable datacenters for the dropdown.
+    // Example output: { "Japan": [ {name: ..., id: ...}, ... ], "Europe": [ ... ], ... }
+    const datacentersByRegion = Object.entries(DATACENTER_NAMES)
+        // Only include datacenters that are selectable
+        .filter(([id, datacenter]) => datacenter.selectable)
+        // Group datacenters by their region
+        .reduce((regions, [id, datacenter]) => {
+            // Initialize the region array if it doesn't exist
+            if (!regions[datacenter.region]) {
+                regions[datacenter.region] = [];
+            }
+            // Add the datacenter to the appropriate region, including its string id
+            regions[datacenter.region].push({ ...datacenter, id: id.toString() });
+            return regions;
+        }, {});
+
+    // Initialize datacenter from localStorage
+    function initializeDatacenter() {
+        const savedDatacenter = localStorage.getItem('selectedDatacenter');
+        if (savedDatacenter) {
+            const datacenterId = parseInt(savedDatacenter);
+            if (DATACENTER_NAMES[datacenterId]) {
+                selectedDatacenter = savedDatacenter; // Keep as string for select binding
+            }
+        }
+    }
+
+    // Handle datacenter selection change
+    function handleDatacenterChange(event) {
+        const newDatacenter = event.target.value || "";
+        selectedDatacenter = newDatacenter;
+        
+        if (newDatacenter) {
+            localStorage.setItem('selectedDatacenter', newDatacenter);
+        } else {
+            localStorage.removeItem('selectedDatacenter');
+        }
+        
+        // Refresh trackers with new filter
+        refreshTrackers();
+    }
 
     async function fetchRecentTrackers() {
         try {
             const thirtyMinutesAgo = Math.floor(
                 (Date.now() - 30 * 60 * 1000) / 1000,
             );
+            
+            // Build query parameters
+            const params = new URLSearchParams();
+            params.set('last_update', `gte.${thirtyMinutesAgo}`);
+            if (selectedDatacenter && selectedDatacenter !== "") {
+                params.set('datacenter', `eq.${selectedDatacenter}`);
+            }
+            
             const response = await fetch(
-                `${BASE_URL}?last_update=gte.${thirtyMinutesAgo}`,
+                `${BASE_URL}?${params.toString()}`,
                 {
                     headers: API_HEADERS,
                 },
@@ -196,6 +248,7 @@
     }
 
     onMount(() => {
+        initializeDatacenter();
         loadRecentTrackers();
 
         // Set up auto-refresh every minute
@@ -215,7 +268,7 @@
 
 <div class="bg-slate-950 p-2 mb-2 sticky top-0 z-10 overscroll-pseudo-elt">
     <div
-        class="max-w-6xl px-8 mx-auto flex flex-col lg:flex-row items-center justify-between"
+        class="max-w-6xl px-8 mx-auto flex flex-col gap-5 lg:flex-row items-center justify-between"
     >
         <h1>
             <a href={`${base}/`} aria-label="Occult Tracker">
@@ -227,7 +280,36 @@
                 />
             </a>
         </h1>
-        <LanguageSwitcher />
+        <div class="flex grow flex-row flex-wrap items-center justify-center lg:justify-between gap-2">
+            <!-- Datacenter Filter -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-x-4">
+                <label for="datacenter-select" class="text-white text-sm whitespace-nowrap">
+                    Filter by Datacenter:
+                </label>
+                <select
+                    id="datacenter-select"
+                    bind:value={selectedDatacenter}
+                    onchange={handleDatacenterChange}
+                    class="bg-white text-black px-1 rounded-none text-sm"
+                >
+                    <option value="">All Datacenters</option>
+                    {#each Object.entries(datacentersByRegion) as [region, datacenters]}
+                        {#if region == 'undefined'}
+                            {#each datacenters as datacenter}
+                                <option value={datacenter.id}>{datacenter.name}</option>
+                            {/each}
+                        {:else}
+                            <optgroup label={region}>
+                                {#each datacenters as datacenter}
+                                    <option value={datacenter.id}>{datacenter.name}</option>
+                                {/each}
+                            </optgroup>
+                        {/if}
+                    {/each}
+                </select>
+            </div>
+            <LanguageSwitcher />
+        </div>
     </div>
 </div>
 
