@@ -332,7 +332,6 @@
                     { id: 'ce', key: 'active_ce_fate_id', name: 'Last/Current CE', sortable: false },
                     { id: 'fate', key: 'active_fate_id', name: 'Last/Current Fate', sortable: false },
                 ],
-                pageSize: 50,
             });
         } catch (err) {
             console.error("Error loading recent trackers:", err);
@@ -360,7 +359,6 @@
                         { id: 'ce', key: 'active_ce_fate_id', name: 'Last/Current CE', sortable: false },
                         { id: 'fate', key: 'active_fate_id', name: 'Last/Current Fate', sortable: false },
                     ],
-                    pageSize: 50,
                 });
             }
         } catch (err) {
@@ -456,7 +454,7 @@
         <div class="text-red-400 mb-8 text-center px-20 py-10 bg-slate-950 w-fit mx-auto rounded">
             <p>Error: {error}</p>
         </div>
-    {:else if !table || table.rows.length === 0}
+    {:else if !table || table.allRows.length === 0}
         <div class="text-white mb-8 text-center px-20 py-10 bg-slate-950 w-fit mx-auto rounded">
             <p>No trackers found.</p>
         </div>
@@ -503,7 +501,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each table.rows as row (row.tracker_id)}
+                    {#each table.allRows as row (row.tracker_id)}
                         <tr class="relative group cursor-pointer bg-slate-900/90 hover:bg-slate-800 transition-colors duration-200">
                             <!-- Tracker ID -->
                             <td class="relative px-2 font-mono">
@@ -596,29 +594,6 @@
                     {/each}
                 </tbody>
             </table>
-            
-            <!-- Pagination -->
-            {#if table.totalPages > 1}
-                <div class="flex items-center justify-center gap-4 mt-4">
-                    <button
-                        onclick={() => table.currentPage--}
-                        disabled={!table.canGoBack}
-                        class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-slate-800 hover:bg-slate-700"
-                    >
-                        Previous
-                    </button>
-                    <span class="text-white text-xs">
-                        Page {table.currentPage} of {table.totalPages} ({table.allRows.length} total)
-                    </span>
-                    <button
-                        onclick={() => table.currentPage++}
-                        disabled={!table.canGoForward}
-                        class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-slate-800 hover:bg-slate-700"
-                    >
-                        Next
-                    </button>
-                </div>
-            {/if}
         </div>
     {/if}
 </div>
