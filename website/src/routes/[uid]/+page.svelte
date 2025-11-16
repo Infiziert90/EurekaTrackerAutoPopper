@@ -453,7 +453,7 @@
                                         <ClickToCopyButton text={uid} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                             <Clipboard class="w-4 h-4" />
                                         </ClickToCopyButton>
-                                        <ClickToCopyButton text={`${base}/${uid}`} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <ClickToCopyButton text={`${$page.url.origin}${base}/${uid}`} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                             <Link class="w-4 h-4" />
                                         </ClickToCopyButton>
                                         {#if trackerType === 2}
