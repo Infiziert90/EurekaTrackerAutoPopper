@@ -16,7 +16,7 @@ export const API_HEADERS = {
 export const DATACENTER_NAMES = {
     0: {
         name: "Unknown",
-        selectable: true,
+        selectable: false,
     },
     1: {
         name: "Elemental",
@@ -74,7 +74,6 @@ export const DATACENTER_NAMES = {
         region: "North America"
     },
 
-    // Unusual DCs, listed but not available to choose in manual trackers for now
     12: {
         name: "Shadow",
         selectable: false,
@@ -91,15 +90,23 @@ export const DATACENTER_NAMES = {
     },
     101: {
         name: "陆行鸟",
-        selectable: false
+        selectable: true,
+        region: "China"
+    },
+    102: {
+        name: "莫古力",
+        selectable: true,
+        region: "China"
     },
     103: {
         name: "猫小胖",
-        selectable: false
+        selectable: true,
+        region: "China"
     },
     104: {
         name: "豆豆柴",
-        selectable: false
+        selectable: true,
+        region: "China"
     },
     151: {
         name: "[empty]",
@@ -107,7 +114,8 @@ export const DATACENTER_NAMES = {
     },
     201: {
         name: "Eorzea",
-        selectable: false
+        selectable: true,
+        region: "Korea"
     }
 }
 
@@ -440,7 +448,7 @@ export const ITEM = {
         name: {
             "en": "Verdigris Demiatma",
             "fr": "Demi-âtma turquoise",
-            "jp": "碧晶のデミアートマ",
+            "ja": "碧晶のデミアートマ",
             "de": "Demi-Atma Verdigris",
         },
         img: "ui/icon/026000/026035.tex"

@@ -15,21 +15,8 @@ export function isAlive(fate, now = Math.floor(Date.now() / 1000)) {
         return date.toLocaleString('fr-FR');
     }
 
-    try {
-        console.log(`[isAlive ${fate.fate_id}] isAlive called with fate:`, OCCULT_FATES[fate.fate_id].name['fr']);
-    } catch (e) {
-    }
-    try {
-        console.log(`[isAlive ${fate.fate_id}] isAlive called with fate:`, OCCULT_ENCOUNTERS[fate.fate_id].name['fr']);
-    } catch (e) {
-    }
-    console.log(`[isAlive ${fate.fate_id}] spawn_time: ${formatTimestamp(fate.spawn_time)}`);
-    console.log(`[isAlive ${fate.fate_id}] death_time: ${formatTimestamp(fate.death_time)}`);
-    console.log(`[isAlive ${fate.fate_id}] last_seen: ${formatTimestamp(fate.last_seen)}`);
-
     // if both spawn_time and death_time are -1, then the fate/encounter has just been initialized - so it's not alive
     if (fate.spawn_time === -1 && fate.death_time === -1) {
-        console.log(`[isAlive ${fate.fate_id}] Not Alive : spawn_time and death_time are -1 for fate_id ${fate.fate_id}`);
         return false;
     }
 
@@ -39,26 +26,16 @@ export function isAlive(fate, now = Math.floor(Date.now() / 1000)) {
 
     // If no valid death time, alive once spawned
     if (!hasValidDeath) {
-        console.log(
-            `[isAlive ${fate.fate_id}] Alive : no valid death_time (${formatTimestamp(fate.death_time)}) after spawn_time (${formatTimestamp(fate.spawn_time)}) for fate_id ${fate.fate_id}`
-        );
         return true;
     }
 
     // If current time is before spawn, not alive
-    console.log(`[isAlive ${fate.fate_id}] checking if now < spawn_time : ${formatTimestamp(now)} < ${formatTimestamp(fate.spawn_time)}`);
     if (now < fate.spawn_time) {
-        console.log(
-            `[isAlive ${fate.fate_id}] Not Alive : now (${formatTimestamp(now)}) < spawn_time (${formatTimestamp(fate.spawn_time)}) for fate_id ${fate.fate_id}`
-        );
         return false;
     }
 
     // Alive if now is still before death_time
     const alive = now <= fate.death_time;
-    console.log(
-        `[isAlive ${fate.fate_id}] ${alive ? "Alive" : "Not alive"}: now (${formatTimestamp(now)}) ${alive ? "<=" : ">"} death_time (${formatTimestamp(fate.death_time)}) for fate_id ${fate.fate_id}`
-    );
     return alive;
 }
 
