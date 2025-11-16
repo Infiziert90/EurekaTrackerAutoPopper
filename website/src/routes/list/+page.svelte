@@ -25,6 +25,16 @@
     let table = $state(null);
     let datacenterDialog = $state(null);
     
+    // Table column definitions
+    const tableColumns = [
+        { id: 'tracker_id', key: 'tracker_id', name: 'Tracker ID', sortable: true },
+        { id: 'last_update', key: 'last_update', name: 'Last Updated', sortable: true },
+        { id: 'datacenter', key: 'datacenter_name', name: 'Datacenter', sortable: true },
+        { id: 'pot_status', key: 'pot_status_text', name: 'Pot Status', sortable: true },
+        { id: 'ce', key: 'active_ce_fate_id', name: 'Last/Current CE', sortable: false },
+        { id: 'fate', key: 'active_fate_id', name: 'Last/Current Fate', sortable: false },
+    ];
+    
     // Get all selectable datacenters grouped by region
     const datacentersByRegion = Object.entries(DATACENTER_NAMES)
         .filter(([id, dc]) => dc.selectable)
@@ -62,11 +72,7 @@
     // Toggle individual datacenter in dialog (temp state)
     function toggleDatacenter(dcId) {
         tempDatacenterIds = new Set(tempDatacenterIds);
-        if (tempDatacenterIds.has(dcId)) {
-            tempDatacenterIds.delete(dcId);
-        } else {
-            tempDatacenterIds.add(dcId);
-        }
+        tempDatacenterIds.has(dcId) ? tempDatacenterIds.delete(dcId) : tempDatacenterIds.add(dcId);
     }
     
     // Toggle entire region in dialog (temp state)
@@ -123,9 +129,6 @@
         const newUrl = $page.url.pathname + (params.toString() ? '?' + params.toString() : '');
         await goto(newUrl, { replaceState: true, noScroll: true });
         
-        // Ensure state is set (in case of any reactivity issues)
-        appliedDatacenterIds = new Set(ids);
-        
         // Fetch with new filter - pass IDs directly to avoid state timing issues
         await loadRecentTrackers(ids);
     }
@@ -153,9 +156,7 @@
 
     async function fetchRecentTrackers(filterIds = null) {
         try {
-            const thirtyMinutesAgo = Math.floor(
-                (Date.now() - 30 * 60 * 1000) / 1000,
-            );
+            const thirtyMinutesAgo = Math.floor((Date.now() - 30 * 60 * 1000) / 1000);
             
             // Use provided filterIds or fall back to applied filter
             const selectedIds = filterIds !== null ? filterIds : Array.from(appliedDatacenterIds);
@@ -170,17 +171,15 @@
                 params.set('datacenter', `in.(${selectedIds.join(',')})`);
             }
             
-            const url = `${BASE_URL}?${params.toString()}`;
-            console.log('API URL:', url);
-            
-            const response = await fetch(url, {
+            const response = await fetch(`${BASE_URL}?${params.toString()}`, {
                 headers: API_HEADERS,
             });
+            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+            
             const data = await response.json();
-
             // filter out trackers with a datacenter field set to 0
             return data.filter(tracker => tracker.datacenter !== 0);
         } catch (error) {
@@ -189,18 +188,35 @@
         }
     }
 
+    // Helper to process history and find active/recent entries
+    function processHistory(history, historyType) {
+        if (!history) return { active: null, recent: null, isActive: false };
+        
+        try {
+            const parsed = JSON.parse(history);
+            parsed.forEach(item => { item.alive = isAlive(item); });
+            
+            const active = parsed.find(item => item.alive);
+            if (active) {
+                return { active: active.fate_id, recent: null, isActive: true };
+            }
+            
+            const recent = parsed
+                .filter(item => item.last_seen > 0)
+                .sort((a, b) => b.last_seen - a.last_seen)[0];
+            
+            return { active: null, recent: recent?.fate_id || null, isActive: false };
+        } catch (e) {
+            console.warn(`Failed to parse ${historyType} for tracker:`, historyType);
+            return { active: null, recent: null, isActive: false };
+        }
+    }
+
     async function processTrackerData(data) {
         // Process the data to add last_ce information and cap timestamps
         const currentTime = Math.floor(Date.now() / 1000);
+        
         return data.map((tracker) => {
-            let isCeActive = false;
-            let activeCeFateId = null;
-            let recentCeFateId = null;
-
-            let isFateActive = false;
-            let activeFateId = null;
-            let recentFateId = null;
-
             // Cap the last_update timestamp to current time if it's in the future
             const cappedLastUpdate = Math.min(tracker.last_update, currentTime);
 
@@ -210,9 +226,7 @@
             if (tracker.pot_history) {
                 try {
                     const potHistory = JSON.parse(tracker.pot_history);
-                    potHistory.forEach(pot => {
-                        pot.alive = isAlive(pot);
-                    });
+                    potHistory.forEach(pot => { pot.alive = isAlive(pot); });
                     const potData = calculatePotStatus(potHistory);
                     if (potData.bunny) {
                         potStatus = potData.bunny;
@@ -221,94 +235,41 @@
                         } else {
                             const respawnTime = calculateOccultRespawn(potData.bunny, 'timestamp');
                             const now = Math.floor(Date.now() / 1000);
-                            if (respawnTime <= now) {
-                                potStatusText = "Soon";
-                            } else {
-                                potStatusText = respawnTime;
-                            }
+                            potStatusText = respawnTime <= now ? "Soon" : respawnTime;
                         }
                     }
                 } catch (e) {
-                    console.warn(
-                        "Failed to parse pot_history for tracker:",
-                        tracker.tracker_id,
-                    );
+                    console.warn("Failed to parse pot_history for tracker:", tracker.tracker_id);
                 }
             }
 
-            // Try to parse encounter_history to get the last active CE
-            if (tracker.encounter_history) {
-                try {
-                    const encounterHistory = JSON.parse(tracker.encounter_history);
-                    encounterHistory.forEach(ce => {
-                        ce.alive = isAlive(ce);
-                    });
-                    const activeCe = encounterHistory.find(
-                        (ce) => ce.alive
-                    );
-                    if (activeCe) {
-                        activeCeFateId = activeCe.fate_id;
-                        isCeActive = true;
-                    } else {
-                        const recentCe = encounterHistory
-                            .filter(ce => ce.last_seen > 0)
-                            .sort((a, b) => b.last_seen - a.last_seen)[0];
-                        if (recentCe) {
-                            recentCeFateId = recentCe.fate_id;
-                            isCeActive = false;
-                        }
-                    }
-                } catch (e) {
-                    console.warn(
-                        "Failed to parse encounter_history for tracker:",
-                        tracker.tracker_id,
-                    );
-                }
-            }
-
-            // Try to parse fate_history to get the last active fate
-            if (tracker.fate_history) {
-                try {
-                    const fateHistory = JSON.parse(tracker.fate_history);
-                    fateHistory.forEach(fate => {
-                        fate.alive = isAlive(fate);
-                    });
-                    const activeFate = fateHistory.find(
-                        (fate) => fate.alive
-                    );
-                    if (activeFate) {
-                        activeFateId = activeFate.fate_id;
-                        isFateActive = true;
-                    } else {
-                        const recentFate = fateHistory
-                            .filter(fate => fate.last_seen > 0)
-                            .sort((a, b) => b.last_seen - a.last_seen)[0];
-                        if (recentFate) {
-                            recentFateId = recentFate.fate_id;
-                            isFateActive = false;
-                        }
-                    }
-                } catch (e) {
-                    console.warn(
-                        "Failed to parse fate_history for tracker:",
-                        tracker.tracker_id,
-                    );
-                }
-            }
+            // Process encounter history to get the last active CE
+            const ceData = processHistory(tracker.encounter_history, 'encounter_history');
+            
+            // Process fate history to get the last active fate
+            const fateData = processHistory(tracker.fate_history, 'fate_history');
 
             return {
                 ...tracker,
                 last_update: cappedLastUpdate,
-                active_ce_fate_id: activeCeFateId,
-                recent_ce_fate_id: recentCeFateId,
-                is_ce_active: isCeActive,
-                active_fate_id: activeFateId,
-                recent_fate_id: recentFateId,
-                is_fate_active: isFateActive,
+                active_ce_fate_id: ceData.active,
+                recent_ce_fate_id: ceData.recent,
+                is_ce_active: ceData.isActive,
+                active_fate_id: fateData.active,
+                recent_fate_id: fateData.recent,
+                is_fate_active: fateData.isActive,
                 pot_status: potStatus,
                 pot_status_text: potStatusText,
                 datacenter_name: DATACENTER_NAMES[tracker.datacenter]?.name || "Unknown",
             };
+        });
+    }
+
+    // Create or update the data table
+    function createTable() {
+        table = new DataTable({
+            data: trackers,
+            columns: tableColumns,
         });
     }
 
@@ -322,17 +283,7 @@
             trackers = processedData;
             
             // Always recreate the table to ensure it updates properly
-            table = new DataTable({
-                data: trackers,
-                columns: [
-                    { id: 'tracker_id', key: 'tracker_id', name: 'Tracker ID', sortable: true },
-                    { id: 'last_update', key: 'last_update', name: 'Last Updated', sortable: true },
-                    { id: 'datacenter', key: 'datacenter_name', name: 'Datacenter', sortable: true },
-                    { id: 'pot_status', key: 'pot_status_text', name: 'Pot Status', sortable: true },
-                    { id: 'ce', key: 'active_ce_fate_id', name: 'Last/Current CE', sortable: false },
-                    { id: 'fate', key: 'active_fate_id', name: 'Last/Current Fate', sortable: false },
-                ],
-            });
+            createTable();
         } catch (err) {
             console.error("Error loading recent trackers:", err);
             error = err.message;
@@ -349,17 +300,7 @@
             trackers = processedData;
             // Recreate table to ensure it updates
             if (table) {
-                table = new DataTable({
-                    data: trackers,
-                    columns: [
-                        { id: 'tracker_id', key: 'tracker_id', name: 'Tracker ID', sortable: true },
-                        { id: 'last_update', key: 'last_update', name: 'Last Updated', sortable: true },
-                        { id: 'datacenter', key: 'datacenter_name', name: 'Datacenter', sortable: true },
-                        { id: 'pot_status', key: 'pot_status_text', name: 'Pot Status', sortable: true },
-                        { id: 'ce', key: 'active_ce_fate_id', name: 'Last/Current CE', sortable: false },
-                        { id: 'fate', key: 'active_fate_id', name: 'Last/Current Fate', sortable: false },
-                    ],
-                });
+                createTable();
             }
         } catch (err) {
             console.error("Error refreshing trackers:", err);
@@ -369,12 +310,7 @@
     // Clear all filters
     async function clearAllFilters() {
         appliedDatacenterIds = new Set();
-        
-        // Update URL
-        const newUrl = $page.url.pathname;
-        await goto(newUrl, { replaceState: true, noScroll: true });
-        
-        // Refresh data
+        await goto($page.url.pathname, { replaceState: true, noScroll: true });
         await loadRecentTrackers();
     }
 
@@ -502,35 +438,25 @@
                 </thead>
                 <tbody>
                     {#each table.allRows as row (row.tracker_id)}
+                        {@const trackerLink = `${base}/${row.tracker_id}`}
+                        {@const trackerLabel = `View tracker ${row.tracker_id}`}
                         <tr class="relative group cursor-pointer bg-slate-900/90 hover:bg-slate-800 transition-colors duration-200">
                             <!-- Tracker ID -->
                             <td class="relative px-2 font-mono">
                                 {row.tracker_id}
-                                <a
-                                    href={`${base}/${row.tracker_id}`}
-                                    class="absolute inset-0 z-10"
-                                    aria-label={`View tracker ${row.tracker_id}`}
-                                ></a>
+                                <a href={trackerLink} class="absolute inset-0 z-10" aria-label={trackerLabel}></a>
                             </td>
 
                             <!-- Last Updated -->
                             <td class="relative hidden sm:table-cell px-2 truncate">
                                 <AutoTimeFormatted timestamp={row.last_update} format="relative" disableUpdate={false} />
-                                <a
-                                    href={`${base}/${row.tracker_id}`}
-                                    class="absolute inset-0 z-10"
-                                    aria-label={`View tracker ${row.tracker_id}`}
-                                ></a>
+                                <a href={trackerLink} class="absolute inset-0 z-10" aria-label={trackerLabel}></a>
                             </td>
 
                             <!-- Datacenter -->
                             <td class="relative px-2 truncate">
                                 {row.datacenter_name}
-                                <a
-                                    href={`${base}/${row.tracker_id}`}
-                                    class="absolute inset-0 z-10"
-                                    aria-label={`View tracker ${row.tracker_id}`}
-                                ></a>
+                                <a href={trackerLink} class="absolute inset-0 z-10" aria-label={trackerLabel}></a>
                             </td>
 
                             <!-- Pot Status -->
@@ -546,11 +472,7 @@
                                 {:else}
                                     None
                                 {/if}
-                                <a
-                                    href={`${base}/${row.tracker_id}`}
-                                    class="absolute inset-0 z-10"
-                                    aria-label={`View tracker ${row.tracker_id}`}
-                                ></a>
+                                <a href={trackerLink} class="absolute inset-0 z-10" aria-label={trackerLabel}></a>
                             </td>
 
                             <!-- Last/Current CE -->
@@ -565,11 +487,7 @@
                                 {:else}
                                     None
                                 {/if}
-                                <a
-                                    href={`${base}/${row.tracker_id}`}
-                                    class="absolute inset-0 z-10"
-                                    aria-label={`View tracker ${row.tracker_id}`}
-                                ></a>
+                                <a href={trackerLink} class="absolute inset-0 z-10" aria-label={trackerLabel}></a>
                             </td>
 
                             <!-- Last/Current Fate -->
@@ -584,11 +502,7 @@
                                 {:else}
                                     None
                                 {/if}
-                                <a
-                                    href={`${base}/${row.tracker_id}`}
-                                    class="absolute inset-0 z-10"
-                                    aria-label={`View tracker ${row.tracker_id}`}
-                                ></a>
+                                <a href={trackerLink} class="absolute inset-0 z-10" aria-label={trackerLabel}></a>
                             </td>
                         </tr>
                     {/each}
