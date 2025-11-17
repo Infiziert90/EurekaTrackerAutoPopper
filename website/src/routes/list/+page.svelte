@@ -2,7 +2,7 @@
     import { base } from "$app/paths";
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
-    import { onMount, onDestroy } from "svelte";
+    import { onMount, onDestroy, tick } from "svelte";
     import { Clock, Globe, ChevronUp, ChevronDown, ChevronsUpDown, X } from "@lucide/svelte";
     import { DATACENTER_NAMES, OCCULT_FATES, OCCULT_ENCOUNTERS, BASE_URL, API_HEADERS } from "$lib/const";
     import { calculatePotStatus, calculateOccultRespawn, isAlive } from "$lib/utils";
@@ -25,12 +25,16 @@
     let table = $state(null);
     let datacenterDialog = $state(null);
     
+    // Store sort state to preserve it across refreshes
+    let savedSortColumn = $state(null);
+    let savedSortDirection = $state(null);
+    
     // Table column definitions
     const tableColumns = [
-        { id: 'tracker_id', key: 'tracker_id', name: 'Tracker ID', sortable: true },
+        { id: 'tracker_id', key: 'tracker_id', name: 'Tracker ID', sortable: false },
         { id: 'last_update', key: 'last_update', name: 'Last Updated', sortable: true },
         { id: 'datacenter', key: 'datacenter_name', name: 'Datacenter', sortable: true },
-        { id: 'pot_status', key: 'pot_status_text', name: 'Pot Status', sortable: true },
+        { id: 'pot_status', key: 'pot_status_sort', name: 'Pot Status', sortable: true },
         { id: 'ce', key: 'active_ce_fate_id', name: 'Last/Current CE', sortable: false },
         { id: 'fate', key: 'active_fate_id', name: 'Last/Current Fate', sortable: false },
     ];
@@ -249,6 +253,19 @@
             // Process fate history to get the last active fate
             const fateData = processHistory(tracker.fate_history, 'fate_history');
 
+            // Calculate sort value for pot status
+            // "Alive" = 0, "Soon" = 1, timestamp = timestamp value, null = Infinity
+            let potStatusSort = null;
+            if (potStatusText === "Alive") {
+                potStatusSort = 0;
+            } else if (potStatusText === "Soon") {
+                potStatusSort = 1;
+            } else if (typeof potStatusText === 'number') {
+                potStatusSort = potStatusText;
+            } else {
+                potStatusSort = Infinity;
+            }
+
             return {
                 ...tracker,
                 last_update: cappedLastUpdate,
@@ -260,17 +277,60 @@
                 is_fate_active: fateData.isActive,
                 pot_status: potStatus,
                 pot_status_text: potStatusText,
+                pot_status_sort: potStatusSort,
                 datacenter_name: DATACENTER_NAMES[tracker.datacenter]?.name || "Unknown",
             };
         });
     }
 
     // Create or update the data table
-    function createTable() {
+    async function createTable() {
+        // Save current sort state before recreating
+        if (table) {
+            // Find the currently sorted column
+            for (const column of tableColumns) {
+                if (column.sortable) {
+                    const sortState = table.getSortState(column.id);
+                    if (sortState === 'asc' || sortState === 'desc') {
+                        savedSortColumn = column.id;
+                        savedSortDirection = sortState;
+                        break;
+                    }
+                }
+            }
+        }
+        
         table = new DataTable({
             data: trackers,
             columns: tableColumns,
         });
+        
+        // Wait for reactive update to complete
+        await tick();
+        
+        // Restore sort state after recreating
+        if (savedSortColumn && savedSortDirection) {
+            // Apply the sort - toggleSort cycles through: none -> asc -> desc -> none
+            // So we need to toggle until we get to the right state
+            const currentState = table.getSortState(savedSortColumn);
+            if (currentState !== savedSortDirection) {
+                // If not sorted, toggle once to get to asc
+                if (currentState === null || currentState === undefined) {
+                    table.toggleSort(savedSortColumn);
+                    // If we wanted desc, toggle again
+                    if (savedSortDirection === 'desc') {
+                        table.toggleSort(savedSortColumn);
+                    }
+                } else if (currentState === 'asc' && savedSortDirection === 'desc') {
+                    // If currently asc but want desc, toggle once
+                    table.toggleSort(savedSortColumn);
+                } else if (currentState === 'desc' && savedSortDirection === 'asc') {
+                    // If currently desc but want asc, toggle twice (desc -> none -> asc)
+                    table.toggleSort(savedSortColumn);
+                    table.toggleSort(savedSortColumn);
+                }
+            }
+        }
     }
 
     async function loadRecentTrackers(filterIds = null) {
@@ -283,7 +343,7 @@
             trackers = processedData;
             
             // Always recreate the table to ensure it updates properly
-            createTable();
+            await createTable();
         } catch (err) {
             console.error("Error loading recent trackers:", err);
             error = err.message;
@@ -300,7 +360,7 @@
             trackers = processedData;
             // Recreate table to ensure it updates
             if (table) {
-                createTable();
+                await createTable();
             }
         } catch (err) {
             console.error("Error refreshing trackers:", err);
@@ -369,10 +429,10 @@
                     <button
                         type="button"
                         onclick={clearAllFilters}
-                        class="h-6 w-6 text-center text-white text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-red-600 hover:bg-red-700 flex items-center justify-center"
+                        class="px-1 py-0.5 text-center text-white text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-red-600 hover:bg-red-700 flex items-center justify-center"
                         title="Clear All"
                     >
-                        <X class="w-4 h-4" />
+                        <X class="w-5 h-5" />
                     </button>
                 {/if}
             </div>
