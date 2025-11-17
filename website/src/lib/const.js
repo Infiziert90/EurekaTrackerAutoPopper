@@ -78,7 +78,6 @@ export const DATACENTER_NAMES = {
         region: "North America"
     },
 
-    // Unusual DCs, listed but not available to choose in manual trackers for now
     12: {
         name: "Shadow",
         selectable: false,
@@ -95,6 +94,11 @@ export const DATACENTER_NAMES = {
     },
     101: {
         name: "陆行鸟",
+        selectable: true,
+        region: "China"
+    },
+    102: {
+        name: "莫古力",
         selectable: true,
         region: "China"
     },
@@ -463,7 +467,7 @@ export const ITEM = {
         name: {
             "en": "Verdigris Demiatma",
             "fr": "Demi-âtma turquoise",
-            "jp": "碧晶のデミアートマ",
+            "ja": "碧晶のデミアートマ",
             "de": "Demi-Atma Verdigris",
         },
         img: "ui/icon/026000/026035.tex"

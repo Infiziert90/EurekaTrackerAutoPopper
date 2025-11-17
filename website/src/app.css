@@ -10,6 +10,7 @@
 html,
 body {
     height: 100%;
+    accent-color: var(--color-slate-950);
 }
 
 html {

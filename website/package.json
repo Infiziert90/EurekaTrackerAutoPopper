@@ -21,6 +21,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@careswitch/svelte-data-table": "^0.6.3",
 		"@lucide/svelte": "^0.525.0",
 		"svelte-5-french-toast": "^2.0.6",
 		"svelte-time": "^2.0.1"
