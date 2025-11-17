@@ -11,7 +11,7 @@
     import ItemIcon from "../../components/ItemIcon.svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import PasswordButton from "../../components/PasswordButton.svelte";
-    import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive } from "$lib/utils";
+    import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive, calculateCECooldown } from "$lib/utils";
 
     const uid = $page.params.uid;
 
@@ -641,6 +641,7 @@
                         <tr class="text-left">
                             <th class="px-2 w-2/5">Encounter</th>
                             <th class="px-2 hidden md:table-cell">Drops</th>
+                            <th class="px-2 w-1/5 text-end">Pop Timer</th>
                             <th class="px-2 w-1/5 text-end">Last Seen</th>
                             {#if trackerType === 2}
                                 <th class="px-2 w-[14%] md:w-14 text-center"></th>
@@ -658,6 +659,22 @@
                                                 <ItemIcon itemId={drop} />
                                             {/each}
                                         </div>
+                                    </td>
+                                    <td class="px-2 w-1/5 text-end">
+                                        <p class="text-nowrap">
+                                            {#if encounter.alive}
+                                                <span class="text-slate-400">—</span>
+                                            {:else}
+                                                {@const cooldown = calculateCECooldown(encounter)}
+                                                {#if cooldown.canPop}
+                                                    <span class="text-green-400">Can pop</span>
+                                                {:else if cooldown.cooldownEndTime}
+                                                    <AutoTimeFormatted timestamp={cooldown.cooldownEndTime} format="simple" countdown={true} />
+                                                {:else}
+                                                    <span class="text-slate-400">—</span>
+                                                {/if}
+                                            {/if}
+                                        </p>
                                     </td>
                                     <td class="px-2 w-1/5 text-end">
                                         <p class="text-nowrap">
@@ -708,7 +725,7 @@
                             {/each}
                         {:else}
                             <tr class="bg-slate-900/90">
-                                <td colspan={trackerType === 2 ? 4 : 3} class="px-2 py-4 text-center text-slate-400">
+                                <td colspan={trackerType === 2 ? 5 : 4} class="px-2 py-4 text-center text-slate-400">
                                     No encounter history available
                                 </td>
                             </tr>

@@ -1,4 +1,4 @@
-import { OCCULT_RESPAWN, OCCULT_FATES, OCCULT_ENCOUNTERS } from "$lib/const";
+import { OCCULT_RESPAWN, OCCULT_FATES, OCCULT_ENCOUNTERS, CE_COOLDOWN_MONSTER_KILL, CE_COOLDOWN_RANDOM_SPAWN } from "$lib/const";
 
 /*
  * Checks if a fate/encounter is currently alive based on spawn and death times
@@ -149,4 +149,48 @@ export function formatSeconds(secondsToFormat, format = 'simple') {
     }
 
     return finalString;
+}
+
+/*
+ * Calculates the CE cooldown status
+ * 
+ * @param {Object} encounter - The encounter object with death_time property
+ * @param {number} now - Current timestamp in seconds (defaults to current time)
+ * @returns {Object} Object containing cooldownEndTime, remainingSeconds, and canPop status
+ */
+export function calculateCECooldown(encounter, now = Math.floor(Date.now() / 1000)) {
+    // If encounter is alive or has no death time, no cooldown
+    if (encounter.alive || !encounter.death_time || encounter.death_time === -1) {
+        return {
+            cooldownEndTime: null,
+            remainingSeconds: 0,
+            canPop: true
+        };
+    }
+
+    // Forked Tower (CE 48) doesn't use cooldown system
+    if (encounter.fate_id === 48) {
+        return {
+            cooldownEndTime: null,
+            remainingSeconds: 0,
+            canPop: true
+        };
+    }
+
+    // Get the cooldown time based on spawn type from OCCULT_ENCOUNTERS
+    const encounterData = OCCULT_ENCOUNTERS[encounter.fate_id];
+    const isMonsterKill = encounterData?.spawn_type === true;
+    const cooldownTime = isMonsterKill ? CE_COOLDOWN_MONSTER_KILL : CE_COOLDOWN_RANDOM_SPAWN;
+    
+    // Calculate when cooldown ends
+    const cooldownEndTime = encounter.death_time + cooldownTime;
+    
+    // Calculate remaining seconds
+    const remainingSeconds = Math.max(0, cooldownEndTime - now);
+    
+    return {
+        cooldownEndTime,
+        remainingSeconds,
+        canPop: remainingSeconds <= 0
+    };
 }
