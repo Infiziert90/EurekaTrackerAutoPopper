@@ -1,6 +1,10 @@
 export const OCCULT_RESPAWN = 1800; // 30 minutes
 export const TOWER_SPAWN_TIMER = 3600; // 1 hour
 
+// CE Cooldown times (in seconds)
+export const CE_COOLDOWN_MONSTER_KILL = 3600; // 60 minutes
+export const CE_COOLDOWN_RANDOM_SPAWN = 7200; // 120 minutes
+
 // API Configuration
 export const BASE_URL = "https://infi.ovh/api/OccultTrackerV3";
 export const BASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiJ9.Ur6wgi_rD4dr3uLLvbLoaEvfLCu4QFWdrF-uHRtbl_s";
@@ -277,6 +281,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47744],
         encounter_id: 33,
+        spawn_type: true, // monster kill - Crescent Monk
     },
     34: {
         name: {
@@ -287,6 +292,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47749, 47752, 47732],
         encounter_id: 34,
+        spawn_type: false, // random spawn - Automatic
     },
     35: {
         name: {
@@ -297,6 +303,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47744, 47751, 47730],
         encounter_id: 35,
+        spawn_type: false, // random spawn - Automatic
     },
     36: {
         name: {
@@ -307,6 +314,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47744],
         encounter_id: 36,
+        spawn_type: false, // random spawn - Automatic
     },
     37: {
         name: {
@@ -317,6 +325,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47745, 47728, 48008],
         encounter_id: 37,
+        spawn_type: true, // monster kill - Crescent Inkstain
     },
     38: {
         name: {
@@ -327,6 +336,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47746],
         encounter_id: 38,
+        spawn_type: false, // random spawn - Automatic
     },
     39: {
         name: {
@@ -337,6 +347,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47746, 47729],
         encounter_id: 39,
+        spawn_type: true, // monster kill - Crescent Byblos
     },
     40: {
         name: {
@@ -347,6 +358,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47748],
         encounter_id: 40,
+        spawn_type: false, // random spawn - Automatic
     },
     41: {
         name: {
@@ -357,6 +369,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47747, 47731],
         encounter_id: 41,
+        spawn_type: true, // monster kill - Crescent Petalodite
     },
     42: {
         name: {
@@ -367,6 +380,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47748, 47757],
         encounter_id: 42,
+        spawn_type: true, // monster kill - Crescent Fan
     },
     43: {
         name: {
@@ -377,6 +391,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47747],
         encounter_id: 43,
+        spawn_type: false, // random spawn - Automatic
     },
     44: {
         name: {
@@ -387,6 +402,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops:  [47749],
         encounter_id: 44,
+        spawn_type: true, // monster kill - Crescent Garula
     },
     45: {
         name: {
@@ -397,6 +413,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47747, 47733],
         encounter_id: 45,
+        spawn_type: false, // random spawn - Automatic
     },
     46: {
         name: {
@@ -407,6 +424,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47748],
         encounter_id: 46,
+        spawn_type: false, // random spawn - Automatic
     },
     47: {
         name: {
@@ -417,6 +435,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47746],
         encounter_id: 47,
+        spawn_type: false, // random spawn - Automatic
     },
 
     // SPECIAL ENCOUNTER

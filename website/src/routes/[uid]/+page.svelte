@@ -11,40 +11,43 @@
     import ItemIcon from "../../components/ItemIcon.svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import PasswordButton from "../../components/PasswordButton.svelte";
-    import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive } from "$lib/utils";
+    import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive, calculateCECooldown } from "$lib/utils";
 
     const uid = $page.params.uid;
 
+    // Core state
     let trackerResults = $state([]);
-    let bunny = $state(null); // The next pot fate to spawn, named "bunny" to match the Dalamud plugin
-    var activeCE = $state(null);
-    var activeFate = $state(null);
-    var activeBunny = $state(null);
-    let fetchInterval = $state(null);
+    let bunny = $state(null);
+    let activeCE = $state(null);
+    let activeFate = $state(null);
+    let activeBunny = $state(null);
     let isLoading = $state(true);
     let error = $state(null);
     
-    // New state variables for tracker type 2 functionality
+    // Tracker type 2 functionality
     let isPasswordUnlocked = $state(false);
     let trackerType = $state(1);
     let originalData = $state(null);
     let isUpdating = $state(false);
-
+    let lastKnownUpdate = $state(null);
     
-    // URL password will be checked in onMount
+    // Polling
+    let headCheckInterval = $state(null);
+    
+    // URL password (checked in onMount)
     let urlPassword = null;
 
-    // Function to handle password authentication from PasswordButton
+    // Handle password authentication from PasswordButton component
+    // Stores password in localStorage for persistence and removes it from URL
     function handlePasswordCorrect(event) {
         const { password } = event.detail;
         isPasswordUnlocked = true;
-        // Store password in localStorage for persistence
+        // Store password in localStorage for persistence across page refreshes
         localStorage.setItem(`tracker_password_${uid}`, password);
-        
-        // Clean up URL password if it was used
+        // Clean up temporary URL password storage
         localStorage.removeItem(`url_password_${uid}`);
         
-        // Remove password from URL if present
+        // Remove password from URL if it was present (for security)
         if (urlPassword) {
             const newUrl = new URL(window.location);
             newUrl.searchParams.delete('password');
@@ -52,7 +55,6 @@
         }
     }
 
-    // Function to handle status updates for both mobs and fates
     async function handleStatusUpdate({ encounter, type, status }) {
         if (!isPasswordUnlocked || !originalData) return;
         
@@ -117,6 +119,8 @@
                 
                 // Refresh the data after successful update
                 await fetchTrackerData();
+                // Update last known update timestamp
+                lastKnownUpdate = trackerResults.last_update;
             } finally {
                 isUpdating = false;
             }
@@ -131,7 +135,7 @@
         });
     }
 
-    // Wrapper functions for backward compatibility and cleaner calls
+    // Status update wrappers
     async function handleMobSpawned(encounter) {
         await handleStatusUpdate({ encounter, type: 'ce', status: 'spawned' });
     }
@@ -157,46 +161,101 @@
     }
 
 
-    // Fetch tracker data from API
+    // Check if tracker data has changed using a lightweight GET request
+    // Fetches only the last_update field to compare with our known value
+    // This is more efficient than fetching full data every time
+    // Runs every second via setInterval in onMount
+    async function checkTrackerUpdate() {
+        // Skip check if we don't have a known update time, or if we're already updating/loading
+        if (!lastKnownUpdate || isUpdating || isLoading) return;
+        
+        try {
+            // Fetch only the last_update field for this tracker (lightweight query)
+            const response = await fetch(
+                `${BASE_URL}?tracker_id=eq.${uid}&select=last_update`,
+                {
+                    method: 'GET',
+                    headers: API_HEADERS,
+                },
+            );
+            
+            // If request failed, fall back to full fetch
+            if (!response.ok) {
+                console.warn(`[Update check] Error status ${response.status}, fetching full data`);
+                await fetchTrackerData();
+                return;
+            }
+
+            const data = await response.json();
+            
+            // If no data returned, something's wrong - fetch full data
+            if (!data || data.length === 0) {
+                console.warn(`[Update check] No tracker found, fetching full data`);
+                await fetchTrackerData();
+                return;
+            }
+            
+            const currentLastUpdate = data[0].last_update;
+            
+            // Compare current last_update with our known value
+            // If they differ, data has changed - fetch full update
+            if (currentLastUpdate !== lastKnownUpdate) {
+                console.log(`[Update check] Data changed (${lastKnownUpdate} -> ${currentLastUpdate}), fetching full data`);
+                await fetchTrackerData();
+            }
+            // If they match, no change - do nothing (most efficient path)
+        } catch (err) {
+            // Network error or other exception - fall back to full fetch
+            console.error("[Update check] Error:", err);
+            await fetchTrackerData();
+        }
+    }
+
     async function fetchTrackerData() {
         try {
             isLoading = true;
             error = null;
 
-            // FETCH TRACKER DATA
             const response = await fetch(
                 `${BASE_URL}?tracker_id=eq.${uid}`,
                 {
+                    method: 'GET',
                     headers: API_HEADERS,
                 },
             );
+            
             if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error(`Tracker ${uid} not found`);
+                }
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
+            
+            if (!data || data.length === 0) {
+                throw new Error(`No tracker found with ID ${uid}`);
+            }
+            
             trackerResults = data[0];
-            
-            // Store original data for POST requests
             originalData = { ...trackerResults };
-            
-            // Check tracker type
+            lastKnownUpdate = trackerResults.last_update;
             trackerType = trackerResults.tracker_type || 1;
             
-            // Check if stored password is still valid instead of resetting
+            // Check if stored password is still valid (password might have changed)
             if (isPasswordUnlocked && originalData) {
                 const storedPassword = localStorage.getItem(`tracker_password_${uid}`);
                 if (storedPassword !== trackerResults.password) {
-                    // Password changed, need to re-authenticate
+                    // Password changed on server, need to re-authenticate
                     isPasswordUnlocked = false;
                     localStorage.removeItem(`tracker_password_${uid}`);
                 }
             }
             
-            // ADD DATA TO STATE
-            activeCE = null;
+            // Check if we can auto-unlock with stored/URL password
+            checkStoredPassword();
             
-            // Safely parse encounter_history with null check
+            activeCE = null;
             if (trackerResults.encounter_history) {
                 try {
                     trackerResults.encounter_history = JSON.parse(trackerResults.encounter_history);
@@ -225,8 +284,6 @@
             }
 
             activeFate = null;
-
-            // Safely parse fate_history with null check
             if (trackerResults.fate_history) {
                 try {
                     trackerResults.fate_history = JSON.parse(trackerResults.fate_history);
@@ -250,8 +307,6 @@
             }
 
             activeBunny = null;
-            
-            // Safely parse pot_history with null check
             if (trackerResults.pot_history) {
                 try {
                     trackerResults.pot_history = JSON.parse(trackerResults.pot_history);
@@ -274,7 +329,6 @@
                 trackerResults.pot_history = [];
             }
 
-            // Calculate pot status using utility function
             const potStatus = calculatePotStatus(trackerResults.pot_history);
             bunny = potStatus.bunny;
 
@@ -286,53 +340,51 @@
         }
     }
 
+    // Check and unlock password if stored in localStorage
+    // Checks both stored password and URL password (from query params)
+    // Called after tracker data is loaded to auto-unlock if password matches
+    function checkStoredPassword() {
+        if (trackerResults && trackerResults.password && !isPasswordUnlocked) {
+            // First, check if we have a stored password that matches
+            const storedPassword = localStorage.getItem(`tracker_password_${uid}`);
+            if (storedPassword === trackerResults.password) {
+                isPasswordUnlocked = true;
+                return;
+            }
+            
+            // If no stored password, check URL password (from query params)
+            const urlPasswordStored = localStorage.getItem(`url_password_${uid}`);
+            if (urlPasswordStored === trackerResults.password) {
+                isPasswordUnlocked = true;
+                // Convert URL password to stored password for future use
+                localStorage.setItem(`tracker_password_${uid}`, urlPasswordStored);
+                localStorage.removeItem(`url_password_${uid}`);
+                return;
+            }
+        }
+    }
+
     onMount(() => {
-        // Check for password in URL parameters and localStorage (client-side only)
+        // Check for password in URL parameters (from tracker creation or shared links)
         const urlParams = new URLSearchParams(window.location.search);
         urlPassword = urlParams.get('password');
         
-        // Initialize password from URL or localStorage
+        // Store URL password temporarily for later validation
         if (urlPassword) {
-            // Store URL password for later use when tracker data loads
             localStorage.setItem(`url_password_${uid}`, urlPassword);
         }
         
-        // Initial fetch
+        // Initial data fetch
         fetchTrackerData();
-
-        // Set up polling every 30 seconds
-        fetchInterval = setInterval(fetchTrackerData, 30000);
         
-        // Auto-unlock if password is stored and valid
-        const checkStoredPassword = () => {
-            if (trackerResults && trackerResults.password && !isPasswordUnlocked) {
-                // Check stored password first
-                const storedPassword = localStorage.getItem(`tracker_password_${uid}`);
-                if (storedPassword === trackerResults.password) {
-                    isPasswordUnlocked = true;
-                    return;
-                }
-                
-                // Check URL password if no stored password
-                const urlPassword = localStorage.getItem(`url_password_${uid}`);
-                if (urlPassword === trackerResults.password) {
-                    isPasswordUnlocked = true;
-                    // Convert URL password to stored password
-                    localStorage.setItem(`tracker_password_${uid}`, urlPassword);
-                    localStorage.removeItem(`url_password_${uid}`);
-                    return;
-                }
-            }
-        };
-        
-        // Check after initial data load
-        setTimeout(checkStoredPassword, 500);
+        // Set up polling every second to check for data changes
+        // Uses lightweight query (only fetches last_update field) to detect changes
+        headCheckInterval = setInterval(checkTrackerUpdate, 1000);
     });
 
-    // Clean up interval on component destroy
     onDestroy(() => {
-        if (fetchInterval) {
-            clearInterval(fetchInterval);
+        if (headCheckInterval) {
+            clearInterval(headCheckInterval);
         }
     });
 </script>
@@ -401,7 +453,7 @@
                                         <ClickToCopyButton text={uid} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                             <Clipboard class="w-4 h-4" />
                                         </ClickToCopyButton>
-                                        <ClickToCopyButton text={`${base}/${uid}`} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <ClickToCopyButton text={`${$page.url.origin}${base}/${uid}`} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                             <Link class="w-4 h-4" />
                                         </ClickToCopyButton>
                                         {#if trackerType === 2}
@@ -521,7 +573,7 @@
                     </h2>
 
                     {#if bunny && bunny.fate_id}
-                        <p>FATE: {OCCULT_FATES[bunny.fate_id].name[$currentLanguage]} {OCCULT_FATES[bunny.fate_id].suffix[$currentLanguage]}</p>
+                        <p>FATE: {OCCULT_FATES[bunny.fate_id].name[$currentLanguage]}{OCCULT_FATES[bunny.fate_id].suffix ? ' ' + OCCULT_FATES[bunny.fate_id].suffix[$currentLanguage] : ''}</p>
                         {#if bunny.alive === true}
                             <p class="text-green-400">Alive</p>
                         {:else}
@@ -542,29 +594,32 @@
                         <!-- Pot History -->
                         <div class="flex flex-row gap-2 mt-2">
                             {#if trackerResults.pot_history && trackerResults.pot_history.length > 0}
+                                {@const hasAlivePot = trackerResults.pot_history.some(pot => pot.alive)}
                                 {#each trackerResults.pot_history as pot}
-                                    {#if pot.alive}
-                                        <button
-                                            onclick={() => handlePotDead(pot)}
-                                            disabled={isUpdating}
-                                            class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
-                                                isUpdating ? 'bg-slate-600' : 'bg-red-600 hover:bg-red-700'
-                                            }"
-                                            title="Mark pot as dead"
-                                        >
-                                            KILL {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}
-                                        </button>
-                                    {:else}
-                                        <button
-                                            onclick={() => handlePotSpawned(pot)}
-                                            disabled={isUpdating}
-                                            class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
-                                                isUpdating ? 'bg-slate-600' : 'bg-green-600 hover:bg-green-700'
-                                            }"
-                                            title="Mark pot as spawned"
-                                        >
-                                            POP {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}
-                                        </button>
+                                    {#if !hasAlivePot || pot.alive}
+                                        {#if pot.alive}
+                                            <button
+                                                onclick={() => handlePotDead(pot)}
+                                                disabled={isUpdating}
+                                                class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                    isUpdating ? 'bg-slate-600' : 'bg-red-600 hover:bg-red-700'
+                                                }"
+                                                title="Mark pot as dead"
+                                            >
+                                                KILL {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}{OCCULT_FATES[pot.fate_id].suffix ? ' ' + OCCULT_FATES[pot.fate_id].suffix[$currentLanguage] : ''}
+                                            </button>
+                                        {:else}
+                                            <button
+                                                onclick={() => handlePotSpawned(pot)}
+                                                disabled={isUpdating}
+                                                class="px-2 py-1 text-center text-white text-xs font-medium transition-colors cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed {
+                                                    isUpdating ? 'bg-slate-600' : 'bg-green-600 hover:bg-green-700'
+                                                }"
+                                                title="Mark pot as spawned"
+                                            >
+                                                POP {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}{OCCULT_FATES[pot.fate_id].suffix ? ' ' + OCCULT_FATES[pot.fate_id].suffix[$currentLanguage] : ''}
+                                            </button>
+                                        {/if}
                                     {/if}
                                 {/each}
                             {/if}
@@ -586,6 +641,7 @@
                         <tr class="text-left">
                             <th class="px-2 w-2/5">Encounter</th>
                             <th class="px-2 hidden md:table-cell">Drops</th>
+                            <th class="px-2 w-1/5 text-end">Pop Timer</th>
                             <th class="px-2 w-1/5 text-end">Last Seen</th>
                             {#if trackerType === 2}
                                 <th class="px-2 w-[14%] md:w-14 text-center"></th>
@@ -603,6 +659,22 @@
                                                 <ItemIcon itemId={drop} />
                                             {/each}
                                         </div>
+                                    </td>
+                                    <td class="px-2 w-1/5 text-end">
+                                        <p class="text-nowrap">
+                                            {#if encounter.alive}
+                                                <span class="text-slate-400">—</span>
+                                            {:else}
+                                                {@const cooldown = calculateCECooldown(encounter)}
+                                                {#if cooldown.canPop}
+                                                    <span class="text-green-400">Can pop</span>
+                                                {:else if cooldown.cooldownEndTime}
+                                                    <AutoTimeFormatted timestamp={cooldown.cooldownEndTime} format="simple" countdown={true} />
+                                                {:else}
+                                                    <span class="text-slate-400">—</span>
+                                                {/if}
+                                            {/if}
+                                        </p>
                                     </td>
                                     <td class="px-2 w-1/5 text-end">
                                         <p class="text-nowrap">
@@ -653,7 +725,7 @@
                             {/each}
                         {:else}
                             <tr class="bg-slate-900/90">
-                                <td colspan={trackerType === 2 ? 4 : 3} class="px-2 py-4 text-center text-slate-400">
+                                <td colspan={trackerType === 2 ? 5 : 4} class="px-2 py-4 text-center text-slate-400">
                                     No encounter history available
                                 </td>
                             </tr>
