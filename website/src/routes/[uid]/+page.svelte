@@ -650,7 +650,7 @@
                     </thead>
                     <tbody>
                         {#if trackerResults.encounter_history && trackerResults.encounter_history.length > 0}
-                            {#each trackerResults.encounter_history as encounter}
+                            {#each trackerResults.encounter_history.filter(encounter => encounter.fate_id !== 48) as encounter}
                                 <tr class={encounter.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
                                     <td class="px-2 w-2/5 truncate">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
                                     <td class="px-2 hidden md:table-cell">
