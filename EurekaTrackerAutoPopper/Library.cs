@@ -30,7 +30,7 @@ public class Library
 
         public readonly string Type = string.Empty;
 
-        public long LastSeen = DateTimeOffset.Now.ToUnixTimeSeconds();
+        public long LastSeen = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
         public LocationMemory(uint objectId, Vector3 pos, uint? extraInfo = null)
         {

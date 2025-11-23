@@ -180,7 +180,7 @@ public class TrackerHandler
             Fates = JsonConvert.DeserializeObject<ShareableFate[]>(FateHistory) ?? [];
             Pots = JsonConvert.DeserializeObject<ShareableFate[]>(PotHistory) ?? [];
 
-            LastUpdate = DateTimeOffset.Now.ToUnixTimeSeconds();
+            LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         }
 
         public void Update(Fates fateManager)
@@ -189,7 +189,7 @@ public class TrackerHandler
             FateHistory = JsonConvert.SerializeObject(fateManager.OccultFates.Select(f => new ShareableFate(f)));
             PotHistory = JsonConvert.SerializeObject(fateManager.BunnyFates.TakeLast(2).Select(f => new ShareableFate(f)));
 
-            LastUpdate = DateTimeOffset.Now.ToUnixTimeSeconds();
+            LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         }
     }
 

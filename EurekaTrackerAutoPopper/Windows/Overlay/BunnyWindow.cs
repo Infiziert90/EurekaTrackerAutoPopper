@@ -98,7 +98,7 @@ public class BunnyWindow : Window, IDisposable
                 ImGui.SameLine();
                 if (bunny.LastSeenAlive != -1)
                 {
-                    var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+                    var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     var (min, max) = InEureka
                         ? CalculateEurekaRespawn(bunny, currentTime)
                         : CalculateOccultRespawn(lastFate, currentTime); // for occult we use the last alive one to calculate

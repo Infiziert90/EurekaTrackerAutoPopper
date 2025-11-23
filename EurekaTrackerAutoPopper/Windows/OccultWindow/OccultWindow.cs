@@ -163,7 +163,7 @@ public class OccultWindow : Window, IDisposable
             else
             {
                 var lastSpawn = towerEngagement.LastSeenAlive;
-                var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+                var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 var spawnTimer = TowerSpawnTimer - (300 * towerEngagement.KilledCEs) - (60 * towerEngagement.KilledFates);
                 if (towerEngagement.LastSeenAlive == -1)
                 {
@@ -250,7 +250,7 @@ public class OccultWindow : Window, IDisposable
             return;
         }
 
-        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var width = ImGui.CalcTextSize("Tracker ID: ").X + 20.0f * ImGuiHelpers.GlobalScale;
 
         ImGui.AlignTextToFramePadding();
@@ -366,7 +366,7 @@ public class OccultWindow : Window, IDisposable
             state = fate.State.ToName();
         }
 
-        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         if (isCurrent)
         {
             heightOffset += lineHeightWithSpacing;

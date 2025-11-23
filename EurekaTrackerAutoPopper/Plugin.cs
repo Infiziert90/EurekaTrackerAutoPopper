@@ -323,7 +323,7 @@ public class Plugin : IDalamudPlugin
             Fates.RegisterEvents();
 
             // Set forked tower timer to when the client joined south horn
-            Fates.OccultCriticalEncounters[^1].InstanceJoinedTimer = DateTimeOffset.Now.ToUnixTimeSeconds();
+            Fates.OccultCriticalEncounters[^1].InstanceJoinedTimer = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         }
         else
         {
@@ -691,7 +691,7 @@ public class Plugin : IDalamudPlugin
             return;
 
         var deleteIndex = -1;
-        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         foreach (var (locationObject, idx) in Library.ExistingOccultLocations.Select((val, idx) => (val, idx)))
         {
             if (!CheckForObjectRemoval(locationObject, local, currentTime))

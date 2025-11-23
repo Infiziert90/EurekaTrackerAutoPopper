@@ -253,7 +253,7 @@ public class Fates
 
         var towerEngagement = Plugin.Fates.OccultCriticalEncounters[^1];
 
-        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         foreach (var bnuuy in BunnyFates)
         {
             foreach (var fate in Plugin.FateTable)
@@ -263,9 +263,6 @@ public class Fates
 
                 bnuuy.Update(fate, currentTime);
                 if (bnuuy.PlayedSound || !Plugin.Configuration.PlayBunnyEffect)
-                    continue;
-
-                if (Plugin.Configuration.OnlyEasyBunny && !bnuuy.Easy)
                     continue;
 
                 bnuuy.PlayedSound = true;
@@ -341,7 +338,7 @@ public class Fates
             return;
         }
 
-        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         foreach (var occultCE in OccultCriticalEncounters)
         {
             var isTowerCE = occultCE.FateId == 48;
