@@ -184,16 +184,6 @@ public partial class MainWindow
                 changed |= ImGui.Checkbox(Language.ConfigOptionAutoPots, ref Plugin.Configuration.AutoSwitchToOccultPots);
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipAutoPots);
 
-                if (ImGui.Button("Play Alarm"))
-                {
-                    Plugin.AlarmClock.StartAlarm();
-                }
-
-                if (ImGui.Button("Stop Alarm"))
-                {
-                    Plugin.AlarmClock.StopAlarm();
-                }
-
                 if (changed)
                     Plugin.Configuration.Save();
             }

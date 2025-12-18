@@ -30,7 +30,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using Dalamud.Bindings.ImGui;
-using EurekaTrackerAutoPopper.Audio;
 
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
@@ -66,7 +65,6 @@ public class Plugin : IDalamudPlugin
     public readonly Library Library;
     public readonly Fates Fates;
     public readonly TrackerHandler TrackerHandler;
-    public readonly AlarmClock AlarmClock;
 
     public bool PlayerInEureka;
     public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
@@ -96,7 +94,6 @@ public class Plugin : IDalamudPlugin
 
         Fates = new Fates(this);
         TrackerHandler = new TrackerHandler(this);
-        AlarmClock = new AlarmClock();
 
         MainWindow = new MainWindow(this);
         OccultWindow = new OccultWindow(this);
@@ -645,9 +642,10 @@ public class Plugin : IDalamudPlugin
         if (local == null)
             return;
 
+        // TODO Needs a CS update
         // Player is in a Critical Engagement, disable all scans
-        if (IsInCriticalEncounter())
-            return;
+        // if (IsInCriticalEncounter())
+        //     return;
 
         // Player is in a fade, disable all scans
         if (IsInFate())
