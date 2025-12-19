@@ -66,7 +66,7 @@ public class TrackerHandler
     public class Upload
     {
         [JsonIgnore]
-        public string Table;
+        public string Table = string.Empty;
 
         [JsonProperty("version")]
         public string Version = Plugin.PluginInterface.Manifest.AssemblyVersion.ToString();
@@ -83,7 +83,7 @@ public class TrackerHandler
     public class NewTracker : Upload
     {
         [JsonProperty("last_fate")]
-        public string LastFateHash;
+        public string LastFateHash = string.Empty;
 
         [JsonProperty("tracker_type")]
         public byte TrackerType;
@@ -92,13 +92,13 @@ public class TrackerHandler
         public ushort Datacenter;
 
         [JsonProperty("encounter_history")]
-        public string EncounterHistory;
+        public string EncounterHistory = string.Empty;
 
         [JsonProperty("fate_history")]
-        public string FateHistory;
+        public string FateHistory = string.Empty;
 
         [JsonProperty("pot_history")]
-        public string PotHistory;
+        public string PotHistory = string.Empty;
 
         [JsonConstructor]
         public NewTracker() {}
@@ -138,10 +138,10 @@ public class TrackerHandler
         public long LastUpdate;
 
         [JsonProperty("tracker_id")]
-        public string TrackerId;
+        public string TrackerId = string.Empty;
 
         [JsonProperty("password")]
-        public string TrackerPassword;
+        public string TrackerPassword = string.Empty;
 
         [JsonProperty("tracker_type")]
         public byte TrackerType;
@@ -150,25 +150,25 @@ public class TrackerHandler
         public ushort Datacenter;
 
         [JsonProperty("last_fate")]
-        public string LastFateHash;
+        public string LastFateHash = string.Empty;
 
         [JsonProperty("encounter_history")]
-        public string EncounterHistory;
+        public string EncounterHistory = string.Empty;
 
         [JsonProperty("fate_history")]
-        public string FateHistory;
+        public string FateHistory = string.Empty;
 
         [JsonProperty("pot_history")]
-        public string PotHistory;
+        public string PotHistory = string.Empty;
 
         [JsonIgnore]
-        public ShareableFate[] Encounters;
+        public ShareableFate[] Encounters = [];
 
         [JsonIgnore]
-        public ShareableFate[] Fates;
+        public ShareableFate[] Fates = [];
 
         [JsonIgnore]
-        public ShareableFate[] Pots;
+        public ShareableFate[] Pots = [];
 
         [JsonConstructor]
         public ExistingTracker() {}

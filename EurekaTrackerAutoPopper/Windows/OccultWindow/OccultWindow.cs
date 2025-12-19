@@ -125,7 +125,7 @@ public class OccultWindow : Window, IDisposable
         ImGui.Separator();
         ImGuiHelpers.ScaledDummy(5.0f);
 
-        var local = Plugin.ClientState.LocalPlayer;
+        var local = Plugin.ObjectTable.LocalPlayer;
         if (local == null)
             return;
 

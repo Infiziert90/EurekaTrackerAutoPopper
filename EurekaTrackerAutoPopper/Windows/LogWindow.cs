@@ -35,7 +35,7 @@ public class LogWindow : Window, IDisposable
 
     public override unsafe void Draw()
     {
-        var local = Plugin.ClientState.LocalPlayer;
+        var local = Plugin.ObjectTable.LocalPlayer;
         if (local == null)
             return;
 

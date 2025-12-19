@@ -247,7 +247,7 @@ public class Fates
 
     private void ScanOccultFates(IFramework _)
     {
-        var local = Plugin.ClientState.LocalPlayer;
+        var local = Plugin.ObjectTable.LocalPlayer;
         if (local == null)
             return;
 
@@ -321,7 +321,7 @@ public class Fates
 
     private unsafe void ScanOccultCEs(IFramework _)
     {
-        var local = Plugin.ClientState.LocalPlayer;
+        var local = Plugin.ObjectTable.LocalPlayer;
         if (local == null)
             return;
 

@@ -550,7 +550,7 @@ public class Plugin : IDalamudPlugin
         if (!Fates.BunnyTerritories.Contains(ClientState.TerritoryType))
             return;
 
-        var local = ClientState.LocalPlayer;
+        var local = ObjectTable.LocalPlayer;
         if (local == null)
             return;
 
@@ -593,7 +593,7 @@ public class Plugin : IDalamudPlugin
                 return;
 
             foreach (var coffer in ObjectTable.OfType<IEventObj>()
-                         .Where(a => BunnyChests.Coffers.Contains(a.DataId))
+                         .Where(a => BunnyChests.Coffers.Contains(a.BaseId))
                          .Where(a => !BunnyChests.ExistingCoffers.Contains(a.EntityId)))
             {
                 if (coffer.EntityId != local.TargetObject.EntityId)
@@ -602,7 +602,7 @@ public class Plugin : IDalamudPlugin
                 BunnyChests.ExistingCoffers.Add(coffer.EntityId);
                 CofferTimer.Stop();
 
-                Configuration.Stats[ClientState.TerritoryType][coffer.DataId] += 1;
+                Configuration.Stats[ClientState.TerritoryType][coffer.BaseId] += 1;
                 Configuration.KilledBunnies -= 1;
                 Configuration.Save();
             }
@@ -611,7 +611,7 @@ public class Plugin : IDalamudPlugin
 
     private void FairyCheck(IFramework framework)
     {
-        var local = ClientState.LocalPlayer;
+        var local = ObjectTable.LocalPlayer;
         if (local == null)
             return;
 
@@ -638,14 +638,13 @@ public class Plugin : IDalamudPlugin
 
     private unsafe void OccultCheck(IFramework _)
     {
-        var local = ClientState.LocalPlayer;
+        var local = ObjectTable.LocalPlayer;
         if (local == null)
             return;
 
-        // TODO Needs a CS update
         // Player is in a Critical Engagement, disable all scans
-        // if (IsInCriticalEncounter())
-        //     return;
+        if (IsInCriticalEncounter())
+            return;
 
         // Player is in a fade, disable all scans
         if (IsInFate())
@@ -654,14 +653,14 @@ public class Plugin : IDalamudPlugin
         foreach (var actor in ObjectTable.Where(gameObject => gameObject.ObjectKind == ObjectKind.Treasure))
         {
             // This range should include all random coffer
-            if (actor.DataId is > 1856 or < 1789)
+            if (actor.BaseId is > 1856 or < 1789)
                 return;
 
             var treasureObject = (Treasure*)actor.Address;
             if (treasureObject->RenderFlags > 0)
                 return;
 
-            if (!Sheets.TreasureSheet.TryGetRow(actor.DataId, out var treasureRow))
+            if (!Sheets.TreasureSheet.TryGetRow(actor.BaseId, out var treasureRow))
                 return;
 
             if (Library.ExistingOccultLocations.Any(f => f.ObjectId == actor.EntityId))
@@ -674,7 +673,7 @@ public class Plugin : IDalamudPlugin
 
         foreach (var actor in ObjectTable.Where(gameObject => gameObject.ObjectKind == ObjectKind.EventObj))
         {
-            if (actor.DataId != 2010139)
+            if (actor.BaseId != 2010139)
                 continue;
 
             if (Library.ExistingOccultLocations.Any(f => f.ObjectId == actor.EntityId))
@@ -725,7 +724,7 @@ public class Plugin : IDalamudPlugin
         if (ClientState.TerritoryType != 1252)
             return;
 
-        var local = ClientState.LocalPlayer;
+        var local = ObjectTable.LocalPlayer;
         if (local == null)
             return;
 
@@ -987,6 +986,9 @@ public class Plugin : IDalamudPlugin
         if (publicContent == null)
             return false;
 
+        Plugin.Log.Information($"Address: {(nint)(publicContent):X}");
+        Plugin.Log.Information($"Address: {(nint)(&publicContent->DynamicEventContainer):X}");
+        Plugin.Log.Information($"CurrentEventIndex: {publicContent->DynamicEventContainer.CurrentEventIndex}");
         return publicContent->DynamicEventContainer.CurrentEventIndex != -1;
     }
 
@@ -1001,11 +1003,11 @@ public class Plugin : IDalamudPlugin
 
     public void EnablePreview()
     {
-        if (ClientState.LocalPlayer == null)
+        if (ObjectTable.LocalPlayer == null)
             return;
 
         NearToCoffer = true;
-        CofferPos = ClientState.LocalPlayer.Position;
+        CofferPos = ObjectTable.LocalPlayer.Position;
 
         PreviewTimer.Start();
     }
