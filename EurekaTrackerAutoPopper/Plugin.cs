@@ -986,9 +986,6 @@ public class Plugin : IDalamudPlugin
         if (publicContent == null)
             return false;
 
-        Plugin.Log.Information($"Address: {(nint)(publicContent):X}");
-        Plugin.Log.Information($"Address: {(nint)(&publicContent->DynamicEventContainer):X}");
-        Plugin.Log.Information($"CurrentEventIndex: {publicContent->DynamicEventContainer.CurrentEventIndex}");
         return publicContent->DynamicEventContainer.CurrentEventIndex != -1;
     }
 
