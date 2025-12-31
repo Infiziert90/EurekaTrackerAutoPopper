@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using EurekaTrackerAutoPopper.Resources;
 using Dalamud.Bindings.ImGui;
@@ -88,6 +90,15 @@ public class BunnyWindow : Window, IDisposable
             }
 
             ImGui.TextUnformatted($"{bunny.Name}{bunny.Position}");
+            if (InOccult)
+            {
+                ImGui.SameLine();
+                using (ImRaii.PushFont(UiBuilder.IconFont))
+                {
+                    if (ImGui.Selectable($"{FontAwesomeIcon.Flag.ToIconString()}##{bunny.FateId}"))
+                        Plugin.OpenMap(bunny.MapLinkPayload);
+                }
+            }
             if (bunny.Alive)
             {
                 ImGui.TextColored(ImGuiColors.HealerGreen, Language.BunnyWindowStatusAlive);

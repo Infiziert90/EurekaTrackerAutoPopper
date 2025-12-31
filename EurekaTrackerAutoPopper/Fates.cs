@@ -168,7 +168,7 @@ public class Fates
         new(1425, Territory.Hydatos, true, ""),
 
         // Occult
-        new(1976, 60958, new Vector2(206.12666f, 205.55835f), [47749, 47738], OccultAetheryte.CrystallizedCaverns, 40) { Position = " (North)", Easy = true},
+        new(1976, 60958, new Vector2(206.12666f, -205.55835f), [47749, 47738], OccultAetheryte.CrystallizedCaverns, 40) { Position = " (North)", Easy = true},
         new(1977, 60958, new Vector2(-479.7468f, 524.8094f), [47745, 47738], OccultAetheryte.Stonemarsh, 18) { Position = " (South)", Easy = true},
     ];
 
