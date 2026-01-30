@@ -5,6 +5,8 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using static System.Math;
 
 namespace EurekaTrackerAutoPopper;
@@ -47,5 +49,27 @@ public static class Utils
             .Where(o => Distance(towerEngagement.WorldPos, o.Position) <= 20.0f)
             .Where(o => ((BattleChara*)o.Address)->GetForayInfo()->Level >= 20)
             .ToArray();
+    }
+
+    /// <summary>
+    /// Return the ui path for usage with XIVAPI.
+    /// </summary>
+    /// <param name="iconId">The items icon id</param>
+    /// <returns>Game path to the icon</returns>
+    public static string GetIconPath(uint iconId){
+        var iconGroup = iconId - (iconId % 1000);
+        return $"{iconGroup:D6}/{iconId:D6}";
+    }
+
+    /// <summary>
+    /// Converts <see cref="Image{Bgra32}"/> to raw pixel array in the same pixel format
+    /// </summary>
+    /// <param name="image"></param>
+    /// <returns></returns>
+    public static byte[] ImageToRaw(this Image<Bgra32> image)
+    {
+        var data = new byte[4 * image.Width * image.Height];
+        image.CopyPixelDataTo(data);
+        return data;
     }
 }

@@ -2,7 +2,7 @@
 <Project Sdk="Dalamud.NET.Sdk/14.0.1">
 	<PropertyGroup>
 		<Authors>Infi, electr0sheep</Authors>
-		<Version>1.6.0.1</Version>
+		<Version>1.6.1.0</Version>
 		<Description>Easy helper for Eureka and Occult</Description>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<Configurations>Debug;Release</Configurations>
@@ -42,5 +42,11 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>Language.resx</DependentUpon>
 	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Penumbra.Api" Version="5.13.1" />
+	  <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+	  <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
 	</ItemGroup>
 </Project>
