@@ -32,8 +32,6 @@ public class PenumbraIpc : IDisposable
 
         try
         {
-            Plugin.Log.Information("Mod register");
-            Plugin.Log.Information($"Replacing: {TexEdit.EmptyGamePath} with {TexEdit.ReplacementPath}");
             var r = AddTemporaryModAll();
             if (r != PenumbraApiEc.Success)
             {
