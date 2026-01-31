@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Dalamud.Plugin.Ipc.Exceptions;
 using Penumbra.Api.Enums;
 using Penumbra.Api.IpcSubscribers;
 
@@ -6,21 +8,58 @@ namespace EurekaTrackerAutoPopper;
 
 public class PenumbraIpc : IDisposable
 {
-    public const string ModName = "CarrotReplacement [EurekaLinker]";
+    private const string ModName = "CarrotReplacement [EurekaLinker]";
+    private readonly TexEdit TexEdit;
 
-    public bool ActiveReplacement = false;
+    public bool ActiveReplacement;
 
-    private readonly AddTemporaryModAll AddTemporaryModAllFunc = new AddTemporaryModAll(Plugin.PluginInterface);
-    private readonly RemoveTemporaryModAll RemoveTemporaryModAllFunc = new RemoveTemporaryModAll(Plugin.PluginInterface);
+    private readonly Dictionary<string, string> Paths;
+    private readonly AddTemporaryModAll AddTemporaryModAllFunc = new(Plugin.PluginInterface);
+    private readonly RemoveTemporaryModAll RemoveTemporaryModAllFunc = new(Plugin.PluginInterface);
 
-    public PenumbraApiEc AddTemporaryModAll(string gamePath, string replacedPath)
-        => AddTemporaryModAllFunc.Invoke(ModName, new() { { gamePath, replacedPath } }, string.Empty, 99);
+    public PenumbraIpc(TexEdit texEdit)
+    {
+        TexEdit = texEdit;
+        Paths = new Dictionary<string, string> { { texEdit.EmptyGamePath, texEdit.ReplacementPath } };
 
-    public PenumbraApiEc RemoveTemporaryModAll()
+        Initialized.Subscriber(Plugin.PluginInterface, RegisterMod);
+    }
+
+    public void RegisterMod()
+    {
+        if (TexEdit.InvalidReplacement)
+            return;
+
+        try
+        {
+            Plugin.Log.Information("Mod register");
+            Plugin.Log.Information($"Replacing: {TexEdit.EmptyGamePath} with {TexEdit.ReplacementPath}");
+            var r = AddTemporaryModAll();
+            if (r != PenumbraApiEc.Success)
+            {
+                Plugin.Log.Error($"Unable to add temporary mod. Result: {r}");
+                return;
+            }
+
+            ActiveReplacement = true;
+        }
+        catch (IpcNotReadyError ex)
+        {
+            Plugin.Log.Debug(ex, "Penumbra not installed, disabling feature.");
+        }
+    }
+
+    private PenumbraApiEc AddTemporaryModAll()
+        => AddTemporaryModAllFunc.Invoke(ModName, Paths, string.Empty, 99);
+
+    private PenumbraApiEc RemoveTemporaryModAll()
         => RemoveTemporaryModAllFunc.Invoke(ModName, 99);
 
     public void Dispose()
     {
+        if (!ActiveReplacement)
+            return;
+
         try
         {
             var r = RemoveTemporaryModAll();

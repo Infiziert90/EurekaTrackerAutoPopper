@@ -30,8 +30,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Plugin.Ipc.Exceptions;
-using Penumbra.Api.Enums;
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
 namespace EurekaTrackerAutoPopper;
@@ -51,7 +49,6 @@ public class Plugin : IDalamudPlugin
     [PluginService] public static IPluginLog Log { get; private set; } = null!;
     [PluginService] public static ITextureProvider TextureManager { get; private set; } = null!;
     [PluginService] public static IAddonLifecycle AddonLifecycle { get; private set; } = null!;
-    [PluginService] public static ITextureSubstitutionProvider SubstitutionProvider { get; private set; } = null!;
 
     public Configuration Configuration { get; init; }
 
@@ -92,7 +89,10 @@ public class Plugin : IDalamudPlugin
     public Plugin()
     {
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-        PenumbraIpc = new PenumbraIpc();
+        TexEdit = new TexEdit();
+        TexEdit.EditIcon(25207, 170010);
+        PenumbraIpc = new PenumbraIpc(TexEdit);
+        PenumbraIpc.RegisterMod();
 
         Library = new Library(Configuration);
         Library.Initialize();
@@ -137,28 +137,6 @@ public class Plugin : IDalamudPlugin
 
         AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarker);
         AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarkerOccult);
-
-        TexEdit = new TexEdit();
-        TexEdit.EditIcon(25207, 170010);
-
-        try
-        {
-            if (TexEdit.EmptyGamePath != string.Empty && TexEdit.ReplacementPath != string.Empty)
-            {
-                var r = PenumbraIpc.AddTemporaryModAll(TexEdit.EmptyGamePath, TexEdit.ReplacementPath);
-                if (r != PenumbraApiEc.Success)
-                {
-                    Log.Error($"Unable to add temporary mod. Result: {r}");
-                    return;
-                }
-
-                PenumbraIpc.ActiveReplacement = true;
-            }
-        }
-        catch (IpcNotReadyError ex)
-        {
-            Log.Error(ex, "Failed to add temporary mod.");
-        }
     }
 
     public void Dispose()

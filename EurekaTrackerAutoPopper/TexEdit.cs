@@ -12,13 +12,14 @@ namespace EurekaTrackerAutoPopper;
 
 public class TexEdit
 {
-    public string GamePath = string.Empty;
     public string EmptyGamePath = string.Empty;
     public string ReplacementPath = string.Empty;
 
+    // Set to false after the Edit has been done successfully
+    public bool InvalidReplacement = true;
+
     public void EditIcon(uint iconId, uint emptySlotId)
     {
-        GamePath = $"ui/icon/{Utils.GetIconPath(iconId)}_hr1.tex";
         EmptyGamePath = $"ui/icon/{Utils.GetIconPath(emptySlotId)}_hr1.tex";
         if (Plugin.Data.FileExists(EmptyGamePath))
         {
@@ -26,7 +27,8 @@ public class TexEdit
             return;
         }
 
-        var tex = Plugin.Data.GetFile<TexFile>(GamePath)!;
+        var gamePath = $"ui/icon/{Utils.GetIconPath(iconId)}_hr1.tex";
+        var tex = Plugin.Data.GetFile<TexFile>(gamePath)!;
 
         var width = tex.Header.Width;
         var height = tex.Header.Height;
@@ -56,6 +58,7 @@ public class TexEdit
         var outputPath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "icon.tex");
         WriteTexFile(outputPath, 80, 80, iconBgra.ImageToRaw());
         ReplacementPath = outputPath;
+        InvalidReplacement = false;
     }
 
     private static unsafe void WriteTexFile(string filename, uint width, uint height, ReadOnlySpan<byte> pixelData)
