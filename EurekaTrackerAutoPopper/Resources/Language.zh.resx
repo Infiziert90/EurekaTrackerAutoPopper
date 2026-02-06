@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:element name="root" msdata:IsDataSet="true">
+
+        </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutEntryAuthor" xml:space="preserve">
+        <value>作者:</value>
+    </data>
+  <data name="AboutEntryDiscord" xml:space="preserve">
+        <value>Discord:</value>
+    </data>
+  <data name="AboutEntryVersion" xml:space="preserve">
+        <value>版本:</value>
+    </data>
+  <data name="AreaNameAnemos" xml:space="preserve">
+        <value>常风之地</value>
+    </data>
+  <data name="AreaNameHydatos" xml:space="preserve">
+        <value>丰水之地</value>
+    </data>
+  <data name="AreaNamePagos" xml:space="preserve">
+        <value>恒冰之地</value>
+    </data>
+  <data name="AreaNamePyros" xml:space="preserve">
+        <value>涌火之地</value>
+    </data>
+  <data name="BunnyWindowRespawning" xml:space="preserve">
+        <value>重生:</value>
+    </data>
+  <data name="BunnyWindowRespawningsoon" xml:space="preserve">
+        <value> 即将开始 </value>
+    </data>
+  <data name="BunnyWindowStatusAlive" xml:space="preserve">
+        <value>存活</value>
+    </data>
+  <data name="BunnyWindowStatusUnknown" xml:space="preserve">
+        <value>未知</value>
+    </data>
+  <data name="ChatDeadFairyNote" xml:space="preserve">
+        <value>从追踪器中移除无效元灵。</value>
+    </data>
+  <data name="ChatErrorFairyMapMarkers" xml:space="preserve">
+        <value>无法在地图上放置元灵标记</value>
+    </data>
+  <data name="ChatErrorFairyMarkers" xml:space="preserve">
+        <value>元灵的追踪信息需重置，请前往所有标注地点以完成更新。</value>
+    </data>
+  <data name="ChatErrorFairyMinimapMarkers" xml:space="preserve">
+        <value>无法在小地图上放置元灵标记</value>
+    </data>
+  <data name="ChatErrorMapMarkers" xml:space="preserve">
+        <value>无法在地图上放置所有标记</value>
+    </data>
+  <data name="ChatErrorMinimapMarkers" xml:space="preserve">
+        <value>无法在小地图上放置所有标记</value>
+    </data>
+  <data name="ChatErrorNotInEureka" xml:space="preserve">
+        <value>你不在优雷卡中，此命令不可用。</value>
+    </data>
+  <data name="ChatNewChestFound" xml:space="preserve">
+        <value>你找到了一个新的宝箱位置</value>
+    </data>
+  <data name="ChatNewChestFoundDevNote" xml:space="preserve">
+        <value>请考虑向开发人员发送以下信息:</value>
+    </data>
+  <data name="ChatNewChestFoundFeedback" xml:space="preserve">
+        <value>(请不要使用反馈功能发送此信息)</value>
+    </data>
+  <data name="ConfigButtonAddMapMarkers" xml:space="preserve">
+        <value>添加标记</value>
+    </data>
+  <data name="ConfigButtonCirclePreview" xml:space="preserve">
+        <value>预览</value>
+    </data>
+  <data name="ConfigButtonDiscordForumThread" xml:space="preserve">
+        <value>Discord 频道</value>
+    </data>
+  <data name="ConfigButtonFairyAll" xml:space="preserve">
+        <value>默语全部</value>
+    </data>
+  <data name="ConfigButtonGithubIssues" xml:space="preserve">
+        <value>议题</value>
+    </data>
+  <data name="ConfigButtonRemoveMapMarkers" xml:space="preserve">
+        <value>移除标记</value>
+    </data>
+  <data name="ConfigButtonStartNew" xml:space="preserve">
+        <value>开始新的追踪器</value>
+    </data>
+  <data name="ConfigHeaderBunny" xml:space="preserve">
+        <value>幸福兔</value>
+    </data>
+  <data name="ConfigHeaderBunnyCarrot" xml:space="preserve">
+        <value>好运胡萝卜</value>
+    </data>
+  <data name="ConfigHeaderFairy" xml:space="preserve">
+        <value>元灵</value>
+    </data>
+  <data name="ConfigHeaderFormat" xml:space="preserve">
+        <value>格式:</value>
+    </data>
+  <data name="ConfigHeaderKnownLocations" xml:space="preserve">
+        <value>已知地点</value>
+    </data>
+  <data name="ConfigHeaderMapStats" xml:space="preserve">
+        <value>地图统计:</value>
+    </data>
+  <data name="ConfigHeaderMarkerSetHeader" xml:space="preserve">
+        <value>地图标记</value>
+    </data>
+  <data name="ConfigHeaderPop" xml:space="preserve">
+        <value>弹窗</value>
+    </data>
+  <data name="ConfigHeaderPotHelperHeader" xml:space="preserve">
+        <value>撒娇罐助手窗口</value>
+    </data>
+  <data name="ConfigHeaderEngagements" xml:space="preserve">
+        <value>战斗</value>
+    </data>
+  <data name="ConfigHeaderTower" xml:space="preserve">
+        <value>两歧塔</value>
+    </data>
+  <data name="ConfigHeaderGeneral" xml:space="preserve">
+        <value>通用</value>
+    </data>
+  <data name="ConfigHeaderProximityNotification" xml:space="preserve">
+        <value>接近时通知</value>
+    </data>
+  <data name="ConfigHeaderTotalStats" xml:space="preserve">
+        <value>汇总数据:</value>
+    </data>
+  <data name="ConfigHeaderTracker" xml:space="preserve">
+        <value>追踪器:</value>
+    </data>
+  <data name="ConfigHeaderTreasure" xml:space="preserve">
+        <value>宝箱</value>
+    </data>
+  <data name="ConfigInputPW" xml:space="preserve">
+        <value>密码</value>
+    </data>
+  <data name="ConfigInputURL" xml:space="preserve">
+        <value>实例网址</value>
+    </data>
+  <data name="ConfigOptionBunnyLowLevelFates" xml:space="preserve">
+        <value>仅显示低等级</value>
+    </data>
+  <data name="ConfigOptionBunnyWindow" xml:space="preserve">
+        <value>进入时显示窗口</value>
+    </data>
+  <data name="ConfigOptionClearMemory" xml:space="preserve">
+        <value>清除记忆</value>
+    </data>
+  <data name="ConfigOptionCofferIcons" xml:space="preserve">
+        <value>进入时添加宝箱图标</value>
+    </data>
+  <data name="ConfigOptionCopyShoutMessage" xml:space="preserve">
+        <value>复制喊话消息</value>
+    </data>
+  <data name="ConfigOptionDrawCircle" xml:space="preserve">
+        <value>绘制附近宝箱圆圈</value>
+    </data>
+  <data name="ConfigOptionEcho" xml:space="preserve">
+        <value>在聊天中发送默语</value>
+    </data>
+  <data name="ConfigOptionEchoFairy" xml:space="preserve">
+        <value>默语</value>
+    </data>
+  <data name="ConfigOptionEchoNM" xml:space="preserve">
+        <value>默语</value>
+    </data>
+  <data name="ConfigOptionFastSwitcher" xml:space="preserve">
+        <value>显示快速切换悬浮窗</value>
+    </data>
+  <data name="ConfigOptionFateWindow" xml:space="preserve">
+        <value>进入时显示危命任务窗口</value>
+    </data>
+  <data name="ConfigOptionEngagementsPot" xml:space="preserve">
+        <value>显示激活的魔法罐</value>
+    </data>
+  <data name="ConfigOptionTowerTabName" xml:space="preserve">
+        <value>更改选项卡名称</value>
+    </data>
+  <data name="ConfigOptionTowerTabTooltip" xml:space="preserve">
+        <value>当两歧塔处于激活状态时，在选项卡名称旁添加“(已激活)”小标识。</value>
+    </data>
+  <data name="ConfigOptionEngagementsHide" xml:space="preserve">
+        <value>在紧急遭遇战中隐藏</value>
+    </data>
+  <data name="ConfigOptionFlag" xml:space="preserve">
+        <value>放置地图标记</value>
+    </data>
+  <data name="ConfigOptionMemoryTimer" xml:space="preserve">
+        <value>秒后清除</value>
+    </data>
+  <data name="ConfigOptionOpenShoutWindow" xml:space="preserve">
+        <value>显示喊话窗口</value>
+    </data>
+  <data name="ConfigOptionPlaceDefault" xml:space="preserve">
+        <value>进入时放置</value>
+    </data>
+  <data name="ConfigOptionRandomizeCoords" xml:space="preserve">
+        <value>随机化地图坐标</value>
+    </data>
+  <data name="ConfigOptionShortNames" xml:space="preserve">
+        <value>使用短名</value>
+    </data>
+  <data name="ConfigOptionShowPT" xml:space="preserve">
+        <value>在喊话窗口中显示开怪时间</value>
+    </data>
+  <data name="ConfigOptionSoundNM" xml:space="preserve">
+        <value>播放声音</value>
+    </data>
+  <data name="ConfigOptionSpawnNotification" xml:space="preserve">
+        <value>播放重生声音</value>
+    </data>
+  <data name="ConfigOptionSoundCESpawn" xml:space="preserve">
+        <value>播放紧急遭遇战声音</value>
+    </data>
+  <data name="ConfigOptionSoundFateSpawn" xml:space="preserve">
+        <value>播放危命任务声音</value>
+    </data>
+  <data name="ConfigOptionSoundTowerSpawn" xml:space="preserve">
+        <value>播放两歧塔声音</value>
+    </data>
+  <data name="ConfigOptionSwitcherPosition" xml:space="preserve">
+        <value>地图下方显示</value>
+    </data>
+  <data name="ConfigOptionToast" xml:space="preserve">
+        <value>显示弹出提示</value>
+    </data>
+  <data name="ConfigOptionToastFairy" xml:space="preserve">
+        <value>显示弹出提示</value>
+    </data>
+  <data name="ConfigOptionToastNM" xml:space="preserve">
+        <value>显示弹出提示</value>
+    </data>
+  <data name="ConfigOptionUse12h" xml:space="preserve">
+        <value>使用 12 小时格式</value>
+    </data>
+  <data name="ConfigOptionUseET" xml:space="preserve">
+        <value>使用艾欧泽亚时间</value>
+    </data>
+  <data name="ConfigTooltipBunnyLowLevelFates" xml:space="preserve">
+        <value>在恒冰之地和涌火之地仅显示低等级的幸福兔危命任务。</value>
+    </data>
+  <data name="ConfigTooltipBunnyWindow" xml:space="preserve">
+        <value>或使用命令 '/elbunny'。</value>
+    </data>
+  <data name="ConfigOptionAutoPots" xml:space="preserve">
+        <value>自动切换到撒娇罐标记</value>
+    </data>
+  <data name="ConfigTooltipAutoPots" xml:space="preserve">
+        <value>当你携带撒娇罐时，自动在地图上标出撒娇罐宝箱的位置。</value>
+    </data>
+  <data name="ConfigTooltipClearMemory" xml:space="preserve">
+        <value>在 X 秒后移除已发现的宝藏和胡萝卜，以便重新通知。</value>
+    </data>
+  <data name="ConfigTooltipCofferIcons" xml:space="preserve">
+        <value>进入优雷卡时添加宝箱位置。</value>
+    </data>
+  <data name="ConfigTooltipDrawCircle" xml:space="preserve">
+        <value>当玩家靠近宝箱位置时绘制圆圈。</value>
+    </data>
+  <data name="ConfigTooltipOpenTracker" xml:space="preserve">
+        <value>在浏览器中打开追踪器</value>
+    </data>
+  <data name="ConfigTooltipShowPT" xml:space="preserve">
+        <value>禁用此选项将从喊话消息中删除时间元素。</value>
+    </data>
+  <data name="ConfigTooltipStartNew" xml:space="preserve">
+        <value>仅在优雷卡中可用</value>
+    </data>
+  <data name="LogCategoryFE" xml:space="preserve">
+        <value>火和土</value>
+    </data>
+  <data name="LogCategoryIL" xml:space="preserve">
+        <value>冰和雷</value>
+    </data>
+  <data name="LogCategoryNight" xml:space="preserve">
+        <value>夜间</value>
+    </data>
+  <data name="LogCategorySprites" xml:space="preserve">
+        <value>死灵</value>
+    </data>
+  <data name="LogCategoryWW" xml:space="preserve">
+        <value>水和风</value>
+    </data>
+  <data name="LogError" xml:space="preserve">
+        <value>无法读取日志。</value>
+    </data>
+  <data name="LogWrongTab" xml:space="preserve">
+        <value>请打开挑战笔记的“探索型任务”种类。</value>
+    </data>
+  <data name="LogWrongTabNote" xml:space="preserve">
+        <value>无法检测优雷卡进度。</value>
+    </data>
+  <data name="QuestLogAetheryteText" xml:space="preserve">
+        <value>以太之光解锁:</value>
+    </data>
+  <data name="QuestLogAnemos13Step2" xml:space="preserve">
+        <value>前往靠近瀑布的瓦尔河流域，并与地脉的结节点交互</value>
+    </data>
+  <data name="QuestLogAnemos17Step2" xml:space="preserve">
+        <value>前往奇怪谷，并与地脉的结节点交互</value>
+    </data>
+  <data name="QuestLogAnemos17Step4" xml:space="preserve">
+        <value>前往传送技术管理室，并与中继以太之晶交互</value>
+    </data>
+  <data name="QuestLogAnemos17Step5" xml:space="preserve">
+        <value>再次与中继以太之晶交互，并提交99个常风水晶。</value>
+    </data>
+  <data name="QuestLogAnemos1Step1" xml:space="preserve">
+        <value>与可露儿和盖罗尔特对话</value>
+    </data>
+  <data name="QuestLogAnemos1Tip1" xml:space="preserve">
+        <value>你必须从普通怪物身上获取一个乱属性水晶。</value>
+    </data>
+  <data name="QuestLogAnemos1Tip2" xml:space="preserve">
+        <value>在你完成这项任务之前，你不能将常风水晶兑换成乱属性水晶。</value>
+    </data>
+  <data name="QuestLogAnemos3Step2" xml:space="preserve">
+        <value>前往原初自然史院分室，并与地脉的结节点交互</value>
+    </data>
+  <data name="QuestLogAnemos3Tip1" xml:space="preserve">
+        <value>夜间建筑内外会刷怪，建议在白天 (艾欧泽亚时间 6:00–18:00) 前往。</value>
+    </data>
+  <data name="QuestLogAnemos5Step2" xml:space="preserve">
+        <value>前往悬崖下方的高树果林，并与地脉的结节点交互</value>
+    </data>
+  <data name="QuestLogHeader" xml:space="preserve">
+        <value>当前区域</value>
+    </data>
+  <data name="QuestLogHydatos51Step2" xml:space="preserve">
+        <value>前往中央魔力桥脚，并再次与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos51Step3" xml:space="preserve">
+        <value>向南前往瓦尔河源流，并找到以太汇聚处</value>
+    </data>
+  <data name="QuestLogHydatos51Step4" xml:space="preserve">
+        <value>返回中央魔力桥脚，并与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos54Step2" xml:space="preserve">
+        <value>前往西部魔力桥脚，并再次与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos54Step3" xml:space="preserve">
+        <value>前往瓦尔河西岸</value>
+    </data>
+  <data name="QuestLogHydatos54Step4" xml:space="preserve">
+        <value>走上大桥脚，寻找以太汇聚处</value>
+    </data>
+  <data name="QuestLogHydatos54Step5" xml:space="preserve">
+        <value>返回西部魔力桥脚，并与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos57Step1" xml:space="preserve">
+        <value>在西部魔力桥脚与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos57Step2" xml:space="preserve">
+        <value>向东前往东部魔力桥脚，并再次与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos57Step3" xml:space="preserve">
+        <value>向北前往瓦尔河东岸，寻找以太汇聚处</value>
+    </data>
+  <data name="QuestLogHydatos57Step4" xml:space="preserve">
+        <value>返回东部魔力桥脚，并与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos60Step1" xml:space="preserve">
+        <value>前往东部魔力桥脚，并与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos60Step2" xml:space="preserve">
+        <value>前往魔力桥基，并再次与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos60Step3" xml:space="preserve">
+        <value>进入总部塔入口（传送点在旁边）</value>
+    </data>
+  <data name="QuestLogHydatos60Step4" xml:space="preserve">
+        <value>再次与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos60Step5" xml:space="preserve">
+        <value>去委员长办公室，并再次与可露儿对话</value>
+    </data>
+  <data name="QuestLogHydatos60Step6" xml:space="preserve">
+        <value>与散落的书籍交互</value>
+    </data>
+  <data name="QuestLogHydatos60Step7" xml:space="preserve">
+        <value>再次与可露儿对话 (将播放过场动画)</value>
+    </data>
+  <data name="QuestLogHydatos60Step8" xml:space="preserve">
+        <value>在可露儿路线(封印)或艾吉卡·岑吉卡路线(摧毁)之间选择</value>
+    </data>
+  <data name="QuestLogHydatos60Step9" xml:space="preserve">
+        <value>回到中点，并与艾吉卡·岑吉卡或可露儿对话(与你选择的相反)</value>
+    </data>
+  <data name="QuestLogHydatos60Tip1" xml:space="preserve">
+        <value>这个任务解锁巴尔德西昂兵武塔。</value>
+    </data>
+  <data name="QuestLogHydatos60Tip2" xml:space="preserve">
+        <value>完成这个任务后与调查队的研究员对话。</value>
+    </data>
+  <data name="QuestLogOutside" xml:space="preserve">
+        <value>不在优雷卡中...</value>
+    </data>
+  <data name="QuestLogPagos21Step2" xml:space="preserve">
+        <value>在松塔林找到以太的奔流痕(上层的高草坡上)</value>
+    </data>
+  <data name="QuestLogPagos23Step2" xml:space="preserve">
+        <value>在瓦尔河谷找到以太的奔流痕</value>
+    </data>
+  <data name="QuestLogPagos25Step2" xml:space="preserve">
+        <value>在东缘崖找到魔素石</value>
+    </data>
+  <data name="QuestLogPagos25Step3" xml:space="preserve">
+        <value>在几乎相同的位置再次与它交互</value>
+    </data>
+  <data name="QuestLogPagos25Tip1" xml:space="preserve">
+        <value>首次与可露儿对话后，随时可与盖罗尔特对话，解锁优雷卡恒冰之地武器强化功能。</value>
+    </data>
+  <data name="QuestLogPagos29Step2" xml:space="preserve">
+        <value>从此处跳下</value>
+    </data>
+  <data name="QuestLogPagos29Step3" xml:space="preserve">
+        <value>与艾吉卡·岑吉卡对话</value>
+    </data>
+  <data name="QuestLogPagos35Step2" xml:space="preserve">
+        <value>在地脉喷口找到指定地点</value>
+    </data>
+  <data name="QuestLogPyros35Step2" xml:space="preserve">
+        <value>前往实验魔器工房，并与可露儿对话</value>
+    </data>
+  <data name="QuestLogPyros35Step5" xml:space="preserve">
+        <value>打开文理融合器，选择文理麻痹，并提取记忆</value>
+    </data>
+  <data name="QuestLogPyros35Step7" xml:space="preserve">
+        <value>前往冰针东北，并与地脉的结节点交互</value>
+    </data>
+  <data name="QuestLogPyros38Step2" xml:space="preserve">
+        <value>前往萨盖特别墅遗迹，并与损坏的装置交互</value>
+    </data>
+  <data name="QuestLogPyros38Step4" xml:space="preserve">
+        <value>前往耐热实验场，并与地脉的结节点交互</value>
+    </data>
+  <data name="QuestLogPyros38Tip1" xml:space="preserve">
+        <value>此任务解锁了文理融合器的额外能力。</value>
+    </data>
+  <data name="QuestLogPyros40Step2" xml:space="preserve">
+        <value>前往火岩溶洞西侧，并与地脉的结节点交互</value>
+    </data>
+  <data name="QuestLogPyros45Step1" xml:space="preserve">
+        <value>与可露儿对话 (将播放过场动画)</value>
+    </data>
+  <data name="QuestLogPyros45Step2" xml:space="preserve">
+        <value>前往实验魔器工房，并与可露儿对话</value>
+    </data>
+  <data name="QuestLogPyros50Step2" xml:space="preserve">
+        <value>前往火岩溶洞东侧，并与地脉的结节点交互</value>
+    </data>
+  <data name="QuestLogPyros50Step4" xml:space="preserve">
+        <value>前往歌咏冰洞，并与地脉的结节点交互</value>
+    </data>
+  <data name="QuestLogReturnToDrake" xml:space="preserve">
+        <value>回到德雷克处</value>
+    </data>
+  <data name="QuestLogReturnToGerolt" xml:space="preserve">
+        <value>回到盖罗尔特处</value>
+    </data>
+  <data name="QuestLogReturnToKrile" xml:space="preserve">
+        <value>回到可露儿处</value>
+    </data>
+  <data name="QuestLogTabItemQuestLevel" xml:space="preserve">
+        <value>等级</value>
+    </data>
+  <data name="QuestLogTalkToDrake" xml:space="preserve">
+        <value>与德雷克对话</value>
+    </data>
+  <data name="QuestLogTalkToGerolt" xml:space="preserve">
+        <value>与盖罗尔特对话</value>
+    </data>
+  <data name="QuestLogTalkToKrile" xml:space="preserve">
+        <value>与可露儿对话</value>
+    </data>
+  <data name="ShoutButtonClose" xml:space="preserve">
+        <value>关闭</value>
+    </data>
+  <data name="ShoutButtonPost" xml:space="preserve">
+        <value>发布</value>
+    </data>
+  <data name="ShoutWindowLimit" xml:space="preserve">
+        <value>喊话将在恶名精英刷出20秒后可用。</value>
+    </data>
+  <data name="StatsEntryBronze" xml:space="preserve">
+        <value>铜:</value>
+    </data>
+  <data name="StatsEntryFound" xml:space="preserve">
+        <value>找到宝箱:</value>
+    </data>
+  <data name="StatsEntryGold" xml:space="preserve">
+        <value>金:</value>
+    </data>
+  <data name="StatsEntryKilled" xml:space="preserve">
+        <value>击杀的幸福兔:</value>
+    </data>
+  <data name="StatsEntrySilver" xml:space="preserve">
+        <value>银:</value>
+    </data>
+  <data name="StatsEntryTime" xml:space="preserve">
+        <value>在优雷卡中的时间:</value>
+    </data>
+  <data name="TabHeaderAbout" xml:space="preserve">
+        <value>关于</value>
+    </data>
+  <data name="TabHeaderBunny" xml:space="preserve">
+        <value>幸福兔</value>
+    </data>
+  <data name="TabHeaderChat" xml:space="preserve">
+        <value>聊天</value>
+    </data>
+  <data name="TabHeaderFairy" xml:space="preserve">
+        <value>元灵</value>
+    </data>
+  <data name="TabHeaderGeneral" xml:space="preserve">
+        <value>通用</value>
+    </data>
+  <data name="TabHeaderOccult" xml:space="preserve">
+        <value>新月岛</value>
+    </data>
+  <data name="TabHeaderNotification" xml:space="preserve">
+        <value>通知</value>
+    </data>
+  <data name="TabHeaderMap" xml:space="preserve">
+        <value>地图</value>
+    </data>
+  <data name="TabHeaderEngagements" xml:space="preserve">
+        <value>战斗</value>
+    </data>
+  <data name="TabHeaderTower" xml:space="preserve">
+        <value>两歧塔</value>
+    </data>
+  <data name="TabHeaderPot" xml:space="preserve">
+        <value>撒娇罐</value>
+    </data>
+  <data name="TabHeaderStats" xml:space="preserve">
+        <value>统计</value>
+    </data>
+  <data name="TableLabelDone" xml:space="preserve">
+        <value>完成</value>
+    </data>
+  <data name="TableLabelEnemyLvl" xml:space="preserve">
+        <value>敌方等级</value>
+    </data>
+  <data name="TableLabelMonster" xml:space="preserve">
+        <value>怪物</value>
+    </data>
+  <data name="LogWindowRefreshTooltip" xml:space="preserve">
+        <value>由于游戏需要向服务器请求最新进度，刷新是必要的。
+每次使用后需等待 5 秒冷却。</value>
+    </data>
+  <data name="TabHeaderTracker" xml:space="preserve">
+        <value>追踪器</value>
+    </data>
+  <data name="TabHeaderHelper" xml:space="preserve">
+        <value>助手</value>
+    </data>
+  <data name="OccultWindowNotInTerritory" xml:space="preserve">
+        <value>你不在新月岛区域，此窗口没有任何用处。</value>
+    </data>
+  <data name="CEStateInactive" xml:space="preserve">
+        <value>未激活</value>
+    </data>
+  <data name="CEStateRegister" xml:space="preserve">
+        <value>招募人手</value>
+    </data>
+  <data name="CEStateWarmup" xml:space="preserve">
+        <value>准备开始</value>
+    </data>
+  <data name="CEStateBattle" xml:space="preserve">
+        <value>战斗进行中</value>
+    </data>
+  <data name="MarkerSetCombined" xml:space="preserve">
+        <value>宝箱和胡萝卜</value>
+    </data>
+  <data name="MarkerSetOnlySilver" xml:space="preserve">
+        <value>银宝箱</value>
+    </data>
+  <data name="MarkerSetOnlyBronze" xml:space="preserve">
+        <value>铜宝箱</value>
+    </data>
+  <data name="MarkerSetBunny" xml:space="preserve">
+        <value>胡萝卜位置</value>
+    </data>
+  <data name="MarkerSetPot" xml:space="preserve">
+        <value>撒娇罐位置</value>
+    </data>
+  <data name="MarkerSetTreasure" xml:space="preserve">
+        <value>全部宝箱</value>
+    </data>
+  <data name="MarkerSetNone" xml:space="preserve">
+        <value>不显示</value>
+    </data>
+  <data name="HeaderActiveCE" xml:space="preserve">
+        <value>已激活的紧急遭遇战:</value>
+    </data>
+  <data name="HeaderActiveFate" xml:space="preserve">
+        <value>已激活的危命任务:</value>
+    </data>
+  <data name="HeaderActivePot" xml:space="preserve">
+        <value>已激活的魔法罐危命任务:</value>
+    </data>
+  <data name="CollapseablePreviousEngagements" xml:space="preserve">
+        <value>全部既往战斗</value>
+    </data>
+  <data name="HeaderCE" xml:space="preserve">
+        <value>紧急遭遇战:</value>
+    </data>
+  <data name="HeaderFates" xml:space="preserve">
+        <value>危命任务:</value>
+    </data>
+  <data name="FateTimeRemaining" xml:space="preserve">
+        <value>剩余时间</value>
+    </data>
+  <data name="FateProgress" xml:space="preserve">
+        <value>进度</value>
+    </data>
+  <data name="FateInfoLastSeen" xml:space="preserve">
+        <value>最后出现时间: {0} 前</value>
+    </data>
+  <data name="FateInfoLastSeenUnknown" xml:space="preserve">
+        <value>最后出现时间: 尚未出现</value>
+    </data>
+  <data name="FateInfoRespawnTimes" xml:space="preserve">
+        <value>重生时间: [{0}]</value>
+    </data>
+  <data name="FateInfoWalkingTime" xml:space="preserve">
+        <value>步行时间: {0}</value>
+    </data>
+  <data name="ForkedTowerInfoJoinRun" xml:space="preserve">
+        <value>想要参与攻略两歧塔?</value>
+    </data>
+  <data name="ForkedTowerInfoWarning1" xml:space="preserve">
+        <value>请注意，极不推荐尝试单人进入两歧塔。即在触发天气期间站在两歧塔平台上，且在该时段内提交任意数量的启动凭证。</value>
+    </data>
+  <data name="ForkedTowerInfoWarning2" xml:space="preserve">
+        <value>若想进一步了解两歧塔或参加有组织的车队，建议加入对应区服的以下 Discord 服务器。</value>
+    </data>
+  <data name="ForkedTowerInfoJoinDiscordList" xml:space="preserve">
+        <value>我可以在哪里加入有组织的车队？(点击名称)</value>
+    </data>
+  <data name="ForkedTowerInfoPlayerCount" xml:space="preserve">
+        <value>平台上的玩家(20级或以上): {0}</value>
+    </data>
+  <data name="ForkedTowerInfoPlayerListCollapseable" xml:space="preserve">
+        <value>玩家列表</value>
+    </data>
+  <data name="ForkedTowerNotOnPlatform" xml:space="preserve">
+        <value>不在平台上。</value>
+    </data>
+  <data name="ForkedTowerNotSeen" xml:space="preserve">
+        <value>两歧塔尚未出现。</value>
+    </data>
+  <data name="OccultTowerActiveIndicator" xml:space="preserve">
+        <value> (激活)</value>
+    </data>
+  <data name="ButtonOpenHelper" xml:space="preserve">
+        <value>打开助手窗口</value>
+    </data>
+  <data name="MarketSetReroll" xml:space="preserve">
+        <value>额外机会</value>
+    </data>
+  <data name="MarkerSetPotReroll" xml:space="preserve">
+        <value>撒娇罐和额外机会</value>
+    </data>
+</root>
