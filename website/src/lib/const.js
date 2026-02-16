@@ -282,6 +282,12 @@ export const OCCULT_ENCOUNTERS = {
         drops: [47744],
         encounter_id: 33,
         spawn_type: true, // monster kill - Crescent Monk
+        monster: {
+            "en": "Crescent Monk",
+            "fr": "Moine de Lunule",
+            "ja": "クレセント・モンク",
+            "de": "Kreszentia-Mönch"
+        },
     },
     34: {
         name: {
@@ -326,6 +332,12 @@ export const OCCULT_ENCOUNTERS = {
         drops: [47745, 47728, 48008],
         encounter_id: 37,
         spawn_type: true, // monster kill - Crescent Inkstain
+        monster: {
+            "en": "Crescent Inkstain",
+            "fr": "Tache d'encre de Lunule",
+            "ja": "クレセント・インクステイン",
+            "de": "Kreszentia-Tintenfleck"
+        },
     },
     38: {
         name: {
@@ -348,6 +360,12 @@ export const OCCULT_ENCOUNTERS = {
         drops: [47746, 47729],
         encounter_id: 39,
         spawn_type: true, // monster kill - Crescent Byblos
+        monster: {
+            "en": "Crescent Byblos",
+            "fr": "Byblos de Lunule",
+            "ja": "クレセント・ビブロス",
+            "de": "Kreszentia-Byblos"
+        },
     },
     40: {
         name: {
@@ -370,6 +388,12 @@ export const OCCULT_ENCOUNTERS = {
         drops: [47747, 47731],
         encounter_id: 41,
         spawn_type: true, // monster kill - Crescent Petalodite
+        monster: {
+            "en": "Crescent Petalodite",
+            "fr": "Petalodus inférieur de Lunule",
+            "ja": "クレセント・レッサーペタロドゥス",
+            "de": "Niederer Kreszentia-Petalodus"
+        },
     },
     42: {
         name: {
@@ -381,6 +405,12 @@ export const OCCULT_ENCOUNTERS = {
         drops: [47748, 47757],
         encounter_id: 42,
         spawn_type: true, // monster kill - Crescent Fan
+        monster: {
+            "en": "Crescent Fan",
+            "fr": "Ventilateur de Lunule",
+            "ja": "クレセント・ファン",
+            "de": "Kreszentia-Ventilator"
+        },
     },
     43: {
         name: {
@@ -391,7 +421,7 @@ export const OCCULT_ENCOUNTERS = {
         },
         drops: [47747],
         encounter_id: 43,
-        spawn_type: false, // random spawn - Automatic
+        spawn_type: false, // random spawn - Automati
     },
     44: {
         name: {
@@ -403,6 +433,12 @@ export const OCCULT_ENCOUNTERS = {
         drops:  [47749],
         encounter_id: 44,
         spawn_type: true, // monster kill - Crescent Garula
+        monster: {
+            "en": "Crescent Garula",
+            "fr": "Garula de Lunule",
+            "ja": "クレセント・ガルラ",
+            "de": "Kreszentia-Garula"
+        },
     },
     45: {
         name: {

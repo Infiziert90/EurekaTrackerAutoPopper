@@ -36,3 +36,28 @@ html {
     background-color: inherit;
     pointer-events: none;
 }
+
+.tooltip {
+    display: inline-block;
+    border-bottom: 1px dotted black; /* Add dots under the hoverable text */
+    cursor: pointer;
+}
+
+/* Tooltip text */
+.tooltip-content {
+    visibility: hidden; /* Hidden by default */
+    width: 600px;
+    height: 600px;
+    background-color: black;
+    color: #ffffff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1; /* Ensure tooltip is displayed above content */
+}
+
+/* Show the tooltip text on hover */
+.tooltip:hover .tooltip-content {
+    visibility: visible;
+}

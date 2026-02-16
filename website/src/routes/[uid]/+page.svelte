@@ -2,7 +2,10 @@
     import { onDestroy, onMount } from "svelte";
     import { page } from "$app/stores";
     import { base } from "$app/paths";
-    import { TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS, DATACENTER_NAMES } from "$lib/const";
+    import {
+        TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS, DATACENTER_NAMES,
+        ITEM
+    } from "$lib/const";
     import { currentLanguage } from "$lib/stores";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull, Link, Clipboard } from "@lucide/svelte";
     import toast, {Toaster} from 'svelte-5-french-toast'
@@ -12,6 +15,14 @@
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import PasswordButton from "../../components/PasswordButton.svelte";
     import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive, calculateCECooldown } from "$lib/utils";
+
+    import monks from '$lib/assets/33.png';
+    import inks from '$lib/assets/37.png';
+    import byblos from '$lib/assets/39.png';
+    import peta from '$lib/assets/41.png';
+    import fan from '$lib/assets/42.png';
+    import garula from '$lib/assets/44.png';
+    import {Tooltip} from "flowbite-svelte";
 
     const uid = $page.params.uid;
 
@@ -23,17 +34,17 @@
     let activeBunny = $state(null);
     let isLoading = $state(true);
     let error = $state(null);
-    
+
     // Tracker type 2 functionality
     let isPasswordUnlocked = $state(false);
     let trackerType = $state(1);
     let originalData = $state(null);
     let isUpdating = $state(false);
     let lastKnownUpdate = $state(null);
-    
+
     // Polling
     let headCheckInterval = $state(null);
-    
+
     // URL password (checked in onMount)
     let urlPassword = null;
 
@@ -46,7 +57,7 @@
         localStorage.setItem(`tracker_password_${uid}`, password);
         // Clean up temporary URL password storage
         localStorage.removeItem(`url_password_${uid}`);
-        
+
         // Remove password from URL if it was present (for security)
         if (urlPassword) {
             const newUrl = new URL(window.location);
@@ -57,19 +68,19 @@
 
     async function handleStatusUpdate({ encounter, type, status }) {
         if (!isPasswordUnlocked || !originalData) return;
-        
+
         const updatePromise = async () => {
             isUpdating = true;
-            
+
             try {
                 // Create a copy of the original data
                 const updatedData = { ...originalData };
-                
+
                 // Determine which history to update based on type
                 const historyKey = type === 'ce' ? 'encounter_history' : type === 'fate' ? 'fate_history' : 'pot_history';
                 const history = JSON.parse(updatedData[historyKey]);
                 const targetItem = history.find(item => item.fate_id === encounter.fate_id);
-                
+
                 if (targetItem) {
                     if (status === 'spawned') {
                         targetItem.spawn_time = Math.floor(Date.now() / 1000);
@@ -79,11 +90,11 @@
                         targetItem.death_time = Math.floor(Date.now() / 1000);
                         targetItem.last_seen = targetItem.death_time;
                     }
-                    
+
                     updatedData[historyKey] = JSON.stringify(history);
                     updatedData.last_update = Math.floor(Date.now() / 1000);
                 }
-                
+
                 // Send only the updated history data
                 const response = await fetch(BASE_URL, {
                     method: 'PATCH',
@@ -96,11 +107,11 @@
                         last_update: updatedData.last_update
                     })
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Failed to update tracker data');
                 }
-                
+
                 // Update the current display data immediately for better UX
                 const currentHistory = trackerResults[historyKey];
                 const currentItem = currentHistory.find(item => item.fate_id === encounter.fate_id);
@@ -116,7 +127,7 @@
                         currentItem.alive = false;
                     }
                 }
-                
+
                 // Refresh the data after successful update
                 await fetchTrackerData();
                 // Update last known update timestamp
@@ -168,7 +179,7 @@
     async function checkTrackerUpdate() {
         // Skip check if we don't have a known update time, or if we're already updating/loading
         if (!lastKnownUpdate || isUpdating || isLoading) return;
-        
+
         try {
             // Fetch only the last_update field for this tracker (lightweight query)
             const response = await fetch(
@@ -178,7 +189,7 @@
                     headers: API_HEADERS,
                 },
             );
-            
+
             // If request failed, fall back to full fetch
             if (!response.ok) {
                 console.warn(`[Update check] Error status ${response.status}, fetching full data`);
@@ -187,16 +198,16 @@
             }
 
             const data = await response.json();
-            
+
             // If no data returned, something's wrong - fetch full data
             if (!data || data.length === 0) {
                 console.warn(`[Update check] No tracker found, fetching full data`);
                 await fetchTrackerData();
                 return;
             }
-            
+
             const currentLastUpdate = data[0].last_update;
-            
+
             // Compare current last_update with our known value
             // If they differ, data has changed - fetch full update
             if (currentLastUpdate !== lastKnownUpdate) {
@@ -223,7 +234,7 @@
                     headers: API_HEADERS,
                 },
             );
-            
+
             if (!response.ok) {
                 if (response.status === 404) {
                     throw new Error(`Tracker ${uid} not found`);
@@ -232,16 +243,16 @@
             }
 
             const data = await response.json();
-            
+
             if (!data || data.length === 0) {
                 throw new Error(`No tracker found with ID ${uid}`);
             }
-            
+
             trackerResults = data[0];
             originalData = { ...trackerResults };
             lastKnownUpdate = trackerResults.last_update;
             trackerType = trackerResults.tracker_type || 1;
-            
+
             // Check if stored password is still valid (password might have changed)
             if (isPasswordUnlocked && originalData) {
                 const storedPassword = localStorage.getItem(`tracker_password_${uid}`);
@@ -251,10 +262,10 @@
                     localStorage.removeItem(`tracker_password_${uid}`);
                 }
             }
-            
+
             // Check if we can auto-unlock with stored/URL password
             checkStoredPassword();
-            
+
             activeCE = null;
             if (trackerResults.encounter_history) {
                 try {
@@ -314,7 +325,7 @@
                         trackerResults.pot_history.forEach(pot => {
                             pot.name = OCCULT_FATES[pot.fate_id].name[$currentLanguage];
                             pot.alive = isAlive(pot);
-                            
+
                             // If any pot is alive, set activeBunny to the first one we find
                             if (pot.alive && !activeBunny) {
                                 activeBunny = pot;
@@ -351,7 +362,7 @@
                 isPasswordUnlocked = true;
                 return;
             }
-            
+
             // If no stored password, check URL password (from query params)
             const urlPasswordStored = localStorage.getItem(`url_password_${uid}`);
             if (urlPasswordStored === trackerResults.password) {
@@ -368,15 +379,15 @@
         // Check for password in URL parameters (from tracker creation or shared links)
         const urlParams = new URLSearchParams(window.location.search);
         urlPassword = urlParams.get('password');
-        
+
         // Store URL password temporarily for later validation
         if (urlPassword) {
             localStorage.setItem(`url_password_${uid}`, urlPassword);
         }
-        
+
         // Initial data fetch
         fetchTrackerData();
-        
+
         // Set up polling every second to check for data changes
         // Uses lightweight query (only fetches last_update field) to detect changes
         headCheckInterval = setInterval(checkTrackerUpdate, 1000);
@@ -387,6 +398,18 @@
             clearInterval(headCheckInterval);
         }
     });
+
+    function getMonsterImage(encounterId) {
+        switch (encounterId) {
+            case 33: return monks;
+            case 37: return inks;
+            case 39: return byblos;
+            case 41: return peta;
+            case 42: return fan;
+            case 44: return garula;
+            default: '';
+        }
+    }
 </script>
 
 <svelte:head>
@@ -458,7 +481,7 @@
                                         </ClickToCopyButton>
                                         {#if trackerType === 2}
                                             {#if !isPasswordUnlocked}
-                                                <PasswordButton 
+                                                <PasswordButton
                                                     expectedPassword={trackerResults.password}
                                                     on:passwordCorrect={handlePasswordCorrect}
                                                     class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -534,14 +557,14 @@
                                 <details>
                                     <summary class="bg-slate-900/90 p-2 py-0.5 rounded-md mt-2">Spawn Prediction</summary>
                                     <p class="text-green-400 pt-2">
-                                        Predicted spawn time: 
+                                        Predicted spawn time:
                                         {#if encounter.spawn_timer && encounter.last_seen !== -1 && (encounter.last_seen + encounter.spawn_timer) > (new Date().getTime() / 1000)}
                                             <AutoTimeFormatted timestamp={encounter.last_seen + encounter.spawn_timer} />
                                         {:else}
                                             N/A
                                         {/if}
                                     </p>
-                                    
+
                                     {#if activeFate || activeBunny || activeCE}
                                         <p class="text-blue-400">Upcoming reductions:</p>
                                         <ul class="list-disc list-inside text-blue-400">
@@ -555,9 +578,9 @@
                                             {#if activeCE && activeCE.name}
                                                 <li> -5 minutes ({activeCE.name})</li>
                                             {/if}
-                                        </ul> 
+                                        </ul>
                                     {/if}
-                                </details>   
+                                </details>
                             {/if}
                         {/each}
                     {:else}
@@ -630,7 +653,7 @@
 
 
 
-            <!-- Encounter History -->    
+            <!-- Encounter History -->
             <div class="max-w-6xl w-full mx-auto mb-4">
                 <h2 class="text-2xl font-extrabold">
                     <img src="https://v2.xivapi.com/api/asset?path=ui/icon/063000/063909.tex&format=webp" alt="Critical Encounter Icon" class="w-[1lh] h-[1lh] inline-block mr-2" />
@@ -640,7 +663,8 @@
                     <thead>
                         <tr class="text-left">
                             <th class="px-2 w-2/5">Encounter</th>
-                            <th class="px-2 hidden md:table-cell">Drops</th>
+                            <th class="px-2 w-2/5">Trigger</th>
+                            <th class="px-2 w-1/5 hidden md:table-cell">Drops</th>
                             <th class="px-2 w-1/5 text-end">Pop Timer</th>
                             <th class="px-2 w-1/5 text-end">Last Seen</th>
                             {#if trackerType === 2}
@@ -653,7 +677,22 @@
                             {#each trackerResults.encounter_history.filter(encounter => encounter.fate_id !== 48) as encounter}
                                 <tr class={encounter.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
                                     <td class="px-2 w-2/5 truncate">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
-                                    <td class="px-2 hidden md:table-cell">
+                                    <td class="px-2 w-2/5 truncate">
+                                        {#if OCCULT_ENCOUNTERS[encounter.fate_id].monster !== undefined}
+                                            <div class="tooltip">
+                                                {OCCULT_ENCOUNTERS[encounter.fate_id].monster[$currentLanguage]}
+                                                <Tooltip
+                                                    arrow={false}
+                                                    class="bg-black/80 rounded-md text-white text-xs px-2 py-1 border border-white/20"
+                                                    style="width: 40rem;height: 40rem;"
+                                                    placement="right"
+                                                >
+                                                    <img src={getMonsterImage(OCCULT_ENCOUNTERS[encounter.fate_id].encounter_id)}>
+                                                </Tooltip>
+                                            </div>
+                                        {/if}
+                                    </td>
+                                    <td class="px-2 w-1/5 hidden md:table-cell">
                                         <div class="flex flex-wrap gap-1">
                                             {#each OCCULT_ENCOUNTERS[encounter.fate_id].drops as drop}
                                                 <ItemIcon itemId={drop} />
@@ -681,7 +720,7 @@
                                             <span class="hidden md:inline">
                                                  {encounter.alive ? '(Alive)' : ''}
                                              </span>
-                                            {#if encounter.last_seen != -1}
+                                            {#if encounter.last_seen !== -1}
                                                 <AutoTimeFormatted timestamp={encounter.last_seen} />
                                             {:else}
                                                 N/A
