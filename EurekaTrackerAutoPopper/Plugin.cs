@@ -366,6 +366,8 @@ public class Plugin : IDalamudPlugin
             Framework.Update -= OccultPotCheck;
             Framework.Update -= UpdateDtr;
 
+            PotDtrBar.Hide();
+
             Fates.RemoveEvents();
         }
     }

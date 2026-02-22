@@ -35,6 +35,12 @@ public class PotDtrBar : IDisposable
         }
     }
 
+    public void Hide()
+    {
+        if (DtrEntry != null)
+            DtrEntry.Shown = false;
+    }
+
     public void Update()
     {
         if (DtrEntry == null)
