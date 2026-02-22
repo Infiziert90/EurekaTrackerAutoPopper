@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using System.Collections.Generic;
@@ -49,6 +49,7 @@ public class Plugin : IDalamudPlugin
     [PluginService] public static IPluginLog Log { get; private set; } = null!;
     [PluginService] public static ITextureProvider TextureManager { get; private set; } = null!;
     [PluginService] public static IAddonLifecycle AddonLifecycle { get; private set; } = null!;
+    [PluginService] public static IDtrBar DtrBar { get; private set; } = null!;
 
     public Configuration Configuration { get; init; }
 
@@ -66,6 +67,7 @@ public class Plugin : IDalamudPlugin
     public readonly TrackerHandler TrackerHandler;
     public readonly TexEdit TexEdit;
     public readonly PenumbraIpc PenumbraIpc;
+    public readonly PotDtrBar PotDtrBar;
 
     public bool PlayerInEureka;
     public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
@@ -99,6 +101,7 @@ public class Plugin : IDalamudPlugin
 
         Fates = new Fates(this);
         TrackerHandler = new TrackerHandler(this);
+        PotDtrBar = new PotDtrBar(this, DtrBar);
 
         MainWindow = new MainWindow(this);
         OccultWindow = new OccultWindow(this);
@@ -146,12 +149,14 @@ public class Plugin : IDalamudPlugin
         PenumbraIpc.Dispose();
         Fates.Dispose();
         TrackerHandler.Dispose();
+        PotDtrBar.Dispose();
 
         Framework.Update -= PollForFateChange;
         Framework.Update -= FairyCheck;
         Framework.Update -= BunnyCheck;
         Framework.Update -= OccultCheck;
         Framework.Update -= OccultPotCheck;
+        Framework.Update -= UpdateDtr;
         ClientState.TerritoryChanged -= TerritoryChangePoll;
 
         PluginInterface.UiBuilder.Draw -= DrawUI;
@@ -322,6 +327,7 @@ public class Plugin : IDalamudPlugin
 
             Framework.Update += OccultCheck;
             Framework.Update += OccultPotCheck;
+            Framework.Update += UpdateDtr;
 
             Fates.RegisterEvents();
 
@@ -358,6 +364,7 @@ public class Plugin : IDalamudPlugin
             Framework.Update -= BunnyCheck;
             Framework.Update -= OccultCheck;
             Framework.Update -= OccultPotCheck;
+            Framework.Update -= UpdateDtr;
 
             Fates.RemoveEvents();
         }
@@ -767,6 +774,11 @@ public class Plugin : IDalamudPlugin
                 SavedOccultMarkerSets = null;
             }
         }
+    }
+
+    private void UpdateDtr(IFramework _)
+    {
+        PotDtrBar.Update();
     }
 
     private void PollForFateChange(IFramework framework)

@@ -44,6 +44,40 @@ public class BunnyWindow : Window, IDisposable
         return InEureka || InOccult;
     }
 
+    public (Fate displayFate, Fate lastFate)? GetOccultPotInfo()
+    {
+        if (!InOccult)
+            return null;
+
+        var bunnies = Plugin.Fates.BunnyFates.Where(bnuuuy => (uint)bnuuuy.Territory == Plugin.ClientState.TerritoryType).ToArray();
+        if (bunnies.Length == 0)
+            return null;
+
+        var sortedFates = bunnies.OrderBy(bnuuuy => bnuuuy.LastSeenAlive).ToArray();
+        var nextSpawn = sortedFates[0];
+        var lastAlive = sortedFates[^1];
+
+        // If it is -1 there hasn't been any pop yet
+        if (nextSpawn.LastSeenAlive == -1 && lastAlive.LastSeenAlive == -1)
+        {
+            return (nextSpawn, nextSpawn);
+        }
+        // If our last alive is still active then show it
+        else if (lastAlive.Alive)
+        {
+            return (lastAlive, lastAlive);
+        }
+        // Apply the time of latest spawn to calculate next respawn
+        else
+        {
+            // Set LastSeenAlive to 30min previously
+            if (nextSpawn.LastSeenAlive == -1)
+                nextSpawn.LastSeenAlive = lastAlive.SpawnTime - OccultRespawn;
+
+            return (nextSpawn, lastAlive);
+        }
+    }
+
     public override void Draw()
     {
         var bunnies = Plugin.Fates.BunnyFates.Where(bnuuuy => (uint)bnuuuy.Territory == Plugin.ClientState.TerritoryType).ToArray();

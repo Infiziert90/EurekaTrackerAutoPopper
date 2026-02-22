@@ -184,6 +184,9 @@ public partial class MainWindow
                 changed |= ImGui.Checkbox(Language.ConfigOptionAutoPots, ref Plugin.Configuration.AutoSwitchToOccultPots);
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipAutoPots);
 
+                changed |= ImGui.Checkbox("Show Timer On Server Info Bar", ref Plugin.Configuration.ShowPotDtrBar);
+                ImGuiComponents.HelpMarker("Display the pot FATE timer in the server info bar. Click the timer to place a flag on the map.");
+
                 if (changed)
                     Plugin.Configuration.Save();
             }
