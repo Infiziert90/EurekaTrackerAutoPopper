@@ -1,8 +1,5 @@
 using System;
-using System.Linq;
 using Dalamud.Game.Gui.Dtr;
-using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Plugin.Services;
 
 namespace EurekaTrackerAutoPopper;
 
@@ -11,18 +8,17 @@ public class PotDtrBar : IDisposable
     private const int OccultRespawn = 1805;
 
     private readonly Plugin Plugin;
-    private readonly IDtrBar DtrBar;
     private readonly IDtrBarEntry? DtrEntry;
 
-    public PotDtrBar(Plugin plugin, IDtrBar dtrBar)
+    public PotDtrBar(Plugin plugin)
     {
         Plugin = plugin;
-        DtrBar = dtrBar;
 
-        DtrEntry = DtrBar.Get("Eureka Linker Pot Timer");
+        DtrEntry = Plugin.DtrBar.Get("Eureka Linker Pot Timer");
         if (DtrEntry != null)
         {
             DtrEntry.OnClick += OnClick;
+            DtrEntry.Tooltip = "Eureka Linker\nClick to place flag on map\n\nDisable in: /el - Occult - Pot - Show Timer On Server Info Bar";
         }
     }
 
@@ -64,7 +60,7 @@ public class PotDtrBar : IDisposable
         if (displayFate.Alive)
         {
             var activeFateDirection = displayFate.FateId == 1976 ? "North" : "South";
-            DtrEntry.Text = new SeString(new Dalamud.Game.Text.SeStringHandling.Payloads.TextPayload($"Pot: Active ({activeFateDirection})"));
+            DtrEntry.Text = $"Pot: Active ({activeFateDirection})";
             DtrEntry.Shown = true;
             return;
         }
@@ -84,7 +80,7 @@ public class PotDtrBar : IDisposable
         var direction = displayFate.FateId == 1976 ? "North" : "South";
         var timeString = Utils.TimeToClockFormat(respawnTime);
 
-        DtrEntry.Text = new SeString(new Dalamud.Game.Text.SeStringHandling.Payloads.TextPayload($"Next pot: {timeString} ({direction})"));
+        DtrEntry.Text = $"Next pot: {timeString} ({direction})";
         DtrEntry.Shown = true;
     }
 

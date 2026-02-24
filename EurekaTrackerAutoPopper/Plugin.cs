@@ -101,7 +101,7 @@ public class Plugin : IDalamudPlugin
 
         Fates = new Fates(this);
         TrackerHandler = new TrackerHandler(this);
-        PotDtrBar = new PotDtrBar(this, DtrBar);
+        PotDtrBar = new PotDtrBar(this);
 
         MainWindow = new MainWindow(this);
         OccultWindow = new OccultWindow(this);
