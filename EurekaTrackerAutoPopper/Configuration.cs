@@ -1,4 +1,4 @@
-﻿using Dalamud.Configuration;
+using Dalamud.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -65,6 +65,8 @@ public class Configuration : IPluginConfiguration
 
     public bool UploadNotification = true;
     public bool UploadPermission = true;
+
+    public bool ShowPotDtrBar = true;
 
     public long TimeInEureka = 0;  // in milliseconds
     public int KilledBunnies = 0;
