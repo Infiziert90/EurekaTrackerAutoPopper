@@ -1,12 +1,12 @@
 # Eureka Linker
 Automatically notifies you about NMs in Eureka, with the ability to pop them on a tracker.
-Also includes:  
+Also includes:
 - Fairy Finder
 - Bunny Timer Window
 - Bunny Coffer Helper
 - Stats
 - Quest Guide (clickable coords)
-- Localized (DE, FR, JA)
+- Localized (DE, FR, JA, ZH-CN)
 
 ### Coffer Map Marker
 ![pyrosMap](EurekaTrackerAutoPopper/images/pyrosCoffers.png)
