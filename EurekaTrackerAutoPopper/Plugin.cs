@@ -30,6 +30,9 @@ using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using Dalamud.Bindings.ImGui;
+using KamiToolKit;
+using KamiToolKit.Overlay.MapOverlay;
+using MapMarkerInfo = KamiToolKit.Classes.MapMarkerInfo;
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
 namespace EurekaTrackerAutoPopper;
@@ -88,8 +91,12 @@ public class Plugin : IDalamudPlugin
     public SharedMarkerSet MarkerSetToPlace = SharedMarkerSet.None;
     public SharedMarkerSet? SavedOccultMarkerSets;
 
+    private readonly MapOverlayController MapOverlayController;
+
     public Plugin()
     {
+        KamiToolKitLibrary.Initialize(PluginInterface, "Eureka Linker");
+
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         TexEdit = new TexEdit();
         TexEdit.EditIcon(25207, 170010);
@@ -138,6 +145,8 @@ public class Plugin : IDalamudPlugin
             CofferPos = Vector3.Zero;
         };
 
+        MapOverlayController = new MapOverlayController();
+
         AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarker);
         AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "AreaMap", RefreshMapMarkerOccult);
     }
@@ -175,6 +184,8 @@ public class Plugin : IDalamudPlugin
 
         Commands.Dispose();
         WindowSystem.RemoveAllWindows();
+
+        KamiToolKitLibrary.Dispose();
     }
 
     public void StartTrackerAsync()
@@ -894,7 +905,7 @@ public class Plugin : IDalamudPlugin
             if (ClientState.TerritoryType == 827)
                 mapPos.Z += 475;
 
-            SetMarkers(worldPos, mapPos, 60354);
+            SetMarkers(worldPos, 60354);
         }
     }
 
@@ -911,7 +922,7 @@ public class Plugin : IDalamudPlugin
                 mapPos.Z += 475;
 
             Log.Information($"Adding Fairy Marker: {fairy.Pos}");
-            SetMarkers(fairy.Pos, mapPos, 60474 + (uint)idx);
+            SetMarkers(fairy.Pos, 60474 + (uint)idx);
         }
     }
 
@@ -927,7 +938,7 @@ public class Plugin : IDalamudPlugin
                 _ => 60354u
             };
 
-            SetMarkers(worldPos, worldPos, icon);
+            SetMarkers(worldPos, icon);
         }
     }
 
@@ -935,49 +946,49 @@ public class Plugin : IDalamudPlugin
     {
         MarkerSetToPlace = SharedMarkerSet.OccultPotNorth;
         foreach (var worldPos in OccultChests.PotNorthPosition[ClientState.TerritoryType])
-            SetMarkers(worldPos, worldPos, 60354);
+            SetMarkers(worldPos, 60354);
     }
 
     private void AddOccultPotSouthLocations()
     {
         MarkerSetToPlace = SharedMarkerSet.OccultPotSouth;
         foreach (var worldPos in OccultChests.PotSouthPosition[ClientState.TerritoryType])
-            SetMarkers(worldPos, worldPos, 60354);
+            SetMarkers(worldPos, 60354);
     }
 
     private void AddOccultRerollLocations()
     {
         MarkerSetToPlace = SharedMarkerSet.OccultReroll;
         foreach (var worldPos in OccultChests.RerollPosition[ClientState.TerritoryType])
-            SetMarkers(worldPos, worldPos, 61473);
+            SetMarkers(worldPos, 61473);
     }
 
     private void AddOccultBunnyPositions()
     {
         MarkerSetToPlace = SharedMarkerSet.OccultBunny;
         foreach (var worldPos in OccultChests.BunnyPosition[ClientState.TerritoryType])
-            SetMarkers(worldPos, worldPos, PenumbraIpc.ActiveReplacement ? 170010u : 25207u);
+            SetMarkers(worldPos, PenumbraIpc.ActiveReplacement ? 170010u : 25207u);
     }
 
     private void AddOccultBronzeLocations()
     {
         MarkerSetToPlace = SharedMarkerSet.OccultBronze;
         foreach (var (worldPos, _) in OccultChests.TreasurePosition[ClientState.TerritoryType].Where(pair => pair.Item2 == 1596))
-            SetMarkers(worldPos, worldPos, 60356u);
+            SetMarkers(worldPos, 60356u);
     }
 
     private void AddOccultSilverLocations()
     {
         MarkerSetToPlace = SharedMarkerSet.OccultSilver;
         foreach (var (worldPos, _) in OccultChests.TreasurePosition[ClientState.TerritoryType].Where(pair => pair.Item2 == 1597))
-            SetMarkers(worldPos, worldPos, 60355u);
+            SetMarkers(worldPos, 60355u);
     }
 
 
     public unsafe void RemoveMapMarker()
     {
         MarkerSetToPlace = SharedMarkerSet.None;
-        AgentMap.Instance()->ResetMapMarkers();
+        MapOverlayController.RemoveAllMarkers();
         AgentMap.Instance()->ResetMiniMapMarkers();
     }
 
@@ -1029,10 +1040,19 @@ public class Plugin : IDalamudPlugin
         PreviewTimer.Start();
     }
 
-    private unsafe void SetMarkers(Vector3 worldPos, Vector3 mapPos, uint iconId, int scale = 0)
+    private unsafe void SetMarkers(Vector3 worldPos, uint iconId, int scale = 0)
     {
-        if (!AgentMap.Instance()->AddMapMarker(mapPos, iconId, scale: scale))
-            Chat.PrintError(Language.ChatErrorMapMarkers);
+        MapOverlayController.AddMarker(new MapMarkerInfo
+        {
+            AllowAnyMap = false,
+            MapId = AgentMap.Instance()->CurrentMapId,
+            Position = new Vector2(worldPos.X, worldPos.Z),
+            IconId = iconId,
+            // Size = new Vector2(32.0f, 32.0f), // Can customize size here.
+            // Texture = default(IDalamudTextureWrap), // Can use any already loaded dalamud texture wrap
+            // TexturePath = @"Assets\SomeImageName.png", // Can directly load from packaged assets (have to resolve path through IPluginInterface Assembly location path)
+            // Tooltip = "This is a XYZ icon", // Can have any custom tooltip
+        });
 
         if (!AgentMap.Instance()->AddMiniMapMarker(worldPos, iconId, scale: scale))
             Chat.PrintError(Language.ChatErrorMinimapMarkers);
