@@ -1031,7 +1031,7 @@ public class Plugin : IDalamudPlugin
         PreviewTimer.Start();
     }
 
-    private unsafe void SetMarkers(Vector3 worldPos, uint iconId, int scale = 0)
+    private unsafe void SetMarkers(Vector3 worldPos, uint iconId)
     {
         MapOverlayController.AddMarker(new MapMarkerInfo
         {
@@ -1045,7 +1045,7 @@ public class Plugin : IDalamudPlugin
             // Tooltip = "This is a XYZ icon", // Can have any custom tooltip
         });
 
-        if (!AgentMap.Instance()->AddMiniMapMarker(worldPos, iconId, scale: scale))
+        if (!AgentMap.Instance()->AddMiniMapMarker(worldPos, iconId))
             Chat.PrintError(Language.ChatErrorMinimapMarkers);
     }
 }
