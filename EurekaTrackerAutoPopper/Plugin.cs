@@ -901,13 +901,7 @@ public class Plugin : IDalamudPlugin
     {
         MarkerSetToPlace = SharedMarkerSet.Eureka;
         foreach (var worldPos in BunnyChests.Positions[ClientState.TerritoryType])
-        {
-            var mapPos = worldPos;
-            if (ClientState.TerritoryType == 827)
-                mapPos.Z += 475;
-
             SetMarkers(worldPos, 60354);
-        }
     }
 
     private void AddFairyLocationsMap()
@@ -917,10 +911,6 @@ public class Plugin : IDalamudPlugin
         {
             if (idx == 3)
                 Chat.PrintError(Language.ChatErrorFairyMarkers);
-
-            var mapPos = fairy.Pos;
-            if (ClientState.TerritoryType == 827)
-                mapPos.Z += 475;
 
             Log.Information($"Adding Fairy Marker: {fairy.Pos}");
             SetMarkers(fairy.Pos, 60474 + (uint)idx);
