@@ -185,6 +185,7 @@ public class Plugin : IDalamudPlugin
         Commands.Dispose();
         WindowSystem.RemoveAllWindows();
 
+        MapOverlayController.Dispose();
         KamiToolKitLibrary.Dispose();
     }
 
