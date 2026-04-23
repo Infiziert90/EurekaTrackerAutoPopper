@@ -6,7 +6,6 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using EurekaTrackerAutoPopper.Resources;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Textures;
 
 namespace EurekaTrackerAutoPopper.Windows.MainWindow;
 
@@ -70,7 +69,7 @@ public partial class MainWindow
         changed |= ImGui.Checkbox($"{Language.ConfigOptionToast}##ToastBunnyCarrot", ref Plugin.Configuration.ShowBunnyCarrotToast);
         changed |= ImGui.Checkbox($"{Language.ConfigOptionFlag}##FlagBunnyCarrot", ref Plugin.Configuration.PlaceBunnyCarrotFlag);
 
-        ImGui.Columns(1);
+        ImGui.Columns();
 
         if (changed)
             Plugin.Configuration.Save();
@@ -95,19 +94,29 @@ public partial class MainWindow
 
                 using var indent = ImRaii.PushIndent(10.0f);
                 changed |= ImGui.Checkbox(Language.ConfigOptionPlaceDefault, ref Plugin.Configuration.PlaceDefaultOccult);
+
                 if (Plugin.Configuration.PlaceDefaultOccult)
                 {
-                    using var combo = ImRaii.Combo("##DefaultMarkerSetCombo", Plugin.Configuration.DefaultOccultMarkerSets.ToName());
-                    if (combo.Success)
-                    {
-                        foreach (var set in EnumExtensions.OccultSetArray)
-                        {
-                            if (!ImGui.Selectable(set.ToName(), set == Plugin.Configuration.DefaultOccultMarkerSets))
-                                continue;
+                    var flagsChanged = false;
+                    var current = Plugin.Configuration.DefaultOccultFlags;
+                    flagsChanged |= Helper.ImageButtonWithState(Icons.BronzeTreasure, FlagMarkerSet.OccultBronzeTreasure, ref current);
+                    ImGui.SameLine();
+                    flagsChanged |= Helper.ImageButtonWithState(Icons.SilverTreasure, FlagMarkerSet.OccultSilverTreasure, ref current);
+                    ImGui.SameLine();
+                    flagsChanged |= Helper.ImageButtonWithState(Icons.GoldChest, FlagMarkerSet.OccultNorthPot, ref current);
+                    ImGui.SameLine();
+                    flagsChanged |= Helper.ImageButtonWithState(Icons.GoldChest, FlagMarkerSet.OccultSouthPot, ref current);
+                    ImGui.SameLine();
+                    flagsChanged |= Helper.ImageButtonWithState(Icons.Reroll, FlagMarkerSet.OccultReroll, ref current);
+                    ImGui.SameLine();
+                    flagsChanged |= Helper.ImageButtonWithState(Plugin.PenumbraIpc.GetReplacedIcon, FlagMarkerSet.OccultBunny, ref current);
 
-                            changed = true;
-                            Plugin.Configuration.DefaultOccultMarkerSets = set;
-                        }
+                    if (flagsChanged)
+                    {
+                        Plugin.Configuration.DefaultOccultFlags = current;
+                        Plugin.MapMarkerController.SetMarkerSet(current);
+
+                        changed = true;
                     }
                 }
 
@@ -120,25 +129,6 @@ public partial class MainWindow
 
                 if (changed)
                     Plugin.Configuration.Save();
-            }
-        }
-
-        ImGui.Separator();
-        ImGuiHelpers.ScaledDummy(Helper.SeparatorPadding);
-
-        using (var bottomChild = ImRaii.Child("Bottom", Vector2.Zero))
-        {
-            if (bottomChild.Success)
-            {
-                Plugin.FastSwitchOverlay.DrawMapSetSwitcher();
-
-                ImGui.SameLine();
-
-                using (ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.DPSRed))
-                {
-                    if (ImGui.Button(Language.ConfigButtonRemoveMapMarkers))
-                        Plugin.RemoveMapMarker();
-                }
             }
         }
     }
@@ -164,7 +154,7 @@ public partial class MainWindow
                 if (ImGui.Checkbox(Language.ConfigOptionFateWindow, ref Plugin.Configuration.ShowBunnyWindow))
                 {
                     changed = true;
-                    if (Plugin.Configuration.ShowBunnyWindow && Plugin.PlayerInOccultTerritory())
+                    if (Plugin.Configuration.ShowBunnyWindow && TerritoryHelper.PlayerInEureka())
                         Plugin.BunnyWindow.IsOpen = true;
                 }
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipBunnyWindow);
@@ -183,6 +173,23 @@ public partial class MainWindow
 
                 changed |= ImGui.Checkbox(Language.ConfigOptionAutoPots, ref Plugin.Configuration.AutoSwitchToOccultPots);
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipAutoPots);
+
+                if (Plugin.Configuration.AutoSwitchToOccultPots)
+                {
+                    var flagsChanged = false;
+                    var current = Plugin.Configuration.AutoSwitchFlags;
+                    flagsChanged |= Helper.ImageButtonWithState(Icons.GoldChest, FlagMarkerSet.OccultNorthPot, ref current);
+                    ImGui.SameLine();
+                    flagsChanged |= Helper.ImageButtonWithState(Icons.GoldChest, FlagMarkerSet.OccultSouthPot, ref current);
+                    ImGui.SameLine();
+                    flagsChanged |= Helper.ImageButtonWithState(Icons.Reroll, FlagMarkerSet.OccultReroll, ref current);
+
+                    if (flagsChanged)
+                    {
+                        Plugin.Configuration.AutoSwitchFlags = current;
+                        changed = true;
+                    }
+                }
 
                 changed |= ImGui.Checkbox("Show Timer On Server Info Bar", ref Plugin.Configuration.ShowPotDtrBar);
                 ImGuiComponents.HelpMarker("Display the pot FATE timer in the server info bar. Click the timer to place a flag on the map.");
@@ -276,12 +283,16 @@ public partial class MainWindow
 
         foreach (var icon in EnumExtensions.IconArray)
         {
+            var adjustedIcon = icon;
+            if (icon == Icons.Carrot)
+                adjustedIcon = Plugin.PenumbraIpc.GetReplacedIcon;
+
             ImGui.TableNextColumn();
-            var texture = Plugin.TextureManager.GetFromGameIcon(new GameIconLookup((uint)icon)).GetWrapOrEmpty();
+            var texture = Plugin.TextureManager.GetFromGameIcon((uint)adjustedIcon).GetWrapOrEmpty();
             ImGui.Image(texture.Handle, LegendIconSize * ImGuiHelpers.GlobalScale);
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted(icon.ToName());
+            ImGui.TextUnformatted(adjustedIcon.ToOccultName());
         }
 
     }

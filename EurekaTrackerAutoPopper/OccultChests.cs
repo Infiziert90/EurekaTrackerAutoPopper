@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 
 namespace EurekaTrackerAutoPopper;
@@ -216,14 +215,27 @@ public static class OccultChests
         },
     };
 
-    private static readonly Vector3[] CombinedPositions = PotNorthPosition[1252].Concat(PotSouthPosition[1252]).Concat(RerollPosition[1252]).ToArray();
     public static Vector3 CalculateDistance(uint territoryId, Vector3 player)
     {
         var bestPos = (Dif: InRange, Pos: Vector3.Zero);
-        if (!PotNorthPosition.ContainsKey(territoryId) || !PotSouthPosition.ContainsKey(territoryId) || !RerollPosition.ContainsKey(territoryId))
+        if (!TerritoryHelper.PlayerInOccult())
             return bestPos.Pos;
 
-        foreach (var pos in CombinedPositions)
+        foreach (var pos in PotNorthPosition[territoryId])
+        {
+            var dif = Utils.GetDistance(player, pos);
+            if (dif < bestPos.Dif)
+                bestPos = (dif, pos);
+        }
+
+        foreach (var pos in PotSouthPosition[territoryId])
+        {
+            var dif = Utils.GetDistance(player, pos);
+            if (dif < bestPos.Dif)
+                bestPos = (dif, pos);
+        }
+
+        foreach (var pos in RerollPosition[territoryId])
         {
             var dif = Utils.GetDistance(player, pos);
             if (dif < bestPos.Dif)

@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Dalamud.Memory;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 
@@ -9,9 +10,9 @@ namespace EurekaTrackerAutoPopper;
 // https://github.com/Infiziert90/ChatTwo/blob/main/ChatTwo/GameFunctions/ChatBox.cs
 public unsafe class ChatBox
 {
-    public static void SendMessageUnsafe(byte[] message)
+    private static void SendMessageUnsafe(byte[] message)
     {
-        var mes = Utf8String.FromSequence(message);
+        var mes = Utf8String.FromSequence(message.NullTerminate());
         UIModule.Instance()->ProcessChatBoxEntry(mes);
         mes->Dtor(true);
     }

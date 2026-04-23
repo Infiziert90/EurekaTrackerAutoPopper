@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Game.ClientState.Fates;
-using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -14,85 +12,75 @@ public class Fate
 {
     public readonly uint FateId;
     public readonly Territory Territory;
-    public bool Easy;
 
-    public string Position = string.Empty;
+    public readonly string Position;
 
     public bool Alive;
     public bool PlayedSound;
     public long SpawnTime;
     public long DeathTime;
     public long LastSeenAlive = -1;
-    public List<long> PreviousRespawnTimes = [];
 
     public long TimeLeft;
     public byte Progress;
 
-    public uint MapIcon;
-    public string Name;
+    public readonly string Name;
+    public readonly uint MapIcon;
 
     public long StateTimeLeft;
     public DynamicEventState State;
 
-    public SeString MapLink;
-    public MapLinkPayload MapLinkPayload;
+    public readonly Vector3 WorldPos;
+    public readonly string MapDataLink;
 
-    public Vector2 WorldPos = Vector2.Zero;
-    public uint[] SpecialRewards = [];
+    public readonly uint[] SpecialRewards = [];
 
-    public int WalkingDistance;
-    public OccultAetheryte Aetheryte = OccultAetheryte.None;
+    public readonly int WalkingDistance;
+    public readonly OccultAetheryte Aetheryte = OccultAetheryte.None;
 
     // Only used for Forked Tower
     public int KilledFates;
     public int KilledCEs;
     public long InstanceJoinedTimer;
 
-    public Fate(uint id, Territory territory, bool easy, string position)
+    // Eureka Bunny Fates
+    public Fate(uint id, Territory territory, Vector3 worldPos, string position)
     {
         FateId = id;
         Territory = territory;
-        Easy = easy;
+
+        WorldPos = worldPos;
+        MapDataLink = Utils.CreateMapDataLink((uint)territory, territory.ToMap(), worldPos.X, worldPos.Z);
+
         Position = position;
 
         MapIcon = 60958;
 
-        MapLink = Fates.CreateOccultLink(0, 0);
-        MapLinkPayload = (MapLinkPayload) MapLink.Payloads[0];
-
-        // Above 1000 are Fates, below is most likely Critical Encounter
-        Name = FateId > 1000
-            ? Sheets.FateSheet.GetRow(FateId).Name.ExtractText()
-            : Sheets.DynamicEventSheet.GetRow(FateId).Name.ExtractText();
+        Name = GetName(id);
     }
 
-    public Fate(uint id, uint mapIcon, Vector2 worldPosition, uint[] rewards, OccultAetheryte aetheryte = OccultAetheryte.ExpeditionBaseCamp, int distance = 0)
+    public Fate(uint id, uint mapIcon, Territory territory, Vector3 worldPos, uint[] rewards, OccultAetheryte aetheryte = OccultAetheryte.ExpeditionBaseCamp, int distance = 0, string position = "")
     {
         FateId = id;
-        Territory = Territory.SouthHorn;
+        Territory = territory;
 
         MapIcon = mapIcon;
 
-        WorldPos = worldPosition;
+        WorldPos = worldPos;
+        MapDataLink = Utils.CreateMapDataLink((uint)territory, territory.ToMap(), worldPos.X, worldPos.Z);
+
+        Position = position;
+
         SpecialRewards = rewards;
 
         Aetheryte = aetheryte;
         WalkingDistance = distance;
 
-        MapLink = Fates.CreateOccultLink(worldPosition.X, worldPosition.Y);
-        MapLinkPayload = (MapLinkPayload) MapLink.Payloads[0];
-
-        // Above 1000 are Fates, below is most likely Critical Encounter
-        Name = FateId > 1000
-            ? Sheets.FateSheet.GetRow(FateId).Name.ExtractText()
-            : Sheets.DynamicEventSheet.GetRow(FateId).Name.ExtractText();
+        Name = GetName(id);
     }
 
     public void Update(IFate fate, long currentTime)
     {
-        if (!Alive && LastSeenAlive > -1)
-            PreviousRespawnTimes.Add(currentTime - LastSeenAlive);
-
         Alive = true;
         LastSeenAlive = currentTime;
         SpawnTime = fate.StartTimeEpoch;
@@ -104,12 +92,7 @@ public class Fate
     public void Update(ref DynamicEvent criticalEncounter, long currentTime)
     {
         if (!Alive)
-        {
             SpawnTime = currentTime;
-
-            if (LastSeenAlive > -1)
-                PreviousRespawnTimes.Add(currentTime - LastSeenAlive);
-        }
 
         Alive = true;
         LastSeenAlive = currentTime;
@@ -130,6 +113,10 @@ public class Fate
         KilledFates = 0;
         KilledCEs = 0;
     }
+
+    // Above 1000 are Fates, below is most likely Critical Encounter
+    private static string GetName(uint fateId)
+        => (fateId > 1000 ? Sheets.FateSheet.GetRow(fateId).Name : Sheets.DynamicEventSheet.GetRow(fateId).Name).ExtractText();
 }
 
 public class Fates
@@ -161,89 +148,52 @@ public class Fates
     public readonly List<Fate> BunnyFates =
     [
         // Eureka
-        new(1367, Territory.Pagos, true, " (South)"),
-        new(1368, Territory.Pagos, false, " (North)"),
-        new(1407, Territory.Pyros, true, " (South)"),
-        new(1408, Territory.Pyros, false, " (North)"),
-        new(1425, Territory.Hydatos, true, ""),
+        new(1367, Territory.Pagos, new Vector3(-168.20723f, -737.0106f, 304.78036f), " (South)"),
+        new(1368, Territory.Pagos, new Vector3(-45.060673f, -542.2534f, -10.444342f), " (North)"),
+        new(1407, Territory.Pyros, new Vector3(123.93088f, 706.2543f, 235.71927f), " (South)"),
+        new(1408, Territory.Pyros, new Vector3(172.66713f, 679.68823f, -514.0787f), " (North)"),
+        new(1425, Territory.Hydatos, new Vector3(-369.96432f, 499.13068f, -477.4539f), ""),
 
         // Occult
-        new(1976, 60958, new Vector2(206.12666f, -205.55835f), [47749, 47738], OccultAetheryte.CrystallizedCaverns, 40) { Position = " (North)", Easy = true},
-        new(1977, 60958, new Vector2(-479.7468f, 524.8094f), [47745, 47738], OccultAetheryte.Stonemarsh, 18) { Position = " (South)", Easy = true},
-    ];
-
-    public static readonly HashSet<uint> EurekaTerritories =
-    [
-        (uint)Territory.Anemos,
-        (uint)Territory.Pagos,
-        (uint)Territory.Pyros,
-        (uint)Territory.Hydatos,
-    ];
-
-    public static readonly HashSet<uint> BunnyTerritories =
-    [
-        (uint)Territory.Pagos,
-        (uint)Territory.Pyros,
-        (uint)Territory.Hydatos,
-        (uint)Territory.SouthHorn
-    ];
-
-    public static readonly HashSet<uint> EurekaBunnyTerritories =
-    [
-        (uint)Territory.Pagos,
-        (uint)Territory.Pyros,
-        (uint)Territory.Hydatos
-    ];
-
-    public static readonly HashSet<uint> BunnyMapIds =
-    [
-        467,
-        484,
-        515
+        new(1976, 60958, Territory.SouthHorn, new Vector3(204.66835f, 111.81729f, -204.96242f), [47749, 47738], OccultAetheryte.CrystallizedCaverns, 40, " (North)"),
+        new(1977, 60958, Territory.SouthHorn, new Vector3(-479.8395f, 75f, 524.78894f), [47745, 47738], OccultAetheryte.Stonemarsh, 18, " (South)")
     ];
 
     public readonly List<Fate> OccultFates =
     [
-        new(1962, 60502, new Vector2(153.12436f, 669.49994f), [47744], OccultAetheryte.Eldergrowth, 28), // Rough Waters
-        new(1963, 60502, new Vector2(366.70068f, 489.8156f), [47744], OccultAetheryte.Eldergrowth, 14), // The Golden Guardian
-        new(1964, 60502, new Vector2(-216.79004f, 265.99548f), [47749], OccultAetheryte.Stonemarsh, 10), // King of the Crescent
-        new(1965, 60502, new Vector2(-546.3211f, -594.8453f), [47747], OccultAetheryte.TheWanderersHaven, 27), // The Winged Terror
-        new(1966, 60502, new Vector2(-220.38368f, 40.531372f), [47746], OccultAetheryte.CrystallizedCaverns, 26), // An Unending Duty
-        new(1967, 60502, new Vector2(-41.95025f, -318.47665f), [47747], OccultAetheryte.CrystallizedCaverns, 24), // Brain Drain
-        new(1968, 60502, new Vector2(-369.75647f, 655.7229f), [47745], OccultAetheryte.Stonemarsh, 25), // A Delicate Balance
-        new(1969, 60502, new Vector2(-589.3044f, 331.68253f), [47745], OccultAetheryte.Stonemarsh, 18), // Sworn to Soil
-        new(1970, 60502, new Vector2(-57.268074f, 562.66583f), [47744], OccultAetheryte.Stonemarsh, 29), // A Prying Eye
-        new(1971, 60502, new Vector2(77.73725f, 275.27878f), [47749], OccultAetheryte.Eldergrowth, 17), // Fatal Allure
-        new(1972, 60502, new Vector2(414.7572f, -15.474099f), [47748], OccultAetheryte.Eldergrowth, 24), // Serving Darkness
+        new(1962, 60502, Territory.SouthHorn, new Vector3(151.38765f, 56f, 670.072f), [47744], OccultAetheryte.Eldergrowth, 28), // Rough Waters
+        new(1963, 60502, Territory.SouthHorn, new Vector3(364.61816f, 70f, 489.55896f), [47744], OccultAetheryte.Eldergrowth, 14), // The Golden Guardian
+        new(1964, 60502, Territory.SouthHorn, new Vector3(-217.46391f, 116.70241f, 265.08792f), [47749], OccultAetheryte.Stonemarsh, 10), // King of the Crescent
+        new(1965, 60502, Territory.SouthHorn, new Vector3(-221.13199f, 107f, 40.158627f), [47747], OccultAetheryte.TheWanderersHaven, 27), // The Winged Terror
+        new(1966, 60502, Territory.SouthHorn, new Vector3(-221.1495f, 106.99999f, 40.21738f), [47746], OccultAetheryte.CrystallizedCaverns, 26), // An Unending Duty
+        new(1967, 60502, Territory.SouthHorn, new Vector3(-40.98325f, 111.68926f, -316.82162f), [47747], OccultAetheryte.CrystallizedCaverns, 24), // Brain Drain
+        new(1968, 60502, Territory.SouthHorn, new Vector3(-369.61337f, 75f, 649.92035f), [47745], OccultAetheryte.Stonemarsh, 25), // A Delicate Balance
+        new(1969, 60502, Territory.SouthHorn, new Vector3(-589.41364f, 96.2f, 330.6984f), [47745], OccultAetheryte.Stonemarsh, 18), // Sworn to Soil
+        new(1970, 60502, Territory.SouthHorn, new Vector3(-57.992046f, 69.50635f, 561.93933f), [47744], OccultAetheryte.Stonemarsh, 29), // A Prying Eye
+        new(1971, 60502, Territory.SouthHorn, new Vector3(76.327644f, 96.94907f, 275.7444f), [47749], OccultAetheryte.Eldergrowth, 17), // Fatal Allure
+        new(1972, 60502, Territory.SouthHorn, new Vector3(413.7364f, 95.999985f, -14.67076f), [47748], OccultAetheryte.Eldergrowth, 24) // Serving Darkness
     ];
 
     public readonly List<Fate> OccultCriticalEncounters =
     [
-        new(33, 63909, new Vector2(302.1504f, 733.8478f), [47744], OccultAetheryte.Eldergrowth, 30), // Scourge of the Mind
-        new(34, 63911, new Vector2(450.04425f, 355.49652f), [47749, 47752, 47732], OccultAetheryte.Eldergrowth, 10), // The Black Regiment
-        new(35, 63909, new Vector2(620.46155f, 799.9018f), [47744, 47751, 47730], OccultAetheryte.Eldergrowth, 48), // The Unbridled
-        new(36, 63909, new Vector2(680.983f, 533.4121f), [47744], OccultAetheryte.Eldergrowth, 33), // Crawling Death
-        new(37, 63909, new Vector2(-338.75793f, 799.1263f), [47745, 47728, 48008], OccultAetheryte.Stonemarsh, 33), // Calamity Bound
-        new(38, 63909, new Vector2(-413.84256f, 74.792145f), [47746], OccultAetheryte.CrystallizedCaverns, 17), // Trial by Claw
-        new(39, 63909, new Vector2(-799.7762f, 245.09113f), [47746, 47729], OccultAetheryte.Stonemarsh, 37), // From Times Bygone
-        new(40, 63911, new Vector2(676.0466f, -255.98221f), [47748], OccultAetheryte.ExpeditionBaseCamp, 36), // Company of Stone
-        new(41, 63909, new Vector2(-117.4481f, -848.1179f), [47747, 47731], OccultAetheryte.TheWanderersHaven, 17), // Shark Attack
-        new(42, 63909, new Vector2(629.22296f, -53.54043f), [47748, 47757], OccultAetheryte.Eldergrowth, 42), // On the Hunt
-        new(43, 63909, new Vector2(-350.47372f, -606.685f), [47747], OccultAetheryte.TheWanderersHaven, 12), // With Extreme Prejudice
-        new(44, 63909, new Vector2(458.65436f, -360.27054f), [47749], OccultAetheryte.ExpeditionBaseCamp, 36), // Noise Complaint
-        new(45, 63909, new Vector2(72.1046f, -551.4241f), [47747, 47733], OccultAetheryte.TheWanderersHaven, 17), // Cursed Concern
-        new(46, 63909, new Vector2(868.556f, 178.51392f), [47748], OccultAetheryte.Eldergrowth, 57), // Eternal Watch
-        new(47, 63909, new Vector2(-568.61255f, -160.21591f), [47746], OccultAetheryte.CrystallizedCaverns, 14), // Flame of Dusk
+        new(33, 63909, Territory.SouthHorn, new Vector3(299.92032f, 70f, 729.9832f), [47744], OccultAetheryte.Eldergrowth, 30), // Scourge of the Mind
+        new(34, 63911, Territory.SouthHorn, new Vector3(450.28986f, 65f, 356.46573f), [47749, 47752, 47732], OccultAetheryte.Eldergrowth, 10), // The Black Regiment
+        new(35, 63909, Territory.SouthHorn, new Vector3(620.17365f, 79f, 800.0485f), [47744, 47751, 47730], OccultAetheryte.Eldergrowth, 48), // The Unbridled
+        new(36, 63909, Territory.SouthHorn, new Vector3(680.90576f, 74f, 534.0728f), [47744], OccultAetheryte.Eldergrowth, 33), // Crawling Death
+        new(37, 63909, Territory.SouthHorn, new Vector3(-340.11813f, 75f, 800.0618f), [47745, 47728, 48008], OccultAetheryte.Stonemarsh, 33), // Calamity Bound
+        new(38, 63909, Territory.SouthHorn, new Vector3(-413.43665f, 92f, 74.68839f), [47746], OccultAetheryte.CrystallizedCaverns, 17), // Trial by Claw
+        new(39, 63909, Territory.SouthHorn, new Vector3(-799.84845f, 43.99998f, 245.20094f), [47746, 47729], OccultAetheryte.Stonemarsh, 37), // From Times Bygone
+        new(40, 63911, Territory.SouthHorn, new Vector3(676.5143f, 96.03f, -254.43198f), [47748], OccultAetheryte.ExpeditionBaseCamp, 36), // Company of Stone
+        new(41, 63909, Territory.SouthHorn, new Vector3(-117.018456f, 1f, -850.34644f), [47747, 47731], OccultAetheryte.TheWanderersHaven, 17), // Shark Attack
+        new(42, 63909, Territory.SouthHorn, new Vector3(629.3389f, 108f, -52.77268f), [47748, 47757], OccultAetheryte.Eldergrowth, 42), // On the Hunt
+        new(43, 63909, Territory.SouthHorn, new Vector3(-353.2408f, 5f, -606.3008f), [47747], OccultAetheryte.TheWanderersHaven, 12), // With Extreme Prejudice
+        new(44, 63909, Territory.SouthHorn, new Vector3(457.3497f, 97f, -357.9041f), [47749], OccultAetheryte.ExpeditionBaseCamp, 36), // Noise Complaint
+        new(45, 63909, Territory.SouthHorn, new Vector3(72.06891f, 20f, -549.957f), [47747, 47733], OccultAetheryte.TheWanderersHaven, 17), // Cursed Concern
+        new(46, 63909, Territory.SouthHorn, new Vector3(870.55774f, 122f, 180.04774f), [47748], OccultAetheryte.Eldergrowth, 57), // Eternal Watch
+        new(47, 63909, Territory.SouthHorn, new Vector3(-569.202f, 97f, -158.79793f), [47746], OccultAetheryte.CrystallizedCaverns, 14), // Flame of Dusk
 
-        new(48, 63978, new Vector2(62.95297f, 4.004886f), [47868, 47734, 47735, 47736, 47737], OccultAetheryte.Eldergrowth, 25), // The Forked Tower: Blood
+        new(48, 63978, Territory.SouthHorn, new Vector3(63.066174f, 126.499985f, 3.8296576f), [47868, 47734, 47735, 47736, 47737], OccultAetheryte.Eldergrowth, 25) // The Forked Tower: Blood
     ];
-
-    private static SeString CreateMapLink(uint territoryId, uint mapId, double xRaw, double yRaw)
-    {
-        return SeString.CreateMapLink(territoryId, mapId, (int) xRaw * 1000, (int) yRaw * 1000);
-    }
-
-    public static SeString CreateOccultLink(double x, double y) => CreateMapLink(1252, 967, x, y);
 
     private void ScanOccultFates(IFramework _)
     {

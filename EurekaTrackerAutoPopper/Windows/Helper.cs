@@ -5,6 +5,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Colors;
 
 namespace EurekaTrackerAutoPopper.Windows;
 
@@ -13,6 +14,8 @@ public static class Helper
     public const float SeparatorPadding = 1.0f;
     public static float GetSeparatorPaddingHeight => SeparatorPadding * ImGuiHelpers.GlobalScale;
     public static float CalculateChildHeight() => ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().WindowPadding.Y + GetSeparatorPaddingHeight;
+
+    private static readonly Vector2 IconSize = new(32, 32);
 
     private static readonly int[] SoundEffects = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52];
     public static bool AddSoundOption(int id, string text, ref bool playSound, ref int soundEffect)
@@ -121,7 +124,7 @@ public static class Helper
     }
 
     /// <summary>
-    /// Bullet with clickable link
+    /// Bullet with a clickable link
     /// </summary>
     /// <param name="text">text to display</param>
     /// <param name="url">url to open</param>
@@ -131,5 +134,33 @@ public static class Helper
         ImGui.SameLine();
         if (ImGui.Selectable(text))
             Dalamud.Utility.Util.OpenLink(url);
+    }
+
+    public static bool ImageButtonWithState(Icons icon, FlagMarkerSet value, ref FlagMarkerSet current)
+    {
+        var iconScaled = IconSize * ImGuiHelpers.GlobalScale;
+
+        using var pushedId = ImRaii.PushId((int)value);
+
+        var hasFlag = current.HasFlag(value);
+
+        var color = hasFlag ? ImGuiColors.HealerGreen : ImGuiColors.ParsedGrey;
+        var iconTexture = Plugin.TextureManager.GetFromGameIcon((uint)icon).GetWrapOrEmpty();
+
+        using var pushedColor = ImRaii.PushColor(ImGuiCol.Button, color);
+        var ok = ImGui.ImageButton(iconTexture.Handle, iconScaled);
+        if (ok)
+        {
+            if (hasFlag)
+                current &= ~value;
+            else
+                current |= value;
+        }
+
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip(value.ToName());
+
+        return ok;
+
     }
 }

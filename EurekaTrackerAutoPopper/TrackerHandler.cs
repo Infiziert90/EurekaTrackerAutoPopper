@@ -209,7 +209,7 @@ public class TrackerHandler
         public long LastSeenAlive = fate.LastSeenAlive;
 
         [JsonProperty("respawn_times")]
-        public long[] PreviousRespawnTimes = fate.PreviousRespawnTimes.ToArray();
+        public long[] PreviousRespawnTimes = [];
 
         [JsonProperty("killed_fates")]
         public int KilledFates = fate.KilledFates;
@@ -234,7 +234,7 @@ public class TrackerHandler
 
     public void UpdateRunningTracker()
     {
-        if (Plugin.ClientState.TerritoryType != (uint)Territory.SouthHorn)
+        if (!TerritoryHelper.PlayerInOccult())
             return;
 
         // Check upload permission
@@ -301,7 +301,6 @@ public class TrackerHandler
                 localFate.LastSeenAlive = sharedFate.LastSeenAlive;
                 localFate.SpawnTime = sharedFate.SpawnTime;
                 localFate.DeathTime = sharedFate.DeathTime;
-                localFate.PreviousRespawnTimes = sharedFate.PreviousRespawnTimes.ToList();
 
                 // Only important for forked tower
                 if (localFate.FateId != 48)
@@ -319,7 +318,6 @@ public class TrackerHandler
                 localFate.LastSeenAlive = sharedFate.LastSeenAlive;
                 localFate.SpawnTime = sharedFate.SpawnTime;
                 localFate.DeathTime = sharedFate.DeathTime;
-                localFate.PreviousRespawnTimes = sharedFate.PreviousRespawnTimes.ToList();
             }
 
             // Write back pot fates fetched from tracker
@@ -330,7 +328,6 @@ public class TrackerHandler
                 localFate.LastSeenAlive = sharedFate.LastSeenAlive;
                 localFate.SpawnTime = sharedFate.SpawnTime;
                 localFate.DeathTime = sharedFate.DeathTime;
-                localFate.PreviousRespawnTimes = sharedFate.PreviousRespawnTimes.ToList();
             }
         }
         catch (Exception ex)

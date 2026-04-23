@@ -2,21 +2,10 @@
 <Project Sdk="Dalamud.NET.Sdk/14.0.2">
 	<PropertyGroup>
 		<Authors>Infi, electr0sheep</Authors>
-		<Version>1.6.2.0</Version>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<Configurations>Debug;Release</Configurations>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<TargetFramework>net10.0-windows</TargetFramework>
-		<Platforms>x64</Platforms>
-		<Nullable>enable</Nullable>
-		<LangVersion>latest</LangVersion>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<OutputPath>bin\$(Configuration)\</OutputPath>
-		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<Version>1.7.0.0</Version>
+        <PackageProjectUrl>https://github.com/Infiziert90/EurekaTrackerAutoPopper</PackageProjectUrl>
+        <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
+        <IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<ItemGroup>

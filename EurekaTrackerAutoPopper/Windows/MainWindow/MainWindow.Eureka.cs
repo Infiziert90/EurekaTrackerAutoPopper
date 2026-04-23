@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
@@ -100,7 +99,7 @@ public partial class MainWindow
                 ImGui.SetClipboardText(Password);
         }
 
-        if (Plugin.PlayerInEureka && string.IsNullOrEmpty(Instance))
+        if (TerritoryHelper.PlayerInEureka() && string.IsNullOrEmpty(Instance))
         {
             if (ImGui.Button(Language.ConfigButtonStartNew))
                 Plugin.StartTrackerAsync();
@@ -211,11 +210,9 @@ public partial class MainWindow
                         var delIdx = -1;
                         foreach (var (fairy, idx) in Plugin.Library.ExistingFairies.Select((val, i) => (val, i)))
                         {
-                            var map = (MapLinkPayload)fairy.MapLink.Payloads.First();
-
                             ImGui.TableNextColumn();
-                            if (ImGui.Selectable($"Fairy ({map.XCoord:0.0},  {map.YCoord:0.0})##{idx}"))
-                                Plugin.OpenMap(map);
+                            if (ImGui.Selectable($"Fairy ({fairy.MapLink.TextValue})##{idx}"))
+                                Plugin.OpenMap(fairy.MapDataLink);
 
                             ImGui.TableNextColumn();
                             if (ImGuiComponents.IconButton(idx, FontAwesomeIcon.Trash))
@@ -247,7 +244,7 @@ public partial class MainWindow
                 using (ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.ParsedBlue))
                 {
                     if (ImGui.Button(Language.ConfigButtonAddMapMarkers))
-                        Plugin.Framework.RunOnFrameworkThread(() => { Plugin.PlaceEurekaMarkerSet(false, false); });
+                        Plugin.MapMarkerController.SetMarkerSet(FlagMarkerSet.Eureka);
                 }
 
                 ImGui.SameLine();
@@ -255,7 +252,7 @@ public partial class MainWindow
                 using (ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.DPSRed))
                 {
                     if (ImGui.Button(Language.ConfigButtonRemoveMapMarkers))
-                        Plugin.Framework.RunOnFrameworkThread(() => { Plugin.RemoveMapMarker(); });
+                        Plugin.MapMarkerController.RemoveMapMarker();
                 }
             }
         }
@@ -282,7 +279,7 @@ public partial class MainWindow
                 if (ImGui.Checkbox(Language.ConfigOptionFateWindow, ref Plugin.Configuration.ShowBunnyWindow))
                 {
                     changed = true;
-                    if (Plugin.Configuration.ShowBunnyWindow && Plugin.PlayerInRelevantTerritory())
+                    if (Plugin.Configuration.ShowBunnyWindow && TerritoryHelper.PlayerInEureka())
                         Plugin.BunnyWindow.IsOpen = true;
                 }
                 ImGuiComponents.HelpMarker(Language.ConfigTooltipBunnyWindow);
@@ -325,7 +322,7 @@ public partial class MainWindow
                 using (ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.ParsedBlue))
                 {
                     if (ImGui.Button(Language.ConfigButtonAddMapMarkers))
-                        Plugin.Framework.RunOnFrameworkThread(() => { Plugin.PlaceEurekaMarkerSet(true); });
+                        Plugin.MapMarkerController.SetMarkerSet(FlagMarkerSet.Eureka);
                 }
 
                 ImGui.SameLine();
@@ -333,7 +330,7 @@ public partial class MainWindow
                 using (ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.DPSRed))
                 {
                     if (ImGui.Button(Language.ConfigButtonRemoveMapMarkers))
-                        Plugin.Framework.RunOnFrameworkThread(() => { Plugin.RemoveMapMarker(); });
+                        Plugin.MapMarkerController.RemoveMapMarker();
                 }
             }
         }
@@ -451,7 +448,7 @@ public partial class MainWindow
             }
 
             if (ImGui.Button("SetFlagMarker"))
-                Plugin.SetFlagMarker((MapLinkPayload)Plugin.LastSeenFate.MapLink.Payloads[0]);
+                Plugin.SetFlagMarker(Plugin.LastSeenFate.WorldPos);
 
             ImGuiHelpers.ScaledDummy(20);
 

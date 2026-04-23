@@ -8,7 +8,7 @@ public static class BunnyChests
     private const double InRange = 80.0f;
 
     public static readonly List<uint> ExistingCoffers = [];
-    public static readonly List<uint> Coffers =
+    public static readonly HashSet<uint> Coffers =
     [
         2009530, // Gold
         2009531, // Silver

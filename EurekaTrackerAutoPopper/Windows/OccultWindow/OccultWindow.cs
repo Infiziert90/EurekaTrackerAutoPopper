@@ -94,14 +94,14 @@ public class OccultWindow : Window, IDisposable
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderCE);
             foreach (var previousCE in Plugin.Fates.OccultCriticalEncounters.Where(f => f.MapIcon != 0))
             {
-                DrawFateInfo(previousCE, false, false, true);
+                DrawFateInfo(previousCE, false);
                 DrawSeparator();
             }
 
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderFates);
             foreach (var previousFate in Plugin.Fates.OccultFates.Where(f => f.MapIcon != 0))
             {
-                DrawFateInfo(previousFate, false, false, true);
+                DrawFateInfo(previousFate, false);
                 DrawSeparator();
             }
         }
@@ -117,7 +117,7 @@ public class OccultWindow : Window, IDisposable
 
         var towerEngagement = Plugin.Fates.OccultCriticalEncounters[^1];
         if (towerEngagement.SpawnTime > 0)
-            DrawFateInfo(towerEngagement, false, true, true);
+            DrawFateInfo(towerEngagement, false, true);
         else
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.ForkedTowerNotSeen);
 
@@ -164,7 +164,7 @@ public class OccultWindow : Window, IDisposable
             {
                 var lastSpawn = towerEngagement.LastSeenAlive;
                 var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                var spawnTimer = TowerSpawnTimer - (300 * towerEngagement.KilledCEs) - (60 * towerEngagement.KilledFates);
+                var spawnTimer = TowerSpawnTimer - 300 * towerEngagement.KilledCEs - 60 * towerEngagement.KilledFates;
                 if (towerEngagement.LastSeenAlive == -1)
                 {
                     lastSpawn = towerEngagement.InstanceJoinedTimer;
@@ -323,7 +323,7 @@ public class OccultWindow : Window, IDisposable
         }
     }
 
-    private void DrawFateInfo(Fate fate, bool isCurrent, bool isTower = false, bool showSpawnTimer = false)
+    private void DrawFateInfo(Fate fate, bool isCurrent, bool isTower = false)
     {
         var iconTexture = Plugin.TextureManager.GetFromGameIcon(new GameIconLookup(fate.MapIcon)).GetWrapOrDefault();
         if (iconTexture == null)
@@ -344,14 +344,14 @@ public class OccultWindow : Window, IDisposable
 
         var lineHeightWithSpacing = ImGui.GetTextLineHeightWithSpacing();
         var widthOffset = pos.X + iconTexture.Width * ImGuiHelpers.GlobalScale + 5.0f * ImGuiHelpers.GlobalScale;
-        var heightOffset = pos.Y + iconTexture.Height * ImGuiHelpers.GlobalScale - (lineHeightWithSpacing * 3);
+        var heightOffset = pos.Y + iconTexture.Height * ImGuiHelpers.GlobalScale - lineHeightWithSpacing * 3;
 
         DrawOffsetText(new Vector2(widthOffset, heightOffset), ImGuiColors.DalamudWhite, fate.Name);
         ImGui.SameLine();
         using (ImRaii.PushFont(UiBuilder.IconFont))
         {
             if (ImGui.Selectable($"{FontAwesomeIcon.Flag.ToIconString()}##{fate.FateId}"))
-                Plugin.OpenMap(fate.MapLinkPayload);
+                Plugin.OpenMap(fate.MapDataLink);
         }
 
         string state, time;
@@ -403,14 +403,6 @@ public class OccultWindow : Window, IDisposable
 
             heightOffset += lineHeightWithSpacing;
             DrawOffsetText(new Vector2(widthOffset, heightOffset), ImGuiColors.HealerGreen, text);
-        }
-
-        if (showSpawnTimer && fate.PreviousRespawnTimes.Count > 0)
-        {
-            var convertedTimes = fate.PreviousRespawnTimes.Select(t => Utils.TimeToClockFormat(TimeSpan.FromSeconds(t)));
-
-            heightOffset += lineHeightWithSpacing;
-            DrawOffsetText(new Vector2(widthOffset, heightOffset), ImGuiColors.HealerGreen, Language.FateInfoRespawnTimes.Format(string.Join(", ", convertedTimes)));
         }
 
         ImGui.SetCursorPos(afterPos);

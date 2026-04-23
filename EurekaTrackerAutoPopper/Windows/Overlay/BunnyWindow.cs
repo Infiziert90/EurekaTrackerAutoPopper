@@ -15,7 +15,7 @@ public class BunnyWindow : Window, IDisposable
 {
     private const int MinRespawn = 530;
     private const int MaxRespawn = 1000;
-    private const int OccultRespawn = 1805;
+    private const int OccultRespawn = 1800;
 
     private readonly Plugin Plugin;
 
@@ -38,18 +38,18 @@ public class BunnyWindow : Window, IDisposable
 
     public override bool DrawConditions()
     {
-        InEureka = Fates.EurekaBunnyTerritories.Contains(Plugin.ClientState.TerritoryType);
-        InOccult = Plugin.PlayerInOccultTerritory();
+        InEureka = TerritoryHelper.HasEurekaBunnies();
+        InOccult = TerritoryHelper.PlayerInOccult();
 
         return InEureka || InOccult;
     }
 
-    public (Fate displayFate, Fate lastFate)? GetOccultPotInfo()
+    public (Fate DisplayFate, Fate LastFate)? GetOccultPotInfo()
     {
         if (!InOccult)
             return null;
 
-        var bunnies = Plugin.Fates.BunnyFates.Where(bnuuuy => (uint)bnuuuy.Territory == Plugin.ClientState.TerritoryType).ToArray();
+        var bunnies = Plugin.Fates.BunnyFates.Where(bnuuuy => bnuuuy.Territory == (Territory)Plugin.ClientState.TerritoryType).ToArray();
         if (bunnies.Length == 0)
             return null;
 
@@ -59,28 +59,23 @@ public class BunnyWindow : Window, IDisposable
 
         // If it is -1 there hasn't been any pop yet
         if (nextSpawn.LastSeenAlive == -1 && lastAlive.LastSeenAlive == -1)
-        {
             return (nextSpawn, nextSpawn);
-        }
-        // If our last alive is still active then show it
-        else if (lastAlive.Alive)
-        {
-            return (lastAlive, lastAlive);
-        }
-        // Apply the time of latest spawn to calculate next respawn
-        else
-        {
-            // Set LastSeenAlive to 30min previously
-            if (nextSpawn.LastSeenAlive == -1)
-                nextSpawn.LastSeenAlive = lastAlive.SpawnTime - OccultRespawn;
 
-            return (nextSpawn, lastAlive);
-        }
+        // If our last alive is still active then show it
+        if (lastAlive.Alive)
+            return (lastAlive, lastAlive);
+
+        // Apply the time of latest spawn to calculate next respawn
+        // Set LastSeenAlive to 30min previously
+        if (nextSpawn.LastSeenAlive == -1)
+            nextSpawn.LastSeenAlive = lastAlive.SpawnTime - OccultRespawn;
+
+        return (nextSpawn, lastAlive);
     }
 
     public override void Draw()
     {
-        var bunnies = Plugin.Fates.BunnyFates.Where(bnuuuy => (uint)bnuuuy.Territory == Plugin.ClientState.TerritoryType).ToArray();
+        var bunnies = Plugin.Fates.BunnyFates.Where(bnuuuy => bnuuuy.Territory == (Territory)Plugin.ClientState.TerritoryType).ToArray();
         if (InEureka && Plugin.Configuration.OnlyEasyBunny)
             bunnies = bunnies[..1];
 
@@ -124,15 +119,13 @@ public class BunnyWindow : Window, IDisposable
             }
 
             ImGui.TextUnformatted($"{bunny.Name}{bunny.Position}");
-            if (InOccult)
+            ImGui.SameLine();
+            using (ImRaii.PushFont(UiBuilder.IconFont))
             {
-                ImGui.SameLine();
-                using (ImRaii.PushFont(UiBuilder.IconFont))
-                {
-                    if (ImGui.Selectable($"{FontAwesomeIcon.Flag.ToIconString()}##{bunny.FateId}"))
-                        Plugin.OpenMap(bunny.MapLinkPayload);
-                }
+                if (ImGui.Selectable($"{FontAwesomeIcon.Flag.ToIconString()}##{bunny.FateId}"))
+                    Plugin.OpenMap(bunny.MapDataLink);
             }
+
             if (bunny.Alive)
             {
                 ImGui.TextColored(ImGuiColors.HealerGreen, Language.BunnyWindowStatusAlive);

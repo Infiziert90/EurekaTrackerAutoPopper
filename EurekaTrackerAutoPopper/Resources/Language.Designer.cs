@@ -123,6 +123,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automatic markers are active, switching not possible..
+        /// </summary>
+        internal static string AutoMarkerActiveWarning {
+            get {
+                return ResourceManager.GetString("AutoMarkerActiveWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Respawning in:.
         /// </summary>
         internal static string BunnyWindowRespawning {
@@ -1182,6 +1191,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string MarkerSetCombined {
             get {
                 return ResourceManager.GetString("MarkerSetCombined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Eureka.
+        /// </summary>
+        internal static string MarkerSetEureka {
+            get {
+                return ResourceManager.GetString("MarkerSetEureka", resourceCulture);
             }
         }
         

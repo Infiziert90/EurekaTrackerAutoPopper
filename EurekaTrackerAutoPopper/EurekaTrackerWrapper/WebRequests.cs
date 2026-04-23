@@ -10,6 +10,8 @@ namespace EurekaTrackerAutoPopper.EurekaTrackerWrapper;
 
 internal static class WebRequests
 {
+    private static readonly HttpClient HttpClient = new();
+
     public static async void PopNM(ushort trackerId, string instance, string password)
     {
         try
@@ -31,13 +33,10 @@ internal static class WebRequests
     {
         try
         {
-            HttpClient httpClient = new();
-            var response = await httpClient.PostAsync("https://ffxiv-eureka.com/api/instances",
+            var response = await HttpClient.PostAsync("https://ffxiv-eureka.com/api/instances",
                 new StringContent(
                     $"{{\"data\":{{\"attributes\":{{\"zone-id\":\"{trackerZoneId}\"}},\"type\":\"instances\"}}}}",
                     Encoding.UTF8, "application/json"));
-
-            httpClient.Dispose();
 
             if (response.IsSuccessStatusCode)
             {

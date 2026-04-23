@@ -18,22 +18,17 @@ public class TexEdit
     // Set to false after the Edit has been done successfully
     public bool InvalidReplacement = true;
 
-    public void EditIcon(uint iconId, uint emptySlotId)
+    public void EditIcon()
     {
-        EmptyGamePath = $"ui/icon/{Utils.GetIconPath(emptySlotId)}_hr1.tex";
-        if (Plugin.Data.FileExists(EmptyGamePath))
-        {
-            Plugin.Log.Error($"Empty icon file {EmptyGamePath} already exists!");
-            return;
-        }
+        EmptyGamePath = $"ui/icon/{Utils.GetIconPath(Icons.CarrotReplaced)}_hr1.tex";
 
-        var gamePath = $"ui/icon/{Utils.GetIconPath(iconId)}_hr1.tex";
+        var gamePath = $"ui/icon/{Utils.GetIconPath(Icons.Carrot)}_hr1.tex";
         var tex = Plugin.Data.GetFile<TexFile>(gamePath)!;
 
         var width = tex.Header.Width;
         var height = tex.Header.Height;
 
-        var threshold = 0.004f;
+        const float threshold = 0.004f;
 
         var sourceColor = Color.FromRgb(110, 108, 99);
         var targetColor = Color.Transparent;

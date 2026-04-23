@@ -1,17 +1,18 @@
 using System;
 using System.Numerics;
 using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
+using EurekaTrackerAutoPopper.Resources;
 
 namespace EurekaTrackerAutoPopper.Windows.Overlay;
 
 public class FastSwitchOverlay : Window, IDisposable
 {
     private readonly Plugin Plugin;
-    private readonly Vector2 OriginalSize = new(260, 40);
+    private readonly Vector2 OriginalSize = new(295, 55);
 
     public FastSwitchOverlay(Plugin plugin) : base("Linker: Fast Switch##EurekaLinker")
     {
@@ -62,26 +63,28 @@ public class FastSwitchOverlay : Window, IDisposable
 
     public override void Draw()
     {
-        DrawMapSetSwitcher();
-    }
+        using var disabled = ImRaii.Disabled(Plugin.MapMarkerController.SavedOccultMarkerSets != null);
+        if (disabled.Success && ImGui.IsWindowHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            ImGui.SetTooltip(Language.AutoMarkerActiveWarning);
 
-    public void DrawMapSetSwitcher()
-    {
-        ImGui.AlignTextToFramePadding();
-        ImGui.TextUnformatted("Switch To:");
+        var flagsChanged = false;
+        var current = Plugin.MapMarkerController.MarkerSetToPlace;
+        flagsChanged |= Helper.ImageButtonWithState(Icons.BronzeTreasure, FlagMarkerSet.OccultBronzeTreasure, ref current);
         ImGui.SameLine();
-        ImGui.SetNextItemWidth(175.0f * ImGuiHelpers.GlobalScale);
-        using var combo = ImRaii.Combo("##SwitchMarkersToCombo", Plugin.MarkerSetToPlace.ToOccultSet().ToName(), ImGuiComboFlags.HeightLarge);
-        if (!combo.Success)
-            return;
+        flagsChanged |= Helper.ImageButtonWithState(Icons.SilverTreasure, FlagMarkerSet.OccultSilverTreasure, ref current);
+        ImGui.SameLine();
+        flagsChanged |= Helper.ImageButtonWithState(Icons.GoldChest, FlagMarkerSet.OccultNorthPot, ref current);
+        ImGui.SameLine();
+        flagsChanged |= Helper.ImageButtonWithState(Icons.GoldChest, FlagMarkerSet.OccultSouthPot, ref current);
+        ImGui.SameLine();
+        flagsChanged |= Helper.ImageButtonWithState(Icons.Reroll, FlagMarkerSet.OccultReroll, ref current);
+        ImGui.SameLine();
+        flagsChanged |= Helper.ImageButtonWithState(Plugin.PenumbraIpc.GetReplacedIcon, FlagMarkerSet.OccultBunny, ref current);
 
-        foreach (var set in EnumExtensions.OccultSetArray)
+        if (flagsChanged)
         {
-            if (!ImGui.Selectable(set.ToName(), set == Plugin.MarkerSetToPlace.ToOccultSet()))
-                continue;
-
-            Plugin.SavedOccultMarkerSets = null;
-            Plugin.PlaceOccultMarkerSet(set, true);
+            Plugin.MapMarkerController.RevertTempMarkerSet();
+            Plugin.MapMarkerController.SetMarkerSet(current);
         }
     }
 }

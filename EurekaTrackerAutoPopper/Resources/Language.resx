@@ -691,4 +691,10 @@ A cooldown of 5s applies after each use.</value>
     <data name="MarkerSetPotSouth" xml:space="preserve">
         <value>Pot South Locations</value>
     </data>
+    <data name="MarkerSetEureka" xml:space="preserve">
+        <value>Eureka</value>
+    </data>
+    <data name="AutoMarkerActiveWarning" xml:space="preserve">
+        <value>Automatic markers are active, switching not possible.</value>
+    </data>
 </root>

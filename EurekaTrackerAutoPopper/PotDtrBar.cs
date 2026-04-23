@@ -5,7 +5,7 @@ namespace EurekaTrackerAutoPopper;
 
 public class PotDtrBar : IDisposable
 {
-    private const int OccultRespawn = 1805;
+    private const int OccultRespawn = 1800;
 
     private readonly Plugin Plugin;
     private readonly IDtrBarEntry? DtrEntry;
@@ -33,8 +33,7 @@ public class PotDtrBar : IDisposable
 
     public void Hide()
     {
-        if (DtrEntry != null)
-            DtrEntry.Shown = false;
+        DtrEntry?.Shown = false;
     }
 
     public void Update()
@@ -42,7 +41,7 @@ public class PotDtrBar : IDisposable
         if (DtrEntry == null)
             return;
 
-        if (!Plugin.Configuration.ShowPotDtrBar || !Plugin.PlayerInOccultTerritory())
+        if (!Plugin.Configuration.ShowPotDtrBar || !TerritoryHelper.PlayerInOccult())
         {
             DtrEntry.Shown = false;
             return;
@@ -90,7 +89,6 @@ public class PotDtrBar : IDisposable
         if (potInfo == null)
             return;
 
-        var (displayFate, _) = potInfo.Value;
-        Plugin.OpenMap(displayFate.MapLinkPayload);
+        Plugin.OpenMap(potInfo.Value.DisplayFate.MapDataLink);
     }
 }

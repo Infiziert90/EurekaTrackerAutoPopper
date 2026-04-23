@@ -1,38 +1,38 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using EurekaTrackerAutoPopper.Resources;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 
 namespace EurekaTrackerAutoPopper;
 
-public enum SharedMarkerSet
+[Flags]
+public enum FlagMarkerSet : uint
 {
     None = 0,
-    Eureka = 1,
-    OccultTreasure = 2,
-    OccultPot = 3,
-    OccultBunny = 4,
-    OccultBronze = 5,
-    OccultSilver = 6,
-    OccultTreasureCarrots = 7,
-    OccultReroll = 8,
-    OccultPotReroll = 9,
-    OccultPotNorth = 10,
-    OccultPotSouth = 11,
+
+    Eureka = 1 << 0,
+
+    OccultBronzeTreasure = 1 << 1,
+    OccultSilverTreasure = 1 << 2,
+    OccultNorthPot = 1 << 3,
+    OccultSouthPot = 1 << 4,
+    OccultReroll = 1 << 5,
+    OccultBunny = 1 << 6,
 }
 
-public enum OccultMarkerSets
+public enum Icons : uint
 {
-    None = 0,
-    Treasure = 1,
-    Pot = 2,
-    Bunny = 3,
-    OnlyBronze = 4,
-    OnlySilver = 5,
-    TreasureAndCarrots = 6,
-    Reroll = 7,
-    PotAndReroll = 8,
-    PotNorth = 9,
-    PotSouth = 10,
+    Fairy = 60474u,
+
+    GoldChest = 60354u,
+
+    BronzeTreasure = 60356u,
+    SilverTreasure = 60355u,
+    Reroll = 61473u,
+
+    Carrot = 25207u,
+    CarrotReplaced = 199201u,
 }
 
 public enum Territory : uint
@@ -41,6 +41,7 @@ public enum Territory : uint
     Pagos = 763,
     Pyros = 795,
     Hydatos = 827,
+
     SouthHorn = 1252,
 }
 
@@ -54,68 +55,60 @@ public enum OccultAetheryte : uint
     Stonemarsh = 4947,
 }
 
-public enum LegendIcons
+public static class TerritoryHelper
 {
-    PotIcon = 60354,
-    BronzeIcon = 60356,
-    SilverIcon = 60355,
-    RerollIcon = 61473,
-    CarrotIcon = 25207
+    private static readonly HashSet<Territory> SupportedTerritories = Enum.GetValues<Territory>().ToHashSet();
+    private static readonly HashSet<Territory> EurekaTerritories = [Territory.Anemos, Territory.Pagos, Territory.Pyros, Territory.Hydatos];
+    private static readonly HashSet<Territory> EurekaBunnyTerritories = [Territory.Pagos, Territory.Pyros, Territory.Hydatos];
+    private static readonly HashSet<Territory> BunnyTerritories = [Territory.Pagos, Territory.Pyros, Territory.Hydatos, Territory.SouthHorn];
+    private static readonly HashSet<Territory> OccultTerritories = [Territory.SouthHorn];
+
+    public static bool PlayerInSupportedTerritory()
+        => SupportedTerritories.Contains((Territory)Plugin.ClientState.TerritoryType);
+
+    public static bool PlayerInEureka()
+        => EurekaTerritories.Contains((Territory)Plugin.ClientState.TerritoryType);
+
+    public static bool HasBunnies()
+        => BunnyTerritories.Contains((Territory)Plugin.ClientState.TerritoryType);
+
+    public static bool HasEurekaBunnies()
+        => EurekaBunnyTerritories.Contains((Territory)Plugin.ClientState.TerritoryType);
+
+    public static bool PlayerInOccult()
+        => OccultTerritories.Contains((Territory)Plugin.ClientState.TerritoryType);
 }
 
 public static class EnumExtensions
 {
-    public static readonly LegendIcons[] IconArray = Enum.GetValues<LegendIcons>();
-    public static readonly OccultMarkerSets[] OccultSetArray = Enum.GetValues<OccultMarkerSets>();
+    public static readonly Icons[] IconArray = [Icons.BronzeTreasure, Icons.SilverTreasure, Icons.GoldChest, Icons.Reroll, Icons.Carrot];
 
-    public static string ToName(this OccultMarkerSets set)
+    public static string ToName(this FlagMarkerSet flag)
     {
-        return set switch
+        return flag switch
         {
-            OccultMarkerSets.None => Language.MarkerSetNone,
-            OccultMarkerSets.Treasure => Language.MarkerSetTreasure,
-            OccultMarkerSets.Pot => Language.MarkerSetPot,
-            OccultMarkerSets.Bunny => Language.MarkerSetBunny,
-            OccultMarkerSets.OnlyBronze => Language.MarkerSetOnlyBronze,
-            OccultMarkerSets.OnlySilver => Language.MarkerSetOnlySilver,
-            OccultMarkerSets.TreasureAndCarrots => Language.MarkerSetCombined,
-            OccultMarkerSets.Reroll => Language.MarketSetReroll,
-            OccultMarkerSets.PotAndReroll => Language.MarkerSetPotReroll,
-            OccultMarkerSets.PotNorth => Language.MarkerSetPotNorth,
-            OccultMarkerSets.PotSouth => Language.MarkerSetPotSouth,
-            _ => "Unknown",
+            FlagMarkerSet.None => Language.MarkerSetNone,
+            FlagMarkerSet.Eureka => Language.MarkerSetEureka,
+            FlagMarkerSet.OccultBronzeTreasure => Language.MarkerSetOnlyBronze,
+            FlagMarkerSet.OccultSilverTreasure => Language.MarkerSetOnlySilver,
+            FlagMarkerSet.OccultNorthPot => Language.MarkerSetPotNorth,
+            FlagMarkerSet.OccultSouthPot => Language.MarkerSetPotSouth,
+            FlagMarkerSet.OccultReroll => Language.MarketSetReroll,
+            FlagMarkerSet.OccultBunny => Language.MarkerSetBunny,
+            _ => "Unknown"
         };
     }
 
-    public static string ToName(this LegendIcons set)
+    public static string ToOccultName(this Icons set)
     {
         return set switch
         {
-            LegendIcons.PotIcon => Language.MarkerSetPot,
-            LegendIcons.CarrotIcon => Language.MarkerSetBunny,
-            LegendIcons.BronzeIcon => Language.MarkerSetOnlyBronze,
-            LegendIcons.SilverIcon => Language.MarkerSetOnlySilver,
-            LegendIcons.RerollIcon => Language.MarketSetReroll,
+            Icons.BronzeTreasure => Language.MarkerSetOnlyBronze,
+            Icons.SilverTreasure => Language.MarkerSetOnlySilver,
+            Icons.GoldChest => Language.MarkerSetPot,
+            Icons.Reroll => Language.MarketSetReroll,
+            Icons.Carrot or Icons.CarrotReplaced=> Language.MarkerSetBunny,
             _ => "Unknown",
-        };
-    }
-
-    public static OccultMarkerSets ToOccultSet(this SharedMarkerSet set)
-    {
-        return set switch
-        {
-            SharedMarkerSet.None or SharedMarkerSet.Eureka => OccultMarkerSets.None,
-            SharedMarkerSet.OccultTreasure => OccultMarkerSets.Treasure,
-            SharedMarkerSet.OccultPot => OccultMarkerSets.Pot,
-            SharedMarkerSet.OccultBunny => OccultMarkerSets.Bunny,
-            SharedMarkerSet.OccultBronze => OccultMarkerSets.OnlyBronze,
-            SharedMarkerSet.OccultSilver => OccultMarkerSets.OnlySilver,
-            SharedMarkerSet.OccultTreasureCarrots => OccultMarkerSets.TreasureAndCarrots,
-            SharedMarkerSet.OccultReroll => OccultMarkerSets.Reroll,
-            SharedMarkerSet.OccultPotReroll => OccultMarkerSets.PotAndReroll,
-            SharedMarkerSet.OccultPotNorth => OccultMarkerSets.PotNorth,
-            SharedMarkerSet.OccultPotSouth => OccultMarkerSets.PotSouth,
-            _ =>  OccultMarkerSets.None,
         };
     }
 
@@ -137,6 +130,19 @@ public static class EnumExtensions
             return "None";
 
         return !Sheets.PlaceNameSheet.TryGetRow((uint) id, out var placeNameRow) ? "Unknown" : placeNameRow.Name.ExtractText();
+    }
+
+    public static uint ToMap(this Territory territory)
+    {
+        return territory switch
+        {
+            Territory.Anemos => 414,
+            Territory.Pagos => 467,
+            Territory.Pyros => 484,
+            Territory.Hydatos => 515,
+            Territory.SouthHorn => 967,
+            _ => throw new ArgumentOutOfRangeException(nameof(territory), territory, null)
+        };
     }
 }
 

@@ -297,7 +297,7 @@ public static class QuestHelper
         // right align coords
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - length.X - ImGui.GetScrollX() - 2 * ImGui.GetStyle().ItemSpacing.X);
         if (ImGui.Selectable($"{text}##{index}", false, 0, length))
-            Plugin.OpenMap(map);
+            Plugin.OpenMap(map.DataString);
 
         ImGui.TableNextRow();
     }
@@ -312,7 +312,7 @@ public static class QuestHelper
         ImGui.TextColored(ImGuiColors.ParsedGold, aetheryte.Name);
         ImGui.SameLine();
         if (ImGui.Selectable(text, false, 0, length))
-            Plugin.OpenMap(aetheryte.MapFlag);
+            Plugin.OpenMap(aetheryte.MapFlag.DataString);
     }
     #endregion
 
