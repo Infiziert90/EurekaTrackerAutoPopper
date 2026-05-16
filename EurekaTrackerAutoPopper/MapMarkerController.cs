@@ -234,6 +234,10 @@ public unsafe class MapMarkerController : IDisposable
 
     private void SetMarkers(Vector3 worldPos, Icons icon)
     {
+        // Only place distant markers if correct map is set
+        if (!TerritoryHelper.IsCorrectMap())
+            return;
+
         var mapPos = worldPos;
         var agentMap = AgentMap.Instance();
 
@@ -244,7 +248,7 @@ public unsafe class MapMarkerController : IDisposable
                 AllowAnyMap = false,
                 MapId = agentMap->CurrentMapId,
                 Position = new Vector2(mapPos.X, mapPos.Z),
-                IconId = (uint)icon
+                IconId = (uint)icon,
             });
         }
         else

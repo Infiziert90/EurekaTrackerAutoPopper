@@ -45,6 +45,16 @@ public enum Territory : uint
     SouthHorn = 1252,
 }
 
+public enum Map : uint
+{
+    Anemos = 414,
+    Pagos = 467,
+    Pyros = 484,
+    Hydatos = 515,
+
+    SouthHorn = 967,
+}
+
 public enum OccultAetheryte : uint
 {
     None = 0,
@@ -63,20 +73,26 @@ public static class TerritoryHelper
     private static readonly HashSet<Territory> BunnyTerritories = [Territory.Pagos, Territory.Pyros, Territory.Hydatos, Territory.SouthHorn];
     private static readonly HashSet<Territory> OccultTerritories = [Territory.SouthHorn];
 
+    private static Territory CurrentTerritory
+        => (Territory)Plugin.ClientState.TerritoryType;
+
     public static bool PlayerInSupportedTerritory()
-        => SupportedTerritories.Contains((Territory)Plugin.ClientState.TerritoryType);
+        => SupportedTerritories.Contains(CurrentTerritory);
 
     public static bool PlayerInEureka()
-        => EurekaTerritories.Contains((Territory)Plugin.ClientState.TerritoryType);
+        => EurekaTerritories.Contains(CurrentTerritory);
 
     public static bool HasBunnies()
-        => BunnyTerritories.Contains((Territory)Plugin.ClientState.TerritoryType);
+        => BunnyTerritories.Contains(CurrentTerritory);
 
     public static bool HasEurekaBunnies()
-        => EurekaBunnyTerritories.Contains((Territory)Plugin.ClientState.TerritoryType);
+        => EurekaBunnyTerritories.Contains(CurrentTerritory);
 
     public static bool PlayerInOccult()
-        => OccultTerritories.Contains((Territory)Plugin.ClientState.TerritoryType);
+        => OccultTerritories.Contains(CurrentTerritory);
+
+    public static bool IsCorrectMap()
+        => CurrentTerritory.ToMap() == (Map)Plugin.ClientState.MapId;
 }
 
 public static class EnumExtensions
@@ -129,19 +145,19 @@ public static class EnumExtensions
         if (id == OccultAetheryte.None)
             return "None";
 
-        return !Sheets.PlaceNameSheet.TryGetRow((uint) id, out var placeNameRow) ? "Unknown" : placeNameRow.Name.ExtractText();
+        return !Sheets.PlaceNameSheet.TryGetRow((uint) id, out var placeNameRow) ? "Unknown" : placeNameRow.Name.ToString();
     }
 
-    public static uint ToMap(this Territory territory)
+    public static Map ToMap(this Territory territory)
     {
         return territory switch
         {
-            Territory.Anemos => 414,
-            Territory.Pagos => 467,
-            Territory.Pyros => 484,
-            Territory.Hydatos => 515,
-            Territory.SouthHorn => 967,
-            _ => throw new ArgumentOutOfRangeException(nameof(territory), territory, null)
+            Territory.Anemos => Map.Anemos,
+            Territory.Pagos => Map.Pagos,
+            Territory.Pyros => Map.Pyros,
+            Territory.Hydatos => Map.Hydatos,
+            Territory.SouthHorn => Map.SouthHorn,
+            _ => throw new ArgumentOutOfRangeException(nameof(territory), territory, null),
         };
     }
 }

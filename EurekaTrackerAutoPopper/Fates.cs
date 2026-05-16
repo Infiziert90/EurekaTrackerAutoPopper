@@ -50,7 +50,7 @@ public class Fate
         Territory = territory;
 
         WorldPos = worldPos;
-        MapDataLink = Utils.CreateMapDataLink((uint)territory, territory.ToMap(), worldPos.X, worldPos.Z);
+        MapDataLink = Utils.CreateMapDataLink((uint)territory, (uint)territory.ToMap(), worldPos.X, worldPos.Z);
 
         Position = position;
 
@@ -67,7 +67,7 @@ public class Fate
         MapIcon = mapIcon;
 
         WorldPos = worldPos;
-        MapDataLink = Utils.CreateMapDataLink((uint)territory, territory.ToMap(), worldPos.X, worldPos.Z);
+        MapDataLink = Utils.CreateMapDataLink((uint)territory, (uint)territory.ToMap(), worldPos.X, worldPos.Z);
 
         Position = position;
 
