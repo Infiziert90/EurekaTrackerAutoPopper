@@ -448,7 +448,7 @@ public partial class MainWindow
             }
 
             if (ImGui.Button("SetFlagMarker"))
-                Plugin.SetFlagMarker(Plugin.LastSeenFate.WorldPos);
+                Plugin.SetFlagMarker(Plugin.Configuration.RandomizeMapCoords ? Plugin.LastSeenFate.RandomizedWorldPos : Plugin.LastSeenFate.WorldPos);
 
             ImGuiHelpers.ScaledDummy(20);
 

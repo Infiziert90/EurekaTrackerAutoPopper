@@ -414,9 +414,12 @@ public class Plugin : IDalamudPlugin
 
     public void EchoNMPop()
     {
+        var worldPos = Configuration.RandomizeMapCoords ? LastSeenFate.RandomizedWorldPos : LastSeenFate.WorldPos;
+        var mapLink = LastSeenFate.TerritoryId != 0 ? Utils.CreateMapLink(LastSeenFate.TerritoryId, LastSeenFate.MapId, worldPos.X, worldPos.Z) : "";
+
         var payload = new SeStringBuilder()
             .AddUiForeground($"{(Configuration.UseShortNames ? LastSeenFate.ShortName : LastSeenFate.Name)} pop: ", 540)
-            .Append(LastSeenFate.MapLink)
+            .Append(mapLink)
             .BuiltString;
 
         if (Configuration.EchoNMPop)
@@ -442,17 +445,13 @@ public class Plugin : IDalamudPlugin
 
     private void CopyChatMessage()
     {
-        SetFlagMarker(LastSeenFate.WorldPos);
+        SetFlagMarker(Configuration.RandomizeMapCoords ? LastSeenFate.RandomizedWorldPos : LastSeenFate.WorldPos);
         ImGui.SetClipboardText(BuildChatString());
     }
 
     public void PostChatMessage()
     {
-        var worldPos = LastSeenFate.WorldPos;
-        if (Configuration.RandomizeMapCoords)
-            worldPos = worldPos with { X = Utils.Randomize(worldPos.X), Y = Utils.Randomize(worldPos.Y) };
-
-        SetFlagMarker(worldPos);
+        SetFlagMarker(Configuration.RandomizeMapCoords ? LastSeenFate.RandomizedWorldPos : LastSeenFate.WorldPos);
         ChatBox.SendMessage(BuildChatString());
     }
 

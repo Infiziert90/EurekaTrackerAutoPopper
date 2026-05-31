@@ -16,7 +16,7 @@ public class Library
 
     public sealed record EurekaFate(ushort FateId, ushort TrackerId, uint TerritoryId, uint MapId, Vector3 WorldPos, string Name, string ShortName)
     {
-        public readonly SeString MapLink = TerritoryId != 0 ? Utils.CreateMapLink(TerritoryId, MapId, WorldPos.X, WorldPos.Z) : "";
+        public Vector3 RandomizedWorldPos => WorldPos with { X = Utils.Randomize(WorldPos.X), Z = Utils.Randomize(WorldPos.Z) };
 
         public static EurekaFate Empty => new(0, 0, 0, 0, Vector3.Zero, "", "");
 
