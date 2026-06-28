@@ -5,7 +5,8 @@ export const AVAILABLE_LANGUAGES = [
     { code: 'en', name: 'English', letter: 'E' },
     { code: 'fr', name: 'Français', letter: 'F' },
     { code: 'ja', name: '日本語', letter: 'J' },
-    { code: 'de', name: 'Deutsch', letter: 'D' }
+    { code: 'de', name: 'Deutsch', letter: 'D' },
+    { code: 'zh', name: '简体中文', letter: '中' }
 ];
 
 // Language store with localStorage persistence
