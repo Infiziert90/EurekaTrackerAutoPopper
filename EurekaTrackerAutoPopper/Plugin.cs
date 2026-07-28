@@ -306,7 +306,7 @@ public class Plugin : IDalamudPlugin
             Fates.RegisterEvents();
 
             // Set forked tower timer to when the client joined south horn
-            Fates.OccultCriticalEncounters[^1].InstanceJoinedTimer = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            Fates.GetNormalTowerForTerritory().InstanceJoinedTimer = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         }
         else
         {

@@ -305,7 +305,7 @@ public class TrackerHandler
             // Write back critical encounters fetched from tracker
             foreach (var sharedFate in CurrentTracker.Encounters)
             {
-                var localFate = Plugin.Fates.OccultCriticalEncounters.First(f => f.FateId == sharedFate.FateId);
+                var localFate = Plugin.Fates.GetCriticalEngagementForTerritory().First(f => f.FateId == sharedFate.FateId);
 
                 localFate.LastSeenAlive = sharedFate.LastSeenAlive;
                 localFate.SpawnTime = sharedFate.SpawnTime;
@@ -322,7 +322,7 @@ public class TrackerHandler
             // Write back fates fetched from tracker
             foreach (var sharedFate in CurrentTracker.Fates)
             {
-                var localFate = Plugin.Fates.OccultFates.First(f => f.FateId == sharedFate.FateId);
+                var localFate = Plugin.Fates.GetFatesForTerritory().First(f => f.FateId == sharedFate.FateId);
 
                 localFate.LastSeenAlive = sharedFate.LastSeenAlive;
                 localFate.SpawnTime = sharedFate.SpawnTime;
@@ -332,7 +332,7 @@ public class TrackerHandler
             // Write back pot fates fetched from tracker
             foreach (var sharedFate in CurrentTracker.Pots)
             {
-                var localFate = Plugin.Fates.BunnyFates.First(f => f.FateId == sharedFate.FateId);
+                var localFate = Plugin.Fates.GetBunnyForTerritory().First(f => f.FateId == sharedFate.FateId);
 
                 localFate.LastSeenAlive = sharedFate.LastSeenAlive;
                 localFate.SpawnTime = sharedFate.SpawnTime;

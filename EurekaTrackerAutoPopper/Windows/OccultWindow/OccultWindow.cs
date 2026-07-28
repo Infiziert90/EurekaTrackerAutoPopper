@@ -65,13 +65,13 @@ public class OccultWindow : Window, IDisposable
             return;
 
         Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderActiveCE);
-        if (Plugin.Fates.OccultCriticalEncounters.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType).FirstOrDefault(f => f.Alive) is { } criticalEncounter)
+        if (Plugin.Fates.GetCriticalEngagementForTerritory().FirstOrDefault(f => f.Alive) is { } criticalEncounter)
             DrawFateInfo(criticalEncounter, true);
 
         DrawSeparator();
 
         Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderActiveFate);
-        if (Plugin.Fates.OccultFates.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType).FirstOrDefault(f => f.Alive) is {} fate)
+        if (Plugin.Fates.GetFatesForTerritory().FirstOrDefault(f => f.Alive) is {} fate)
             DrawFateInfo(fate, true);
 
         DrawSeparator();
@@ -79,7 +79,7 @@ public class OccultWindow : Window, IDisposable
         if (Plugin.Configuration.EngagementsShowPot)
         {
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderActivePot);
-            if (Plugin.Fates.BunnyFates.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType).FirstOrDefault(f => f.Alive) is { } potFate)
+            if (Plugin.Fates.GetBunnyForTerritory().FirstOrDefault(f => f.Alive) is { } potFate)
                 DrawFateInfo(potFate, true);
 
             DrawSeparator();
@@ -92,14 +92,14 @@ public class OccultWindow : Window, IDisposable
                 return;
 
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderCE);
-            foreach (var previousCE in Plugin.Fates.OccultCriticalEncounters.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType).Where(f => f.MapIcon != 0))
+            foreach (var previousCE in Plugin.Fates.GetCriticalEngagementForTerritory().Where(f => f.MapIcon != 0))
             {
                 DrawFateInfo(previousCE, false);
                 DrawSeparator();
             }
 
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderFates);
-            foreach (var previousFate in Plugin.Fates.OccultFates.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType).Where(f => f.MapIcon != 0))
+            foreach (var previousFate in Plugin.Fates.GetFatesForTerritory().Where(f => f.MapIcon != 0))
             {
                 DrawFateInfo(previousFate, false);
                 DrawSeparator();
@@ -115,7 +115,7 @@ public class OccultWindow : Window, IDisposable
         if (!tabItem.Success)
             return;
 
-        var towerEngagement = Plugin.Fates.OccultCriticalEncounters[^1];
+        var towerEngagement = Plugin.Fates.GetNormalTowerForTerritory();
         if (towerEngagement.SpawnTime > 0)
             DrawFateInfo(towerEngagement, false, true);
         else
@@ -174,9 +174,9 @@ public class OccultWindow : Window, IDisposable
                 var timer = Utils.TimeToClockFormat(TimeSpan.FromSeconds(lastSpawn - currentTime + spawnTimer));
                 Helper.TextColored(ImGuiColors.HealerGreen, $"Predicted Respawn: {timer}");
 
-                var activeFate = Plugin.Fates.OccultFates.FirstOrDefault(f => f.Alive);
-                var activeCE =  Plugin.Fates.OccultCriticalEncounters.FirstOrDefault(f => f.Alive);
-                var activeBunny =  Plugin.Fates.BunnyFates.FirstOrDefault(f => f.Alive);
+                var activeFate = Plugin.Fates.GetFatesForTerritory().FirstOrDefault(f => f.Alive);
+                var activeCE =  Plugin.Fates.GetCriticalEngagementForTerritory().FirstOrDefault(f => f.Alive);
+                var activeBunny =  Plugin.Fates.GetBunnyForTerritory().FirstOrDefault(f => f.Alive);
 
                 Helper.TextColored(ImGuiColors.HealerGreen, "Upcoming Reductions:");
                 if (activeFate != null)
@@ -449,7 +449,7 @@ public class OccultWindow : Window, IDisposable
         if (!Plugin.Configuration.TowerChangeHeader)
             return string.Empty;
 
-        var towerEncounter = Plugin.Fates.OccultCriticalEncounters[^1];
+        var towerEncounter = Plugin.Fates.GetNormalTowerForTerritory();
         if (towerEncounter.State == DynamicEventState.Inactive)
             return string.Empty;
 

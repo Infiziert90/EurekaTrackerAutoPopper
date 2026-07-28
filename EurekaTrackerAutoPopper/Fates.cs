@@ -241,6 +241,12 @@ public class Fates
     public IEnumerable<Fate> GetCriticalEngagementForTerritory()
         => OccultCriticalEncounters.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType);
 
+    public Fate GetNormalTowerForTerritory()
+        => Plugin.Fates.OccultCriticalEncounters.Find(f => (Territory)Plugin.ClientState.TerritoryType == Territory.SouthHorn
+                ? f.FateId == 48
+                : f.FateId == 64)
+           ?? Plugin.Fates.OccultCriticalEncounters[^2];
+
     public unsafe void ReadLayout()
     {
         var locations = new Dictionary<uint, Fate>();
@@ -365,7 +371,10 @@ public class Fates
         if (local == null)
             return;
 
-        var towerEngagement = Plugin.Fates.OccultCriticalEncounters[^1];
+        var towerEngagement = Plugin.Fates.OccultCriticalEncounters.Find(f =>
+            (Territory)Plugin.ClientState.TerritoryType == Territory.SouthHorn
+                ? f.FateId == 48
+                : f.FateId == 64) ?? Plugin.Fates.OccultCriticalEncounters[^2];
 
         var publicContent = PublicContentOccultCrescent.GetInstance();
         if (publicContent == null)
