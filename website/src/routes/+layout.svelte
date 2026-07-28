@@ -1,8 +1,11 @@
 <script>
 	import '../app.css';
-	
+	import { Toaster } from 'svelte-5-french-toast';
+
 	let { children } = $props();
 </script>
+
+<Toaster />
 
 <div class="flex flex-col min-h-dvh h-full bg-slate-950/80 text-white">
 	<main id="main-content" class="flex-1 overflow-y-auto scrollbar-g">
