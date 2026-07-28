@@ -2,10 +2,8 @@
     import { onDestroy, onMount } from "svelte";
     import { page } from "$app/stores";
     import { base } from "$app/paths";
-    import {
-        TOWER_SPAWN_TIMER, OCCULT_RESPAWN, OCCULT_ENCOUNTERS, OCCULT_FATES, BASE_URL, API_HEADERS, DATACENTER_NAMES,
-        ITEM
-    } from "$lib/const";
+    import { BASE_URL, API_HEADERS, DATACENTER_NAMES, ITEM } from "$lib/const";
+    import { getZone, isEditable, isKnownZone, DEFAULT_TRACKER_TYPE } from "$lib/zones";
     import { currentLanguage } from "$lib/stores";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull, Link, Clipboard } from "@lucide/svelte";
     import toast, {Toaster} from 'svelte-5-french-toast'
@@ -14,14 +12,8 @@
     import ItemIcon from "../../components/ItemIcon.svelte";
     import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
     import PasswordButton from "../../components/PasswordButton.svelte";
-    import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive, calculateCECooldown } from "$lib/utils";
+    import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive, calculateCECooldown, localized, localizedName, localizedSuffix } from "$lib/utils";
 
-    import monks from '$lib/assets/33.png';
-    import inks from '$lib/assets/37.png';
-    import byblos from '$lib/assets/39.png';
-    import peta from '$lib/assets/41.png';
-    import fan from '$lib/assets/42.png';
-    import garula from '$lib/assets/44.png';
     import {Tooltip} from "flowbite-svelte";
 
     const uid = $page.params.uid;
@@ -35,9 +27,13 @@
     let isLoading = $state(true);
     let error = $state(null);
 
-    // Tracker type 2 functionality
+    // Which zone the tracker describes and whether it can be edited from here
+    let trackerType = $state(DEFAULT_TRACKER_TYPE);
+    let territory = $state(null);
+    let zone = $derived(getZone(territory));
+    let canEdit = $derived(isEditable(trackerType));
+
     let isPasswordUnlocked = $state(false);
-    let trackerType = $state(1);
     let originalData = $state(null);
     let isUpdating = $state(false);
     let lastKnownUpdate = $state(null);
@@ -67,7 +63,7 @@
     }
 
     async function handleStatusUpdate({ encounter, type, status }) {
-        if (!isPasswordUnlocked || !originalData) return;
+        if (!isPasswordUnlocked || !originalData || !canEdit) return;
 
         const updatePromise = async () => {
             isUpdating = true;
@@ -95,8 +91,9 @@
                     updatedData.last_update = Math.floor(Date.now() / 1000);
                 }
 
-                // Send only the updated history data
-                const response = await fetch(BASE_URL, {
+                // Send only the updated history data. The tracker_id filter is not
+                // optional: an unfiltered PATCH rewrites every row of the table.
+                const response = await fetch(`${BASE_URL}?tracker_id=eq.${uid}`, {
                     method: 'PATCH',
                     headers: {
                         ...API_HEADERS,
@@ -251,7 +248,12 @@
             trackerResults = data[0];
             originalData = { ...trackerResults };
             lastKnownUpdate = trackerResults.last_update;
-            trackerType = trackerResults.tracker_type || 1;
+            trackerType = trackerResults.tracker_type || DEFAULT_TRACKER_TYPE;
+            territory = trackerResults.territory ?? null;
+
+            // Resolved locally rather than read off the derived `zone`, so the parsing
+            // below cannot run against a stale zone.
+            const currentZone = getZone(territory);
 
             // Check if stored password is still valid (password might have changed)
             if (isPasswordUnlocked && originalData) {
@@ -271,8 +273,10 @@
                 try {
                     trackerResults.encounter_history = JSON.parse(trackerResults.encounter_history);
                     if (Array.isArray(trackerResults.encounter_history)) {
+                        // Drop stale entries left over from another zone's id range (e.g. a
+                        // tracker seeded before it was known to be in this territory)
+                        trackerResults.encounter_history = trackerResults.encounter_history.filter(encounter => currentZone.encounters[encounter.fate_id] !== undefined);
                         trackerResults.encounter_history.forEach(encounter => {
-                            encounter.name = OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage];
                             encounter.alive = isAlive(encounter);
 
                             // If any encounter is alive, set activeCE to the first one we find
@@ -280,9 +284,9 @@
                                 activeCE = encounter;
                             }
 
-                            // When we get the Forked Tower, calculate the spawn_timer
-                            if (encounter.fate_id === 48) {
-                                encounter.spawn_timer = TOWER_SPAWN_TIMER - (300 * encounter.killed_ces) - (60 * encounter.killed_fates);
+                            // When we get the Forked Tower (or its Extreme variant), calculate the spawn_timer
+                            if (encounter.fate_id === currentZone.towerId || encounter.fate_id === currentZone.towerExtremeId) {
+                                encounter.spawn_timer = currentZone.towerSpawnTimer - (300 * encounter.killed_ces) - (60 * encounter.killed_fates);
                             }
                         });
                     }
@@ -299,8 +303,10 @@
                 try {
                     trackerResults.fate_history = JSON.parse(trackerResults.fate_history);
                     if (Array.isArray(trackerResults.fate_history)) {
+                        // Drop stale entries left over from another zone's id range (e.g. a
+                        // tracker seeded before it was known to be in this territory)
+                        trackerResults.fate_history = trackerResults.fate_history.filter(fate => currentZone.fates[fate.fate_id] !== undefined);
                         trackerResults.fate_history.forEach(fate => {
-                            fate.name = OCCULT_FATES[fate.fate_id].name[$currentLanguage];
                             fate.alive = isAlive(fate);
                         });
 
@@ -322,8 +328,10 @@
                 try {
                     trackerResults.pot_history = JSON.parse(trackerResults.pot_history);
                     if (Array.isArray(trackerResults.pot_history)) {
+                        // Drop stale entries left over from another zone's id range (e.g. a
+                        // tracker seeded before it was known to be in this territory)
+                        trackerResults.pot_history = trackerResults.pot_history.filter(pot => currentZone.fates[pot.fate_id] !== undefined);
                         trackerResults.pot_history.forEach(pot => {
-                            pot.name = OCCULT_FATES[pot.fate_id].name[$currentLanguage];
                             pot.alive = isAlive(pot);
 
                             // If any pot is alive, set activeBunny to the first one we find
@@ -340,7 +348,7 @@
                 trackerResults.pot_history = [];
             }
 
-            const potStatus = calculatePotStatus(trackerResults.pot_history);
+            const potStatus = calculatePotStatus(trackerResults.pot_history, currentZone);
             bunny = potStatus.bunny;
 
         } catch (err) {
@@ -399,16 +407,14 @@
         }
     });
 
-    function getMonsterImage(encounterId) {
-        switch (encounterId) {
-            case 33: return monks;
-            case 37: return inks;
-            case 39: return byblos;
-            case 41: return peta;
-            case 42: return fan;
-            case 44: return garula;
-            default: '';
-        }
+    // Shorthands so the markup does not have to spell out the zone lookup every time
+    function encounterName(fateId) {
+        return localizedName(zone.encounters[fateId], $currentLanguage, "Unknown CE");
+    }
+
+    function fateName(fateId) {
+        const fate = zone.fates[fateId];
+        return localizedName(fate, $currentLanguage, "Unknown Fate") + localizedSuffix(fate, $currentLanguage);
     }
 </script>
 
@@ -479,7 +485,7 @@
                                         <ClickToCopyButton text={`${$page.url.origin}${base}/${uid}`} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                             <Link class="w-4 h-4" />
                                         </ClickToCopyButton>
-                                        {#if trackerType === 2}
+                                        {#if canEdit}
                                             {#if !isPasswordUnlocked}
                                                 <PasswordButton
                                                     expectedPassword={trackerResults.password}
@@ -516,6 +522,12 @@
                                     DC: <span class="bg-white text-black px-1">{DATACENTER_NAMES[trackerResults.datacenter]?.name || "Unknown"}</span>
                                 </td>
                             </tr>
+                            <!-- Zone row -->
+                            <tr>
+                                <td>
+                                    <span class="bg-slate-700 text-white px-1">{localized(zone.label, $currentLanguage, "Unknown")}</span>
+                                </td>
+                            </tr>
                         </tbody></table>
                     </div>
                     <LanguageSwitcher />
@@ -524,68 +536,82 @@
         </div>
 
         <div class="px-4">
+            {#if !isKnownZone(territory)}
+                <div class="max-w-6xl w-full mx-auto mb-4 bg-yellow-900/60 border border-yellow-500/40 p-4 text-yellow-200">
+                    This tracker's territory ({territory}) is not a recognized zone. Names and
+                    timers cannot be resolved, so most of this page will read as "Unknown". This
+                    is expected for trackers not yet updated by a newer plugin version.
+                </div>
+            {/if}
+
             <!-- 2col, Forked Tower & Pot Fate -->
             <div class="max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
-                <!-- Forked Tower: Blood -->
+                <!-- Forked Tower (and its Extreme variant, on zones that have one) -->
                 <div class="bg-slate-800/90 p-4">
-                    <h2 class="text-2xl font-extrabold">
-                        <img src="https://v2.xivapi.com/api/asset?path=ui/icon/063000/063978_hr1.tex&format=webp" alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
-                        {OCCULT_ENCOUNTERS[48].name[$currentLanguage]}
-                    </h2>
-
-                    <!-- Pick it from the encounter_history -->
-                    {#if trackerResults.encounter_history && trackerResults.encounter_history.length > 0}
-                        {#each trackerResults.encounter_history as encounter}
-                            {#if encounter.fate_id === 48}
-                                {#if encounter.alive}
-                                    <p class="text-green-400">Tower is up and recruiting!</p>
-                                {:else}
-                                    <p>Last seen: <AutoTimeFormatted timestamp={encounter.last_seen} /></p>
-
+                    {#each [zone.towerId, zone.towerExtremeId].filter((id) => id != null) as towerFateId, towerIndex}
+                        <div class={towerIndex > 0 ? 'mt-4 pt-4 border-t border-white/10' : ''}>
+                            <h2 class="text-2xl font-extrabold">
+                                {#if zone.towerIcon}
+                                    <img src={`https://v2.xivapi.com/api/asset?path=${zone.towerIcon}&format=webp`} alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
                                 {/if}
-                                <p>Previous respawn times:
-                                    {#if encounter.respawn_times && encounter.respawn_times.length > 0}
-                                        {#each encounter.respawn_times as time, i}
-                                            <span>{formatSeconds(time) + (i < encounter.respawn_times.length - 1 ? ', ' : '')}</span>
-                                        {/each}
-                                    {:else}
-                                        <span class="text-slate-400">None recorded</span>
-                                    {/if}
-                                </p>
+                                {localizedName(zone.encounters[towerFateId], $currentLanguage, zone.towerLabel ?? "Unknown CE")}
+                            </h2>
 
-                                <details>
-                                    <summary class="bg-slate-900/90 p-2 py-0.5 rounded-md mt-2">Spawn Prediction</summary>
-                                    <p class="text-green-400 pt-2">
-                                        Predicted spawn time:
-                                        {#if encounter.spawn_timer && encounter.last_seen !== -1 && (encounter.last_seen + encounter.spawn_timer) > (new Date().getTime() / 1000)}
-                                            <AutoTimeFormatted timestamp={encounter.last_seen + encounter.spawn_timer} />
+                            <!-- Pick it from the encounter_history -->
+                            {#if trackerResults.encounter_history && trackerResults.encounter_history.length > 0}
+                                {#each trackerResults.encounter_history as encounter}
+                                    {#if encounter.fate_id === towerFateId}
+                                        {#if encounter.alive}
+                                            <p class="text-green-400">Tower is up and recruiting!</p>
                                         {:else}
-                                            N/A
-                                        {/if}
-                                    </p>
+                                            <p>Last seen: <AutoTimeFormatted timestamp={encounter.last_seen} /></p>
 
-                                    {#if activeFate || activeBunny || activeCE}
-                                        <p class="text-blue-400">Upcoming reductions:</p>
-                                        <ul class="list-disc list-inside text-blue-400">
-                                            <!-- Display the active fate, pot and encounter -->
-                                            {#if activeFate && activeFate.name}
-                                                <li> -1 minute ({activeFate.name})</li>
+                                        {/if}
+                                        <p>Previous respawn times:
+                                            {#if encounter.respawn_times && encounter.respawn_times.length > 0}
+                                                {#each encounter.respawn_times as time, i}
+                                                    <span>{formatSeconds(time) + (i < encounter.respawn_times.length - 1 ? ', ' : '')}</span>
+                                                {/each}
+                                            {:else}
+                                                <span class="text-slate-400">None recorded</span>
                                             {/if}
-                                            {#if activeBunny && activeBunny.name}
-                                                <li> -1 minute ({activeBunny.name})</li>
+                                        </p>
+
+                                        <details>
+                                            <summary class="bg-slate-900/90 p-2 py-0.5 rounded-md mt-2">Spawn Prediction</summary>
+                                            <p class="text-green-400 pt-2">
+                                                Predicted spawn time:
+                                                {#if encounter.spawn_timer && encounter.last_seen !== -1 && (encounter.last_seen + encounter.spawn_timer) > (new Date().getTime() / 1000)}
+                                                    <AutoTimeFormatted timestamp={encounter.last_seen + encounter.spawn_timer} />
+                                                {:else}
+                                                    N/A
+                                                {/if}
+                                            </p>
+
+                                            {#if activeFate || activeBunny || activeCE}
+                                                <p class="text-blue-400">Upcoming reductions:</p>
+                                                <ul class="list-disc list-inside text-blue-400">
+                                                    <!-- Display the active fate, pot and encounter -->
+                                                    {#if activeFate}
+                                                        <li> -1 minute ({fateName(activeFate.fate_id)})</li>
+                                                    {/if}
+                                                    {#if activeBunny}
+                                                        <li> -1 minute ({fateName(activeBunny.fate_id)})</li>
+                                                    {/if}
+                                                    {#if activeCE}
+                                                        <li> -5 minutes ({encounterName(activeCE.fate_id)})</li>
+                                                    {/if}
+                                                </ul>
                                             {/if}
-                                            {#if activeCE && activeCE.name}
-                                                <li> -5 minutes ({activeCE.name})</li>
-                                            {/if}
-                                        </ul>
+                                        </details>
                                     {/if}
-                                </details>
+                                {/each}
+                            {:else}
+                                <p class="text-slate-400">No encounter data available</p>
                             {/if}
-                        {/each}
-                    {:else}
-                        <p class="text-slate-400">No encounter data available</p>
-                    {/if}
+                        </div>
+                    {/each}
                 </div>
 
                 <!-- Pot Fate-->
@@ -596,11 +622,11 @@
                     </h2>
 
                     {#if bunny && bunny.fate_id}
-                        <p>FATE: {OCCULT_FATES[bunny.fate_id].name[$currentLanguage]}{OCCULT_FATES[bunny.fate_id].suffix ? ' ' + OCCULT_FATES[bunny.fate_id].suffix[$currentLanguage] : ''}</p>
+                        <p>FATE: {fateName(bunny.fate_id)}</p>
                         {#if bunny.alive === true}
                             <p class="text-green-400">Alive</p>
                         {:else}
-                            {@const respawnTime = calculateOccultRespawn(bunny, 'timestamp')}
+                            {@const respawnTime = calculateOccultRespawn(bunny, zone, 'timestamp')}
                             {@const now = Math.floor(Date.now() / 1000)}
                             {#if respawnTime <= now}
                                 <p class="text-yellow-400">Soon</p>
@@ -629,7 +655,7 @@
                                                 }"
                                                 title="Mark pot as dead"
                                             >
-                                                KILL {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}{OCCULT_FATES[pot.fate_id].suffix ? ' ' + OCCULT_FATES[pot.fate_id].suffix[$currentLanguage] : ''}
+                                                KILL {fateName(pot.fate_id)}
                                             </button>
                                         {:else}
                                             <button
@@ -640,7 +666,7 @@
                                                 }"
                                                 title="Mark pot as spawned"
                                             >
-                                                POP {OCCULT_FATES[pot.fate_id].name[$currentLanguage]}{OCCULT_FATES[pot.fate_id].suffix ? ' ' + OCCULT_FATES[pot.fate_id].suffix[$currentLanguage] : ''}
+                                                POP {fateName(pot.fate_id)}
                                             </button>
                                         {/if}
                                     {/if}
@@ -667,34 +693,37 @@
                             <th class="px-2 w-1/5 hidden md:table-cell">Drops</th>
                             <th class="px-2 w-1/5 text-end">Pop Timer</th>
                             <th class="px-2 w-1/5 text-end">Last Seen</th>
-                            {#if trackerType === 2}
+                            {#if canEdit}
                                 <th class="px-2 w-[14%] md:w-14 text-center"></th>
                             {/if}
                         </tr>
                     </thead>
                     <tbody>
                         {#if trackerResults.encounter_history && trackerResults.encounter_history.length > 0}
-                            {#each trackerResults.encounter_history.filter(encounter => encounter.fate_id !== 48) as encounter}
+                            {#each trackerResults.encounter_history.filter(encounter => encounter.fate_id !== zone.towerId && encounter.fate_id !== zone.towerExtremeId) as encounter}
+                                {@const encounterData = zone.encounters[encounter.fate_id]}
                                 <tr class={encounter.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
-                                    <td class="px-2 w-2/5 truncate">{OCCULT_ENCOUNTERS[encounter.fate_id].name[$currentLanguage]}</td>
+                                    <td class="px-2 w-2/5 truncate">{encounterName(encounter.fate_id)}</td>
                                     <td class="px-2 w-2/5 truncate">
-                                        {#if OCCULT_ENCOUNTERS[encounter.fate_id].monster !== undefined}
+                                        {#if encounterData?.monster !== undefined}
                                             <div class="tooltip">
-                                                {OCCULT_ENCOUNTERS[encounter.fate_id].monster[$currentLanguage]}
-                                                <Tooltip
-                                                    arrow={false}
-                                                    class="bg-black/80 rounded-md text-white text-xs px-2 py-1 border border-white/20"
-                                                    style="width: 40rem;height: 40rem;"
-                                                    placement="right"
-                                                >
-                                                    <img src={getMonsterImage(OCCULT_ENCOUNTERS[encounter.fate_id].encounter_id)}>
-                                                </Tooltip>
+                                                {localized(encounterData.monster, $currentLanguage)}
+                                                {#if encounterData.monster_image}
+                                                    <Tooltip
+                                                        arrow={false}
+                                                        class="bg-black/80 rounded-md text-white text-xs px-2 py-1 border border-white/20"
+                                                        style="width: 40rem;height: 40rem;"
+                                                        placement="right"
+                                                    >
+                                                        <img src={encounterData.monster_image} alt="">
+                                                    </Tooltip>
+                                                {/if}
                                             </div>
                                         {/if}
                                     </td>
                                     <td class="px-2 w-1/5 hidden md:table-cell">
                                         <div class="flex flex-wrap gap-1">
-                                            {#each OCCULT_ENCOUNTERS[encounter.fate_id].drops as drop}
+                                            {#each encounterData?.drops ?? [] as drop}
                                                 <ItemIcon itemId={drop} />
                                             {/each}
                                         </div>
@@ -704,7 +733,7 @@
                                             {#if encounter.alive}
                                                 <span class="text-slate-400">—</span>
                                             {:else}
-                                                {@const cooldown = calculateCECooldown(encounter)}
+                                                {@const cooldown = calculateCECooldown(encounter, zone)}
                                                 {#if cooldown.canPop}
                                                     <span class="text-green-400">Can pop</span>
                                                 {:else if cooldown.cooldownEndTime}
@@ -727,7 +756,7 @@
                                             {/if}
                                         </p>
                                     </td>
-                                    {#if trackerType === 2}
+                                    {#if canEdit}
                                         <td class="px-2 w-[14%] md:w-14 text-center">
                                             {#if isPasswordUnlocked}
                                                 {#if encounter.alive}
@@ -764,7 +793,7 @@
                             {/each}
                         {:else}
                             <tr class="bg-slate-900/90">
-                                <td colspan={trackerType === 2 ? 5 : 4} class="px-2 py-4 text-center text-slate-400">
+                                <td colspan={canEdit ? 5 : 4} class="px-2 py-4 text-center text-slate-400">
                                     No encounter history available
                                 </td>
                             </tr>
@@ -786,7 +815,7 @@
                             <th class="px-2 w-2/5">Fate</th>
                             <th class="px-2 hidden md:table-cell">Drops</th>
                             <th class="px-2 w-1/5 text-end">Last Seen</th>
-                            {#if trackerType === 2}
+                            {#if canEdit}
                                 <th class="px-2 w-[14%] md:w-14 text-center"></th>
                             {/if}
                         </tr>
@@ -795,10 +824,10 @@
                         {#if trackerResults.fate_history && trackerResults.fate_history.length > 0}
                             {#each trackerResults.fate_history as fate}
                                 <tr class={fate.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
-                                    <td class="px-2 w-2/5 truncate">{OCCULT_FATES[fate.fate_id].name[$currentLanguage]}</td>
+                                    <td class="px-2 w-2/5 truncate">{fateName(fate.fate_id)}</td>
                                     <td class="px-2 hidden md:table-cell">
                                         <div class="flex flex-wrap gap-1">
-                                            {#each OCCULT_FATES[fate.fate_id].drops as drop}
+                                            {#each zone.fates[fate.fate_id]?.drops ?? [] as drop}
                                                 <ItemIcon itemId={drop} />
                                             {/each}
                                         </div>
@@ -815,7 +844,7 @@
                                             {/if}
                                         </p>
                                     </td>
-                                    {#if trackerType === 2}
+                                    {#if canEdit}
                                         <td class="px-2 w-[14%] md:w-14 text-center">
                                             {#if isPasswordUnlocked}
                                                 {#if fate.alive}
@@ -852,7 +881,7 @@
                             {/each}
                         {:else}
                             <tr class="bg-slate-900/90">
-                                <td colspan={trackerType === 2 ? 4 : 3} class="px-2 py-4 text-center text-slate-400">
+                                <td colspan={canEdit ? 4 : 3} class="px-2 py-4 text-center text-slate-400">
                                     No fate history available
                                 </td>
                             </tr>

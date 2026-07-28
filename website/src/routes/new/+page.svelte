@@ -1,12 +1,18 @@
 
 <script>
     import { base } from '$app/paths';
-    import { BASE_URL, API_HEADERS, SAMPLE_SOUTH_HORN_TRACKER, DATACENTER_NAMES } from '$lib/const.js';
+    import { BASE_URL, API_HEADERS, DATACENTER_NAMES } from '$lib/const.js';
+    import { selectableTrackerTypes } from '$lib/zones';
+    import { buildTrackerTemplate, localized } from '$lib/utils.js';
     import { goto } from '$app/navigation';
-    
+    import { currentLanguage } from '$lib/stores';
+
+    const trackerTypeOptions = selectableTrackerTypes();
+
     let formData = $state({
         password: '',
-        datacenter: 0
+        datacenter: 0,
+        territory: trackerTypeOptions[0]?.territory
     });
     
     let isLoading = $state(false);
@@ -41,12 +47,13 @@
         isLoading = true;
         
         try {
-            // Create the tracker data based on the sample structure
-            const trackerData = {
-                ...SAMPLE_SOUTH_HORN_TRACKER,
+            // Build the initial histories from the selected zone's own data
+            const selected = trackerTypeOptions.find(option => option.territory === formData.territory);
+            const trackerData = buildTrackerTemplate(selected.zone, {
                 password: formData.password,
-                datacenter: formData.datacenter
-            };
+                datacenter: formData.datacenter,
+                trackerType: selected.type
+            });
             
             const response = await fetch(`${BASE_URL}`, {
                 method: 'POST',
@@ -85,6 +92,7 @@
         result = null;
         formData.password = '';
         formData.datacenter = 0;
+        formData.territory = trackerTypeOptions[0]?.territory;
     }
 </script>
 
@@ -138,8 +146,33 @@
                     {/each}
                 </select>
             </div>
-        
-            <button 
+
+            {#if trackerTypeOptions.length > 1}
+                <fieldset class="mb-4">
+                    <legend class="block text-white text-sm font-medium mb-2">Zone <span class="text-red-500">*</span></legend>
+                    <div class="flex flex-col gap-1">
+                        {#each trackerTypeOptions as option}
+                            {@const zoneRadioId = `zone-${option.territory}`}
+                            <label
+                                for={zoneRadioId}
+                                class="flex items-center gap-2 cursor-pointer hover:bg-white/10 p-1"
+                            >
+                                <input
+                                    id={zoneRadioId}
+                                    type="radio"
+                                    name="zone"
+                                    value={option.territory}
+                                    bind:group={formData.territory}
+                                    class="w-3 h-3 cursor-pointer"
+                                />
+                                <span class="text-white text-sm">{localized(option.zone.label, $currentLanguage, "Unknown")}</span>
+                            </label>
+                        {/each}
+                    </div>
+                </fieldset>
+            {/if}
+
+            <button
                 type="submit"
                 disabled={isLoading}
                 class="w-full bg-white hover:bg-white/80 disabled:bg-slate-600 text-black font-medium py-2 px-4 transition-colors duration-200 disabled:cursor-not-allowed cursor-pointer"

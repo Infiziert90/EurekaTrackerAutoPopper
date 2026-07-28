@@ -4,8 +4,9 @@
     import { goto } from "$app/navigation";
     import { onMount, onDestroy, tick } from "svelte";
     import { Clock, Globe, ChevronUp, ChevronDown, ChevronsUpDown, X } from "@lucide/svelte";
-    import { DATACENTER_NAMES, OCCULT_FATES, OCCULT_ENCOUNTERS, BASE_URL, API_HEADERS } from "$lib/const";
-    import { calculatePotStatus, calculateOccultRespawn, isAlive } from "$lib/utils";
+    import { DATACENTER_NAMES, BASE_URL, API_HEADERS } from "$lib/const";
+    import { getZone } from "$lib/zones";
+    import { calculatePotStatus, calculateOccultRespawn, isAlive, localized, localizedName } from "$lib/utils";
     import { currentLanguage } from "$lib/stores";
     import { DataTable } from "@careswitch/svelte-data-table";
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
@@ -34,6 +35,7 @@
         { id: 'tracker_id', key: 'tracker_id', name: 'Tracker ID', sortable: false },
         { id: 'last_update', key: 'last_update', name: 'Last Updated', sortable: true },
         { id: 'datacenter', key: 'datacenter_name', name: 'Datacenter', sortable: true },
+        { id: 'zone', key: 'zone_label', name: 'Zone', sortable: true },
         { id: 'pot_status', key: 'pot_status_sort', name: 'Pot Status', sortable: true },
         { id: 'ce', key: 'active_ce_fate_id', name: 'Last/Current CE', sortable: false },
         { id: 'fate', key: 'active_fate_id', name: 'Last/Current Fate', sortable: false },
@@ -225,6 +227,8 @@
             // Cap the last_update timestamp to current time if it's in the future
             const cappedLastUpdate = Math.min(tracker.last_update, currentTime);
 
+            const zone = getZone(tracker.territory);
+
             // Process pot status
             let potStatus = null;
             let potStatusText = null;
@@ -232,13 +236,13 @@
                 try {
                     const potHistory = JSON.parse(tracker.pot_history);
                     potHistory.forEach(pot => { pot.alive = isAlive(pot); });
-                    const potData = calculatePotStatus(potHistory);
+                    const potData = calculatePotStatus(potHistory, zone);
                     if (potData.bunny) {
                         potStatus = potData.bunny;
                         if (potData.bunny.alive === true) {
                             potStatusText = "Alive";
                         } else {
-                            const respawnTime = calculateOccultRespawn(potData.bunny, 'timestamp');
+                            const respawnTime = calculateOccultRespawn(potData.bunny, zone, 'timestamp');
                             const now = Math.floor(Date.now() / 1000);
                             potStatusText = respawnTime <= now ? "Soon" : respawnTime;
                         }
@@ -269,6 +273,10 @@
 
             return {
                 ...tracker,
+                zone,
+                // Sorted/keyed in English regardless of display language, so the column
+                // order does not jump around when the user switches language.
+                zone_label: localized(zone.label, 'en', 'Unknown'),
                 last_update: cappedLastUpdate,
                 active_ce_fate_id: ceData.active,
                 recent_ce_fate_id: ceData.recent,
@@ -520,6 +528,12 @@
                                 <a href={trackerLink} class="absolute inset-0 z-10" aria-label={trackerLabel}></a>
                             </td>
 
+                            <!-- Zone -->
+                            <td class="relative px-2 truncate">
+                                {localized(row.zone.shortLabel, $currentLanguage, "Unknown")}
+                                <a href={trackerLink} class="absolute inset-0 z-10" aria-label={trackerLabel}></a>
+                            </td>
+
                             <!-- Pot Status -->
                             <td class="relative px-2 truncate">
                                 {#if row.pot_status_text}
@@ -540,7 +554,7 @@
                             <td class="hidden sm:table-cell relative px-2 truncate">
                                 {#if row.active_ce_fate_id || row.recent_ce_fate_id}
                                     {@const fateId = row.active_ce_fate_id || row.recent_ce_fate_id}
-                                    {@const ceName = OCCULT_ENCOUNTERS[fateId]?.name?.[$currentLanguage] || OCCULT_ENCOUNTERS[fateId]?.name?.en || "Unknown CE"}
+                                    {@const ceName = localizedName(row.zone.encounters[fateId], $currentLanguage, "Unknown CE")}
                                     <span class="flex items-center gap-2">
                                         <span class={`w-2 h-2 rounded-full ${row.is_ce_active ? 'bg-green-500' : 'bg-gray-500'}`} title={row.is_ce_active ? 'Currently Active' : 'Not Active'}></span>
                                         {ceName}
@@ -555,7 +569,7 @@
                             <td class="hidden md:table-cell relative px-2 truncate">
                                 {#if row.active_fate_id || row.recent_fate_id}
                                     {@const fateId = row.active_fate_id || row.recent_fate_id}
-                                    {@const fateName = OCCULT_FATES[fateId]?.name?.[$currentLanguage] || OCCULT_FATES[fateId]?.name?.en || "Unknown Fate"}
+                                    {@const fateName = localizedName(row.zone.fates[fateId], $currentLanguage, "Unknown Fate")}
                                     <span class="flex items-center gap-2">
                                         <span class={`w-2 h-2 rounded-full ${row.is_fate_active ? 'bg-green-500' : 'bg-gray-500'}`} title={row.is_fate_active ? 'Currently Active' : 'Not Active'}></span>
                                         {fateName}
