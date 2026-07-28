@@ -1,4 +1,42 @@
-import { OCCULT_RESPAWN, OCCULT_FATES, OCCULT_ENCOUNTERS, CE_COOLDOWN_MONSTER_KILL, CE_COOLDOWN_RANDOM_SPAWN } from "$lib/const";
+import { CE_COOLDOWN_MONSTER_KILL, CE_COOLDOWN_RANDOM_SPAWN } from "$lib/const";
+
+/*
+ * Resolves a language map ({ en: ..., fr: ... }) down to a single string.
+ * Falls back to English, then to a caller supplied placeholder, so that data we
+ * do not know about yet renders as text instead of throwing.
+ *
+ * @param {Object} map - A language keyed map, may be undefined
+ * @param {string} language - The current language code
+ * @param {string} fallback - Text to use when the map is unknown
+ * @returns {string} The localized string
+ */
+export function localized(map, language, fallback = "Unknown") {
+    return map?.[language] ?? map?.en ?? fallback;
+}
+
+/*
+ * Resolves the localized name of a zone entry (fate, encounter, item...).
+ *
+ * @param {Object} entry - An entry with a name map, may be undefined
+ * @param {string} language - The current language code
+ * @param {string} fallback - Text to use when the entry is unknown
+ * @returns {string} The localized name
+ */
+export function localizedName(entry, language, fallback = "Unknown") {
+    return localized(entry?.name, language, fallback);
+}
+
+/*
+ * Resolves the localized suffix of a fate (the (North)/(South) pot markers).
+ *
+ * @param {Object} entry - A fate entry, may be undefined
+ * @param {string} language - The current language code
+ * @returns {string} The suffix prefixed with a space, or an empty string
+ */
+export function localizedSuffix(entry, language) {
+    const suffix = localized(entry?.suffix, language, "");
+    return suffix ? ` ${suffix}` : "";
+}
 
 /*
  * Checks if a fate/encounter is currently alive based on spawn and death times
@@ -8,19 +46,12 @@ import { OCCULT_RESPAWN, OCCULT_FATES, OCCULT_ENCOUNTERS, CE_COOLDOWN_MONSTER_KI
  * @returns {boolean} True if the fate/encounter is alive, false otherwise
  */
 export function isAlive(fate, now = Math.floor(Date.now() / 1000)) {
-    // Helper to format timestamps as readable strings
-    function formatTimestamp(ts) {
-        if (!ts || ts < 0) return "N/A";
-        const date = new Date(ts * 1000);
-        return date.toLocaleString('fr-FR');
-    }
-
-    // if both spawn_time and death_time are -1, then the fate/encounter has just been initialized - so it's not alive
-    if (fate.spawn_time === -1 && fate.death_time === -1) {
+    // No spawn recorded yet - never alive. Sentinels differ by source: manual
+    // trackers (created via /new) initialize with -1, plugin-fed trackers with 0.
+    if (fate.spawn_time <= 0) {
         return false;
     }
 
-    
     // A death is valid only if it's after the spawn
     const hasValidDeath = fate.death_time > fate.spawn_time;
 
@@ -40,15 +71,17 @@ export function isAlive(fate, now = Math.floor(Date.now() / 1000)) {
 }
 
 /*
- * Calculates the respawn time of pot fates in Occult Crescent, which is exactly 30 minutes after the last one spawned
- * 
+ * Calculates the respawn time of pot fates in Occult Crescent, which is exactly one
+ * respawn cycle after the last one spawned
+ *
  * @param {Object} pot - The pot fate object
+ * @param {Object} zone - The zone the tracker belongs to
  * @param {string} returnType - The type of return value (seconds, timestamp)
  * @returns {number} The timestamp of the next pot fate
  */
-export function calculateOccultRespawn(pot, returnType = 'seconds') {
+export function calculateOccultRespawn(pot, zone, returnType = 'seconds') {
     const now = Math.floor(Date.now() / 1000);
-    const target = pot.spawn_time + OCCULT_RESPAWN;
+    const target = pot.spawn_time + zone.potRespawn;
     const remaining = target - now;
 
     return returnType === 'seconds' ? remaining : target;
@@ -56,11 +89,12 @@ export function calculateOccultRespawn(pot, returnType = 'seconds') {
 
 /*
  * Calculates the pot status for occult trackers
- * 
+ *
  * @param {Array} potHistory - Array of pot fate objects
+ * @param {Object} zone - The zone the tracker belongs to
  * @returns {Object} Object containing the next pot fate and its status
  */
-export function calculatePotStatus(potHistory) {
+export function calculatePotStatus(potHistory, zone) {
     if (!potHistory || potHistory.length === 0) {
         return { bunny: null, status: null };
     }
@@ -82,8 +116,8 @@ export function calculatePotStatus(potHistory) {
     // Else, apply the time of the latest spawn to calculate the next spawn
     } else {
         if (nextSpawn.last_seen == -1) {
-            // Set last_seen to 30 min previously
-            nextSpawn.last_seen = lastAlive.spawn_time - OCCULT_RESPAWN;
+            // Set last_seen to one respawn cycle previously
+            nextSpawn.last_seen = lastAlive.spawn_time - zone.potRespawn;
         }
 
         nextSpawn.spawn_time = lastAlive.spawn_time;
@@ -130,12 +164,13 @@ export function formatSeconds(secondsToFormat, format = 'simple') {
 
 /*
  * Calculates the CE cooldown status
- * 
+ *
  * @param {Object} encounter - The encounter object with death_time property
+ * @param {Object} zone - The zone the tracker belongs to
  * @param {number} now - Current timestamp in seconds (defaults to current time)
  * @returns {Object} Object containing cooldownEndTime, remainingSeconds, and canPop status
  */
-export function calculateCECooldown(encounter, now = Math.floor(Date.now() / 1000)) {
+export function calculateCECooldown(encounter, zone, now = Math.floor(Date.now() / 1000)) {
     // If encounter is alive or has no death time, no cooldown
     if (encounter.alive || !encounter.death_time || encounter.death_time === -1) {
         return {
@@ -145,8 +180,8 @@ export function calculateCECooldown(encounter, now = Math.floor(Date.now() / 100
         };
     }
 
-    // Forked Tower (CE 48) doesn't use cooldown system
-    if (encounter.fate_id === 48) {
+    // The Forked Tower (and its Extreme variant) doesn't use the cooldown system
+    if (encounter.fate_id === zone.towerId || encounter.fate_id === zone.towerExtremeId) {
         return {
             cooldownEndTime: null,
             remainingSeconds: 0,
@@ -154,8 +189,8 @@ export function calculateCECooldown(encounter, now = Math.floor(Date.now() / 100
         };
     }
 
-    // Get the cooldown time based on spawn type from OCCULT_ENCOUNTERS
-    const encounterData = OCCULT_ENCOUNTERS[encounter.fate_id];
+    // Get the cooldown time based on spawn type from the zone's encounters
+    const encounterData = zone.encounters[encounter.fate_id];
     const isMonsterKill = encounterData?.spawn_type === true;
     const cooldownTime = isMonsterKill ? CE_COOLDOWN_MONSTER_KILL : CE_COOLDOWN_RANDOM_SPAWN;
     
@@ -169,5 +204,36 @@ export function calculateCECooldown(encounter, now = Math.floor(Date.now() / 100
         cooldownEndTime,
         remainingSeconds,
         canPop: remainingSeconds <= 0
+    };
+}
+
+/*
+ * Builds the initial payload for a new tracker. The histories are derived from the
+ * zone's own id lists, so a zone only has to be described once in $lib/zones.
+ *
+ * @param {Object} zone - The zone the tracker is for
+ * @param {Object} options - password, datacenter and tracker_type of the new tracker
+ * @returns {Object} The payload to POST to the API
+ */
+export function buildTrackerTemplate(zone, { password, datacenter, trackerType }) {
+    const blankEntry = (fateId) => ({
+        fate_id: fateId,
+        spawn_time: -1,
+        death_time: -1,
+        last_seen: -1,
+        respawn_times: [],
+        killed_fates: 0,
+        killed_ces: 0,
+    });
+
+    return {
+        password,
+        datacenter,
+        tracker_type: trackerType,
+        territory: zone.territory,
+        last_fate: "",
+        encounter_history: JSON.stringify(zone.encounterIds.map(blankEntry)),
+        fate_history: JSON.stringify(zone.fateIds.map(blankEntry)),
+        pot_history: JSON.stringify(zone.potFateIds.map(blankEntry)),
     };
 }
