@@ -277,12 +277,12 @@ public class Fates
                 foreach (var pair in layer.Value->Instances)
                 {
                     // pair.Item2.Value->Id.Type == InstanceType.EventObject || pair.Item2.Value->Id.Type == InstanceType.Treasure
-                    if (pair.Item2.Value->Id.Type == InstanceType.Treasure)
-                    {
-                        var gameEventObject = (TreasureLayoutInstance*)pair.Item2.Value;
-                        var pos = pair.Item2.Value->GetTransformImpl()->Translation;
-                        Plugin.Log.Information($"{gameEventObject->BaseId}: (new Vector3({pos.X}f, {pos.Y}f, {pos.Z}f), {Sheets.TreasureSheet.GetRow(gameEventObject->BaseId).SGB.RowId}),");
-                    }
+                    // if (pair.Item2.Value->Id.Type == InstanceType.Treasure)
+                    // {
+                    //     var gameEventObject = (TreasureLayoutInstance*)pair.Item2.Value;
+                    //     var pos = pair.Item2.Value->GetTransformImpl()->Translation;
+                    //     Plugin.Log.Information($"{gameEventObject->BaseId}: (new Vector3({pos.X}f, {pos.Y}f, {pos.Z}f), {Sheets.TreasureSheet.GetRow(gameEventObject->BaseId).SGB.RowId}),");
+                    // }
 
                     // if (locations.ContainsKey(pair.Item1))
                     // {

@@ -289,7 +289,7 @@ public unsafe class MapMarkerController : IDisposable
         }
         else
         {
-            if (map != 0 && agentMap->CurrentMapId != map)
+            if (map != 0 && agentMap->SelectedMapId != map)
                 return;
 
             if ((Territory)Plugin.ClientState.TerritoryType == Territory.Hydatos)
