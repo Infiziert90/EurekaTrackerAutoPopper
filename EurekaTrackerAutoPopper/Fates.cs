@@ -232,6 +232,15 @@ public class Fates
         new(65, 63978, Territory.NorthHorn, new Vector3(63.066174f, 126.499985f, 3.8296576f), [], OccultAetheryte.NorthHornBaseCamp, 0), // The Forked Tower: Magic Extreme
     ];
 
+    public IEnumerable<Fate> GetBunnyForTerritory()
+        => BunnyFates.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType);
+
+    public IEnumerable<Fate> GetFatesForTerritory()
+        => OccultFates.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType);
+
+    public IEnumerable<Fate> GetCriticalEngagementForTerritory()
+        => OccultCriticalEncounters.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType);
+
     public unsafe void ReadLayout()
     {
         var locations = new Dictionary<uint, Fate>();
@@ -260,13 +269,13 @@ public class Fates
             {
                 foreach (var pair in layer.Value->Instances)
                 {
+                    // pair.Item2.Value->Id.Type == InstanceType.EventObject || pair.Item2.Value->Id.Type == InstanceType.Treasure
                     if (locations.ContainsKey(pair.Item1))
                     {
                         var pos = pair.Item2.Value->GetTransformImpl()->Translation;
                         var fate = locations[pair.Item1];
                         var mapPos = MapUtil.WorldToMap(new Vector2(pos.X, pos.Z));
                         Plugin.Log.Information($"{fate.Name}: {mapPos.X:F2}, {mapPos.Y:F2}");
-
                     }
                 }
             }
@@ -279,7 +288,10 @@ public class Fates
         if (local == null)
             return;
 
-        // var towerEngagement = Plugin.Fates.OccultCriticalEncounters[^1];
+        var towerEngagement = Plugin.Fates.OccultCriticalEncounters.Find(f =>
+            (Territory)Plugin.ClientState.TerritoryType == Territory.SouthHorn
+                ? f.FateId == 48
+                : f.FateId == 64) ?? Plugin.Fates.OccultCriticalEncounters[^2];
 
         var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         foreach (var bnuuy in BunnyFates.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType))
@@ -305,8 +317,8 @@ public class Fates
             bnuuy.DeathTime = bnuuy.LastSeenAlive;
 
             // Only increase if tower is not active
-            // if (!towerEngagement.Alive)
-            //     towerEngagement.KilledFates += 1;
+            if (!towerEngagement.Alive)
+                towerEngagement.KilledFates += 1;
         }
 
         foreach (var occultFate in OccultFates.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType))
@@ -339,8 +351,8 @@ public class Fates
             occultFate.DeathTime = occultFate.LastSeenAlive;
 
             // Only increase if tower is not active
-            // if (!towerEngagement.Alive)
-            //     towerEngagement.KilledFates += 1;
+            if (!towerEngagement.Alive)
+                towerEngagement.KilledFates += 1;
 
             // Fate has died, update our running tracker
             Plugin.TrackerHandler.UpdateRunningTracker();

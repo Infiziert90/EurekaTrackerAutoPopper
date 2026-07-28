@@ -114,9 +114,9 @@ public class TrackerHandler
             TrackerType = 1;
             Datacenter = (ushort)dcId;
 
-            EncounterHistory = JsonConvert.SerializeObject(fateManager.OccultCriticalEncounters.Select(f => new ShareableFate(f)));
-            FateHistory = JsonConvert.SerializeObject(fateManager.OccultFates.Select(f => new ShareableFate(f)));
-            PotHistory = JsonConvert.SerializeObject(fateManager.BunnyFates.TakeLast(2).Select(f => new ShareableFate(f)));
+            EncounterHistory = JsonConvert.SerializeObject(fateManager.GetCriticalEngagementForTerritory().Select(f => new ShareableFate(f)));
+            FateHistory = JsonConvert.SerializeObject(fateManager.GetFatesForTerritory().Select(f => new ShareableFate(f)));
+            PotHistory = JsonConvert.SerializeObject(fateManager.GetBunnyForTerritory().Select(f => new ShareableFate(f)));
 
             using var stream = new MemoryStream();
             using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
@@ -194,9 +194,9 @@ public class TrackerHandler
 
         public void Update(Fates fateManager)
         {
-            EncounterHistory = JsonConvert.SerializeObject(fateManager.OccultCriticalEncounters.Select(f => new ShareableFate(f)));
-            FateHistory = JsonConvert.SerializeObject(fateManager.OccultFates.Select(f => new ShareableFate(f)));
-            PotHistory = JsonConvert.SerializeObject(fateManager.BunnyFates.TakeLast(2).Select(f => new ShareableFate(f)));
+            EncounterHistory = JsonConvert.SerializeObject(fateManager.GetCriticalEngagementForTerritory().Select(f => new ShareableFate(f)));
+            FateHistory = JsonConvert.SerializeObject(fateManager.GetFatesForTerritory().Select(f => new ShareableFate(f)));
+            PotHistory = JsonConvert.SerializeObject(fateManager.GetBunnyForTerritory().Select(f => new ShareableFate(f)));
 
             LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         }
