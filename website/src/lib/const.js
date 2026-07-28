@@ -128,6 +128,7 @@ export const OCCULT_FATES = {
     1962: {
         name: {
             "en": "Rough Waters",
+            "zh": "涌潮海魔——纳木",
             "fr": "Défi : pas de vagues",
             "ja": "波起こしの海魔「ナンム」",
             "de": "Die Wogen glätten"
@@ -138,6 +139,7 @@ export const OCCULT_FATES = {
     1963: {
         name: {
             "en": "The Golden Guardian",
+            "zh": "古代怪石——金色石面",
             "fr": "Défi : tombe vingt-quatre carats",
             "ja": "金色の怪石「ゴールデンブロックス」",
             "de": "Brocken statt Barren"
@@ -148,6 +150,7 @@ export const OCCULT_FATES = {
     1964: {
         name: {
             "en": "King of the Crescent",
+            "zh": "悲鸣收集者——罗普罗斯",
             "fr": "Défi : la bête sadique",
             "ja": "悲鳴の蒐集者「ロプロス」",
             "de": "Geißel Kreszentias"
@@ -158,6 +161,7 @@ export const OCCULT_FATES = {
     1965: {
         name: {
             "en": "The Winged Terror",
+            "zh": "甲板清扫者——巨大鸟",
             "fr": "Défi : je fus zu",
             "ja": "甲板の掃除人「巨大鳥」",
             "de": "Dämonenvogel am Spieß"
@@ -168,6 +172,7 @@ export const OCCULT_FATES = {
     1966: {
         name: {
             "en": "An Unending Duty",
+            "zh": "神罚石兽——西西弗斯",
             "fr": "Défi : pierre de tonnerre",
             "ja": "神罰の石獣「シジフォス」",
             "de": "Los, Sisyphos, Donnerblitz!"
@@ -178,6 +183,7 @@ export const OCCULT_FATES = {
     1967: {
         name: {
             "en": "Brain Drain",
+            "zh": "进化的毒鸟——高等魔鸟",
             "fr": "Défi : le poison de l'évolution",
             "ja": "進化せし怪蛇「アドバンスドエイビス」",
             "de": "Aspho ... asphy ... scheintot!"
@@ -188,6 +194,7 @@ export const OCCULT_FATES = {
     1968: {
         name: {
             "en": "A Delicate Balance",
+            "zh": "湿度猎手——除湿之火",
             "fr": "Défi : humidité zéro",
             "ja": "湿度の狩手「ディヒューミディファイア」",
             "de": "Kampf um Leben und Schweiß"
@@ -198,6 +205,7 @@ export const OCCULT_FATES = {
     1969: {
         name: {
             "en": "Sworn to Soil",
+            "zh": "土壤守护者——癫泥怪",
             "fr": "Défi : rester de boue",
             "ja": "土壌の守り手「マッドマッド」",
             "de": "Kampf um Leben und Boden unter den Füßen"
@@ -208,6 +216,7 @@ export const OCCULT_FATES = {
     1970: {
         name: {
             "en": "A Prying Eye",
+            "zh": "监视之瞳——岛屿监视者",
             "fr": "Défi : un œil sur l'île",
             "ja": "監視の瞳「アイルオブザーバー」",
             "de": "Wächter des Lebens"
@@ -218,6 +227,7 @@ export const OCCULT_FATES = {
     1971: {
         name: {
             "en": "Fatal Allure",
+            "zh": "美丽的咒杀者——执行者",
             "fr": "Défi : la belle mort",
             "ja": "美しき呪殺者「イグゼクレーター」",
             "de": "Tückische Schönheit"
@@ -228,6 +238,7 @@ export const OCCULT_FATES = {
     1972: {
         name: {
             "en": "Serving Darkness",
+            "zh": "凶恶使魔——生命收割者",
             "fr": "Défi : collecte mortelle",
             "ja": "命の収奪者「ライフギャザラー」",
             "de": "Seelen sammeln für den bösen Zweck"
@@ -240,6 +251,7 @@ export const OCCULT_FATES = {
     1976: {
         name: {
             "en": "Pleading Pots",
+            "zh": "瑟瑟发抖的魔法罐",
             "fr": "Pas de pot pour les pots",
             "ja": "しあわせのマジックポット",
             "de": "Freude im Pott"
@@ -256,6 +268,7 @@ export const OCCULT_FATES = {
     1977: {
         name: {
             "en": "Persistent Pots",
+            "zh": "幸福的魔法罐",
             "fr": "Mauvais œil pour les pots",
             "ja": "カチカチのマジックポット",
             "de": "Wunder im Pott"
@@ -275,6 +288,7 @@ export const OCCULT_ENCOUNTERS = {
     33: {
         name: {
             "en": "Scourge of the Mind",
+            "zh": "脑髓爱好者——夺心魔",
             "fr": "Défi : l'encéphalophage",
             "ja": "脳髄愛好家「マインドフレイア」",
             "de": "Die Geißel des Geistes",
@@ -284,6 +298,7 @@ export const OCCULT_ENCOUNTERS = {
         spawn_type: true, // monster kill - Crescent Monk
         monster: {
             "en": "Crescent Monk",
+            "zh": "新月鬼鱼",
             "fr": "Moine de Lunule",
             "ja": "クレセント・モンク",
             "de": "Kreszentia-Mönch"
@@ -292,6 +307,7 @@ export const OCCULT_ENCOUNTERS = {
     34: {
         name: {
             "en": "The Black Regiment",
+            "zh": "黑色连队",
             "fr": "Plumes d'encre",
             "ja": "黒の連隊",
             "de": "Das schwarze Regiment",
@@ -303,6 +319,7 @@ export const OCCULT_ENCOUNTERS = {
     35: {
         name: {
             "en": "The Unbridled",
+            "zh": "愤怒的人造人——新月狂战士",
             "fr": "Défi : le rageux",
             "ja": "怒れる人造人間「クレセント・バーサーカー」",
             "de": "Zorn auf zwei Beinen",
@@ -314,6 +331,7 @@ export const OCCULT_ENCOUNTERS = {
     36: {
         name: {
             "en": "Crawling Death",
+            "zh": "潜影撕裂者——死亡爪",
             "fr": "Défi : face de griffes",
             "ja": "忍び寄る爪「デスクロー」",
             "de": "Das messerscharfe Schicksal",
@@ -325,6 +343,7 @@ export const OCCULT_ENCOUNTERS = {
     37: {
         name: {
             "en": "Calamity Bound",
+            "zh": "挣脱封印的大妖异——回廊恶魔",
             "fr": "Défi : Cloître à perpétuité",
             "ja": "封印大妖「クロイスターデーモン」",
             "de": "Das versiegelte Unheil",
@@ -334,6 +353,7 @@ export const OCCULT_ENCOUNTERS = {
         spawn_type: true, // monster kill - Crescent Inkstain
         monster: {
             "en": "Crescent Inkstain",
+            "zh": "新月墨渍",
             "fr": "Tache d'encre de Lunule",
             "ja": "クレセント・インクステイン",
             "de": "Kreszentia-Tintenfleck"
@@ -342,6 +362,7 @@ export const OCCULT_ENCOUNTERS = {
     38: {
         name: {
             "en": "Trial by Claw",
+            "zh": "拟造使魔——水晶龙",
             "fr": "Défi : écailles de cristal",
             "ja": "模造されしもの「水晶竜」",
             "de": "Tödliche Schönheit",
@@ -353,6 +374,7 @@ export const OCCULT_ENCOUNTERS = {
     39: {
         name: {
             "en": "From Times Bygone",
+            "zh": "双极的造物——神秘土偶",
             "fr": "Défi : idole surprise",
             "ja": "神秘の偶像「ミシカルアイドル」",
             "de": "Von uralten Magien",
@@ -362,6 +384,7 @@ export const OCCULT_ENCOUNTERS = {
         spawn_type: true, // monster kill - Crescent Byblos
         monster: {
             "en": "Crescent Byblos",
+            "zh": "新月比布鲁斯",
             "fr": "Byblos de Lunule",
             "ja": "クレセント・ビブロス",
             "de": "Kreszentia-Byblos"
@@ -370,6 +393,7 @@ export const OCCULT_ENCOUNTERS = {
     40: {
         name: {
             "en": "Company of Stone",
+            "zh": "石制骑士团",
             "fr": "L'armée des argileux",
             "ja": "石造りの守護騎士たち",
             "de": "Die steinerne Staffel",
@@ -381,6 +405,7 @@ export const OCCULT_ENCOUNTERS = {
     41: {
         name: {
             "en": "Shark Attack",
+            "zh": "传说中的鲨鱼——尼姆瓣齿鲨",
             "fr": "Défi : homo selachus",
             "ja": "伝説の鮫「ニーム・ペタロドゥス」",
             "de": "Jäger aus alten Legenden",
@@ -390,6 +415,7 @@ export const OCCULT_ENCOUNTERS = {
         spawn_type: true, // monster kill - Crescent Petalodite
         monster: {
             "en": "Crescent Petalodite",
+            "zh": "新月小瓣齿鲨",
             "fr": "Petalodus inférieur de Lunule",
             "ja": "クレセント・レッサーペタロドゥス",
             "de": "Niederer Kreszentia-Petalodus"
@@ -398,6 +424,7 @@ export const OCCULT_ENCOUNTERS = {
     42: {
         name: {
             "en": "On the Hunt",
+            "zh": "双足狮人——跃立狮",
             "fr": "Défi : à rugir debout",
             "ja": "二足の獅子「ランパントライオン」",
             "de": "Gefürchtetes Gebrüll",
@@ -407,6 +434,7 @@ export const OCCULT_ENCOUNTERS = {
         spawn_type: true, // monster kill - Crescent Fan
         monster: {
             "en": "Crescent Fan",
+            "zh": "新月风扇",
             "fr": "Ventilateur de Lunule",
             "ja": "クレセント・ファン",
             "de": "Kreszentia-Ventilator"
@@ -415,6 +443,7 @@ export const OCCULT_ENCOUNTERS = {
     43: {
         name: {
             "en": "With Extreme Prejudice",
+            "zh": "防卫指令",
             "fr": "Cordon de sécurité",
             "ja": "セキュリティ・コマンドー",
             "de": "Mit absoluter Sicherheit",
@@ -426,6 +455,7 @@ export const OCCULT_ENCOUNTERS = {
     44: {
         name: {
             "en": "Noise Complaint",
+            "zh": "厌鸟巨兽——进化加鲁拉",
             "fr": "Défi : mammouth fâché",
             "ja": "鳥嫌いの巨獣「ネオガルラ」",
             "de": "Keine Gnade dem Gefieder",
@@ -435,6 +465,7 @@ export const OCCULT_ENCOUNTERS = {
         spawn_type: true, // monster kill - Crescent Garula
         monster: {
             "en": "Crescent Garula",
+            "zh": "新月加鲁拉",
             "fr": "Garula de Lunule",
             "ja": "クレセント・ガルラ",
             "de": "Kreszentia-Garula"
@@ -443,6 +474,7 @@ export const OCCULT_ENCOUNTERS = {
     45: {
         name: {
             "en": "Cursed Concern",
+            "zh": "贩卖诅咒的商贩——金钱龟",
             "fr": "Défi : être aux pièces",
             "ja": "呪いの商亀「コイントートス」",
             "de": "Das Feilschen ums Verfluchte",
@@ -454,6 +486,7 @@ export const OCCULT_ENCOUNTERS = {
     46: {
         name: {
             "en": "Eternal Watch",
+            "zh": "城塞守卫——复原狮像",
             "fr": "Défi : comme un lion nouveau",
             "ja": "復元された獅子像「リペアドライオン」",
             "de": "Ausgebessert und verbessert",
@@ -465,6 +498,7 @@ export const OCCULT_ENCOUNTERS = {
     47: {
         name: {
             "en": "Flame of Dusk",
+            "zh": "昏暗妖魂——鬼火苗",
             "fr": "Défi : les ailes de pierre",
             "ja": "昏き篝火「ヒンキーパンク」",
             "de": "Das finsterste Feuer",
@@ -478,6 +512,7 @@ export const OCCULT_ENCOUNTERS = {
     48: {
         name: {
             "en": "The Forked Tower: Blood",
+            "zh": "两歧塔力之塔",
             "fr": "Tour fourchue de la Force",
             "ja": "フォークタワー：力の塔",
             "de": "Der Turm des Blutes"
@@ -493,6 +528,7 @@ export const ITEM = {
     47744: {
         name: {
             "en": "Azurite Demiatma",
+            "zh": "青色半魂晶",
             "fr": "Demi-âtma saphir",
             "ja": "青晶のデミアートマ",
             "de": "Demi-Atma Azurit"
@@ -502,6 +538,7 @@ export const ITEM = {
     47745: {
         name: {
             "en": "Verdigris Demiatma",
+            "zh": "碧色半魂晶",
             "fr": "Demi-âtma turquoise",
             "ja": "碧晶のデミアートマ",
             "de": "Demi-Atma Verdigris",
@@ -511,6 +548,7 @@ export const ITEM = {
     47746: {
         name: {
             "en": "Malachite Demiatma",
+            "zh": "绿色半魂晶",
             "fr": "Demi-âtma émeraude",
             "ja": "緑晶のデミアートマ",
             "de": "Demi-Atma Malachit",
@@ -520,6 +558,7 @@ export const ITEM = {
     47747: {
         name: {
             "en": "Realgar Demiatma",
+            "zh": "橙色半魂晶",
             "fr": "Demi-âtma corail",
             "ja": "橙晶のデミアートマ",
             "de": "Demi-Atma Realgar"
@@ -529,6 +568,7 @@ export const ITEM = {
     47748: {
         name: {
             "en": "Caput Mortuum Demiatma",
+            "zh": "紫色半魂晶",
             "fr": "Demi-âtma améthyste",
             "ja": "紫晶のデミアートマ",
             "de": "Demi-Atma Caput Mortuum"
@@ -538,6 +578,7 @@ export const ITEM = {
     47749: {
         name: {
             "en": "Orpiment Demiatma",
+            "zh": "黄色半魂晶",
             "fr": "Demi-âtma ambre",
             "ja": "黄晶のデミアートマ",
             "de": "Demi-Atma Orpiment"
@@ -549,6 +590,7 @@ export const ITEM = {
     47728: {
         name: {
             "en": "Notes on the Cloister Demon",
+            "zh": "调查记录：回廊恶魔",
             "fr": "Article sur le démon du Cloître",
             "ja": "探査記録:クロイスターデーモン",
             "de": "Chronikeintrag „Klosterdämon“"
@@ -558,6 +600,7 @@ export const ITEM = {
     47729: {
         name: {
             "en": "Notes on the Mythic Idol",
+            "zh": "调查记录：神秘土偶",
             "fr": "Article sur l'idole mythique",
             "ja": "探査記録:ミシカルアイドル",
             "de": "Chronikeintrag „Mystisches Idol“"
@@ -567,6 +610,7 @@ export const ITEM = {
     47730: {
         name: {
             "en": "Notes on the Crescent Berserker",
+            "zh": "调查记录：新月狂战士",
             "fr": "Article sur le berserker de Lunule",
             "ja": "探査記録:クレセント・バーサーカー",
             "de": "Chronikeintrag „Kreszenter Berserker“"
@@ -576,6 +620,7 @@ export const ITEM = {
     47731: {
         name: {
             "en": "Notes on the Nymian Petalodus",
+            "zh": "调查记录：尼姆瓣齿鲨",
             "fr": "Article sur le petalodus de Nym",
             "ja": "探査記録:ニーム・ペタロドゥス",
             "de": "Chronikeintrag „Nymeischer Petalodus“"
@@ -585,6 +630,7 @@ export const ITEM = {
     47732: {
         name: {
             "en": "Notes on Black Chocobos",
+            "zh": "调查记录：黑陆行鸟",
             "fr": "Article sur les chocobos noirs",
             "ja": "探査記録:黒チョコボ",
             "de": "Chronikeintrag „Schwarze Chocobos“"
@@ -594,6 +640,7 @@ export const ITEM = {
     47733: {
         name: {
             "en": "Notes on the Trade Tortoise",
+            "zh": "调查记录：金钱龟",
             "fr": "Article sur la tortue à pièces",
             "ja": "探査記録:コイントートス",
             "de": "Chronikeintrag „Münzkröte“"
@@ -603,6 +650,7 @@ export const ITEM = {
     47734: {
         name: {
             "en": "Notes on the Demon Tablet",
+            "zh": "调查记录：恶魔板",
             "fr": "Article sur la muraille démonique",
             "ja": "探査記録:デモンズ・タブレット",
             "de": "Chronikeintrag „Dämonentafel“"
@@ -612,6 +660,7 @@ export const ITEM = {
     47735: {
         name: {
             "en": "Notes on the Dead Stars",
+            "zh": "调查记录：星头三兄弟",
             "fr": "Article sur le trio de la Fosse",
             "ja": "探査記録:星頭の三人組",
             "de": "Chronikeintrag „Astronomisches Trio“"
@@ -621,6 +670,7 @@ export const ITEM = {
     47736: {
         name: {
             "en": "Notes on the Marble Dragon",
+            "zh": "调查记录：大理石龙",
             "fr": "Article sur le dragon marmoréen",
             "ja": "探査記録:マーブルドラゴン",
             "de": "Chronikeintrag „Marmordrache“"
@@ -630,6 +680,7 @@ export const ITEM = {
     47737: {
         name: {
             "en": "Notes on Magitaur",
+            "zh": "调查记录：魔陶洛斯",
             "fr": "Article sur le magitaure",
             "ja": "探査記録:マギタウロス",
             "de": "Chronikeintrag „Magitaurus“"
@@ -639,6 +690,7 @@ export const ITEM = {
     47738: {
         name: {
             "en": "Notes on Persistent Pots",
+            "zh": "调查记录：撒娇罐",
             "fr": "Article sur les pots persistants",
             "ja": "探査記録:おねだりポット",
             "de": "Chronikeintrag „Wunderpott“"
@@ -650,6 +702,7 @@ export const ITEM = {
     47739: {
         name: {
             "en": "Sanguine Cipher",
+            "zh": "魔纹启动凭证：力之塔",
             "fr": "Sceau arcanique de la Force",
             "ja": "魔紋起動証:力の塔",
             "de": "Arkansiegel des Blutes"
@@ -659,6 +712,7 @@ export const ITEM = {
     47740: {
         name: {
             "en": "Occult Coffer",
+            "zh": "辅助道具：古旧的钱箱",
             "fr": "Boîte de monnaie abîmée",
             "ja": "サポートアイテム:古びた銭箱",
             "de": "Alte Geldkiste (Phantomgegenstand)"
@@ -668,6 +722,7 @@ export const ITEM = {
     47741: {
         name: {
             "en": "Occult Potion",
+            "zh": "魔恢复药",
             "fr": "Magi potion",
             "ja": "マギ・ポーション",
             "de": "Kreszenter Trank"
@@ -677,6 +732,7 @@ export const ITEM = {
     47868: {
         name: {
             "en": "Sanguinite",
+            "zh": "力之魔石",
             "fr": "Gemme mystique de la Force",
             "ja": "力の魔石",
             "de": "Blutstein"
@@ -686,6 +742,7 @@ export const ITEM = {
     48008: {
         name: {
             "en": "Voidsent Contract",
+            "zh": "大妖异的契约书",
             "fr": "Parchemin abîmé",
             "ja": "大妖異の契約書",
             "de": "Nichts­gesand­ten-Paktschrift"
@@ -697,6 +754,7 @@ export const ITEM = {
     47751: {
         name: {
             "en": "Berserker's Soul Shard",
+            "zh": "灵魂碎晶：狂战士",
             "fr": "Éclat d'âme de berserker",
             "ja": "ソウルシャード:バーサーカー",
             "de": "Berserker-Seelensplitter"
@@ -706,6 +764,7 @@ export const ITEM = {
     47752: {
         name: {
             "en": "Ranger's Soul Shard",
+            "zh": "灵魂碎晶：猎人",
             "fr": "Éclat d'âme de rôdeur",
             "ja": "ソウルシャード:狩人",
             "de": "Jäger-Seelensplitter"
@@ -715,6 +774,7 @@ export const ITEM = {
     47757: {
         name: {
             "en": "Oracle's Soul Shard",
+            "zh": "灵魂碎晶：预言师",
             "fr": "Éclat d'âme de devin",
             "ja": "ソウルシャード:予言士",
             "de": "Seher-Seelensplitter"
@@ -726,6 +786,7 @@ export const ITEM = {
     49826: {
         name: {
             "en": "Occult Earrings of Blood",
+            "zh": "力之新月魔耳饰",
             "fr": "Boucles d'oreilles de combattant magi de Lunule",
             "ja": "クレセントマギ・ファイターイヤリング",
             "de": "Kreszentia-Ohrringe des Kriegers"
@@ -735,6 +796,7 @@ export const ITEM = {
     49827: {
         name: {
             "en": "Occult Necklace of Blood",
+            "zh": "力之新月魔项链",
             "fr": "Collier de combattant magi de Lunule",
             "ja": "クレセントマギ・ファイターネックレス",
             "de": "Kreszentia-Halsband des Kriegers"
@@ -744,6 +806,7 @@ export const ITEM = {
     49828: {
         name: {
             "en": "Occult Bracelet of Blood",
+            "zh": "力之新月魔手镯",
             "fr": "Bracelet de combattant magi de Lunule",
             "ja": "クレセントマギ・ファイターブレスレット",
             "de": "Kreszentia-Armband des Kriegers"
@@ -753,6 +816,7 @@ export const ITEM = {
     49831: {
         name: {
             "en": "Occult Bracelet of Magic",
+            "zh": "魔之新月魔手镯",
             "fr": "Boucles d'oreilles de mage magi de Lunule",
             "ja": "クレセントマギ・ソーサラーイヤリング",
             "de": "Kreszentia-Ohrringe des Magiers"
@@ -762,6 +826,7 @@ export const ITEM = {
     49832: {
         name: {
             "en": "Occult Bracelet of Magic",
+            "zh": "魔之新月魔手镯",
             "fr": "Collier de mage magi de Lunule",
             "ja": "クレセントマギ・ソーサラーネックレス",
             "de": "Kreszentia-Halsband des Magiers"
@@ -771,6 +836,7 @@ export const ITEM = {
     49833: {
         name: {
             "en": "Occult Bracelet of Magic",
+            "zh": "魔之新月魔手镯",
             "fr": "Bracelet de mage magi de Lunule",
             "ja": "クレセントマギ・ソーサラーブレスレット",
             "de": "Kreszentia-Armband des Magiers"
