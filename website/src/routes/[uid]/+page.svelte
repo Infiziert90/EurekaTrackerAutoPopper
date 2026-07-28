@@ -2,11 +2,12 @@
     import { onDestroy, onMount } from "svelte";
     import { page } from "$app/stores";
     import { base } from "$app/paths";
+    import { goto } from "$app/navigation";
     import { BASE_URL, API_HEADERS, DATACENTER_NAMES, ITEM } from "$lib/const";
     import { getZone, isEditable, isKnownZone, DEFAULT_TRACKER_TYPE } from "$lib/zones";
     import { currentLanguage } from "$lib/stores";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull, Link, Clipboard } from "@lucide/svelte";
-    import toast, {Toaster} from 'svelte-5-french-toast'
+    import toast from 'svelte-5-french-toast'
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
     import ClickToCopyButton from "../../components/ClickToCopyButton.svelte";
     import ItemIcon from "../../components/ItemIcon.svelte";
@@ -251,6 +252,13 @@
             trackerType = trackerResults.tracker_type || DEFAULT_TRACKER_TYPE;
             territory = trackerResults.territory ?? null;
 
+            // territory defaults to 0 when the uploading plugin is too old to set it - send the user back to start fresh
+            if (territory === 0) {
+                toast.error("You're on a legacy tracker. Please start up a new one.");
+                await goto(`${base}/`);
+                return;
+            }
+
             // Resolved locally rather than read off the derived `zone`, so the parsing
             // below cannot run against a stale zone.
             const currentZone = getZone(territory);
@@ -421,7 +429,6 @@
 <svelte:head>
 	<title>Occult Tracker - {uid}</title>
 </svelte:head>
-<Toaster />
 <div
     class="flex flex-col h-full w-full {isLoading && trackerResults.length === 0 || error || trackerResults.length === 0 ? 'justify-center' : ''}"
 >

@@ -187,8 +187,9 @@
             }
 
             const data = await response.json();
-            // filter out trackers with a datacenter field set to 0
-            return data.filter(tracker => tracker.datacenter !== 0);
+            // filter out trackers with a datacenter field set to 0, and trackers from
+            // outdated plugin versions that never set territory (defaults to 0)
+            return data.filter(tracker => tracker.datacenter !== 0 && tracker.territory !== 0);
         } catch (error) {
             console.error("Error fetching recent trackers:", error);
             throw error;
