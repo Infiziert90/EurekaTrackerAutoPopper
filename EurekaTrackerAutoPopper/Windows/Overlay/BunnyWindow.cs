@@ -49,7 +49,7 @@ public class BunnyWindow : Window, IDisposable
         if (!InOccult)
             return null;
 
-        var bunnies = Plugin.Fates.BunnyFates.Where(bnuuuy => bnuuuy.Territory == (Territory)Plugin.ClientState.TerritoryType).ToArray();
+        var bunnies = Plugin.Fates.GetBunnyForTerritory().ToArray();
         if (bunnies.Length == 0)
             return null;
 
@@ -75,7 +75,7 @@ public class BunnyWindow : Window, IDisposable
 
     public override void Draw()
     {
-        var bunnies = Plugin.Fates.BunnyFates.Where(bnuuuy => bnuuuy.Territory == (Territory)Plugin.ClientState.TerritoryType).ToArray();
+        var bunnies = Plugin.Fates.GetBunnyForTerritory().ToArray();
         if (InEureka && Plugin.Configuration.OnlyEasyBunny)
             bunnies = bunnies[..1];
 

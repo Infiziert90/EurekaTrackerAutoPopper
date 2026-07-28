@@ -58,8 +58,7 @@ public class PotDtrBar : IDisposable
 
         if (displayFate.Alive)
         {
-            var activeFateDirection = displayFate.FateId == 1976 ? "North" : "South";
-            DtrEntry.Text = $"Pot: Active ({activeFateDirection})";
+            DtrEntry.Text = $"Pot: Active{displayFate.Position}";
             DtrEntry.Shown = true;
             return;
         }
@@ -76,10 +75,9 @@ public class PotDtrBar : IDisposable
         if (respawnTime.TotalSeconds < 0)
             respawnTime = TimeSpan.Zero;
 
-        var direction = displayFate.FateId == 1976 ? "North" : "South";
         var timeString = Utils.TimeToClockFormat(respawnTime);
 
-        DtrEntry.Text = $"Next pot: {timeString} ({direction})";
+        DtrEntry.Text = $"Next pot: {timeString}{displayFate.Position}";
         DtrEntry.Shown = true;
     }
 
