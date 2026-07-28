@@ -36,7 +36,7 @@ public class FastSwitchOverlay : Window, IDisposable
 
         try
         {
-            if (Plugin.ClientState.TerritoryType != 1252 || AgentMap.Instance()->SelectedMapId != 967)
+            if (!TerritoryHelper.PlayerInOccult() || !TerritoryHelper.IsOccultMap(AgentMap.Instance()->SelectedMapId))
                 return;
 
             var mapBaseNode = Plugin.GameGui.GetAddonByName("AreaMap");

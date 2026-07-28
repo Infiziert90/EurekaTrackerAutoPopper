@@ -7,81 +7,151 @@ public static class OccultChests
 {
     private const double InRange = 80.0f;
 
-    public static readonly Dictionary<Territory, List<(Vector3, uint)>> TreasurePosition = new()
+    public static readonly Dictionary<Territory, List<(Vector3 Position, TreasureRarity Rarity, Map Map)>> TreasurePosition = new()
     {
-        { Territory.SouthHorn, [
-            (new Vector3(-283.98572f, 115.983765f, 377.03516f), 1597), // Counter: 861
-            (new Vector3(277.7904f, 103.77649f, 241.90125f), 1596), // Counter: 806
-            (new Vector3(-401.66327f, 85.03845f, 332.5398f), 1596), // Counter: 697
-            (new Vector3(-372.67108f, 74.99805f, 527.4281f), 1596), // Counter: 682
-            (new Vector3(609.61304f, 107.98804f, 117.2655f), 1596), // Counter: 601
-            (new Vector3(256.1532f, 73.16687f, 492.3628f), 1596), // Counter: 592
-            (new Vector3(870.6644f, 95.68933f, -388.35742f), 1596), // Counter: 583
-            (new Vector3(-825.1621f, 2.9754639f, -832.2728f), 1597), // Counter: 578
-            (new Vector3(697.322f, 69.99304f, 597.9247f), 1597), // Counter: 575
-            (new Vector3(666.5292f, 79.11792f, -480.36932f), 1596), // Counter: 559
-            (new Vector3(-444.11383f, 90.684326f, 26.230225f), 1596), // Counter: 548
-            (new Vector3(642.96936f, 69.99304f, 407.79736f), 1596), // Counter: 542
-            (new Vector3(-645.68555f, 202.99072f, 710.17017f), 1597), // Counter: 540
-            (new Vector3(779.0187f, 96.08594f, -256.2448f), 1596), // Counter: 538
-            (new Vector3(-118.97461f, 4.989685f, -708.4612f), 1596), // Counter: 520
-            (new Vector3(726.28357f, 108.140625f, -67.91791f), 1596), // Counter: 492
-            (new Vector3(596.45984f, 70.29822f, 622.76636f), 1596), // Counter: 485
-            (new Vector3(294.8805f, 56.076904f, 640.2228f), 1596), // Counter: 476
-            (new Vector3(-491.02008f, 2.9754639f, -529.59485f), 1596), // Counter: 468
-            (new Vector3(770.7484f, 107.98804f, -143.5722f), 1597), // Counter: 466
-            (new Vector3(471.18323f, 70.29822f, 530.022f), 1596), // Counter: 463
-            (new Vector3(788.8761f, 120.378296f, 109.391846f), 1596), // Counter: 456
-            (new Vector3(-648.0049f, 74.99805f, 403.95203f), 1596), // Counter: 420
-            (new Vector3(55.283447f, 111.31445f, -289.0822f), 1596), // Counter: 417
-            (new Vector3(-487.11377f, 98.527466f, -205.46277f), 1596), // Counter: 415
-            (new Vector3(354.1161f, 95.65869f, -288.92963f), 1596), // Counter: 412
-            (new Vector3(35.721313f, 65.11023f, 648.9509f), 1596), // Counter: 411
-            (new Vector3(-197.19238f, 74.906494f, 618.3412f), 1596), // Counter: 410
-            (new Vector3(-729.427f, 4.989685f, -724.81885f), 1596), // Counter: 409
-            (new Vector3(433.70715f, 70.29822f, 683.52783f), 1596), // Counter: 404
-            (new Vector3(517.7539f, 67.88733f, 236.1333f), 1597), // Counter: 402
-            (new Vector3(-756.8322f, 76.55444f, 97.3678f), 1596), // Counter: 393
-            (new Vector3(475.73047f, 95.994385f, -87.08331f), 1596), // Counter: 387
-            (new Vector3(-661.7075f, 2.9754639f, -579.4919f), 1596), // Counter: 367
-            (new Vector3(-884.123f, 3.7994385f, -682.0325f), 1596), // Counter: 362
-            (new Vector3(-343.16016f, 52.32312f, -382.1317f), 1596), // Counter: 357
-            (new Vector3(-550.13354f, 106.98096f, 627.74084f), 1596), // Counter: 352
-            (new Vector3(-158.64807f, 98.61902f, -132.73828f), 1596), // Counter: 351
-            (new Vector3(-729.9153f, 116.53308f, -79.05707f), 1596), // Counter: 343
-            (new Vector3(142.1073f, 16.403442f, -574.0597f), 1596), // Counter: 338
-            (new Vector3(-451.6823f, 2.9754639f, -775.5703f), 1596), // Counter: 336
-            (new Vector3(-225.02484f, 74.99805f, 804.9896f), 1596), // Counter: 335
-            (new Vector3(-856.9619f, 68.833374f, -93.15637f), 1596), // Counter: 332
-            (new Vector3(-682.7955f, 135.60681f, -195.26971f), 1597), // Counter: 330
-            (new Vector3(835.08044f, 69.99304f, 699.09204f), 1596), // Counter: 321
-            (new Vector3(-140.45929f, 22.354431f, -414.2672f), 1596), // Counter: 310
-            (new Vector3(140.97803f, 55.98523f, 770.99243f), 1596), // Counter: 310
-            (new Vector3(8.987488f, 103.196655f, 426.96265f), 1596), // Counter: 303
-            (new Vector3(386.92297f, 96.787964f, -451.37714f), 1596), // Counter: 300
-            (new Vector3(-676.41724f, 170.9773f, 640.37524f), 1596), // Counter: 296
-            (new Vector3(245.59387f, 109.11719f, -18.173523f), 1596), // Counter: 285
-            (new Vector3(826.688f, 121.99585f, 434.9889f), 1596), // Counter: 273
-            (new Vector3(-713.80176f, 62.05847f, 192.61462f), 1596), // Counter: 271
-            (new Vector3(-25.68097f, 102.22009f, 150.16394f), 1596), // Counter: 263
-            (new Vector3(-798.24524f, 105.57703f, -310.5669f), 1597), // Counter: 255
-            (new Vector3(490.40967f, 62.45508f, -590.56995f), 1596), // Counter: 252
-            (new Vector3(-256.88562f, 120.98877f, 125.078125f), 1596), // Counter: 252
-            (new Vector3(-585.2903f, 4.989685f, -864.8356f), 1596), // Counter: 251
-            (new Vector3(-716.1517f, 170.9773f, 794.4304f), 1596), // Counter: 243
-            (new Vector3(-767.4525f, 115.61755f, -235.00421f), 1596), // Counter: 225
-            (new Vector3(-600.27466f, 138.99438f, 802.6398f), 1596), // Counter: 220
-            (new Vector3(617.08997f, 66.300415f, -703.8834f), 1596), // Counter: 212
-            (new Vector3(-729.5491f, 106.98096f, 561.1504f), 1596), // Counter: 208
-            (new Vector3(869.29126f, 109.97168f, 581.2008f), 1596), // Counter: 207
-            (new Vector3(-394.88824f, 106.73682f, 175.43298f), 1596), // Counter: 195
-            (new Vector3(-784.7562f, 138.99438f, 699.7634f), 1596), // Counter: 195
-            (new Vector3(381.73486f, 22.171326f, -743.64844f), 1596), // Counter: 150
-            (new Vector3(-680.5371f, 104.844604f, -354.78754f), 1596), // Counter: 120
+        { Territory.SouthHorn,
+            [
+                (new Vector3(-283.98572f, 115.983765f, 377.03516f), TreasureRarity.Silver, Map.SouthHorn), // Counter: 861
+                (new Vector3(277.7904f, 103.77649f, 241.90125f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 806
+                (new Vector3(-401.66327f, 85.03845f, 332.5398f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 697
+                (new Vector3(-372.67108f, 74.99805f, 527.4281f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 682
+                (new Vector3(609.61304f, 107.98804f, 117.2655f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 601
+                (new Vector3(256.1532f, 73.16687f, 492.3628f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 592
+                (new Vector3(870.6644f, 95.68933f, -388.35742f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 583
+                (new Vector3(-825.1621f, 2.9754639f, -832.2728f), TreasureRarity.Silver, Map.SouthHorn), // Counter: 578
+                (new Vector3(697.322f, 69.99304f, 597.9247f), TreasureRarity.Silver, Map.SouthHorn), // Counter: 575
+                (new Vector3(666.5292f, 79.11792f, -480.36932f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 559
+                (new Vector3(-444.11383f, 90.684326f, 26.230225f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 548
+                (new Vector3(642.96936f, 69.99304f, 407.79736f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 542
+                (new Vector3(-645.68555f, 202.99072f, 710.17017f), TreasureRarity.Silver, Map.SouthHorn), // Counter: 540
+                (new Vector3(779.0187f, 96.08594f, -256.2448f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 538
+                (new Vector3(-118.97461f, 4.989685f, -708.4612f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 520
+                (new Vector3(726.28357f, 108.140625f, -67.91791f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 492
+                (new Vector3(596.45984f, 70.29822f, 622.76636f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 485
+                (new Vector3(294.8805f, 56.076904f, 640.2228f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 476
+                (new Vector3(-491.02008f, 2.9754639f, -529.59485f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 468
+                (new Vector3(770.7484f, 107.98804f, -143.5722f), TreasureRarity.Silver, Map.SouthHorn), // Counter: 466
+                (new Vector3(471.18323f, 70.29822f, 530.022f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 463
+                (new Vector3(788.8761f, 120.378296f, 109.391846f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 456
+                (new Vector3(-648.0049f, 74.99805f, 403.95203f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 420
+                (new Vector3(55.283447f, 111.31445f, -289.0822f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 417
+                (new Vector3(-487.11377f, 98.527466f, -205.46277f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 415
+                (new Vector3(354.1161f, 95.65869f, -288.92963f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 412
+                (new Vector3(35.721313f, 65.11023f, 648.9509f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 411
+                (new Vector3(-197.19238f, 74.906494f, 618.3412f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 410
+                (new Vector3(-729.427f, 4.989685f, -724.81885f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 409
+                (new Vector3(433.70715f, 70.29822f, 683.52783f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 404
+                (new Vector3(517.7539f, 67.88733f, 236.1333f), TreasureRarity.Silver, Map.SouthHorn), // Counter: 402
+                (new Vector3(-756.8322f, 76.55444f, 97.3678f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 393
+                (new Vector3(475.73047f, 95.994385f, -87.08331f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 387
+                (new Vector3(-661.7075f, 2.9754639f, -579.4919f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 367
+                (new Vector3(-884.123f, 3.7994385f, -682.0325f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 362
+                (new Vector3(-343.16016f, 52.32312f, -382.1317f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 357
+                (new Vector3(-550.13354f, 106.98096f, 627.74084f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 352
+                (new Vector3(-158.64807f, 98.61902f, -132.73828f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 351
+                (new Vector3(-729.9153f, 116.53308f, -79.05707f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 343
+                (new Vector3(142.1073f, 16.403442f, -574.0597f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 338
+                (new Vector3(-451.6823f, 2.9754639f, -775.5703f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 336
+                (new Vector3(-225.02484f, 74.99805f, 804.9896f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 335
+                (new Vector3(-856.9619f, 68.833374f, -93.15637f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 332
+                (new Vector3(-682.7955f, 135.60681f, -195.26971f), TreasureRarity.Silver, Map.SouthHorn), // Counter: 330
+                (new Vector3(835.08044f, 69.99304f, 699.09204f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 321
+                (new Vector3(-140.45929f, 22.354431f, -414.2672f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 310
+                (new Vector3(140.97803f, 55.98523f, 770.99243f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 310
+                (new Vector3(8.987488f, 103.196655f, 426.96265f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 303
+                (new Vector3(386.92297f, 96.787964f, -451.37714f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 300
+                (new Vector3(-676.41724f, 170.9773f, 640.37524f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 296
+                (new Vector3(245.59387f, 109.11719f, -18.173523f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 285
+                (new Vector3(826.688f, 121.99585f, 434.9889f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 273
+                (new Vector3(-713.80176f, 62.05847f, 192.61462f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 271
+                (new Vector3(-25.68097f, 102.22009f, 150.16394f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 263
+                (new Vector3(-798.24524f, 105.57703f, -310.5669f), TreasureRarity.Silver, Map.SouthHorn), // Counter: 255
+                (new Vector3(490.40967f, 62.45508f, -590.56995f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 252
+                (new Vector3(-256.88562f, 120.98877f, 125.078125f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 252
+                (new Vector3(-585.2903f, 4.989685f, -864.8356f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 251
+                (new Vector3(-716.1517f, 170.9773f, 794.4304f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 243
+                (new Vector3(-767.4525f, 115.61755f, -235.00421f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 225
+                (new Vector3(-600.27466f, 138.99438f, 802.6398f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 220
+                (new Vector3(617.08997f, 66.300415f, -703.8834f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 212
+                (new Vector3(-729.5491f, 106.98096f, 561.1504f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 208
+                (new Vector3(869.29126f, 109.97168f, 581.2008f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 207
+                (new Vector3(-394.88824f, 106.73682f, 175.43298f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 195
+                (new Vector3(-784.7562f, 138.99438f, 699.7634f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 195
+                (new Vector3(381.73486f, 22.171326f, -743.64844f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 150
+                (new Vector3(-680.5371f, 104.844604f, -354.78754f), TreasureRarity.Bronze, Map.SouthHorn), // Counter: 120
             ] // 69
         },
         {
-            Territory.NorthHorn, [
+            Territory.NorthHorn,
+            [
+                (new Vector3(383.3138f, 33f, -175.6476f), TreasureRarity.Silver, Map.NorthHorn),
+                (new Vector3(-2.305847f, 66.69136f, -814.9053f), TreasureRarity.Silver, Map.NorthHorn),
+                (new Vector3(-22.66858f, 42.08691f, 628.9946f), TreasureRarity.Silver, Map.NorthHorn),
+                (new Vector3(-633.6964f, 82.71846f, -146.0046f), TreasureRarity.Silver, Map.NorthHorn),
+                (new Vector3(634.7919f, 60.51484f, -831.787f), TreasureRarity.Silver, Map.NorthHorn),
+                (new Vector3(-645.4403f, 160.0992f, 967.9435f), TreasureRarity.Silver, Map.NorthHorn),
+                (new Vector3(-815.8082f, -21.83485f, -699.3701f), TreasureRarity.Silver, Map.NorthHorn),
+                (new Vector3(223.6532f, -161.8637f, -30.64362f), TreasureRarity.Silver, Map.NorthSubterrane),
+                (new Vector3(676.9965f, 190.9779f, 957.4468f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(812.0001f, 192f, 669f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(673.7398f, 161.1653f, 729.666f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(758.147f, 130f, 506.8132f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(246.2266f, 66.54174f, 676.6658f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(719.3481f, 69.65454f, 268.3043f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(449.408f, 0.1465552f, 105.2345f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(649.5436f, 46.24511f, -157.7742f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(478.4506f, 12.4224f, -202.9711f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(254.7441f, 36.93214f, -605f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-26f, 0.2318999f, -437.6877f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-265.7608f, 30.17087f, -439.5194f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-232.4192f, 53.23654f, -719.9717f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(147.8688f, 61f, -868.7524f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(658.8088f, 66.1263f, -364.6757f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(950.2007f, 74.00013f, -358.9755f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(658.7231f, 60.52044f, -552.306f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(389.5362f, 60.68167f, -733.0182f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(77.06985f, 21.19984f, 536.2695f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-12.09888f, 66.65052f, 773.8625f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-278.0559f, 47.78407f, 567.9728f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-436.4424f, 0.2028036f, 166.2191f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-256.9473f, 100.6667f, 812.1967f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-504.0914f, 85.75282f, 758.3212f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-612.2136f, 66.98989f, 578.548f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-775.8944f, 70.7192f, 377.1531f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-631.7785f, 78.25452f, 240f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-923.1418f, 113.2651f, 197.9475f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-590.2075f, 87.97915f, -7f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-878.9666f, 13.13452f, -314.2021f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-581.4894f, 40.91439f, -257.4107f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-254.1409f, 1.820912f, -266.3119f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-707.3763f, 41.58638f, -396.9889f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-697.2709f, 34.89849f, -565.0217f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-439.5511f, 43.04438f, -558.4492f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-525.7809f, 46.85732f, -783.4683f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(85.59845f, 3.302996f, -281.1396f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(43.7818f, 2.454146f, -108.1916f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-168.2038f, 3.379924f, -153.4577f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-162.0424f, 3.589863f, 98.44962f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(633.1317f, 60.64236f, -910.2271f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(639.049f, 60.62531f, -698.7261f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(815.4435f, 60.5542f, -657.3135f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(865.4569f, 70.21528f, -874.0874f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-592f, 160.1012f, 767.6685f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-699.8373f, 160f, 926.3793f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-857.7925f, 159.85f, 772.2366f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-800.3965f, 157.8f, 633.3867f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-857.5991f, -12.23519f, -609.8169f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-928.626f, -11.22762f, -744.9562f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-736.0236f, 21.03466f, -881.4858f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-416.7736f, 45.93657f, -945.4311f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-144.7256f, -129.7955f, 304.9379f), TreasureRarity.Bronze, Map.NorthSubterrane),
+                (new Vector3(41.2326f, -140.7708f, 168.5024f), TreasureRarity.Bronze, Map.NorthSubterrane),
+                (new Vector3(161f, -151.7595f, 16.00002f), TreasureRarity.Bronze, Map.NorthSubterrane),
+                (new Vector3(313.9192f, -139.5295f, 180.0712f), TreasureRarity.Bronze, Map.NorthSubterrane),
+                (new Vector3(447.8859f, 62.90584f, 463.3448f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(279.0932f, 143f, -356.1478f), TreasureRarity.Bronze, Map.NorthHorn),
+                (new Vector3(-287.7408f, -92f, 125.6662f), TreasureRarity.Bronze, Map.NorthSubterrane),
+                (new Vector3(222.9122f, 90.40005f, 913.6289f), TreasureRarity.Bronze, Map.NorthHorn),
             ]
         },
     };

@@ -7,6 +7,7 @@ using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.LayoutEngine;
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
 using FFXIVClientStructs.FFXIV.Client.UI;
 
 namespace EurekaTrackerAutoPopper;
@@ -276,13 +277,20 @@ public class Fates
                 foreach (var pair in layer.Value->Instances)
                 {
                     // pair.Item2.Value->Id.Type == InstanceType.EventObject || pair.Item2.Value->Id.Type == InstanceType.Treasure
-                    if (locations.ContainsKey(pair.Item1))
+                    if (pair.Item2.Value->Id.Type == InstanceType.Treasure)
                     {
+                        var gameEventObject = (TreasureLayoutInstance*)pair.Item2.Value;
                         var pos = pair.Item2.Value->GetTransformImpl()->Translation;
-                        var fate = locations[pair.Item1];
-                        var mapPos = MapUtil.WorldToMap(new Vector2(pos.X, pos.Z));
-                        Plugin.Log.Information($"{fate.Name}: {mapPos.X:F2}, {mapPos.Y:F2}");
+                        Plugin.Log.Information($"{gameEventObject->BaseId}: (new Vector3({pos.X}f, {pos.Y}f, {pos.Z}f), {Sheets.TreasureSheet.GetRow(gameEventObject->BaseId).SGB.RowId}),");
                     }
+
+                    // if (locations.ContainsKey(pair.Item1))
+                    // {
+                    //     var pos = pair.Item2.Value->GetTransformImpl()->Translation;
+                    //     var fate = locations[pair.Item1];
+                    //     var mapPos = MapUtil.WorldToMap(new Vector2(pos.X, pos.Z));
+                    //     Plugin.Log.Information($"{fate.Name}: {mapPos.X:F2}, {mapPos.Y:F2}");
+                    // }
                 }
             }
         }

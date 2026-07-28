@@ -55,6 +55,7 @@ public enum Map : uint
 
     SouthHorn = 967,
     NorthHorn = 1135,
+    NorthSubterrane = 1244,
 }
 
 public enum OccultAetheryte : uint
@@ -74,6 +75,12 @@ public enum OccultAetheryte : uint
     UnhallowedHamlet = 5587,
 }
 
+public enum TreasureRarity : uint
+{
+    Bronze = 1596,
+    Silver = 1597,
+}
+
 public static class TerritoryHelper
 {
     private static readonly HashSet<Territory> SupportedTerritories = Enum.GetValues<Territory>().ToHashSet();
@@ -81,6 +88,7 @@ public static class TerritoryHelper
     private static readonly HashSet<Territory> EurekaBunnyTerritories = [Territory.Pagos, Territory.Pyros, Territory.Hydatos];
     private static readonly HashSet<Territory> BunnyTerritories = [Territory.Pagos, Territory.Pyros, Territory.Hydatos, Territory.SouthHorn, Territory.NorthHorn];
     private static readonly HashSet<Territory> OccultTerritories = [Territory.SouthHorn, Territory.NorthHorn];
+    private static readonly HashSet<Map> OccultMaps = [Map.SouthHorn, Map.NorthHorn, Map.NorthSubterrane];
 
     private static Territory CurrentTerritory
         => (Territory)Plugin.ClientState.TerritoryType;
@@ -100,8 +108,11 @@ public static class TerritoryHelper
     public static bool PlayerInOccult()
         => OccultTerritories.Contains(CurrentTerritory);
 
-    public static bool IsCorrectMap()
-        => CurrentTerritory.ToMap() == (Map)Plugin.ClientState.MapId;
+    public static bool IsCorrectMap(uint mapId)
+        => OccultMaps.Contains((Map)mapId) || CurrentTerritory.ToMap() == (Map)Plugin.ClientState.MapId;
+
+    public static bool IsOccultMap(uint mapId)
+        => OccultMaps.Contains((Map)mapId);
 }
 
 public static class EnumExtensions

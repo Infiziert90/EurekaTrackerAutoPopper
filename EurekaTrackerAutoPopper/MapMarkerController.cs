@@ -231,14 +231,14 @@ public unsafe class MapMarkerController : IDisposable
 
     private void AddOccultBronzeLocations(uint territory)
     {
-        foreach (var (worldPos, _) in OccultChests.TreasurePosition[(Territory)territory].Where(pair => pair.Item2 == 1596))
-            SetMarkers(worldPos, Icons.BronzeTreasure);
+        foreach (var (worldPos, _, map) in OccultChests.TreasurePosition[(Territory)territory].Where(pair => pair.Rarity == TreasureRarity.Bronze))
+            SetMarkers(worldPos, Icons.BronzeTreasure, (uint)map);
     }
 
     private void AddOccultSilverLocations(uint territory)
     {
-        foreach (var (worldPos, _) in OccultChests.TreasurePosition[(Territory)territory].Where(pair => pair.Item2 == 1597))
-            SetMarkers(worldPos, Icons.SilverTreasure);
+        foreach (var (worldPos, _, map) in OccultChests.TreasurePosition[(Territory)territory].Where(pair => pair.Rarity == TreasureRarity.Silver))
+            SetMarkers(worldPos, Icons.SilverTreasure, (uint)map);
     }
 
     private void AddOccultPotNorthLocations(uint territory)
@@ -265,27 +265,33 @@ public unsafe class MapMarkerController : IDisposable
             SetMarkers(worldPos, Plugin.PenumbraIpc.GetReplacedIcon);
     }
 
-    private void SetMarkers(Vector3 worldPos, Icons icon)
+    private void SetMarkers(Vector3 worldPos, Icons icon, uint map = 0)
     {
+        var agentMap = AgentMap.Instance();
+
         // Only place distant markers if correct map is set
-        if (!TerritoryHelper.IsCorrectMap())
+        if (!TerritoryHelper.IsCorrectMap(agentMap->CurrentMapId))
             return;
 
         var mapPos = worldPos;
-        var agentMap = AgentMap.Instance();
 
-        if (Utils.GetDistance(worldPos, LastPlayerPos) > MiniMapMarkerRadius && Utils.GetDistance(worldPos with {Y = 0}, LastFlagPos) > FlagMarkerRadius)
+        var useKtk = Utils.GetDistance(worldPos, LastPlayerPos) > MiniMapMarkerRadius &&
+                     Utils.GetDistance(worldPos with { Y = 0 }, LastFlagPos) > FlagMarkerRadius;
+        if (useKtk || agentMap->CurrentMapId != map)
         {
             MapOverlayController.AddMarker(new MapMarkerInfo
             {
                 AllowAnyMap = false,
-                MapId = agentMap->CurrentMapId,
+                MapId = map == 0 ? agentMap->CurrentMapId : map,
                 Position = new Vector2(mapPos.X, mapPos.Z),
                 IconId = (uint)icon,
             });
         }
         else
         {
+            if (map != 0 && agentMap->CurrentMapId != map)
+                return;
+
             if ((Territory)Plugin.ClientState.TerritoryType == Territory.Hydatos)
                 mapPos.Z += 475;
 
