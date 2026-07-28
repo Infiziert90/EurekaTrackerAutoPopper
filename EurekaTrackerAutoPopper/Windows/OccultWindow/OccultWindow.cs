@@ -28,7 +28,7 @@ public class OccultWindow : Window, IDisposable
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(400, 340),
-            MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
+            MaximumSize = new Vector2(float.MaxValue, float.MaxValue),
         };
 
         Plugin = plugin;
@@ -65,13 +65,13 @@ public class OccultWindow : Window, IDisposable
             return;
 
         Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderActiveCE);
-        if (Plugin.Fates.OccultCriticalEncounters.SkipLast(1).FirstOrDefault(f => f.Alive) is { } criticalEncounter)
+        if (Plugin.Fates.OccultCriticalEncounters.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType).FirstOrDefault(f => f.Alive) is { } criticalEncounter)
             DrawFateInfo(criticalEncounter, true);
 
         DrawSeparator();
 
         Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderActiveFate);
-        if (Plugin.Fates.OccultFates.FirstOrDefault(f => f.Alive) is {} fate)
+        if (Plugin.Fates.OccultFates.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType).FirstOrDefault(f => f.Alive) is {} fate)
             DrawFateInfo(fate, true);
 
         DrawSeparator();
@@ -79,7 +79,7 @@ public class OccultWindow : Window, IDisposable
         if (Plugin.Configuration.EngagementsShowPot)
         {
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderActivePot);
-            if (Plugin.Fates.BunnyFates.FirstOrDefault(f => f.Alive) is { } potFate)
+            if (Plugin.Fates.BunnyFates.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType).FirstOrDefault(f => f.Alive) is { } potFate)
                 DrawFateInfo(potFate, true);
 
             DrawSeparator();
@@ -92,14 +92,14 @@ public class OccultWindow : Window, IDisposable
                 return;
 
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderCE);
-            foreach (var previousCE in Plugin.Fates.OccultCriticalEncounters.Where(f => f.MapIcon != 0))
+            foreach (var previousCE in Plugin.Fates.OccultCriticalEncounters.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType).Where(f => f.MapIcon != 0))
             {
                 DrawFateInfo(previousCE, false);
                 DrawSeparator();
             }
 
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderFates);
-            foreach (var previousFate in Plugin.Fates.OccultFates.Where(f => f.MapIcon != 0))
+            foreach (var previousFate in Plugin.Fates.OccultFates.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType).Where(f => f.MapIcon != 0))
             {
                 DrawFateInfo(previousFate, false);
                 DrawSeparator();
@@ -200,13 +200,13 @@ public class OccultWindow : Window, IDisposable
 
             Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, Language.ForkedTowerInfoJoinDiscordList);
             Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "EU:");
-            Helper.BulletLink("CBT", "https://discord.gg/8HUKDA745x");
-            Helper.BulletLink("Savage Slimes", "https://discord.gg/SavageSlimes");
             Helper.BulletLink("Lunar Forays Group", "https://discord.gg/d5gNTMmqbp");
+            Helper.BulletLink("Savage Slimes", "https://discord.gg/SavageSlimes");
             Helper.BulletLink("Late Night", "https://discord.gg/28SRRADTK3");
+            Helper.BulletLink("A Late Night Reborn", "https://discord.gg/psuzsjEZWR");
+            Helper.BulletLink("CBT", "https://discord.gg/8HUKDA745x");
             Helper.BulletLink("Students of Baldesion", "https://discord.gg/students-of-baldesion");
-            Helper.BulletLink("Apocalypse", "https://discord.gg/EKK3Ta5QwQ");
-            Helper.BulletLink("Occult Crescent Chaos!", "https://discord.gg/btD94nYhJA");
+            Helper.BulletLink("Occult Crescent Chaos!", "https://discord.gg/k5wV3GWKzW");
             Helper.BulletLink("Double Edge", "https://discord.gg/doubleedge");
             Helper.BulletLink("Forked Tower Enjoyer Light", "https://discord.gg/forkedtower");
             Helper.BulletLink("Light Savage Lemmings (German)", "https://discord.gg/p3QwFREXJP");
@@ -215,8 +215,8 @@ public class OccultWindow : Window, IDisposable
             ImGuiHelpers.ScaledDummy(10.0f);
 
             Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "NA:");
-            Helper.BulletLink("FOE", "https://discord.gg/foexiv");
-            Helper.BulletLink("ABBA", "https://discord.gg/abbaffxiv");
+            Helper.BulletLink("Field Op Enjoyer", "https://discord.gg/foexiv");
+            Helper.BulletLink("ABBA+", "https://discord.gg/abbaffxiv");
             Helper.BulletLink("CAFE", "https://discord.gg/c-a-f-e");
             Helper.BulletLink("CEM", "https://discord.gg/cem");
             Helper.BulletLink("DFO", "https://discord.gg/vjwYEeubeN");
@@ -275,7 +275,7 @@ public class OccultWindow : Window, IDisposable
         using (ImRaii.PushFont(UiBuilder.IconFont))
         {
             if (ImGui.Button(FontAwesomeIcon.Globe.ToIconString()))
-                Util.OpenLink($"https://tracker.infi.ovh/{Plugin.TrackerHandler.ConnectedTo}");
+                Util.OpenLink($"https://tracker.xivstats.com/{Plugin.TrackerHandler.ConnectedTo}");
         }
 
         if (ImGui.IsItemHovered())

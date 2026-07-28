@@ -209,6 +209,7 @@ public class Plugin : IDalamudPlugin
     }
 
     [Command("/eloccult")]
+    [Aliases("/elo")]
     [HelpMessage("Opens occult helper window")]
     private void OnOccultCommand(string command, string args)
     {
@@ -253,6 +254,13 @@ public class Plugin : IDalamudPlugin
         MapMarkerController.RemoveMapMarker();
     }
 
+    [Command("/coords")]
+    [HelpMessage("Removes all the placed markers")]
+    private void OnCoordsCommand(string command, string args)
+    {
+        Fates.ReadLayout();
+    }
+
     private void TerritoryChangePoll(uint territoryId)
     {
         // Notify the user once about upload opt out
@@ -283,7 +291,7 @@ public class Plugin : IDalamudPlugin
             Framework.Update += EurekaBunnyCheck;
             Fates.RegisterEvents();
         }
-        else if (ClientState.TerritoryType == (uint)Territory.SouthHorn)
+        else if (TerritoryHelper.PlayerInOccult())
         {
             if (Configuration.ShowBunnyWindow)
                 BunnyWindow.IsOpen = true;
@@ -631,8 +639,16 @@ public class Plugin : IDalamudPlugin
         foreach (var actor in ObjectTable.Where(gameObject => gameObject.ObjectKind == ObjectKind.Treasure))
         {
             // This range should include all random coffer
-            if (actor.BaseId is > 1856 or < 1789)
-                return;
+            if ((Territory)Plugin.ClientState.TerritoryType == Territory.SouthHorn)
+            {
+                if (actor.BaseId is > 1856 or < 1789)
+                    return;
+            }
+            else
+            {
+                if (actor.BaseId is > 2073 or < 2006)
+                    return;
+            }
 
             var treasureObject = (Treasure*)actor.Address;
             if (treasureObject->RenderFlags > 0)
@@ -708,7 +724,7 @@ public class Plugin : IDalamudPlugin
 
         if (local.StatusList.Any(status => status.StatusId == 1531))
         {
-            var pos = OccultChests.CalculateDistance(ClientState.TerritoryType, local.Position);
+            var pos = OccultChests.CalculateDistance((Territory)ClientState.TerritoryType, local.Position);
             if (pos != Vector3.Zero)
             {
                 NearToCoffer = true;

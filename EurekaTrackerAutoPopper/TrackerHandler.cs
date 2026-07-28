@@ -84,6 +84,9 @@ public class TrackerHandler
 
     public class NewTracker : Upload
     {
+        [JsonProperty("territory")]
+        public uint Territory;
+
         [JsonProperty("last_fate")]
         public string LastFateHash = string.Empty;
 
@@ -107,6 +110,7 @@ public class TrackerHandler
 
         public NewTracker(uint dcId, uint fateId, int timestamp, Fates fateManager) : base(TableName)
         {
+            Territory = Plugin.ClientState.TerritoryType;
             TrackerType = 1;
             Datacenter = (ushort)dcId;
 
@@ -135,6 +139,9 @@ public class TrackerHandler
     {
         [JsonProperty("id")]
         public long Id;
+
+        [JsonProperty("territory")]
+        public uint Territory;
 
         [JsonProperty("last_update")]
         public long LastUpdate;
@@ -222,7 +229,7 @@ public class TrackerHandler
 
     public void InstanceCheckAsync(IFate fate, IPlayerCharacter localPlayer)
     {
-        if (Plugin.ClientState.TerritoryType != (uint)Territory.SouthHorn)
+        if (!TerritoryHelper.PlayerInOccult())
             return;
 
         // Check upload permission
@@ -347,7 +354,7 @@ public class TrackerHandler
             if (UpcomingTracker == null)
                 return null;
 
-            var response = await Client.GetAsync($"{BaseUrl}{TableName}?last_fate=eq.{UpcomingTracker.LastFateHash}");
+            var response = await Client.GetAsync($"{BaseUrl}{TableName}?last_fate=eq.{UpcomingTracker.LastFateHash}&territory=eq.{UpcomingTracker.Territory}");
             var content = await response.Content.ReadAsStringAsync();
 
             return JsonConvert.DeserializeObject<ExistingTracker[]>(content);

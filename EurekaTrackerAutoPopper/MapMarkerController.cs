@@ -231,37 +231,37 @@ public unsafe class MapMarkerController : IDisposable
 
     private void AddOccultBronzeLocations(uint territory)
     {
-        foreach (var (worldPos, _) in OccultChests.TreasurePosition[territory].Where(pair => pair.Item2 == 1596))
+        foreach (var (worldPos, _) in OccultChests.TreasurePosition[(Territory)territory].Where(pair => pair.Item2 == 1596))
             SetMarkers(worldPos, Icons.BronzeTreasure);
     }
 
     private void AddOccultSilverLocations(uint territory)
     {
-        foreach (var (worldPos, _) in OccultChests.TreasurePosition[territory].Where(pair => pair.Item2 == 1597))
+        foreach (var (worldPos, _) in OccultChests.TreasurePosition[(Territory)territory].Where(pair => pair.Item2 == 1597))
             SetMarkers(worldPos, Icons.SilverTreasure);
     }
 
     private void AddOccultPotNorthLocations(uint territory)
     {
-        foreach (var worldPos in OccultChests.PotNorthPosition[territory])
+        foreach (var worldPos in OccultChests.PotNorthPosition[(Territory)territory])
             SetMarkers(worldPos, Icons.GoldChest);
     }
 
     private void AddOccultPotSouthLocations(uint territory)
     {
-        foreach (var worldPos in OccultChests.PotSouthPosition[territory])
+        foreach (var worldPos in OccultChests.PotSouthPosition[(Territory)territory])
             SetMarkers(worldPos, Icons.GoldChest);
     }
 
     private void AddOccultRerollLocations(uint territory)
     {
-        foreach (var worldPos in OccultChests.RerollPosition[territory])
+        foreach (var worldPos in OccultChests.RerollPosition[(Territory)territory])
             SetMarkers(worldPos, Icons.Reroll);
     }
 
     private void AddOccultBunnyPositions(uint territory)
     {
-        foreach (var worldPos in OccultChests.BunnyPosition[territory])
+        foreach (var worldPos in OccultChests.BunnyPosition[(Territory)territory])
             SetMarkers(worldPos, Plugin.PenumbraIpc.GetReplacedIcon);
     }
 

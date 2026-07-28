@@ -7,9 +7,9 @@ public static class OccultChests
 {
     private const double InRange = 80.0f;
 
-    public static readonly Dictionary<uint, List<(Vector3, uint)>> TreasurePosition = new()
+    public static readonly Dictionary<Territory, List<(Vector3, uint)>> TreasurePosition = new()
     {
-        { 1252, [
+        { Territory.SouthHorn, [
             (new Vector3(-283.98572f, 115.983765f, 377.03516f), 1597), // Counter: 861
             (new Vector3(277.7904f, 103.77649f, 241.90125f), 1596), // Counter: 806
             (new Vector3(-401.66327f, 85.03845f, 332.5398f), 1596), // Counter: 697
@@ -80,11 +80,15 @@ public static class OccultChests
             (new Vector3(-680.5371f, 104.844604f, -354.78754f), 1596), // Counter: 120
             ] // 69
         },
+        {
+            Territory.NorthHorn, [
+            ]
+        },
     };
 
-    public static readonly Dictionary<uint, List<Vector3>> PotNorthPosition = new()
+    public static readonly Dictionary<Territory, List<Vector3>> PotNorthPosition = new()
     {
-        { 1252, [
+        { Territory.SouthHorn, [
             new Vector3(571.5841f, 51.451305f, -813.1642f), // Counter: 544
             new Vector3(662.4388f, 120f, 161.1339f), // Counter: 499
             new Vector3(606.4641f, 108.07402f, 184.8517f), // Counter: 498
@@ -117,11 +121,15 @@ public static class OccultChests
             new Vector3(-386.5904f, -0.13994062f, -461.0976f), // Counter: 429
             ] // 30
         },
+        {
+            Territory.NorthHorn, [
+            ]
+        },
     };
 
-    public static readonly Dictionary<uint, List<Vector3>> PotSouthPosition = new()
+    public static readonly Dictionary<Territory, List<Vector3>> PotSouthPosition = new()
     {
-        { 1252, [
+        { Territory.SouthHorn, [
             new Vector3(-195.4419f, 110.15342f, -287.8911f), // Counter: 530
             new Vector3(74.73397f, 110.494316f, -394.1289f), // Counter: 511
             new Vector3(-386.437f, 98.60658f, -221.7847f), // Counter: 509
@@ -154,11 +162,15 @@ public static class OccultChests
             new Vector3(-810.8279f, 114.053925f, -226.8324f), // Counter: 297
             ] // 30
         },
+        {
+            Territory.NorthHorn, [
+            ]
+        },
     };
 
-    public static readonly Dictionary<uint, List<Vector3>> RerollPosition = new()
+    public static readonly Dictionary<Territory, List<Vector3>> RerollPosition = new()
     {
-        { 1252, [
+        { Territory.SouthHorn, [
             new Vector3(-676.4631f, 5f, -769.7955f), // Counter: 123 // Treasures: Gold: 123
             new Vector3(-823.9183f, 140.00032f, 677.6934f), // Counter: 118 // Treasures: Gold: 118
             new Vector3(-886.4718f, 107f, 712.4964f), // Counter: 118 // Treasures: Gold: 118
@@ -181,11 +193,15 @@ public static class OccultChests
             new Vector3(-758.8058f, 127.66496f, -183.164f), // Counter: 77 // Treasures: Gold: 77
             ] // 20
         },
+        {
+            Territory.NorthHorn, [
+            ]
+        },
     };
 
-    public static readonly Dictionary<uint, List<Vector3>> BunnyPosition = new()
+    public static readonly Dictionary<Territory, List<Vector3>> BunnyPosition = new()
     {
-        { 1252, [
+        { Territory.SouthHorn, [
             new Vector3(283.6546f, 55.999996f, 587.3107f), // Counter: 230
             new Vector3(-439.0463f, 115.82392f, 184.4665f), // Counter: 217
             new Vector3(477.4074f, 96.10128f, 138.6543f), // Counter: 213
@@ -213,29 +229,33 @@ public static class OccultChests
             new Vector3(-554.0244f, 110.698654f, -365.897f), // Counter: 144
             ] // 25
         },
+        {
+            Territory.NorthHorn, [
+            ]
+        },
     };
 
-    public static Vector3 CalculateDistance(uint territoryId, Vector3 player)
+    public static Vector3 CalculateDistance(Territory territory, Vector3 player)
     {
         var bestPos = (Dif: InRange, Pos: Vector3.Zero);
         if (!TerritoryHelper.PlayerInOccult())
             return bestPos.Pos;
 
-        foreach (var pos in PotNorthPosition[territoryId])
+        foreach (var pos in PotNorthPosition[territory])
         {
             var dif = Utils.GetDistance(player, pos);
             if (dif < bestPos.Dif)
                 bestPos = (dif, pos);
         }
 
-        foreach (var pos in PotSouthPosition[territoryId])
+        foreach (var pos in PotSouthPosition[territory])
         {
             var dif = Utils.GetDistance(player, pos);
             if (dif < bestPos.Dif)
                 bestPos = (dif, pos);
         }
 
-        foreach (var pos in RerollPosition[territoryId])
+        foreach (var pos in RerollPosition[territory])
         {
             var dif = Utils.GetDistance(player, pos);
             if (dif < bestPos.Dif)

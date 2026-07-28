@@ -43,6 +43,7 @@ public enum Territory : uint
     Hydatos = 827,
 
     SouthHorn = 1252,
+    NorthHorn = 1346,
 }
 
 public enum Map : uint
@@ -53,6 +54,7 @@ public enum Map : uint
     Hydatos = 515,
 
     SouthHorn = 967,
+    NorthHorn = 1135,
 }
 
 public enum OccultAetheryte : uint
@@ -63,6 +65,13 @@ public enum OccultAetheryte : uint
     CrystallizedCaverns = 4939,
     Eldergrowth = 4940,
     Stonemarsh = 4947,
+
+    NorthHornBaseCamp = 5595,
+    CrownOfKarnak = 5579,
+    SinkingSanctuary = 5582,
+    SuspendedMasonry = 5584,
+    MolderingOutskirts = 5574,
+    UnhallowedHamlet = 5587,
 }
 
 public static class TerritoryHelper
@@ -70,8 +79,8 @@ public static class TerritoryHelper
     private static readonly HashSet<Territory> SupportedTerritories = Enum.GetValues<Territory>().ToHashSet();
     private static readonly HashSet<Territory> EurekaTerritories = [Territory.Anemos, Territory.Pagos, Territory.Pyros, Territory.Hydatos];
     private static readonly HashSet<Territory> EurekaBunnyTerritories = [Territory.Pagos, Territory.Pyros, Territory.Hydatos];
-    private static readonly HashSet<Territory> BunnyTerritories = [Territory.Pagos, Territory.Pyros, Territory.Hydatos, Territory.SouthHorn];
-    private static readonly HashSet<Territory> OccultTerritories = [Territory.SouthHorn];
+    private static readonly HashSet<Territory> BunnyTerritories = [Territory.Pagos, Territory.Pyros, Territory.Hydatos, Territory.SouthHorn, Territory.NorthHorn];
+    private static readonly HashSet<Territory> OccultTerritories = [Territory.SouthHorn, Territory.NorthHorn];
 
     private static Territory CurrentTerritory
         => (Territory)Plugin.ClientState.TerritoryType;
@@ -157,6 +166,7 @@ public static class EnumExtensions
             Territory.Pyros => Map.Pyros,
             Territory.Hydatos => Map.Hydatos,
             Territory.SouthHorn => Map.SouthHorn,
+            Territory.NorthHorn => Map.NorthHorn,
             _ => throw new ArgumentOutOfRangeException(nameof(territory), territory, null),
         };
     }
