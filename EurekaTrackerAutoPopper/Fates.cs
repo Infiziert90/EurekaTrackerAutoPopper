@@ -161,8 +161,8 @@ public class Fates
         new(1976, 60958, Territory.SouthHorn, new Vector3(204.66835f, 111.81729f, -204.96242f), [47749, 47738], OccultAetheryte.CrystallizedCaverns, 40, " (North)"),
         new(1977, 60958, Territory.SouthHorn, new Vector3(-479.8395f, 75f, 524.78894f), [47745, 47738], OccultAetheryte.Stonemarsh, 18, " (South)"),
 
-        new(2072, 60958, Territory.NorthHorn, new Vector3(233f, 7.729229f, -470f), [], OccultAetheryte.NorthHornBaseCamp, 0, " (South?)"),
-        new(2073, 60958, Territory.NorthHorn, new Vector3(-505.2822f, 53.14409f, 244.041f), [], OccultAetheryte.NorthHornBaseCamp, 0, " (North?)"),
+        new(2072, 60958, Territory.NorthHorn, new Vector3(233f, 7.729229f, -470f), [], OccultAetheryte.NorthHornBaseCamp, 0, " (North)"),
+        new(2073, 60958, Territory.NorthHorn, new Vector3(-505.2822f, 53.14409f, 244.041f), [], OccultAetheryte.NorthHornBaseCamp, 0, " (South)"),
     ];
 
     public readonly List<Fate> OccultFates =
