@@ -639,7 +639,7 @@
                             {#if respawnTime <= now}
                                 <p class="text-yellow-400">Soon</p>
                             {:else}
-                                <p>Spawns in: <AutoTimeFormatted timestamp={respawnTime} format="full" /></p>
+                                <p>Spawns in: <AutoTimeFormatted timestamp={respawnTime} format="full" countdown={true} expiredText="Soon" /></p>
                             {/if}
                         {/if}
                     {:else}

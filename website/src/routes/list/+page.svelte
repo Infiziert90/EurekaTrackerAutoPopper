@@ -543,7 +543,7 @@
                                     {:else if row.pot_status_text === "Soon"}
                                         Soon
                                     {:else}
-                                        <AutoTimeFormatted timestamp={row.pot_status_text} format="relative" disableUpdate={false} />
+                                        <AutoTimeFormatted timestamp={row.pot_status_text} format="relative" disableUpdate={false} countdown={true} expiredText="Soon" />
                                     {/if}
                                 {:else}
                                     None
