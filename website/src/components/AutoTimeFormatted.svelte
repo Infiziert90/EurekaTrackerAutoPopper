@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { formatSeconds } from '$lib/utils';
 
-    let { timestamp, seconds, format = 'simple', disableUpdate = false, noNegative = false, countdown = false } = $props();
+    let { timestamp, seconds, format = 'simple', disableUpdate = false, noNegative = false, countdown = false, expiredText = 'Can pop' } = $props();
 
     let finalString = $state('');
     let interval;
@@ -28,9 +28,9 @@
             if (countdown) {
                 // For countdown mode, calculate remaining time until timestamp
                 delta = timestamp - now;
-                // If countdown is complete (delta <= 0), show "Can pop" or similar
+                // If countdown is complete (delta <= 0), show the expired label instead of counting past zero
                 if (delta <= 0) {
-                    finalString = 'Can pop';
+                    finalString = expiredText;
                     return;
                 }
             } else {
@@ -43,7 +43,7 @@
                 // For countdown with seconds, just use the seconds value directly
                 delta = seconds;
                 if (delta <= 0) {
-                    finalString = 'Can pop';
+                    finalString = expiredText;
                     return;
                 }
             } else {
