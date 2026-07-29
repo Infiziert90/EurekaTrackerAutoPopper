@@ -208,8 +208,8 @@
             const currentLastUpdate = data[0].last_update;
 
             // Compare current last_update with our known value
-            // If they differ, data has changed - fetch full update
-            if (currentLastUpdate !== lastKnownUpdate) {
+            // Only treat it as new data if it's strictly newer
+            if (currentLastUpdate > lastKnownUpdate) {
                 console.log(`[Update check] Data changed (${lastKnownUpdate} -> ${currentLastUpdate}), fetching full data`);
                 await fetchTrackerData();
             }
