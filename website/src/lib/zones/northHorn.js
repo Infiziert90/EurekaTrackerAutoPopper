@@ -12,7 +12,7 @@ const FATES = {
             "ja": "暴力の牛魔「ミノタウロス・マキア」",
             "de": "Mit Kraft und Keule"
         },
-        drops: [],
+        drops: [50974],
     },
     2075: {
         name: {
@@ -21,7 +21,7 @@ const FATES = {
             "ja": "呪いの宝珠「イビルシーア」",
             "de": "Auge um Auge"
         },
-        drops: [],
+        drops: [50975],
     },
     2076: {
         name: {
@@ -30,7 +30,7 @@ const FATES = {
             "ja": "水辺の暴君「レグナントキマイラ」",
             "de": "Wassertyrannei"
         },
-        drops: [],
+        drops: [50976],
     },
     2077: {
         name: {
@@ -39,7 +39,7 @@ const FATES = {
             "ja": "歴戦水馬「アーチケルピー」",
             "de": "Mit allen Wassern gewaschen"
         },
-        drops: [],
+        drops: [50974],
     },
     2078: {
         name: {
@@ -48,7 +48,7 @@ const FATES = {
             "ja": "ため息モルボル「センシュアル・サンディ」",
             "de": "Auf den Atem kommt es an"
         },
-        drops: [],
+        drops: [50975],
     },
     2079: {
         name: {
@@ -57,7 +57,7 @@ const FATES = {
             "ja": "自滅の歌い手「イアムベー」",
             "de": "Sing mir das Lied vom Tod"
         },
-        drops: [],
+        drops: [50976],
     },
     2080: {
         name: {
@@ -66,7 +66,7 @@ const FATES = {
             "ja": "遺跡荒らしの氷狼「ルーインハウンド」",
             "de": "Der Hund von Kreszentia"
         },
-        drops: [],
+        drops: [50975],
     },
     2081: {
         name: {
@@ -75,7 +75,7 @@ const FATES = {
             "ja": "腐都の守護者「ペイシェント・クリブ」",
             "de": "Die ewige Wächterin"
         },
-        drops: [],
+        drops: [50974],
     },
     2082: {
         name: {
@@ -84,7 +84,7 @@ const FATES = {
             "ja": "暴風の操者「ストームコーラー」",
             "de": "Stürmischer Empfang"
         },
-        drops: [],
+        drops: [50974],
     },
     2083: {
         name: {
@@ -93,7 +93,7 @@ const FATES = {
             "ja": "模造の蛇人形「デミメデューサ」",
             "de": "Stein zu Stein"
         },
-        drops: [],
+        drops: [50976],
     },
     2084: {
         name: {
@@ -102,7 +102,7 @@ const FATES = {
             "ja": "気高き雷獣「クレセントレギナ」",
             "de": "Königliche Arroganz"
         },
-        drops: [],
+        drops: [50975],
     },
 };
 
@@ -120,7 +120,7 @@ const POT_FATES = {
             "ja": "(北)",
             "de": "(Nord)"
         },
-        drops: [],
+        drops: [50976],
     },
     2073: {
         name: {
@@ -135,7 +135,7 @@ const POT_FATES = {
             "ja": "(南)",
             "de": "(Süden)"
         },
-        drops: [],
+        drops: [50975],
     },
 };
 
@@ -147,7 +147,7 @@ const ENCOUNTERS = {
             "ja": "四つ顎の魔樹「ペレキュス」",
             "de": "Verfressen bis in die Wurzeln"
         },
-        drops: [],
+        drops: [50974],
         spawn_type: true, // monster kill - Wamoura
         monster: {
             "en": "Crescent Wamoura",
@@ -164,7 +164,7 @@ const ENCOUNTERS = {
             "ja": "魔女の複製体「カロフィステリ・ダブル」",
             "de": "Doppelt gehext hält besser"
         },
-        drops: [51988],
+        drops: [51988, 50976],
         spawn_type: true, // monster kill - Crescent Blackguard
         monster: {
             "en": "Crescent Blackguard",
@@ -181,7 +181,7 @@ const ENCOUNTERS = {
             "ja": "白の守護者「アラバスターブレード」",
             "de": "Schwert und Stein"
         },
-        drops: [51987],
+        drops: [51987, 50975],
         spawn_type: false, // random spawn - Automatic
     },
     52: {
@@ -191,7 +191,7 @@ const ENCOUNTERS = {
             "ja": "禁忌の魔道書「アルバテル」",
             "de": "Verbotenes Wissen"
         },
-        drops: [51979],
+        drops: [51979, 50974],
         spawn_type: false, // random spawn - Automatic
     },
     53: {
@@ -201,7 +201,7 @@ const ENCOUNTERS = {
             "ja": "暗紅の屍竜「ルブルムドラゴン」",
             "de": "Gift und Kralle"
         },
-        drops: [51986],
+        drops: [51986, 50975],
         spawn_type: true, // monster kill - Crescent Big Horn
         monster: {
             "en": "Crescent Big Horn",
@@ -218,7 +218,7 @@ const ENCOUNTERS = {
             "ja": "大食の呪鬼「アルゴル」",
             "de": "Unersättliches Unheil"
         },
-        drops: [51981],
+        drops: [51981, 50975],
         spawn_type: false,
     },
     55: {
@@ -228,7 +228,7 @@ const ENCOUNTERS = {
             "ja": "猟奇の母蜘蛛「クレセント・アルケニー」",
             "de": "Wie eine Fliege im Netz"
         },
-        drops: [],
+        drops: [50974],
         spawn_type: true, // monster kill - Crescent Hellhound
         monster: {
             "en": "Crescent Hellhound",
@@ -245,7 +245,7 @@ const ENCOUNTERS = {
             "ja": "反逆の使い魔「アトラス・カーバンクル」",
             "de": "Rubinrote Rebellion"
         },
-        drops: [],
+        drops: [50976],
     },
     57: {
         name: {
@@ -254,7 +254,7 @@ const ENCOUNTERS = {
             "ja": "死霊使いの亡霊「マギ・ネクロマンサー」",
             "de": "Auf Tod komm raus"
         },
-        drops: [51974, 51984],
+        drops: [51974, 51984, 50975],
         spawn_type: false,
     },
     58: {
@@ -264,7 +264,7 @@ const ENCOUNTERS = {
             "ja": "求道の人造人間「エルムギガース」",
             "de": "Auf dem Weg der Erleuchtung"
         },
-        drops: [],
+        drops: [50976],
         spawn_type: false,
     },
     59: {
@@ -274,7 +274,7 @@ const ENCOUNTERS = {
             "ja": "呪いを継ぐ者「ペイルマギア」",
             "de": "Verflucht noch eins"
         },
-        drops: [51972, 51983],
+        drops: [51972, 51983, 50974],
         spawn_type: false,
     },
     60: {
@@ -284,7 +284,7 @@ const ENCOUNTERS = {
             "ja": "魔道兵団「タイニーメイジ」",
             "de": "Klein aber oho"
         },
-        drops: [51980],
+        drops: [51980, 50975],
         spawn_type: false,
     },
     61: {
@@ -294,7 +294,7 @@ const ENCOUNTERS = {
             "ja": "絶島の誘拐者「アブダクター」",
             "de": "Vom Winde verweht"
         },
-        drops: [51985],
+        drops: [51985, 50976],
         spawn_type: true, // monster kill - Crescent Wraith
         monster: {
             "en": "Crescent Wraith",
@@ -311,7 +311,7 @@ const ENCOUNTERS = {
             "ja": "覚醒の多頭竜「マギ・ヒュドラ」",
             "de": "Mehr Köpfe als Verstand"
         },
-        drops: [],
+        drops: [50974],
         spawn_type: false,
     },
     63: {
@@ -321,7 +321,7 @@ const ENCOUNTERS = {
             "ja": "変化の使い魔「メタモルファ」",
             "de": "Mieses Mimikry"
         },
-        drops: [51982],
+        drops: [51982, 50976],
         spawn_type: false,
     },
 

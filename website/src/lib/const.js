@@ -523,4 +523,33 @@ export const ITEM = {
         },
         img: "ui/icon/026000/026603.tex"
     },
+
+    // DISPELLERS - NORTH HORN (relic quest)
+    50974: {
+        name: {
+            "en": "Phantom Dispeller α",
+            "fr": "Dissipateur spirituel alpha",
+            "ja": "ファントムディスペラーα",
+            "de": "Entphantomisierer α"
+        },
+        img: "ui/icon/026000/026229.tex"
+    },
+    50975: {
+        name: {
+            "en": "Phantom Dispeller β",
+            "fr": "Dissipateur spirituel bêta",
+            "ja": "ファントムディスペラーβ",
+            "de": "Entphantomisierer β"
+        },
+        img: "ui/icon/026000/026231.tex"
+    },
+    50976: {
+        name: {
+            "en": "Phantom Dispeller γ",
+            "fr": "Dissipateur spirituel gamma",
+            "ja": "ファントムディスペラーγ",
+            "de": "Entphantomisierer γ"
+        },
+        img: "ui/icon/026000/026230.tex"
+    },
 }
