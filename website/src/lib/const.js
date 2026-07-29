@@ -386,7 +386,7 @@ export const ITEM = {
     },
     49831: {
         name: {
-            "en": "Occult Bracelet of Magic",
+            "en": "Occult Earrings of Magic",
             "fr": "Boucles d'oreilles de mage magi de Lunule",
             "ja": "クレセントマギ・ソーサラーイヤリング",
             "de": "Kreszentia-Ohrringe des Magiers"
@@ -395,7 +395,7 @@ export const ITEM = {
     },
     49832: {
         name: {
-            "en": "Occult Bracelet of Magic",
+            "en": "Occult Necklace of Magic",
             "fr": "Collier de mage magi de Lunule",
             "ja": "クレセントマギ・ソーサラーネックレス",
             "de": "Kreszentia-Halsband des Magiers"

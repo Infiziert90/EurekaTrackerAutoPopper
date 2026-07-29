@@ -1,3 +1,9 @@
+import wamoura from '$lib/assets/49.png';
+import blackguard from '$lib/assets/50.png';
+import big_horn from '$lib/assets/53.png';
+import hellhound from '$lib/assets/55.png';
+import wraith from '$lib/assets/61.png';
+
 const FATES = {
     2074: {
         name: {
@@ -142,13 +148,14 @@ const ENCOUNTERS = {
             "de": "Verfressen bis in die Wurzeln"
         },
         drops: [],
-        spawn_type: true, // monster kill - Pelekys
+        spawn_type: true, // monster kill - Wamoura
         monster: {
-            "en": "Pelekys",
-            "fr": "Pélekus",
-            "ja": "ペレキュス",
-            "de": "Pelekos"
+            "en": "Crescent Wamoura",
+            "fr": "Wamoura de Lunule",
+            "ja": "クレセント・ワモーラ",
+            "de": "Kreszentia-Wamoura"
         },
+        monster_image: wamoura,
     },
     50: {
         name: {
@@ -165,6 +172,7 @@ const ENCOUNTERS = {
             "ja": "クレセント・ブラックガード",
             "de": "Kreszentia-Düsterwächter"
         },
+        monster_image: blackguard,
     },
     51: {
         name: {
@@ -201,6 +209,7 @@ const ENCOUNTERS = {
             "ja": "クレセント・ビッグホーン",
             "de": "Kreszentia-Großhorn"
         },
+        monster_image: big_horn,
     },
     54: {
         name: {
@@ -227,6 +236,7 @@ const ENCOUNTERS = {
             "ja": "クレセント・ヘルハウンド",
             "de": "Kreszentia-Höllenhund"
         },
+        monster_image: hellhound,
     },
     56: {
         name: {
@@ -236,7 +246,6 @@ const ENCOUNTERS = {
             "de": "Rubinrote Rebellion"
         },
         drops: [],
-        spawn_type: false,
     },
     57: {
         name: {
@@ -293,6 +302,7 @@ const ENCOUNTERS = {
             "ja": "クレセント・レイス",
             "de": "Kreszentia-Geist"
         },
+        monster_image: wraith,
     },
     62: {
         name: {
