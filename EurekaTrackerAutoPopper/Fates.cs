@@ -4,10 +4,8 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Plugin.Services;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.LayoutEngine;
-using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
 using FFXIVClientStructs.FFXIV.Client.UI;
 
 namespace EurekaTrackerAutoPopper;
@@ -116,6 +114,7 @@ public class Fate
 
         KilledFates = 0;
         KilledCEs = 0;
+        InstanceJoinedTimer = 0;
     }
 
     // Above 1000 are Fates, below is most likely Critical Encounter
@@ -180,17 +179,17 @@ public class Fates
         new(1971, 60502, Territory.SouthHorn, new Vector3(76.327644f, 96.94907f, 275.7444f), [47749], OccultAetheryte.Eldergrowth, 17), // Fatal Allure
         new(1972, 60502, Territory.SouthHorn, new Vector3(413.7364f, 95.999985f, -14.67076f), [47748], OccultAetheryte.Eldergrowth, 24), // Serving Darkness
 
-        new(2074, 60502, Territory.NorthHorn, new Vector3(724f, 70f, 220f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Raging Thrall
-        new(2075, 60502, Territory.NorthHorn, new Vector3(510f, 16.76658f, -29.99999f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Eye to Eye
-        new(2076, 60502, Territory.NorthHorn, new Vector3(95f, 10f, 470f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Shoreline Showdown
-        new(2077, 60502, Territory.NorthHorn, new Vector3(330f, 0f, -250f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Waved Away
-        new(2078, 60502, Territory.NorthHorn, new Vector3(-402.0002f, 29.76808f, -252.9997f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Allure of the Occult
-        new(2079, 60502, Territory.NorthHorn, new Vector3(-170f, 30f, -500f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Inconstant Gardener
-        new(2080, 60502, Territory.NorthHorn, new Vector3(-90f, 67.47852f, 865.9999f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Territorial Dispute
-        new(2081, 60502, Territory.NorthHorn, new Vector3(-440f, 47.02659f, -790f), [], OccultAetheryte.NorthHornBaseCamp, 0), // A Rotten Affair
-        new(2082, 60502, Territory.NorthHorn, new Vector3(-855.7433f, 70.67716f, 482.1518f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Gale-force Encounter
-        new(2083, 60502, Territory.NorthHorn, new Vector3(-661.0049f, 87f, -54.00021f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Scale Model
-        new(2084, 60502, Territory.NorthHorn, new Vector3(140f, 37f, -708f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Thunderregnum
+        new(2074, 60502, Territory.NorthHorn, new Vector3(724f, 70f, 220f), [], OccultAetheryte.CrownOfKarnak, 0), // Raging Thrall
+        new(2075, 60502, Territory.NorthHorn, new Vector3(510f, 16.76658f, -29.99999f), [], OccultAetheryte.CrownOfKarnak, 0), // Eye to Eye
+        new(2076, 60502, Territory.NorthHorn, new Vector3(95f, 10f, 470f), [], OccultAetheryte.CrownOfKarnak, 0), // Shoreline Showdown
+        new(2077, 60502, Territory.NorthHorn, new Vector3(330f, 0f, -250f), [], OccultAetheryte.SinkingSanctuary, 0), // Waved Away
+        new(2078, 60502, Territory.NorthHorn, new Vector3(-402.0002f, 29.76808f, -252.9997f), [], OccultAetheryte.MolderingOutskirts, 0), // Allure of the Occult
+        new(2079, 60502, Territory.NorthHorn, new Vector3(-170f, 30f, -500f), [], OccultAetheryte.MolderingOutskirts, 0), // Inconstant Gardener
+        new(2080, 60502, Territory.NorthHorn, new Vector3(-90f, 67.47852f, 865.9999f), [], OccultAetheryte.MolderingOutskirts, 0), // Territorial Dispute
+        new(2081, 60502, Territory.NorthHorn, new Vector3(-440f, 47.02659f, -790f), [], OccultAetheryte.SuspendedMasonry, 0), // A Rotten Affair
+        new(2082, 60502, Territory.NorthHorn, new Vector3(-855.7433f, 70.67716f, 482.1518f), [], OccultAetheryte.SuspendedMasonry, 0), // Gale-force Encounter
+        new(2083, 60502, Territory.NorthHorn, new Vector3(-661.0049f, 87f, -54.00021f), [], OccultAetheryte.MolderingOutskirts, 0), // Scale Model
+        new(2084, 60502, Territory.NorthHorn, new Vector3(140f, 37f, -708f), [], OccultAetheryte.SinkingSanctuary, 0), // Thunderregnum
     ];
 
     public readonly List<Fate> OccultCriticalEncounters =
@@ -213,24 +212,24 @@ public class Fates
 
         new(48, 63978, Territory.SouthHorn, new Vector3(63.066174f, 126.499985f, 3.8296576f), [47868, 47734, 47735, 47736, 47737], OccultAetheryte.Eldergrowth, 25), // The Forked Tower: Blood
 
-        new(49, 63909, Territory.NorthHorn, new Vector3(-870f, 20f, -560f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Many Mouths to Feed
-        new(50, 63909, Territory.NorthHorn, new Vector3(-215f, 18f, -65f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Doubled Trouble
-        new(51, 63909, Territory.NorthHorn, new Vector3(-519f, 48f, -641f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Quarried Away
+        new(49, 63909, Territory.NorthHorn, new Vector3(-870f, 20f, -560f), [], OccultAetheryte.MolderingOutskirts, 0), // Many Mouths to Feed
+        new(50, 63909, Territory.NorthHorn, new Vector3(-215f, 18f, -65f), [], OccultAetheryte.UnhallowedHamlet, 0), // Doubled Trouble
+        new(51, 63909, Territory.NorthHorn, new Vector3(-519f, 48f, -641f), [], OccultAetheryte.MolderingOutskirts, 0), // Quarried Away
         new(52, 63909, Territory.NorthHorn, new Vector3(659f, 132f, 659f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Forbidden Folios
-        new(53, 63909, Territory.NorthHorn, new Vector3(-688f, 90f, 150f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Cursed Resurgence
-        new(54, 63909, Territory.NorthHorn, new Vector3(765f, 70f, 0f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Imbalanced Diet
-        new(55, 63909, Territory.NorthHorn, new Vector3(169.9999f, 4f, -136f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Web of Terror
-        new(56, 63909, Territory.NorthHorn, new Vector3(238.0022f, 15f, 367f), [], OccultAetheryte.NorthHornBaseCamp, 0), // A Beast Unleashed
-        new(57, 63909, Territory.NorthHorn, new Vector3(224f, 52f, -860f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Dark Artistry
-        new(58, 63909, Territory.NorthHorn, new Vector3(-390f, 67.99994f, 700f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Familiar Tactics
-        new(59, 63909, Territory.NorthHorn, new Vector3(807f, 61f, -562f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Appalling Behavior
-        new(60, 63909, Territory.NorthHorn, new Vector3(152f, 70f, 716f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Tiny Terror
-        new(61, 63909, Territory.NorthHorn, new Vector3(-150f, 70f, -860f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Lost on the Wind
-        new(62, 63909, Territory.NorthHorn, new Vector3(-82f, 12f, 485f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Ahead of the Competition
-        new(63, 63909, Territory.NorthHorn, new Vector3(500f, 56.00003f, -310f), [], OccultAetheryte.NorthHornBaseCamp, 0), // Accept No Imitators
+        new(53, 63909, Territory.NorthHorn, new Vector3(-688f, 90f, 150f), [], OccultAetheryte.SuspendedMasonry, 0), // Cursed Resurgence
+        new(54, 63909, Territory.NorthHorn, new Vector3(765f, 70f, 0f), [], OccultAetheryte.CrownOfKarnak, 0), // Imbalanced Diet
+        new(55, 63909, Territory.NorthHorn, new Vector3(169.9999f, 4f, -136f), [], OccultAetheryte.UnhallowedHamlet, 0), // Web of Terror
+        new(56, 63909, Territory.NorthHorn, new Vector3(238.0022f, 15f, 367f), [], OccultAetheryte.CrownOfKarnak, 0), // A Beast Unleashed
+        new(57, 63909, Territory.NorthHorn, new Vector3(224f, 52f, -860f), [], OccultAetheryte.SinkingSanctuary, 0), // Dark Artistry
+        new(58, 63909, Territory.NorthHorn, new Vector3(-390f, 67.99994f, 700f), [], OccultAetheryte.SuspendedMasonry, 0), // Familiar Tactics
+        new(59, 63909, Territory.NorthHorn, new Vector3(807f, 61f, -562f), [], OccultAetheryte.SinkingSanctuary, 0), // Appalling Behavior
+        new(60, 63909, Territory.NorthHorn, new Vector3(152f, 70f, 716f), [], OccultAetheryte.CrownOfKarnak, 0), // Tiny Terror
+        new(61, 63909, Territory.NorthHorn, new Vector3(-150f, 70f, -860f), [], OccultAetheryte.SinkingSanctuary, 0), // Lost on the Wind
+        new(62, 63909, Territory.NorthHorn, new Vector3(-82f, 12f, 485f), [], OccultAetheryte.SuspendedMasonry, 0), // Ahead of the Competition
+        new(63, 63909, Territory.NorthHorn, new Vector3(500f, 56.00003f, -310f), [], OccultAetheryte.SinkingSanctuary, 0), // Accept No Imitators
 
-        new(64, 63978, Territory.NorthHorn, new Vector3(63.066174f, 126.499985f, 3.8296576f), [], OccultAetheryte.NorthHornBaseCamp, 0), // The Forked Tower: Magic
-        new(65, 63978, Territory.NorthHorn, new Vector3(63.066174f, 126.499985f, 3.8296576f), [], OccultAetheryte.NorthHornBaseCamp, 0), // The Forked Tower: Magic Extreme
+        new(64, 63978, Territory.NorthHorn, new Vector3(-320.06552f, 11.4999996f, 422.0136f), [], OccultAetheryte.SuspendedMasonry, 0), // The Forked Tower: Magic
+        new(65, 63978, Territory.NorthHorn, new Vector3(-320.06552f, 11.4999996f, 422.0136f), [], OccultAetheryte.SuspendedMasonry, 0), // The Forked Tower: Magic Extreme
     ];
 
     public IEnumerable<Fate> GetBunnyForTerritory()
@@ -241,6 +240,9 @@ public class Fates
 
     public IEnumerable<Fate> GetCriticalEngagementForTerritory()
         => OccultCriticalEncounters.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType);
+
+    public IEnumerable<Fate> GetCEsSkipExtremeForTerritory()
+        => OccultCriticalEncounters.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType).Where(f => f.FateId != 65);
 
     public Fate GetNormalTowerForTerritory()
         => Plugin.Fates.OccultCriticalEncounters.Find(f => (Territory)Plugin.ClientState.TerritoryType == Territory.SouthHorn
@@ -308,12 +310,16 @@ public class Fates
                 : f.FateId == 64) ?? Plugin.Fates.OccultCriticalEncounters[^2];
 
         var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        foreach (var bnuuy in BunnyFates.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType))
+        foreach (var bnuuy in GetBunnyForTerritory())
         {
             foreach (var fate in Plugin.FateTable)
             {
                 if (fate.FateId != bnuuy.FateId)
                     continue;
+
+                // Freshly spawned fate
+                if (!bnuuy.Alive)
+                    Plugin.TrackerHandler.UpdateRunningTracker();
 
                 bnuuy.Update(fate, currentTime);
                 if (bnuuy.PlayedSound || !Plugin.Configuration.PlayBunnyEffect)
@@ -333,9 +339,12 @@ public class Fates
             // Only increase if tower is not active
             if (!towerEngagement.Alive)
                 towerEngagement.KilledFates += 1;
+
+            // Bunny has died, update our running tracker
+            Plugin.TrackerHandler.UpdateRunningTracker();
         }
 
-        foreach (var occultFate in OccultFates.Where(f => (uint)f.Territory == Plugin.ClientState.TerritoryType))
+        foreach (var occultFate in GetFatesForTerritory())
         {
             foreach (var fate in Plugin.FateTable)
             {

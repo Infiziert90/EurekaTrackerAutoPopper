@@ -114,7 +114,7 @@ public class TrackerHandler
             TrackerType = 1;
             Datacenter = (ushort)dcId;
 
-            EncounterHistory = JsonConvert.SerializeObject(fateManager.GetCriticalEngagementForTerritory().Select(f => new ShareableFate(f)));
+            EncounterHistory = JsonConvert.SerializeObject(fateManager.GetCEsSkipExtremeForTerritory().Where(f => f.FateId != 65).Select(f => new ShareableFate(f)));
             FateHistory = JsonConvert.SerializeObject(fateManager.GetFatesForTerritory().Select(f => new ShareableFate(f)));
             PotHistory = JsonConvert.SerializeObject(fateManager.GetBunnyForTerritory().Select(f => new ShareableFate(f)));
 
@@ -194,7 +194,7 @@ public class TrackerHandler
 
         public void Update(Fates fateManager)
         {
-            EncounterHistory = JsonConvert.SerializeObject(fateManager.GetCriticalEngagementForTerritory().Select(f => new ShareableFate(f)));
+            EncounterHistory = JsonConvert.SerializeObject(fateManager.GetCEsSkipExtremeForTerritory().Select(f => new ShareableFate(f)));
             FateHistory = JsonConvert.SerializeObject(fateManager.GetFatesForTerritory().Select(f => new ShareableFate(f)));
             PotHistory = JsonConvert.SerializeObject(fateManager.GetBunnyForTerritory().Select(f => new ShareableFate(f)));
 
@@ -225,6 +225,9 @@ public class TrackerHandler
 
         [JsonProperty("killed_ces")]
         public int KilledCEs = fate.KilledCEs;
+
+        [JsonProperty("state")]
+        public byte State = (byte)fate.State;
     }
 
     public void InstanceCheckAsync(IFate fate, IPlayerCharacter localPlayer)
@@ -305,7 +308,10 @@ public class TrackerHandler
             // Write back critical encounters fetched from tracker
             foreach (var sharedFate in CurrentTracker.Encounters)
             {
-                var localFate = Plugin.Fates.GetCriticalEngagementForTerritory().First(f => f.FateId == sharedFate.FateId);
+                if (sharedFate.FateId == 65)
+                    continue;
+
+                var localFate = Plugin.Fates.GetCEsSkipExtremeForTerritory().First(f => f.FateId == sharedFate.FateId);
 
                 localFate.LastSeenAlive = sharedFate.LastSeenAlive;
                 localFate.SpawnTime = sharedFate.SpawnTime;

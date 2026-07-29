@@ -92,7 +92,7 @@ public class OccultWindow : Window, IDisposable
                 return;
 
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderCE);
-            foreach (var previousCE in Plugin.Fates.GetCriticalEngagementForTerritory().Where(f => f.MapIcon != 0))
+            foreach (var previousCE in Plugin.Fates.GetCEsSkipExtremeForTerritory().Where(f => f.MapIcon != 0))
             {
                 DrawFateInfo(previousCE, false);
                 DrawSeparator();
