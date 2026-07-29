@@ -185,6 +185,7 @@
                 {
                     method: 'GET',
                     headers: API_HEADERS,
+                    cache: 'no-store',
                 },
             );
 
@@ -230,6 +231,7 @@
                 {
                     method: 'GET',
                     headers: API_HEADERS,
+                    cache: 'no-store',
                 },
             );
 
