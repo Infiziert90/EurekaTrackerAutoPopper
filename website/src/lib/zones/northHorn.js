@@ -157,7 +157,7 @@ const ENCOUNTERS = {
             "ja": "魔女の複製体「カロフィステリ・ダブル」",
             "de": "Doppelt gehext hält besser"
         },
-        drops: [],
+        drops: [51988],
         spawn_type: true, // monster kill - Crescent Blackguard
         monster: {
             "en": "Crescent Blackguard",
@@ -173,7 +173,7 @@ const ENCOUNTERS = {
             "ja": "白の守護者「アラバスターブレード」",
             "de": "Schwert und Stein"
         },
-        drops: [],
+        drops: [51987],
         spawn_type: false, // random spawn - Automatic
     },
     52: {
@@ -183,7 +183,7 @@ const ENCOUNTERS = {
             "ja": "禁忌の魔道書「アルバテル」",
             "de": "Verbotenes Wissen"
         },
-        drops: [],
+        drops: [51979],
         spawn_type: false, // random spawn - Automatic
     },
     53: {
@@ -193,7 +193,7 @@ const ENCOUNTERS = {
             "ja": "暗紅の屍竜「ルブルムドラゴン」",
             "de": "Gift und Kralle"
         },
-        drops: [],
+        drops: [51986],
         spawn_type: true, // monster kill - Crescent Big Horn
         monster: {
             "en": "Crescent Big Horn",
@@ -209,7 +209,7 @@ const ENCOUNTERS = {
             "ja": "大食の呪鬼「アルゴル」",
             "de": "Unersättliches Unheil"
         },
-        drops: [],
+        drops: [51981],
         spawn_type: false,
     },
     55: {
@@ -220,7 +220,13 @@ const ENCOUNTERS = {
             "de": "Wie eine Fliege im Netz"
         },
         drops: [],
-        spawn_type: false,
+        spawn_type: true, // monster kill - Crescent Hellhound
+        monster: {
+            "en": "Crescent Hellhound",
+            "fr": "Limier de Lunule",
+            "ja": "クレセント・ヘルハウンド",
+            "de": "Kreszentia-Höllenhund"
+        },
     },
     56: {
         name: {
@@ -239,7 +245,7 @@ const ENCOUNTERS = {
             "ja": "死霊使いの亡霊「マギ・ネクロマンサー」",
             "de": "Auf Tod komm raus"
         },
-        drops: [],
+        drops: [51974, 51984],
         spawn_type: false,
     },
     58: {
@@ -259,7 +265,7 @@ const ENCOUNTERS = {
             "ja": "呪いを継ぐ者「ペイルマギア」",
             "de": "Verflucht noch eins"
         },
-        drops: [],
+        drops: [51972, 51983],
         spawn_type: false,
     },
     60: {
@@ -269,7 +275,7 @@ const ENCOUNTERS = {
             "ja": "魔道兵団「タイニーメイジ」",
             "de": "Klein aber oho"
         },
-        drops: [],
+        drops: [51980],
         spawn_type: false,
     },
     61: {
@@ -279,7 +285,7 @@ const ENCOUNTERS = {
             "ja": "絶島の誘拐者「アブダクター」",
             "de": "Vom Winde verweht"
         },
-        drops: [],
+        drops: [51985],
         spawn_type: true, // monster kill - Crescent Wraith
         monster: {
             "en": "Crescent Wraith",
@@ -305,7 +311,7 @@ const ENCOUNTERS = {
             "ja": "変化の使い魔「メタモルファ」",
             "de": "Mieses Mimikry"
         },
-        drops: [],
+        drops: [51982],
         spawn_type: false,
     },
 

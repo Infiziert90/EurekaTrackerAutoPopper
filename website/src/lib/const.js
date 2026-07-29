@@ -411,4 +411,116 @@ export const ITEM = {
         },
         img: "ui/icon/055000/055905_hr1.tex"
     },
+
+    // SOULS - NORTH HORN
+    51972: {
+        name: {
+            "en": "Blue Mage's Soul Shard",
+            "fr": "Éclat d'âme de mage bleu",
+            "ja": "ソウルシャード:青魔道士",
+            "de": "Blaumagier-Seelensplitter"
+        },
+        img: "ui/icon/026000/026681.tex"
+    },
+    51974: {
+        name: {
+            "en": "Necromancer's Soul Shard",
+            "fr": "Éclat d'âme de nécromancien",
+            "ja": "ソウルシャード:ネクロマンサー",
+            "de": "Nekromanten-Seelensplitter"
+        },
+        img: "ui/icon/026000/026681.tex"
+    },
+
+    // FIELD NOTES - NORTH HORN
+    51979: {
+        name: {
+            "en": "Notes on Arbatel",
+            "fr": "Article sur Arbatel",
+            "ja": "探査記録:アルバテル",
+            "de": "Chronikeintrag „Arbatel“"
+        },
+        img: "ui/icon/026000/026603.tex"
+    },
+    51980: {
+        name: {
+            "en": "Notes on the Tiny Mage",
+            "fr": "Article sur le petit mage",
+            "ja": "探査記録:タイニーメイジ",
+            "de": "Chronikeintrag „Winzige Magier“"
+        },
+        img: "ui/icon/026000/026603.tex"
+    },
+    51981: {
+        name: {
+            "en": "Notes on Algol",
+            "fr": "Article sur Algol",
+            "ja": "探査記録:アルゴル",
+            "de": "Chronikeintrag „Algol“"
+        },
+        img: "ui/icon/026000/026603.tex"
+    },
+    51982: {
+        name: {
+            "en": "Notes on the Metamorph",
+            "fr": "Article sur le métamorphe",
+            "ja": "探査記録:メタモルファ",
+            "de": "Chronikeintrag „Metamorpha“"
+        },
+        img: "ui/icon/026000/026603.tex"
+    },
+    51983: {
+        name: {
+            "en": "Notes on the Pallmagia",
+            "fr": "Article sur Palimagia",
+            "ja": "探査記録:ペイルマギア",
+            "de": "Chronikeintrag „Bleicher Magia“"
+        },
+        img: "ui/icon/026000/026603.tex"
+    },
+    51984: {
+        name: {
+            "en": "Notes on the Phantom Necromancer",
+            "fr": "Article sur le nécromancien magi",
+            "ja": "探査記録:マギ・ネクロマンサー",
+            "de": "Chronikeintrag „Kreszenter Nekromant“"
+        },
+        img: "ui/icon/026000/026603.tex"
+    },
+    51985: {
+        name: {
+            "en": "Notes on the Abductor",
+            "fr": "Article sur le Ravisseur",
+            "ja": "探査記録:アブダクター",
+            "de": "Chronikeintrag „Abduktor“"
+        },
+        img: "ui/icon/026000/026603.tex"
+    },
+    51986: {
+        name: {
+            "en": "Notes on the Claret Dragon",
+            "fr": "Article sur le dragon rubrum",
+            "ja": "探査記録:ルブルムドラゴン",
+            "de": "Chronikeintrag „Rubrum-Drache“"
+        },
+        img: "ui/icon/026000/026603.tex"
+    },
+    51987: {
+        name: {
+            "en": "Notes on the Alabaster Blade",
+            "fr": "Article sur la Lame d'albâtre",
+            "ja": "探査記録:アラバスターブレード",
+            "de": "Chronikeintrag „Alabaster-Klinge“"
+        },
+        img: "ui/icon/026000/026603.tex"
+    },
+    51988: {
+        name: {
+            "en": "Notes on Conjured Calofisteri",
+            "fr": "Article sur le clone de Calofisteri",
+            "ja": "探査記録:カロフィステリ・ダブル",
+            "de": "Chronikeintrag „Calofisteri-Doppelgängerin“"
+        },
+        img: "ui/icon/026000/026603.tex"
+    },
 }
