@@ -325,8 +325,8 @@ const ENCOUNTERS = {
         spawn_type: false,
     },
 
-    // SPECIAL ENCOUNTERS - the Forked Tower and its Extreme variant, both handled
-    // through the tower* fields below rather than the generic encounter list.
+    // SPECIAL ENCOUNTER - the Forked Tower, handled through the tower* fields
+    // below rather than the generic encounter list.
     64: {
         name: {
             "en": "The Forked Tower: Magic",
@@ -336,16 +336,6 @@ const ENCOUNTERS = {
         },
         drops: [],
         type: "tower",
-    },
-    65: {
-        name: {
-            "en": "The Forked Tower: Magic (Extreme)",
-            "fr": "Tour fourchue de la Magie (extrême)",
-            "ja": "極フォークタワー：魔の塔",
-            "de": "Der Turm der Magie (extrem)"
-        },
-        drops: [],
-        type: "tower-extreme",
     },
 };
 
@@ -379,7 +369,6 @@ export const NORTH_HORN = {
     encounterIds: Object.keys(ENCOUNTERS).map(Number),
 
     towerId: 64,
-    towerExtremeId: 65,
     towerIcon: "ui/icon/063000/063978_hr1.tex",
     towerSpawnTimer: 3600, // unconfirmed
     potRespawn: 1800, // unconfirmed

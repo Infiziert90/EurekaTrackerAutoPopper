@@ -180,8 +180,8 @@ export function calculateCECooldown(encounter, zone, now = Math.floor(Date.now()
         };
     }
 
-    // The Forked Tower (and its Extreme variant) doesn't use the cooldown system
-    if (encounter.fate_id === zone.towerId || encounter.fate_id === zone.towerExtremeId) {
+    // The Forked Tower doesn't use the cooldown system
+    if (encounter.fate_id === zone.towerId) {
         return {
             cooldownEndTime: null,
             remainingSeconds: 0,

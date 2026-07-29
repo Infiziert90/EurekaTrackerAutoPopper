@@ -292,8 +292,8 @@
                                 activeCE = encounter;
                             }
 
-                            // When we get the Forked Tower (or its Extreme variant), calculate the spawn_timer
-                            if (encounter.fate_id === currentZone.towerId || encounter.fate_id === currentZone.towerExtremeId) {
+                            // When we get the Forked Tower, calculate the spawn_timer
+                            if (encounter.fate_id === currentZone.towerId) {
                                 encounter.spawn_timer = currentZone.towerSpawnTimer - (300 * encounter.killed_ces) - (60 * encounter.killed_fates);
                             }
                         });
@@ -554,10 +554,11 @@
             <!-- 2col, Forked Tower & Pot Fate -->
             <div class="max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
-                <!-- Forked Tower (and its Extreme variant, on zones that have one) -->
+                <!-- Forked Tower (on zones that have one) -->
                 <div class="bg-slate-800/90 p-4">
-                    {#each [zone.towerId, zone.towerExtremeId].filter((id) => id != null) as towerFateId, towerIndex}
-                        <div class={towerIndex > 0 ? 'mt-4 pt-4 border-t border-white/10' : ''}>
+                    {#if zone.towerId}
+                        {@const towerFateId = zone.towerId}
+                        <div>
                             <h2 class="text-2xl font-extrabold">
                                 {#if zone.towerIcon}
                                     <img src={`https://v2.xivapi.com/api/asset?path=${zone.towerIcon}&format=webp`} alt="Forked Tower Icon" class="w-16 h-16 inline-block mr-2" />
@@ -618,7 +619,7 @@
                                 <p class="text-slate-400">No encounter data available</p>
                             {/if}
                         </div>
-                    {/each}
+                    {/if}
                 </div>
 
                 <!-- Pot Fate-->
@@ -707,7 +708,7 @@
                     </thead>
                     <tbody>
                         {#if trackerResults.encounter_history && trackerResults.encounter_history.length > 0}
-                            {#each trackerResults.encounter_history.filter(encounter => encounter.fate_id !== zone.towerId && encounter.fate_id !== zone.towerExtremeId) as encounter}
+                            {#each trackerResults.encounter_history.filter(encounter => encounter.fate_id !== zone.towerId) as encounter}
                                 {@const encounterData = zone.encounters[encounter.fate_id]}
                                 <tr class={encounter.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
                                     <td class="px-2 w-2/5 truncate">{encounterName(encounter.fate_id)}</td>

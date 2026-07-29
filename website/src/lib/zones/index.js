@@ -31,7 +31,6 @@ const UNKNOWN_ZONE = {
     potFateIds: [],
     encounterIds: [],
     towerId: null,
-    towerExtremeId: null,
     towerIcon: null,
     towerSpawnTimer: 3600,
     potRespawn: 1800,
