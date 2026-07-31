@@ -4,9 +4,18 @@
 export const CE_COOLDOWN_MONSTER_KILL = 3600; // 60 minutes
 export const CE_COOLDOWN_RANDOM_SPAWN = 7200; // 120 minutes
 
+// Elemental weaknesses, referenced by key from zone fate/encounter entries.
+export const WEAKNESS = {
+    fire: { en: "Fire", fr: "Feu", ja: "火", de: "Feuer", icon: "ui/icon/229000/229983_hr1.tex" },
+    ice: { en: "Ice", fr: "Glace", ja: "氷", de: "Eis", icon: "ui/icon/229000/229984_hr1.tex" },
+    lightning: { en: "Lightning", fr: "Foudre", ja: "雷", de: "Blitz", icon: "ui/icon/229000/229985_hr1.tex" },
+    wind: { en: "Wind", fr: "Vent", ja: "風", de: "Wind", icon: "ui/icon/229000/229986_hr1.tex" },
+};
+
 // API Configuration
 export const BASE_URL = "https://infi.ovh/api/OccultTrackerV3";
 export const BASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiJ9.Ur6wgi_rD4dr3uLLvbLoaEvfLCu4QFWdrF-uHRtbl_s";
+export const XIVAPI_BASE_URL = "https://v2.xivapi.com/api/";
 
 // API Headers
 export const API_HEADERS = {

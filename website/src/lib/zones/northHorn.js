@@ -2,7 +2,6 @@ import wamoura from '$lib/assets/49.png';
 import blackguard from '$lib/assets/50.png';
 import big_horn from '$lib/assets/53.png';
 import hellhound from '$lib/assets/55.png';
-import bile from '$lib/assets/59.png';
 
 const FATES = {
     2074: {
@@ -13,6 +12,7 @@ const FATES = {
             "de": "Mit Kraft und Keule"
         },
         drops: [50974],
+        weakness: ["fire"],
     },
     2075: {
         name: {
@@ -22,6 +22,7 @@ const FATES = {
             "de": "Auge um Auge"
         },
         drops: [50975],
+        weakness: ["fire"],
     },
     2076: {
         name: {
@@ -31,6 +32,7 @@ const FATES = {
             "de": "Wassertyrannei"
         },
         drops: [50976],
+        weakness: ["wind"],
     },
     2077: {
         name: {
@@ -40,6 +42,7 @@ const FATES = {
             "de": "Mit allen Wassern gewaschen"
         },
         drops: [50974],
+        weakness: ["lightning"],
     },
     2078: {
         name: {
@@ -49,6 +52,7 @@ const FATES = {
             "de": "Auf den Atem kommt es an"
         },
         drops: [50975],
+        weakness: ["fire"],
     },
     2079: {
         name: {
@@ -58,6 +62,7 @@ const FATES = {
             "de": "Sing mir das Lied vom Tod"
         },
         drops: [50976],
+        weakness: ["fire"],
     },
     2080: {
         name: {
@@ -67,6 +72,7 @@ const FATES = {
             "de": "Der Hund von Kreszentia"
         },
         drops: [50975],
+        weakness: ["fire"],
     },
     2081: {
         name: {
@@ -76,6 +82,7 @@ const FATES = {
             "de": "Die ewige Wächterin"
         },
         drops: [50974],
+        weakness: ["wind", "lightning"],
     },
     2082: {
         name: {
@@ -85,6 +92,7 @@ const FATES = {
             "de": "Stürmischer Empfang"
         },
         drops: [50974],
+        weakness: ["fire"],
     },
     2083: {
         name: {
@@ -94,6 +102,7 @@ const FATES = {
             "de": "Stein zu Stein"
         },
         drops: [50976],
+        weakness: ["ice"],
     },
     2084: {
         name: {
@@ -103,6 +112,7 @@ const FATES = {
             "de": "Königliche Arroganz"
         },
         drops: [50975],
+        weakness: ["fire"],
     },
 };
 
@@ -121,6 +131,7 @@ const POT_FATES = {
             "de": "(Nord)"
         },
         drops: [50976],
+        weakness: ["fire"],
     },
     2073: {
         name: {
@@ -136,6 +147,7 @@ const POT_FATES = {
             "de": "(Süden)"
         },
         drops: [50975],
+        weakness: ["lightning"],
     },
 };
 
@@ -156,6 +168,7 @@ const ENCOUNTERS = {
             "de": "Kreszentia-Wamoura"
         },
         monster_image: wamoura,
+        weakness: ["ice"],
     },
     50: {
         name: {
@@ -164,7 +177,7 @@ const ENCOUNTERS = {
             "ja": "魔女の複製体「カロフィステリ・ダブル」",
             "de": "Doppelt gehext hält besser"
         },
-        drops: [51988, 50976],
+        drops: [49832, 49827, 51988, 50976],
         spawn_type: true, // monster kill - Crescent Blackguard
         monster: {
             "en": "Crescent Blackguard",
@@ -173,6 +186,7 @@ const ENCOUNTERS = {
             "de": "Kreszentia-Düsterwächter"
         },
         monster_image: blackguard,
+        weakness: ["wind"],
     },
     51: {
         name: {
@@ -181,8 +195,9 @@ const ENCOUNTERS = {
             "ja": "白の守護者「アラバスターブレード」",
             "de": "Schwert und Stein"
         },
-        drops: [51987, 50975],
+        drops: [49831, 49826, 51987, 50975],
         spawn_type: false, // random spawn - Automatic
+        weakness: ["lightning"],
     },
     52: {
         name: {
@@ -191,8 +206,9 @@ const ENCOUNTERS = {
             "ja": "禁忌の魔道書「アルバテル」",
             "de": "Verbotenes Wissen"
         },
-        drops: [51979, 50974],
+        drops: [49833, 49828, 51979, 50974],
         spawn_type: false, // random spawn - Automatic
+        weakness: ["fire"],
     },
     53: {
         name: {
@@ -210,6 +226,7 @@ const ENCOUNTERS = {
             "de": "Kreszentia-Großhorn"
         },
         monster_image: big_horn,
+        weakness: ["fire"],
     },
     54: {
         name: {
@@ -218,8 +235,9 @@ const ENCOUNTERS = {
             "ja": "大食の呪鬼「アルゴル」",
             "de": "Unersättliches Unheil"
         },
-        drops: [51981, 50975],
+        drops: [49831, 49826, 51981, 50975],
         spawn_type: false,
+        weakness: ["fire"],
     },
     55: {
         name: {
@@ -228,7 +246,7 @@ const ENCOUNTERS = {
             "ja": "猟奇の母蜘蛛「クレセント・アルケニー」",
             "de": "Wie eine Fliege im Netz"
         },
-        drops: [50974],
+        drops: [49832, 49827, 50974],
         spawn_type: true, // monster kill - Crescent Hellhound
         monster: {
             "en": "Crescent Hellhound",
@@ -237,6 +255,7 @@ const ENCOUNTERS = {
             "de": "Kreszentia-Höllenhund"
         },
         monster_image: hellhound,
+        weakness: ["ice"],
     },
     56: {
         name: {
@@ -245,7 +264,8 @@ const ENCOUNTERS = {
             "ja": "反逆の使い魔「アトラス・カーバンクル」",
             "de": "Rubinrote Rebellion"
         },
-        drops: [50976],
+        drops: [49833, 49828, 50976],
+        weakness: ["ice"],
     },
     57: {
         name: {
@@ -254,8 +274,9 @@ const ENCOUNTERS = {
             "ja": "死霊使いの亡霊「マギ・ネクロマンサー」",
             "de": "Auf Tod komm raus"
         },
-        drops: [51974, 51984, 50975],
+        drops: [49832, 49827, 51974, 51984, 50975],
         spawn_type: false,
+        weakness: ["wind"],
     },
     58: {
         name: {
@@ -264,8 +285,9 @@ const ENCOUNTERS = {
             "ja": "求道の人造人間「エルムギガース」",
             "de": "Auf dem Weg der Erleuchtung"
         },
-        drops: [50976],
+        drops: [49833, 49828, 50976],
         spawn_type: false,
+        weakness: ["lightning"],
     },
     59: {
         name: {
@@ -274,15 +296,9 @@ const ENCOUNTERS = {
             "ja": "呪いを継ぐ者「ペイルマギア」",
             "de": "Verflucht noch eins"
         },
-        drops: [51972, 51983, 50974],
-        spawn_type: true, // monster kill - Crescent Bile
-        monster: {
-            "en": "Crescent Bile",
-            "fr": "Bile de Lunule",
-            "ja": "クレセント・バイル",
-            "de": "Kreszentia-Galle"
-        },
-        monster_image: bile,
+        drops: [49831, 49826, 51972, 51983, 50974],
+        spawn_type: false,
+        weakness: ["fire"],
     },
     60: {
         name: {
@@ -291,8 +307,9 @@ const ENCOUNTERS = {
             "ja": "魔道兵団「タイニーメイジ」",
             "de": "Klein aber oho"
         },
-        drops: [51980, 50975],
+        drops: [49833, 49828, 51980, 50975],
         spawn_type: false,
+        weakness: ["lightning"],
     },
     61: {
         name: {
@@ -301,8 +318,9 @@ const ENCOUNTERS = {
             "ja": "絶島の誘拐者「アブダクター」",
             "de": "Vom Winde verweht"
         },
-        drops: [51985, 50976],
+        drops: [49832, 49827, 51985, 50976],
         spawn_type: false, // random spawn - Automatic
+        weakness: ["lightning"],
     },
     62: {
         name: {
@@ -311,8 +329,9 @@ const ENCOUNTERS = {
             "ja": "覚醒の多頭竜「マギ・ヒュドラ」",
             "de": "Mehr Köpfe als Verstand"
         },
-        drops: [50974],
+        drops: [49833, 49828, 50974],
         spawn_type: false,
+        weakness: ["ice"],
     },
     63: {
         name: {
@@ -321,8 +340,9 @@ const ENCOUNTERS = {
             "ja": "変化の使い魔「メタモルファ」",
             "de": "Mieses Mimikry"
         },
-        drops: [51982, 50976],
+        drops: [49831, 49826, 51982, 50976],
         spawn_type: false,
+        weakness: ["wind"],
     },
 
     // SPECIAL ENCOUNTER - the Forked Tower, handled through the tower* fields

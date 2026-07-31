@@ -3,7 +3,7 @@
     import { page } from "$app/stores";
     import { base } from "$app/paths";
     import { goto } from "$app/navigation";
-    import { BASE_URL, API_HEADERS, DATACENTER_NAMES, ITEM } from "$lib/const";
+    import { BASE_URL, API_HEADERS, DATACENTER_NAMES, ITEM, WEAKNESS, XIVAPI_BASE_URL } from "$lib/const";
     import { getZone, isEditable, isKnownZone, DEFAULT_TRACKER_TYPE } from "$lib/zones";
     import { currentLanguage } from "$lib/stores";
     import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull, Link, Clipboard } from "@lucide/svelte";
@@ -689,6 +689,36 @@
 
 
 
+            {#snippet weaknessBadge(weakness)}
+                {#if weakness?.length}
+                    <span class="tooltip relative inline-block w-5 h-5 mr-1 align-middle">
+                        {#if weakness.length === 1}
+                            <img
+                                src={`${XIVAPI_BASE_URL}asset?path=${WEAKNESS[weakness[0]].icon}&format=png`}
+                                alt={localized(WEAKNESS[weakness[0]], $currentLanguage)}
+                                class="w-full h-full object-contain"
+                            />
+                        {:else}
+                            <img
+                                src={`${XIVAPI_BASE_URL}asset?path=${WEAKNESS[weakness[0]].icon}&format=png`}
+                                alt={localized(WEAKNESS[weakness[0]], $currentLanguage)}
+                                class="absolute inset-0 w-full h-full object-contain"
+                                style="clip-path: polygon(0 0, 100% 0, 0 100%);"
+                            />
+                            <img
+                                src={`${XIVAPI_BASE_URL}asset?path=${WEAKNESS[weakness[1]].icon}&format=png`}
+                                alt={localized(WEAKNESS[weakness[1]], $currentLanguage)}
+                                class="absolute inset-0 w-full h-full object-contain"
+                                style="clip-path: polygon(100% 0, 100% 100%, 0 100%);"
+                            />
+                        {/if}
+                        <Tooltip arrow={false} class="bg-black/80 rounded-md text-white text-xs px-2 py-1 border border-white/20">
+                            Weakness: {weakness.map((w) => localized(WEAKNESS[w], $currentLanguage)).join('/')}
+                        </Tooltip>
+                    </span>
+                {/if}
+            {/snippet}
+
             <!-- Encounter History -->
             <div class="max-w-6xl w-full mx-auto mb-4">
                 <h2 class="text-2xl font-extrabold">
@@ -713,7 +743,10 @@
                             {#each trackerResults.encounter_history.filter(encounter => encounter.fate_id !== zone.towerId) as encounter}
                                 {@const encounterData = zone.encounters[encounter.fate_id]}
                                 <tr class={encounter.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
-                                    <td class="px-2 w-2/5 truncate">{encounterName(encounter.fate_id)}</td>
+                                    <td class="px-2 w-2/5 truncate">
+                                        {@render weaknessBadge(encounterData?.weakness)}
+                                        {encounterName(encounter.fate_id)}
+                                    </td>
                                     <td class="px-2 w-2/5 truncate">
                                         {#if encounterData?.monster !== undefined}
                                             <div class="tooltip">
@@ -833,8 +866,12 @@
                     <tbody>
                         {#if trackerResults.fate_history && trackerResults.fate_history.length > 0}
                             {#each trackerResults.fate_history as fate}
+                                {@const fateData = zone.fates[fate.fate_id]}
                                 <tr class={fate.alive ? 'bg-green-800/90' : 'bg-slate-900/90'}>
-                                    <td class="px-2 w-2/5 truncate">{fateName(fate.fate_id)}</td>
+                                    <td class="px-2 w-2/5 truncate">
+                                        {@render weaknessBadge(fateData?.weakness)}
+                                        {fateName(fate.fate_id)}
+                                    </td>
                                     <td class="px-2 hidden md:table-cell">
                                         <div class="flex flex-wrap gap-1">
                                             {#each zone.fates[fate.fate_id]?.drops ?? [] as drop}

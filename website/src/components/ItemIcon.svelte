@@ -1,9 +1,8 @@
 <script>
     import { Tooltip } from "flowbite-svelte";
     let { itemId } = $props();
-    import { ITEM } from "$lib/const";
+    import { ITEM, XIVAPI_BASE_URL } from "$lib/const";
     import { currentLanguage } from "$lib/stores";
-    const XIVAPI_BASE_URL = "https://v2.xivapi.com/api/";
 </script>
 
 <a
