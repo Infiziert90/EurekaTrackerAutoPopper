@@ -2,6 +2,7 @@ import wamoura from '$lib/assets/49.png';
 import blackguard from '$lib/assets/50.png';
 import big_horn from '$lib/assets/53.png';
 import hellhound from '$lib/assets/55.png';
+import bile from '$lib/assets/59.png';
 
 const FATES = {
     2074: {
@@ -281,7 +282,7 @@ const ENCOUNTERS = {
             "ja": "クレセント・バイル",
             "de": "Kreszentia-Galle"
         },
-        // TODO: no portrait asset sourced yet for Crescent Bile (monster_image omitted, degrades gracefully in UI)
+        monster_image: bile,
     },
     60: {
         name: {
