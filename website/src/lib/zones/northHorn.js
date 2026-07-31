@@ -2,7 +2,6 @@ import wamoura from '$lib/assets/49.png';
 import blackguard from '$lib/assets/50.png';
 import big_horn from '$lib/assets/53.png';
 import hellhound from '$lib/assets/55.png';
-import wraith from '$lib/assets/61.png';
 
 const FATES = {
     2074: {
@@ -275,7 +274,14 @@ const ENCOUNTERS = {
             "de": "Verflucht noch eins"
         },
         drops: [51972, 51983, 50974],
-        spawn_type: false,
+        spawn_type: true, // monster kill - Crescent Bile
+        monster: {
+            "en": "Crescent Bile",
+            "fr": "Bile de Lunule",
+            "ja": "クレセント・バイル",
+            "de": "Kreszentia-Galle"
+        },
+        // TODO: no portrait asset sourced yet for Crescent Bile (monster_image omitted, degrades gracefully in UI)
     },
     60: {
         name: {
@@ -295,14 +301,7 @@ const ENCOUNTERS = {
             "de": "Vom Winde verweht"
         },
         drops: [51985, 50976],
-        spawn_type: true, // monster kill - Crescent Wraith
-        monster: {
-            "en": "Crescent Wraith",
-            "fr": "Spectre de Lunule",
-            "ja": "クレセント・レイス",
-            "de": "Kreszentia-Geist"
-        },
-        monster_image: wraith,
+        spawn_type: false, // random spawn - Automatic
     },
     62: {
         name: {
