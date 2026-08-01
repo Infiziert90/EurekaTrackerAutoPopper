@@ -239,7 +239,7 @@ public class Fates
         => OccultFates.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType);
 
     public IEnumerable<Fate> GetCriticalEngagementForTerritory()
-        => OccultCriticalEncounters.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType);
+        => OccultCriticalEncounters.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType).Where(f => f.FateId != 64 && f.FateId != 48);
 
     public IEnumerable<Fate> GetCEsSkipExtremeForTerritory()
         => OccultCriticalEncounters.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType).Where(f => f.FateId != 65);

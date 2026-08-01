@@ -408,7 +408,7 @@
 
         // Set up polling every second to check for data changes
         // Uses lightweight query (only fetches last_update field) to detect changes
-        headCheckInterval = setInterval(checkTrackerUpdate, 1000);
+        headCheckInterval = setInterval(checkTrackerUpdate, 5000);
     });
 
     onDestroy(() => {

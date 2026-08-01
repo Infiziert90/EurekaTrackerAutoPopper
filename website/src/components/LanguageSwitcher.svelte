@@ -1,6 +1,6 @@
 <script>
     import { currentLanguage, AVAILABLE_LANGUAGES } from '$lib/stores';
-    
+
     function handleLanguageChange(event) {
         const selectedLanguage = event.target.value;
         currentLanguage.set(selectedLanguage);
@@ -21,7 +21,7 @@
                     class="sr-only"
                 />
                 <span class="px-2 py-1 transition-colors {
-                    $currentLanguage === language.code 
+                    $currentLanguage === language.code
                         ? 'underline text-white'
                         : 'text-gray-300 hover:underline focus:underline hover:text-white focus:text-white'
                 }">
