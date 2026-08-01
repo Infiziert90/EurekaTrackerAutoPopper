@@ -210,6 +210,9 @@ public unsafe class MapMarkerController : IDisposable
 
         if (MarkerSetToPlace.HasFlag(FlagMarkerSet.OccultBunny))
             AddOccultBunnyPositions(territory);
+
+        if (MarkerSetToPlace.HasFlag(FlagMarkerSet.OccultSurvey))
+            AddOccultSurveyPositions(territory);
     }
 
     private void AddChestsLocationsMap(uint territory)
@@ -263,6 +266,12 @@ public unsafe class MapMarkerController : IDisposable
     {
         foreach (var worldPos in OccultChests.BunnyPosition[(Territory)territory])
             SetMarkers(worldPos, Plugin.PenumbraIpc.GetReplacedIcon);
+    }
+
+    private void AddOccultSurveyPositions(uint territory)
+    {
+        foreach (var (worldPos, map) in OccultChests.SurveyPositions[(Territory)territory])
+            SetMarkers(worldPos, Icons.SurveyPoint, (uint)map);
     }
 
     private void SetMarkers(Vector3 worldPos, Icons icon, uint map = 0)

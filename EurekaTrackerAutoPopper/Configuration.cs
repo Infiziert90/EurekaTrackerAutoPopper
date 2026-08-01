@@ -49,6 +49,7 @@ public class Configuration : IPluginConfiguration
     public bool PlaceDefaultOccult = true;
     public bool ShowFastSwitcher = true;
     public bool SwitcherBelowMap = false;
+    public bool SwitcherMoveable = false;
     public FlagMarkerSet DefaultOccultFlags = FlagMarkerSet.OccultBronzeTreasure | FlagMarkerSet.OccultSilverTreasure;
     public bool AutoSwitchToOccultPots = false;
     public FlagMarkerSet AutoSwitchFlags = FlagMarkerSet.OccultNorthPot | FlagMarkerSet.OccultSouthPot | FlagMarkerSet.OccultReroll;

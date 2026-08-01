@@ -46,14 +46,23 @@ public class FastSwitchOverlay : Window, IDisposable
             if (!mapBaseNode.IsVisible)
                 return;
 
-            Size = CalculateRequiredSize(6) / ImGuiHelpers.GlobalScale;
+            Size = CalculateRequiredSize(EnumExtensions.IconArray.Length + 1) / ImGuiHelpers.GlobalScale;
 
             var posY = mapBaseNode.Y - Size.Value.Y * ImGuiHelpers.GlobalScale;
             if (Plugin.Configuration.SwitcherBelowMap)
                 posY = mapBaseNode.Y + mapBaseNode.ScaledHeight;
 
-            Position = new Vector2(mapBaseNode.X + 5, posY);
-            PositionCondition = ImGuiCond.Always;
+            if (!Plugin.Configuration.SwitcherMoveable)
+            {
+                Position = new Vector2(mapBaseNode.X + 5, posY);
+                PositionCondition = ImGuiCond.Always;
+                Flags |= ImGuiWindowFlags.NoMove;
+            }
+            else
+            {
+                PositionCondition = ImGuiCond.Once;
+                Flags &= ~ImGuiWindowFlags.NoMove;
+            }
 
             IsOpen = true;
         }
@@ -84,6 +93,8 @@ public class FastSwitchOverlay : Window, IDisposable
         flagsChanged |= Helper.ImageButtonWithState(Icons.Reroll, FlagMarkerSet.OccultReroll, ref current);
         ImGui.SameLine();
         flagsChanged |= Helper.ImageButtonWithState(Plugin.PenumbraIpc.GetReplacedIcon, FlagMarkerSet.OccultBunny, ref current);
+        ImGui.SameLine();
+        flagsChanged |= Helper.ImageButtonWithState(Icons.SurveyPoint, FlagMarkerSet.OccultSurvey, ref current);
         ImGui.SameLine();
 
         if (flagsChanged)

@@ -771,6 +771,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Moveable.
+        /// </summary>
+        internal static string ConfigOptionSwitcherMove {
+            get {
+                return ResourceManager.GetString("ConfigOptionSwitcherMove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Position Below Map.
         /// </summary>
         internal static string ConfigOptionSwitcherPosition {
@@ -1263,6 +1272,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string MarkerSetPotSouth {
             get {
                 return ResourceManager.GetString("MarkerSetPotSouth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Survey Point.
+        /// </summary>
+        internal static string MarkerSetSurveyPoint {
+            get {
+                return ResourceManager.GetString("MarkerSetSurveyPoint", resourceCulture);
             }
         }
         

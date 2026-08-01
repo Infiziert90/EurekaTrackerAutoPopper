@@ -302,7 +302,7 @@ public class Fates
                     if (pair.Item2.Value->Id.Type == InstanceType.EventObject)
                     {
                         var gameEventObject = (GameObjectLayoutInstance*)pair.Item2.Value;
-                        if (gameEventObject->BaseId != 2015421)
+                        if (gameEventObject->BaseId != 2014695)
                             continue;
 
                         var pos = pair.Item2.Value->GetTransformImpl()->Translation;

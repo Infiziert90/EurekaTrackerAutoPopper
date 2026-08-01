@@ -110,6 +110,8 @@ public partial class MainWindow
                     flagsChanged |= Helper.ImageButtonWithState(Icons.Reroll, FlagMarkerSet.OccultReroll, ref current);
                     ImGui.SameLine();
                     flagsChanged |= Helper.ImageButtonWithState(Plugin.PenumbraIpc.GetReplacedIcon, FlagMarkerSet.OccultBunny, ref current);
+                    ImGui.SameLine();
+                    flagsChanged |= Helper.ImageButtonWithState(Icons.SurveyPoint, FlagMarkerSet.OccultSurvey, ref current);
 
                     if (flagsChanged)
                     {
@@ -124,7 +126,21 @@ public partial class MainWindow
                 if (Plugin.Configuration.ShowFastSwitcher)
                 {
                     using (ImRaii.PushIndent(10.0f))
-                        changed |= ImGui.Checkbox(Language.ConfigOptionSwitcherPosition, ref Plugin.Configuration.SwitcherBelowMap);
+                    {
+                        if (ImGui.Checkbox(Language.ConfigOptionSwitcherPosition, ref Plugin.Configuration.SwitcherBelowMap))
+                        {
+                            changed = true;
+                            if (Plugin.Configuration.SwitcherBelowMap)
+                                Plugin.Configuration.SwitcherMoveable = false;
+                        }
+
+                        if (ImGui.Checkbox(Language.ConfigOptionSwitcherMove, ref Plugin.Configuration.SwitcherMoveable))
+                        {
+                            changed = true;
+                            if (Plugin.Configuration.SwitcherMoveable)
+                                Plugin.Configuration.SwitcherBelowMap = false;
+                        }
+                    }
                 }
 
                 if (changed)

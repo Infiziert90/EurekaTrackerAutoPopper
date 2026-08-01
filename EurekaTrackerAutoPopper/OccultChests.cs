@@ -418,6 +418,45 @@ public static class OccultChests
         },
     };
 
+    public static readonly Dictionary<Territory, List<(Vector3 Position, Map Map)>> SurveyPositions = new()
+    {
+        { Territory.SouthHorn,
+            [
+                (new Vector3(857f, 73.17932f, -692f), Map.SouthHorn),
+                (new Vector3(491.9049f, 95.99999f, -222.5223f), Map.SouthHorn),
+                (new Vector3(-61.66174f, 30.94501f, -459.6475f), Map.SouthHorn),
+                (new Vector3(-564.0192f, 121.285f, 53.97119f), Map.SouthHorn),
+                (new Vector3(140.3372f, 66.89866f, 570.2448f), Map.SouthHorn),
+                (new Vector3(-291.7067f, 95.64343f, 404.8981f), Map.SouthHorn),
+                (new Vector3(89.89087f, 124.9975f, 3.982544f), Map.SouthHorn),
+                (new Vector3(-145.0065f, 73.98034f, 619.9891f), Map.SouthHorn),
+                (new Vector3(-635.0652f, 203f, 717.9521f), Map.SouthHorn),
+                (new Vector3(-885.008f, 3.8f, -782.0096f), Map.SouthHorn),
+                (new Vector3(757.9918f, 70.3f, 614.0687f), Map.SouthHorn),
+                (new Vector3(726.0089f, 120f, 59.86108f), Map.SouthHorn),
+            ] // 14
+        },
+        {
+            Territory.NorthHorn,
+            [
+               (new Vector3(880f, 259.9927f, 830f), Map.NorthHorn),
+               (new Vector3(756f, 130f, 511f), Map.NorthHorn),
+               (new Vector3(311f, -0.3000001f, 242f), Map.NorthHorn),
+               (new Vector3(917f, 54f, 57f), Map.NorthHorn),
+               (new Vector3(278f, 143f, -360.5961f), Map.NorthHorn),
+               (new Vector3(940f, 97.05797f, -898f), Map.NorthHorn),
+               (new Vector3(-196f, 70f, -813f), Map.NorthHorn),
+               (new Vector3(-514f, 159.3551f, 869f), Map.NorthHorn),
+               (new Vector3(-837.1359f, 160.031f, 743.2947f), Map.NorthHorn),
+               (new Vector3(-906f, 114f, 150f), Map.NorthHorn),
+               (new Vector3(-700.4601f, 41.93895f, -370.4427f), Map.NorthHorn),
+               (new Vector3(-876f, -48.85687f, -903f), Map.NorthHorn),
+               (new Vector3(-8f, 2.259441f, -88f), Map.NorthHorn),
+               (new Vector3(62f, -141.3853f, 124f), Map.NorthSubterrane),
+            ] // 14
+        },
+    };
+
     public static Vector3 CalculateDistance(Territory territory, Vector3 player)
     {
         var bestPos = (Dif: InRange, Pos: Vector3.Zero);

@@ -697,4 +697,10 @@ A cooldown of 5s applies after each use.</value>
     <data name="AutoMarkerActiveWarning" xml:space="preserve">
         <value>Automatic markers are active, switching not possible.</value>
     </data>
+    <data name="MarkerSetSurveyPoint" xml:space="preserve">
+        <value>Survey Point</value>
+    </data>
+    <data name="ConfigOptionSwitcherMove" xml:space="preserve">
+        <value>Moveable</value>
+    </data>
 </root>

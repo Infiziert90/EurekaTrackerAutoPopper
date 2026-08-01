@@ -19,6 +19,7 @@ public enum FlagMarkerSet : uint
     OccultSouthPot = 1 << 4,
     OccultReroll = 1 << 5,
     OccultBunny = 1 << 6,
+    OccultSurvey = 1 << 7,
 }
 
 public enum Icons : uint
@@ -33,6 +34,8 @@ public enum Icons : uint
 
     Carrot = 25207u,
     CarrotReplaced = 199201u,
+
+    SurveyPoint = 60468u,
 }
 
 public enum Territory : uint
@@ -117,7 +120,7 @@ public static class TerritoryHelper
 
 public static class EnumExtensions
 {
-    public static readonly Icons[] IconArray = [Icons.BronzeTreasure, Icons.SilverTreasure, Icons.GoldChest, Icons.Reroll, Icons.Carrot];
+    public static readonly Icons[] IconArray = [Icons.BronzeTreasure, Icons.SilverTreasure, Icons.GoldChest, Icons.Reroll, Icons.Carrot, Icons.SurveyPoint];
 
     public static string ToName(this FlagMarkerSet flag)
     {
@@ -131,7 +134,8 @@ public static class EnumExtensions
             FlagMarkerSet.OccultSouthPot => Language.MarkerSetPotSouth,
             FlagMarkerSet.OccultReroll => Language.MarketSetReroll,
             FlagMarkerSet.OccultBunny => Language.MarkerSetBunny,
-            _ => "Unknown"
+            FlagMarkerSet.OccultSurvey => Language.MarkerSetSurveyPoint,
+            _ => "Unknown",
         };
     }
 
@@ -143,7 +147,8 @@ public static class EnumExtensions
             Icons.SilverTreasure => Language.MarkerSetOnlySilver,
             Icons.GoldChest => Language.MarkerSetPot,
             Icons.Reroll => Language.MarketSetReroll,
-            Icons.Carrot or Icons.CarrotReplaced=> Language.MarkerSetBunny,
+            Icons.Carrot or Icons.CarrotReplaced => Language.MarkerSetBunny,
+            Icons.SurveyPoint => Language.MarkerSetSurveyPoint,
             _ => "Unknown",
         };
     }
