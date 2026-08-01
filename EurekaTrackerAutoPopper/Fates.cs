@@ -6,6 +6,7 @@ using Dalamud.Game.ClientState.Fates;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.LayoutEngine;
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
 using FFXIVClientStructs.FFXIV.Client.UI;
 
 namespace EurekaTrackerAutoPopper;
@@ -109,11 +110,20 @@ public class Fate
     public void Reset()
     {
         Alive = false;
-        SpawnTime = -1;
+        PlayedSound = false;
+        SpawnTime = 0;
+        DeathTime = 0;
         LastSeenAlive = -1;
+
+        TimeLeft = 0;
+        Progress = 0;
+
+        StateTimeLeft = 0;
+        State = DynamicEventState.Inactive;
 
         KilledFates = 0;
         KilledCEs = 0;
+
         InstanceJoinedTimer = 0;
     }
 
@@ -241,6 +251,9 @@ public class Fates
     public IEnumerable<Fate> GetCriticalEngagementForTerritory()
         => OccultCriticalEncounters.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType).Where(f => f.FateId != 64 && f.FateId != 48);
 
+    public IEnumerable<Fate> GetCEsWithoutTowerForTerritory()
+        => OccultCriticalEncounters.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType).Where(f => f.FateId != 64 && f.FateId != 65 && f.FateId != 48);
+
     public IEnumerable<Fate> GetCEsSkipExtremeForTerritory()
         => OccultCriticalEncounters.Where(f => f.Territory == (Territory)Plugin.ClientState.TerritoryType).Where(f => f.FateId != 65);
 
@@ -285,6 +298,16 @@ public class Fates
                     //     var pos = pair.Item2.Value->GetTransformImpl()->Translation;
                     //     Plugin.Log.Information($"{gameEventObject->BaseId}: (new Vector3({pos.X}f, {pos.Y}f, {pos.Z}f), {Sheets.TreasureSheet.GetRow(gameEventObject->BaseId).SGB.RowId}),");
                     // }
+                    //
+                    if (pair.Item2.Value->Id.Type == InstanceType.EventObject)
+                    {
+                        var gameEventObject = (GameObjectLayoutInstance*)pair.Item2.Value;
+                        if (gameEventObject->BaseId != 2015421)
+                            continue;
+
+                        var pos = pair.Item2.Value->GetTransformImpl()->Translation;
+                        Plugin.Log.Information($"{gameEventObject->BaseId}: (new Vector3({pos.X}f, {pos.Y}f, {pos.Z}f),");
+                    }
 
                     // if (locations.ContainsKey(pair.Item1))
                     // {

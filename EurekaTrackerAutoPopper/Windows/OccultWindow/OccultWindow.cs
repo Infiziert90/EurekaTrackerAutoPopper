@@ -65,7 +65,7 @@ public class OccultWindow : Window, IDisposable
             return;
 
         Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderActiveCE);
-        if (Plugin.Fates.GetCriticalEngagementForTerritory().FirstOrDefault(f => f.Alive) is { } criticalEncounter)
+        if (Plugin.Fates.GetCEsWithoutTowerForTerritory().FirstOrDefault(f => f.Alive) is { } criticalEncounter)
             DrawFateInfo(criticalEncounter, true);
 
         DrawSeparator();
