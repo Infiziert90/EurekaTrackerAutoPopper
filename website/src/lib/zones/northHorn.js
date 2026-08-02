@@ -159,7 +159,7 @@ const ENCOUNTERS = {
             "ja": "四つ顎の魔樹「ペレキュス」",
             "de": "Verfressen bis in die Wurzeln"
         },
-        drops: [50974],
+        drops: [49826, 49831, 50974],
         spawn_type: true, // monster kill - Wamoura
         monster: {
             "en": "Crescent Wamoura",
@@ -168,7 +168,7 @@ const ENCOUNTERS = {
             "de": "Kreszentia-Wamoura"
         },
         monster_image: wamoura,
-        weakness: ["ice"],
+        weakness: ["fire"],
     },
     50: {
         name: {
@@ -217,7 +217,7 @@ const ENCOUNTERS = {
             "ja": "暗紅の屍竜「ルブルムドラゴン」",
             "de": "Gift und Kralle"
         },
-        drops: [51986, 50975],
+        drops: [49827, 49832, 51986, 50975],
         spawn_type: true, // monster kill - Crescent Big Horn
         monster: {
             "en": "Crescent Big Horn",
