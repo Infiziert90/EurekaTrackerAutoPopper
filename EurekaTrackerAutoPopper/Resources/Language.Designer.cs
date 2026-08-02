@@ -2129,5 +2129,41 @@ namespace EurekaTrackerAutoPopper.Resources {
                 return ResourceManager.GetString("TableLabelMonster", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fire.
+        /// </summary>
+        internal static string WeaknessFire {
+            get {
+                return ResourceManager.GetString("WeaknessFire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ice.
+        /// </summary>
+        internal static string WeaknessIce {
+            get {
+                return ResourceManager.GetString("WeaknessIce", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lightning.
+        /// </summary>
+        internal static string WeaknessLightning {
+            get {
+                return ResourceManager.GetString("WeaknessLightning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wind.
+        /// </summary>
+        internal static string WeaknessWind {
+            get {
+                return ResourceManager.GetString("WeaknessWind", resourceCulture);
+            }
+        }
     }
 }

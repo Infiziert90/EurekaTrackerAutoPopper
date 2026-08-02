@@ -29,7 +29,6 @@ public class TrackerHandler
 
     public bool IsConnected;
     public string ConnectedTo = string.Empty;
-    public string TrackerPassword = string.Empty;
 
     public int FailedCounter;
 
@@ -58,7 +57,6 @@ public class TrackerHandler
     {
         IsConnected = false;
         ConnectedTo = string.Empty;
-        TrackerPassword = string.Empty;
         FailedCounter = 0;
 
         UpcomingTracker = null;
@@ -148,9 +146,6 @@ public class TrackerHandler
 
         [JsonProperty("tracker_id")]
         public string TrackerId = string.Empty;
-
-        [JsonProperty("password")]
-        public string TrackerPassword = string.Empty;
 
         [JsonProperty("tracker_type")]
         public byte TrackerType;
@@ -280,7 +275,7 @@ public class TrackerHandler
                 return;
             }
 
-            await Task.Delay(10_000, TokenSource.Token);
+            await Task.Delay(3_000, TokenSource.Token);
 
             var trackers = await TryFindInstance();
             if (trackers == null || trackers.Length == 0)
@@ -303,7 +298,6 @@ public class TrackerHandler
 
             IsConnected = true;
             ConnectedTo = CurrentTracker.TrackerId;
-            TrackerPassword = CurrentTracker.TrackerPassword;
 
             // Write back critical encounters fetched from tracker
             foreach (var sharedFate in CurrentTracker.Encounters)
@@ -318,11 +312,11 @@ public class TrackerHandler
                 localFate.DeathTime = sharedFate.DeathTime;
 
                 // Only important for forked tower
-                if (localFate.FateId != 48)
-                    continue;
-
-                localFate.KilledFates = sharedFate.KilledFates;
-                localFate.KilledCEs = sharedFate.KilledCEs;
+                if (localFate.FateId is 48 or 64)
+                {
+                    localFate.KilledFates = sharedFate.KilledFates;
+                    localFate.KilledCEs = sharedFate.KilledCEs;
+                }
             }
 
             // Write back fates fetched from tracker

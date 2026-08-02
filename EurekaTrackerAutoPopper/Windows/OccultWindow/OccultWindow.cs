@@ -249,15 +249,21 @@ public class OccultWindow : Window, IDisposable
             return;
         }
 
+        var width = ImGui.CalcTextSize("Tracker ID: ").X + 20.0f * ImGuiHelpers.GlobalScale;
+        ImGui.AlignTextToFramePadding();
+        Helper.TextColored(ImGuiColors.HealerGreen, "Server ID: ");
+        ImGui.SameLine(width);
+        ImGui.Text($"{Plugin.HookManager.ServerId} (Experimental)");
+
         if (Plugin.TrackerHandler.CurrentTracker == null || !Plugin.TrackerHandler.IsConnected)
         {
-            Helper.CenterText("Searching active tracker...");
+            if (Plugin.Fates.GetFatesForTerritory().Any(f => f.Alive))
+                Helper.CenterText("Searching active tracker...");
+            else
+                Helper.CenterText("Awaiting next fate before searching again ...");
 
             return;
         }
-
-        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var width = ImGui.CalcTextSize("Tracker ID: ").X + 20.0f * ImGuiHelpers.GlobalScale;
 
         ImGui.AlignTextToFramePadding();
         Helper.TextColored(ImGuiColors.HealerGreen, "Tracker ID: ");
@@ -287,46 +293,24 @@ public class OccultWindow : Window, IDisposable
         if (ImGui.IsItemHovered())
             Helper.Tooltip("Open tracker website.");
 
-        ImGui.AlignTextToFramePadding();
-        Helper.TextColored(ImGuiColors.HealerGreen, "Password: ");
-        ImGui.SameLine(width);
-        ImGui.SetNextItemWidth(100 * ImGuiHelpers.GlobalScale);
-        ImGui.InputText("##passwordInput", ref Plugin.TrackerHandler.TrackerPassword, 100, ImGuiInputTextFlags.ReadOnly);
-
-        ImGui.SameLine();
-
-        using (ImRaii.PushFont(UiBuilder.IconFont))
-        {
-            if (ImGui.Button($"{FontAwesomeIcon.Clipboard.ToIconString()}##CopyPasswordButton"))
-                ImGui.SetClipboardText(Plugin.TrackerHandler.TrackerPassword);
-        }
-
-        if (ImGui.IsItemHovered())
-            Helper.Tooltip("Copy tracker password to clipboard.");
-
-
-        if (Plugin.TrackerHandler.CurrentTracker.Encounters.Length == 0)
-        {
-            Helper.TextColored(ImGuiColors.DalamudOrange, "No Instance History Yet.");
-            return;
-        }
-
-        using var table = ImRaii.Table("##TrackerHistory", 2, ImGuiTableFlags.BordersInner | ImGuiTableFlags.RowBg);
+        using var table = ImRaii.Table("trackerTable", 7, ImGuiTableFlags.Resizable | ImGuiTableFlags.BordersInnerH |
+                                                          ImGuiTableFlags.BordersV | ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.ScrollY |
+                                                          ImGuiTableFlags.NoSavedSettings | ImGuiTableFlags.RowBg | ImGuiTableFlags.Sortable |
+                                                          ImGuiTableFlags.SortTristate);
         if (!table.Success)
             return;
 
-        ImGui.TableSetupColumn("Name##Name", ImGuiTableColumnFlags.WidthFixed, ImGui.GetContentRegionAvail().X / 1.3f);
-        ImGui.TableSetupColumn("Last Seen##Timer");
+        ImGui.TableSetupColumn("##Weakness", ImGuiTableColumnFlags.NoSort);
+        ImGui.TableSetupColumn("Encounter", ImGuiTableColumnFlags.WidthFixed);
+        ImGui.TableSetupColumn("Trigger", ImGuiTableColumnFlags.WidthFixed | ImGuiTableColumnFlags.NoSort);
+        ImGui.TableSetupColumn("Kills");
+        ImGui.TableSetupColumn("Drops", ImGuiTableColumnFlags.NoSort);
+        ImGui.TableSetupColumn("Pop Timer");
+        ImGui.TableSetupColumn("Last Seen");
 
         ImGui.TableHeadersRow();
-        foreach (var fate in  Plugin.TrackerHandler.CurrentTracker.Encounters.Where(f => f.LastSeenAlive > 0))
-        {
-            ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{Sheets.DynamicEventSheet.GetRow(fate.FateId).Name.ExtractText()}");
 
-            ImGui.TableNextColumn();
-            Helper.RightTextColored(ImGuiColors.HealerGreen, Utils.TimeToClockFormat(TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive)));
-        }
+        DrawTracker();
     }
 
     private void DrawFateInfo(Fate fate, bool isCurrent, bool isTower = false)
@@ -460,5 +444,145 @@ public class OccultWindow : Window, IDisposable
             return string.Empty;
 
         return Language.OccultTowerActiveIndicator;
+    }
+
+    // Inspired by https://github.com/KangasZ/EurekaHelper/blob/main/EurekaHelper/Windows/PluginWindow.cs
+    private void DrawTracker()
+    {
+        var zoneFates = Plugin.Fates.GetCEsWithoutTowerForTerritory().ToArray();
+        var minRowHeight = ImGui.GetContentRegionAvail().Y / zoneFates.Length;
+
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        var sortSpecs = ImGui.TableGetSortSpecs();
+        if (sortSpecs.SpecsDirty)
+        {
+            var specsCount = sortSpecs.SpecsCount;
+            if (specsCount > 0)
+            {
+                switch (sortSpecs.Specs.ColumnIndex, sortSpecs.Specs.SortDirection)
+                {
+                    case (1, ImGuiSortDirection.Ascending):
+                        zoneFates = zoneFates.OrderBy(x => x.Name).ToArray();
+                        break;
+                    case (1, ImGuiSortDirection.Descending):
+                        zoneFates = zoneFates.OrderByDescending(x => x.Name).ToArray();
+                        break;
+                    case (3, ImGuiSortDirection.Ascending):
+                        zoneFates = zoneFates.OrderBy(x => x.TriggerKills).ToArray();
+                        break;
+                    case (3, ImGuiSortDirection.Descending):
+                        zoneFates = zoneFates.OrderByDescending(x => x.TriggerKills).ToArray();
+                        break;
+                    case (5, ImGuiSortDirection.Ascending):
+                        zoneFates = zoneFates.OrderBy(x => x.DeathTime + (x.TriggeredBy != 0 ? 3600 : 7200)).ToArray();
+                        break;
+                    case (5, ImGuiSortDirection.Descending):
+                        zoneFates = zoneFates.OrderByDescending(x => x.DeathTime + (x.TriggeredBy != 0 ? 3600 : 7200)).ToArray();
+                        break;
+                    case (6, ImGuiSortDirection.Ascending):
+                        zoneFates = zoneFates.OrderBy(x => x.LastSeenAlive).ToArray();
+                        break;
+                    case (6, ImGuiSortDirection.Descending):
+                        zoneFates = zoneFates.OrderByDescending(x => x.LastSeenAlive).ToArray();
+                        break;
+                }
+            }
+        }
+
+        foreach (var fate in zoneFates)
+        {
+            ImGui.TableNextRow(ImGuiTableRowFlags.None, minRowHeight);
+            if (fate.Alive)
+            {
+                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg0, ImGui.GetColorU32(ImGuiColors.HealerGreen with {W = 0.3f}));
+                ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg1, ImGui.GetColorU32(ImGuiColors.HealerGreen with {W = 0.3f}));
+            }
+
+            ImGui.TableNextColumn();
+            if (fate.Weakness != Weakness.None)
+            {
+                var weaknessIcon = Plugin.TextureManager.GetFromGameIcon(new GameIconLookup((uint)fate.Weakness)).GetWrapOrEmpty();
+                ImGui.Image(weaknessIcon.Handle, ImGuiHelpers.ScaledVector2(14, 20));
+                if (ImGui.IsItemHovered())
+                    Helper.Tooltip(fate.Weakness.ToName());
+            }
+
+            ImGui.TableNextColumn();
+            ImGui.Text(fate.Name);
+            if (ImGui.IsItemHovered())
+                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+
+            if (ImGui.IsItemClicked())
+                Plugin.OpenMap(fate.MapDataLink);
+
+            ImGui.TableNextColumn();
+            ImGui.Text(fate.TriggerName);
+
+            ImGui.TableNextColumn();
+            Helper.RightTextColored(ImGuiColors.TankBlue, fate.TriggerKills > 0 ? fate.TriggerKills.ToString() : " ");
+
+            ImGui.TableNextColumn();
+            using (ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, Vector2.Zero))
+            {
+                foreach (var (itemId, idx) in fate.SpecialRewards.Select((val, i) => (val, i)))
+                {
+                    var item = Sheets.GetItem(itemId);
+                    var itemIcon = Plugin.TextureManager.GetFromGameIcon(new GameIconLookup(item.Icon)).GetWrapOrDefault();
+                    if (itemIcon == null)
+                        continue;
+
+                    ImGui.Image(itemIcon.Handle, ImGuiHelpers.ScaledVector2(20, 20));
+                    if (ImGui.IsItemHovered())
+                        Helper.Tooltip(item.Name.ToString());
+
+                    if (idx + 1 != fate.SpecialRewards.Length)
+                        ImGui.SameLine();
+                }
+            }
+
+            ImGui.TableNextColumn();
+            if (fate.Alive)
+            {
+                if (fate.State == DynamicEventState.Battle)
+                    Helper.RightText("Battle");
+                else if (fate.State == DynamicEventState.Warmup)
+                    Helper.RightText("Starting");
+                else if (fate.State == DynamicEventState.Register)
+                    Helper.RightText("Recruiting");
+            }
+            else if (fate.DeathTime == 0)
+            {
+                Helper.RightTextColored(ImGuiColors.HealerGreen, "Can pop");
+            }
+            else
+            {
+                var respawnTimer = fate.TriggeredBy != 0 ? 3600 : 7200;
+                if (fate.DeathTime + respawnTimer < currentTime)
+                    Helper.RightTextColored(ImGuiColors.HealerGreen, "Can pop");
+                else
+                    Helper.RightText(Utils.TimeToClockFormat(TimeSpan.FromSeconds(fate.DeathTime + respawnTimer - currentTime)));
+            }
+
+            ImGui.TableNextColumn();
+            if (fate.LastSeenAlive > 0)
+            {
+                if (fate.Alive)
+                {
+                    if (fate.State == DynamicEventState.Battle)
+                        Helper.RightText($"{fate.Progress}%");
+                    else
+                        Helper.RightText(Utils.TimeToClockFormat(TimeSpan.FromSeconds(fate.StateTimeLeft)));
+                }
+                else
+                {
+                    Helper.RightText(Utils.TimeToClockFormat(TimeSpan.FromSeconds(currentTime - fate.LastSeenAlive)));
+                }
+            }
+            else
+            {
+                Helper.RightText("N/A");
+            }
+        }
     }
 }

@@ -26,6 +26,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Chat;
 using KamiToolKit;
 
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
@@ -48,6 +49,8 @@ public class Plugin : IDalamudPlugin
     [PluginService] public static ITextureProvider TextureManager { get; private set; } = null!;
     [PluginService] public static IAddonLifecycle AddonLifecycle { get; private set; } = null!;
     [PluginService] public static IDtrBar DtrBar { get; private set; } = null!;
+    [PluginService] public static ISeStringEvaluator Evaluator { get; private set; } = null!;
+    [PluginService] public static IGameInteropProvider Hook { get; private set; } = null!;
 
     public readonly Configuration Configuration;
 
@@ -67,6 +70,7 @@ public class Plugin : IDalamudPlugin
     public readonly PenumbraIpc PenumbraIpc;
     public readonly PotDtrBar PotDtrBar;
     public readonly MapMarkerController MapMarkerController;
+    public readonly HookManager HookManager;
 
     public Library.EurekaFate LastSeenFate = Library.EurekaFate.Empty;
     private List<IFate> LastPolledFates = [];
@@ -94,6 +98,8 @@ public class Plugin : IDalamudPlugin
 
         Library = new Library(Configuration);
         Library.Initialize();
+
+        HookManager = new HookManager(this);
 
         Fates = new Fates(this);
         TrackerHandler = new TrackerHandler(this);
@@ -144,6 +150,7 @@ public class Plugin : IDalamudPlugin
         Fates.Dispose();
         TrackerHandler.Dispose();
         PotDtrBar.Dispose();
+        HookManager.Dispose();
 
         Framework.Update -= PollForFateChange;
         Framework.Update -= FairyCheck;
@@ -302,6 +309,7 @@ public class Plugin : IDalamudPlugin
             Framework.Update += OccultCheck;
             Framework.Update += OccultPotCheck;
             Framework.Update += UpdateDtr;
+            Chat.LogMessage += OccultDeathLogMessage;
 
             Fates.RegisterEvents();
 
@@ -746,6 +754,24 @@ public class Plugin : IDalamudPlugin
         {
             NearToCoffer = false;
             MapMarkerController.RevertTempMarkerSet();
+        }
+    }
+
+    private void OccultDeathLogMessage(ILogMessage message)
+    {
+        if (message.LogMessageId != 557)
+            return;
+
+        if (message.TargetEntity == null)
+            return;
+
+        if (!Fates.TriggerMonsters.Contains(message.TargetEntity.ObjStrId))
+            return;
+
+        foreach (var fate in Fates.GetSpawnableCEsForTerritory())
+        {
+            if (fate.TriggeredBy == message.TargetEntity.ObjStrId)
+                fate.TriggerKills += 1;
         }
     }
 

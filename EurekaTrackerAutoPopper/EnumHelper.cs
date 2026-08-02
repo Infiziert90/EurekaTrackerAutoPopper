@@ -84,6 +84,15 @@ public enum TreasureRarity : uint
     Silver = 1597,
 }
 
+public enum Weakness : uint
+{
+    None = 0,
+    Fire = 229983,
+    Ice = 229984,
+    Lightning = 229985,
+    Wind = 229986,
+}
+
 public static class TerritoryHelper
 {
     private static readonly HashSet<Territory> SupportedTerritories = Enum.GetValues<Territory>().ToHashSet();
@@ -184,6 +193,18 @@ public static class EnumExtensions
             Territory.SouthHorn => Map.SouthHorn,
             Territory.NorthHorn => Map.NorthHorn,
             _ => throw new ArgumentOutOfRangeException(nameof(territory), territory, null),
+        };
+    }
+
+    public static string ToName(this Weakness weakness)
+    {
+        return weakness switch
+        {
+            Weakness.Fire => Language.WeaknessFire,
+            Weakness.Ice => Language.WeaknessIce,
+            Weakness.Lightning => Language.WeaknessLightning,
+            Weakness.Wind => Language.WeaknessWind,
+            _ => "Unknown",
         };
     }
 }

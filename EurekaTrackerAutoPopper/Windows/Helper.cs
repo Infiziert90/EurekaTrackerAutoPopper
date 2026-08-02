@@ -81,6 +81,18 @@ public static class Helper
     }
 
     /// <summary>
+    /// Right aligns a text in the available space
+    /// </summary>
+    /// <param name="text">text to display</param>
+    /// <param name="indent">indention to respect</param>
+    public static void RightText(string text, float indent = 0.0f)
+    {
+        indent *= ImGuiHelpers.GlobalScale;
+        ImGui.SameLine(ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(text).X + indent);
+        ImGui.TextUnformatted(text);
+    }
+
+    /// <summary>
     /// An unformatted version for ImGui.TextColored
     /// </summary>
     /// <param name="color">color to be used</param>
