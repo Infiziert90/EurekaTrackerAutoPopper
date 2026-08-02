@@ -41,12 +41,12 @@ public static class Utils
             .BuiltString;
     }
 
-    public static unsafe IGameObject[] GetTowerCharacter(Fate towerEngagement)
+    public static unsafe IGameObject[] GetTowerCharacter(Fate towerEngagement, int levelRequirement)
     {
         return Plugin.ObjectTable
             .Where(o => o.ObjectKind == ObjectKind.Pc)
             .Where(o => Distance(towerEngagement.WorldPos, o.Position) <= 20.0f)
-            .Where(o => ((BattleChara*)o.Address)->GetForayInfo()->Level >= 20)
+            .Where(o => ((BattleChara*)o.Address)->GetForayInfo()->Level >= levelRequirement)
             .ToArray();
     }
 

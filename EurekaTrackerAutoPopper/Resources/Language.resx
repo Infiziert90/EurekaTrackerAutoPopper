@@ -662,7 +662,7 @@ A cooldown of 5s applies after each use.</value>
         <value>Where can I join an organized run? (Click name)</value>
     </data>
     <data name="ForkedTowerInfoPlayerCount" xml:space="preserve">
-        <value>Players on Platform (Level 20 or above): {0}</value>
+        <value>Players on Platform (Level ≥ {0}): {1}</value>
     </data>
     <data name="ForkedTowerInfoPlayerListCollapseable" xml:space="preserve">
         <value>Player List</value>
@@ -702,5 +702,11 @@ A cooldown of 5s applies after each use.</value>
     </data>
     <data name="ConfigOptionSwitcherMove" xml:space="preserve">
         <value>Moveable</value>
+    </data>
+    <data name="ForkedTowerInfoNote1" xml:space="preserve">
+        <value>The following information is only for Forked Tower Blood, and Forked Tower Magic Extreme!</value>
+    </data>
+    <data name="ForkedTowerInfoNote2" xml:space="preserve">
+        <value>Forked Tower Magic Normal is a version that spawns in open instances, the extreme version must be queued with an Alliance Raid.</value>
     </data>
 </root>

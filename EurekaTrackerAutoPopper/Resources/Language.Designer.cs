@@ -1005,7 +1005,25 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Players on Platform (Level 20 or above): {0}.
+        ///   Looks up a localized string similar to The following information is only for Forked Tower Blood, and Forked Tower Magic Extreme!.
+        /// </summary>
+        internal static string ForkedTowerInfoNote1 {
+            get {
+                return ResourceManager.GetString("ForkedTowerInfoNote1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forked Tower Magic Normal is a version that spawns in open instances, the extreme version must be queued with an Alliance Raid..
+        /// </summary>
+        internal static string ForkedTowerInfoNote2 {
+            get {
+                return ResourceManager.GetString("ForkedTowerInfoNote2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Players on Platform (Level ≥ {0}): {1}.
         /// </summary>
         internal static string ForkedTowerInfoPlayerCount {
             get {

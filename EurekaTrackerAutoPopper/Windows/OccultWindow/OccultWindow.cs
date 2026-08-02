@@ -116,6 +116,7 @@ public class OccultWindow : Window, IDisposable
             return;
 
         var towerEngagement = Plugin.Fates.GetNormalTowerForTerritory();
+        var isSouthTower = towerEngagement.FateId == 48;
         if (towerEngagement.SpawnTime > 0)
             DrawFateInfo(towerEngagement, false, true);
         else
@@ -135,9 +136,9 @@ public class OccultWindow : Window, IDisposable
         }
         else
         {
-            var playersClose = Utils.GetTowerCharacter(towerEngagement);
+            var playersClose = Utils.GetTowerCharacter(towerEngagement, isSouthTower ? 20 : 40);
 
-            Helper.TextColored(ImGuiColors.HealerGreen, Language.ForkedTowerInfoPlayerCount.Format(playersClose.Length));
+            Helper.TextColored(ImGuiColors.HealerGreen, Language.ForkedTowerInfoPlayerCount.Format(isSouthTower ? 20 : 40, playersClose.Length));
             if (ImGui.CollapsingHeader(Language.ForkedTowerInfoPlayerListCollapseable))
             {
                 var length = Math.Clamp(playersClose.Length, 2, 10);
@@ -145,7 +146,7 @@ public class OccultWindow : Window, IDisposable
                 if (child.Success)
                 {
                     foreach (var player in playersClose.Skip(1).Cast<IPlayerCharacter>())
-                        ImGui.TextUnformatted($"{player.Name.TextValue}@{player.HomeWorld.Value.Name.ExtractText()}");
+                        ImGui.TextUnformatted($"{player.Name.TextValue}@{player.HomeWorld.Value.Name.ToString()}");
                 }
             }
         }
@@ -192,6 +193,11 @@ public class OccultWindow : Window, IDisposable
 
         if (ImGui.CollapsingHeader(Language.ForkedTowerInfoJoinRun))
         {
+            Helper.WrappedTextWithColor(ImGuiColors.AttentionForeground, Language.ForkedTowerInfoNote1);
+            Helper.WrappedTextWithColor(ImGuiColors.AttentionForeground, Language.ForkedTowerInfoNote2);
+
+            ImGuiHelpers.ScaledDummy(5.0f);
+
             Helper.WrappedTextWithColor(ImGuiColors.DalamudOrange, Language.ForkedTowerInfoWarning1);
             ImGuiHelpers.ScaledDummy(5.0f);
             Helper.WrappedTextWithColor(ImGuiColors.DalamudOrange, Language.ForkedTowerInfoWarning2);
