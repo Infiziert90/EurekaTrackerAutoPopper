@@ -185,7 +185,6 @@
                 {
                     method: 'GET',
                     headers: API_HEADERS,
-                    cache: 'no-store',
                 },
             );
 

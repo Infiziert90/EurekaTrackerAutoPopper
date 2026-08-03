@@ -771,7 +771,10 @@ public class Plugin : IDalamudPlugin
         foreach (var fate in Fates.GetSpawnableCEsForTerritory())
         {
             if (fate.TriggeredBy == message.TargetEntity.ObjStrId)
+            {
                 fate.TriggerKills += 1;
+                return;
+            }
         }
     }
 
