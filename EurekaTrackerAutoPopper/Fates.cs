@@ -450,8 +450,6 @@ public class Fates
         var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         foreach (var occultCE in OccultCriticalEncounters)
         {
-            var isTowerCE = occultCE.FateId == 48;
-
             foreach (ref var criticalEncounter in publicContent->DynamicEventContainer.Events)
             {
                 if (criticalEncounter.State == DynamicEventState.Inactive)
@@ -470,7 +468,7 @@ public class Fates
                 occultCE.PlayedSound = true;
 
                 // Forked Tower
-                if (isTowerCE)
+                if (towerEngagement.FateId == criticalEncounter.DynamicEventId)
                 {
                     if (!Plugin.Configuration.PlayTowerEffect)
                         continue;
@@ -499,7 +497,7 @@ public class Fates
             if (!towerEngagement.Alive)
                 towerEngagement.KilledCEs += 1;
 
-            if (isTowerCE)
+            if (towerEngagement.FateId == occultCE.FateId)
             {
                 towerEngagement.KilledFates = 0;
                 towerEngagement.KilledCEs = 0;

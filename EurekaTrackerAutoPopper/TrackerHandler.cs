@@ -113,7 +113,7 @@ public class TrackerHandler
             TrackerType = 1;
             Datacenter = (ushort)dcId;
 
-            EncounterHistory = JsonConvert.SerializeObject(fateManager.GetCEsSkipExtremeForTerritory().Where(f => f.FateId != 65).Select(f => new ShareableFate(f)));
+            EncounterHistory = JsonConvert.SerializeObject(fateManager.GetCEsSkipExtremeForTerritory().Select(f => new ShareableFate(f)));
             FateHistory = JsonConvert.SerializeObject(fateManager.GetFatesForTerritory().Select(f => new ShareableFate(f)));
             PotHistory = JsonConvert.SerializeObject(fateManager.GetBunnyForTerritory().Select(f => new ShareableFate(f)));
 
