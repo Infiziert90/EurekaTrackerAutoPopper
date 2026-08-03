@@ -24,6 +24,7 @@ public class TrackerHandler
     private readonly Plugin Plugin;
 
     private readonly HttpClient Client = new();
+    private readonly Random Random = new();
 
     private readonly CancellationTokenSource TokenSource = new();
 
@@ -275,7 +276,7 @@ public class TrackerHandler
                 return;
             }
 
-            await Task.Delay(3_000, TokenSource.Token);
+            await Task.Delay(Random.Next(2_500, 4_000), TokenSource.Token);
 
             var trackers = await TryFindInstance();
             if (trackers == null || trackers.Length == 0)
