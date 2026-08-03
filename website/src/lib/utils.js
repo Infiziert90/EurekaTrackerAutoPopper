@@ -207,15 +207,27 @@ export function calculateCECooldown(encounter, zone, now = Math.floor(Date.now()
     };
 }
 
+async function sha1Hex(message) {
+    const data = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest("SHA-1", data);
+    return Array.from(new Uint8Array(hashBuffer))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+}
+
 /*
  * Builds the initial payload for a new tracker. The histories are derived from the
  * zone's own id lists, so a zone only has to be described once in $lib/zones.
+ *
+ * last_fate is seeded with a sha1 hash of the current time instead of an empty
+ * string, since multiple trackers created for the same territory with an empty
+ * last_fate collide.
  *
  * @param {Object} zone - The zone the tracker is for
  * @param {Object} options - password, datacenter and tracker_type of the new tracker
  * @returns {Object} The payload to POST to the API
  */
-export function buildTrackerTemplate(zone, { password, datacenter, trackerType }) {
+export async function buildTrackerTemplate(zone, { password, datacenter, trackerType }) {
     const blankEntry = (fateId) => ({
         fate_id: fateId,
         spawn_time: -1,
@@ -231,7 +243,7 @@ export function buildTrackerTemplate(zone, { password, datacenter, trackerType }
         datacenter,
         tracker_type: trackerType,
         territory: zone.territory,
-        last_fate: "",
+        last_fate: await sha1Hex(Date.now().toString()),
         encounter_history: JSON.stringify(zone.encounterIds.map(blankEntry)),
         fate_history: JSON.stringify(zone.fateIds.map(blankEntry)),
         pot_history: JSON.stringify(zone.potFateIds.map(blankEntry)),

@@ -49,7 +49,7 @@
         try {
             // Build the initial histories from the selected zone's own data
             const selected = trackerTypeOptions.find(option => option.territory === formData.territory);
-            const trackerData = buildTrackerTemplate(selected.zone, {
+            const trackerData = await buildTrackerTemplate(selected.zone, {
                 password: formData.password,
                 datacenter: formData.datacenter,
                 trackerType: selected.type
