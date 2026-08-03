@@ -386,7 +386,7 @@ public class TrackerHandler
         try
         {
             var content = new StringContent(JsonConvert.SerializeObject(entry), Encoding.UTF8, "application/json");
-            var response = await Client.PutAsync($"{BaseUrl}{entry.Table}?id=eq.{entry.Id}", content);
+            var response = await Client.PatchAsync($"{BaseUrl}{entry.Table}?id=eq.{entry.Id}", content);
             Plugin.Log.Debug($"Table {entry.Table} ({response.StatusCode}) | Content: {response.Content.ReadAsStringAsync().Result}");
         }
         catch (Exception e)
