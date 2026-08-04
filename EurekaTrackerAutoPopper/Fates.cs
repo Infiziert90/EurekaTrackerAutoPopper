@@ -364,11 +364,13 @@ public class Fates
                 if (fate.FateId != bnuuy.FateId)
                     continue;
 
+                var isAlive = bnuuy.Alive;
+                bnuuy.Update(fate, currentTime);
+
                 // Freshly spawned fate
-                if (!bnuuy.Alive)
+                if (!isAlive)
                     Plugin.TrackerHandler.UpdateRunningTracker();
 
-                bnuuy.Update(fate, currentTime);
                 if (bnuuy.PlayedSound || !Plugin.Configuration.PlayBunnyEffect)
                     continue;
 
@@ -401,11 +403,13 @@ public class Fates
                 if (fate.FateId != occultFate.FateId)
                     continue;
 
+                var isAlive = occultFate.Alive;
+                occultFate.Update(fate, currentTime);
+
                 // Freshly spawned fate
-                if (!occultFate.Alive)
+                if (!isAlive)
                     Plugin.TrackerHandler.InstanceCheckAsync(fate, local);
 
-                occultFate.Update(fate, currentTime);
                 if (occultFate.PlayedSound || !Plugin.Configuration.PlayFateEffect)
                     continue;
 
@@ -458,11 +462,13 @@ public class Fates
                 if (criticalEncounter.DynamicEventId != occultCE.FateId)
                     continue;
 
+                var isAlive = occultCE.Alive;
+                occultCE.Update(ref criticalEncounter, currentTime);
+
                 // Freshly spawned CE
-                if (!occultCE.Alive)
+                if (!isAlive)
                     Plugin.TrackerHandler.UpdateRunningTracker();
 
-                occultCE.Update(ref criticalEncounter, currentTime);
                 if (occultCE.PlayedSound)
                     continue;
                 occultCE.PlayedSound = true;
