@@ -1,6 +1,6 @@
 {
   "Author": "Infi, electr0sheep",
-  "Description": "Automatically notifies you about NMs in Eureka, with the ability to pop them on a tracker.\nOther Features:\n- Fairy Finder\n- Bunny Timer Window\n- Bunny Coffer Helper\n- Stats\n- Quest Guide (clickable coords)\n- Localized (DE, FR, JA)\n\nOccult:\n- Random Treasure Proximity Notification\n- Bunny Carrot Proximity Notification\n- Pot Coffer Helper\n- Pot Timer Window\n- Map Markers For Treasure, Bunny, Pot",
+  "Description": "A simple tracker for Eureka, and Occult.\nOther Features:\n- Fairy Finder\n- Bunny Timer Window\n- Bunny Coffer Helper\n- Stats\n- Quest Guide (clickable coords)\n- Localized (DE, FR, JA)\n\nOccult:\n- Random Treasure Proximity Notification\n- Bunny Carrot Proximity Notification\n- Pot Coffer Helper\n- Pot Timer Window\n- Map Markers For Treasure, Bunny, Pot, Survey Points\n- Occult Tracker\n\nWebsite (https://tracker.xivstats.com):\n- A simple tracker for occult\n- Players don't need the plugin to enjoy the benefits",
   "InternalName": "eurekaTrackerAutoPopper",
   "Punchline":  "We All Love Eureka And Occult",
   "Name": "Eureka Linker",
@@ -18,6 +18,8 @@
     "Carrot",
     "Forked Tower",
     "Fates",
-    "CEs"
+    "CEs",
+    "North Horn",
+    "South Horn"
   ]
 }
