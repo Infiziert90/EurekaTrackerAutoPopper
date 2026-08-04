@@ -196,8 +196,8 @@ public class Fates
         new(1976, 60958, Territory.SouthHorn, new Vector3(204.66835f, 111.81729f, -204.96242f), [47749, 47738], OccultAetheryte.CrystallizedCaverns, 40, " (North)"),
         new(1977, 60958, Territory.SouthHorn, new Vector3(-479.8395f, 75f, 524.78894f), [47745, 47738], OccultAetheryte.Stonemarsh, 18, " (South)"),
 
-        new(2072, 60958, Territory.NorthHorn, new Vector3(233f, 7.729229f, -470f), [50976], OccultAetheryte.NorthHornBaseCamp, 0, " (North)"),
-        new(2073, 60958, Territory.NorthHorn, new Vector3(-505.2822f, 53.14409f, 244.041f), [50975], OccultAetheryte.NorthHornBaseCamp, 0, " (South)"),
+        new(2072, 60958, Territory.NorthHorn, new Vector3(233f, 7.729229f, -470f), [50976], OccultAetheryte.SinkingSanctuary, 12, " (North)"),
+        new(2073, 60958, Territory.NorthHorn, new Vector3(-505.2822f, 53.14409f, 244.041f), [50975], OccultAetheryte.SuspendedMasonry, 24, " (South)"),
     ];
 
     public readonly List<Fate> OccultFates =
@@ -214,17 +214,17 @@ public class Fates
         new(1971, 60502, Territory.SouthHorn, new Vector3(76.327644f, 96.94907f, 275.7444f), [47749], OccultAetheryte.Eldergrowth, 17), // Fatal Allure
         new(1972, 60502, Territory.SouthHorn, new Vector3(413.7364f, 95.999985f, -14.67076f), [47748], OccultAetheryte.Eldergrowth, 24), // Serving Darkness
 
-        new(2074, 60502, Territory.NorthHorn, new Vector3(724f, 70f, 220f), [50974], OccultAetheryte.CrownOfKarnak, 0, weakness: Weakness.Fire), // Raging Thrall
-        new(2075, 60502, Territory.NorthHorn, new Vector3(510f, 16.76658f, -29.99999f), [50975], OccultAetheryte.CrownOfKarnak, 0, weakness: Weakness.Fire), // Eye to Eye
-        new(2076, 60502, Territory.NorthHorn, new Vector3(95f, 10f, 470f), [50976], OccultAetheryte.CrownOfKarnak, 0, weakness: Weakness.Wind), // Shoreline Showdown
-        new(2077, 60502, Territory.NorthHorn, new Vector3(330f, 0f, -250f), [50974], OccultAetheryte.SinkingSanctuary, 0, weakness: Weakness.Lightning), // Waved Away
-        new(2078, 60502, Territory.NorthHorn, new Vector3(-402.0002f, 29.76808f, -252.9997f), [50975], OccultAetheryte.MolderingOutskirts, 0, weakness: Weakness.Fire), // Allure of the Occult
-        new(2079, 60502, Territory.NorthHorn, new Vector3(-170f, 30f, -500f), [50976], OccultAetheryte.MolderingOutskirts, 0, weakness: Weakness.Fire), // Inconstant Gardener
-        new(2080, 60502, Territory.NorthHorn, new Vector3(-90f, 67.47852f, 865.9999f), [50975], OccultAetheryte.MolderingOutskirts, 0, weakness: Weakness.Fire), // Territorial Dispute
-        new(2081, 60502, Territory.NorthHorn, new Vector3(-440f, 47.02659f, -790f), [50974], OccultAetheryte.SuspendedMasonry, 0, weakness: Weakness.Wind), // A Rotten Affair
-        new(2082, 60502, Territory.NorthHorn, new Vector3(-855.7433f, 70.67716f, 482.1518f), [50974], OccultAetheryte.SuspendedMasonry, 0, weakness: Weakness.Fire), // Gale-force Encounter
-        new(2083, 60502, Territory.NorthHorn, new Vector3(-661.0049f, 87f, -54.00021f), [50976], OccultAetheryte.MolderingOutskirts, 0, weakness: Weakness.Ice), // Scale Model
-        new(2084, 60502, Territory.NorthHorn, new Vector3(140f, 37f, -708f), [50975], OccultAetheryte.SinkingSanctuary, 0, weakness: Weakness.Fire), // Thunderregnum
+        new(2074, 60502, Territory.NorthHorn, new Vector3(724f, 70f, 220f), [50974], OccultAetheryte.CrownOfKarnak, 26, weakness: Weakness.Fire), // Raging Thrall
+        new(2075, 60502, Territory.NorthHorn, new Vector3(510f, 16.76658f, -29.99999f), [50975], OccultAetheryte.CrownOfKarnak, 37, weakness: Weakness.Fire), // Eye to Eye
+        new(2076, 60502, Territory.NorthHorn, new Vector3(95f, 10f, 470f), [50976], OccultAetheryte.CrownOfKarnak, 24, weakness: Weakness.Wind), // Shoreline Showdown
+        new(2077, 60502, Territory.NorthHorn, new Vector3(330f, 0f, -250f), [50974], OccultAetheryte.SinkingSanctuary, 21, weakness: Weakness.Lightning), // Waved Away
+        new(2078, 60502, Territory.NorthHorn, new Vector3(-402.0002f, 29.76808f, -252.9997f), [50975], OccultAetheryte.MolderingOutskirts, 10, weakness: Weakness.Fire), // Allure of the Occult
+        new(2079, 60502, Territory.NorthHorn, new Vector3(-170f, 30f, -500f), [50976], OccultAetheryte.MolderingOutskirts, 14, weakness: Weakness.Fire), // Inconstant Gardener
+        new(2080, 60502, Territory.NorthHorn, new Vector3(-90f, 67.47852f, 865.9999f), [50975], OccultAetheryte.SuspendedMasonry, 35, weakness: Weakness.Fire), // Territorial Dispute
+        new(2081, 60502, Territory.NorthHorn, new Vector3(-440f, 47.02659f, -790f), [50974], OccultAetheryte.MolderingOutskirts, 28, weakness: Weakness.Wind), // A Rotten Affair
+        new(2082, 60502, Territory.NorthHorn, new Vector3(-855.7433f, 70.67716f, 482.1518f), [50974], OccultAetheryte.SuspendedMasonry, 22, weakness: Weakness.Fire), // Gale-force Encounter
+        new(2083, 60502, Territory.NorthHorn, new Vector3(-661.0049f, 87f, -54.00021f), [50976], OccultAetheryte.MolderingOutskirts, 39, weakness: Weakness.Ice), // Scale Model
+        new(2084, 60502, Territory.NorthHorn, new Vector3(140f, 37f, -708f), [50975], OccultAetheryte.SinkingSanctuary, 17, weakness: Weakness.Fire), // Thunderregnum
     ];
 
     public readonly List<Fate> OccultCriticalEncounters =
@@ -247,21 +247,21 @@ public class Fates
 
         new(48, 63978, Territory.SouthHorn, new Vector3(63.066174f, 126.499985f, 3.8296576f), [47868, 47734, 47735, 47736, 47737], OccultAetheryte.Eldergrowth, 25), // The Forked Tower: Blood
 
-        new(49, 63909, Territory.NorthHorn, new Vector3(-870f, 20f, -560f), [49826, 49831, 50974], OccultAetheryte.MolderingOutskirts, 0, trigger: 14908, weakness: Weakness.Fire), // Many Mouths to Feed
-        new(50, 63909, Territory.NorthHorn, new Vector3(-215f, 18f, -65f), [49832, 49827, 51988, 50976], OccultAetheryte.UnhallowedHamlet, 0, trigger: 14896, weakness: Weakness.Wind), // Doubled Trouble
-        new(51, 63909, Territory.NorthHorn, new Vector3(-519f, 48f, -641f), [49831, 49826, 51987, 50975], OccultAetheryte.MolderingOutskirts, 0, weakness: Weakness.Lightning), // Quarried Away
-        new(52, 63909, Territory.NorthHorn, new Vector3(659f, 132f, 659f), [49833, 49828, 51979, 50974], OccultAetheryte.NorthHornBaseCamp, 0, weakness: Weakness.Fire), // Forbidden Folios
-        new(53, 63909, Territory.NorthHorn, new Vector3(-688f, 90f, 150f), [49827, 49832, 51986, 50975], OccultAetheryte.SuspendedMasonry, 0, trigger: 14887, weakness: Weakness.Fire), // Cursed Resurgence
-        new(54, 63909, Territory.NorthHorn, new Vector3(765f, 70f, 0f), [49831, 49826, 51981, 50975], OccultAetheryte.CrownOfKarnak, 0, weakness: Weakness.Fire), // Imbalanced Diet
-        new(55, 63909, Territory.NorthHorn, new Vector3(169.9999f, 4f, -136f), [49832, 49827, 50974], OccultAetheryte.UnhallowedHamlet, 0, trigger: 14897, weakness: Weakness.Ice), // Web of Terror
-        new(56, 63909, Territory.NorthHorn, new Vector3(238.0022f, 15f, 367f), [49833, 49828, 50976], OccultAetheryte.CrownOfKarnak, 0, weakness: Weakness.Ice), // A Beast Unleashed
-        new(57, 63909, Territory.NorthHorn, new Vector3(224f, 52f, -860f), [49832, 49827, 51974, 51984, 50975], OccultAetheryte.SinkingSanctuary, 0, weakness: Weakness.Wind), // Dark Artistry
-        new(58, 63909, Territory.NorthHorn, new Vector3(-390f, 67.99994f, 700f), [49833, 49828, 50976], OccultAetheryte.SuspendedMasonry, 0, weakness: Weakness.Lightning), // Familiar Tactics
-        new(59, 63909, Territory.NorthHorn, new Vector3(807f, 61f, -562f), [49831, 49826, 51972, 51983, 50974], OccultAetheryte.SinkingSanctuary, 0, weakness: Weakness.Fire), // Appalling Behavior
-        new(60, 63909, Territory.NorthHorn, new Vector3(152f, 70f, 716f), [49833, 49828, 51980, 50975], OccultAetheryte.CrownOfKarnak, 0, weakness: Weakness.Lightning), // Tiny Terror
-        new(61, 63909, Territory.NorthHorn, new Vector3(-150f, 70f, -860f), [49832, 49827, 51985, 50976], OccultAetheryte.SinkingSanctuary, 0, weakness: Weakness.Lightning), // Lost on the Wind
-        new(62, 63909, Territory.NorthHorn, new Vector3(-82f, 12f, 485f), [49833, 49828, 50974], OccultAetheryte.SuspendedMasonry, 0, weakness: Weakness.Ice), // Ahead of the Competition
-        new(63, 63909, Territory.NorthHorn, new Vector3(500f, 56.00003f, -310f), [49831, 49826, 51982, 50976], OccultAetheryte.SinkingSanctuary, 0, weakness: Weakness.Wind), // Accept No Imitators
+        new(49, 63909, Territory.NorthHorn, new Vector3(-870f, 20f, -560f), [49826, 49831, 50974], OccultAetheryte.MolderingOutskirts, 36, trigger: 14908, weakness: Weakness.Fire), // Many Mouths to Feed
+        new(50, 63909, Territory.NorthHorn, new Vector3(-215f, 18f, -65f), [49832, 49827, 51988, 50976], OccultAetheryte.UnhallowedHamlet, 17, trigger: 14896, weakness: Weakness.Wind), // Doubled Trouble
+        new(51, 63909, Territory.NorthHorn, new Vector3(-519f, 48f, -641f), [49831, 49826, 51987, 50975], OccultAetheryte.MolderingOutskirts, 17, weakness: Weakness.Lightning), // Quarried Away
+        new(52, 63909, Territory.NorthHorn, new Vector3(659f, 132f, 659f), [49833, 49828, 51979, 50974], OccultAetheryte.NorthHornBaseCamp, 27, weakness: Weakness.Fire), // Forbidden Folios
+        new(53, 63909, Territory.NorthHorn, new Vector3(-688f, 90f, 150f), [49827, 49832, 51986, 50975], OccultAetheryte.SuspendedMasonry, 33, trigger: 14887, weakness: Weakness.Fire), // Cursed Resurgence
+        new(54, 63909, Territory.NorthHorn, new Vector3(765f, 70f, 0f), [49831, 49826, 51981, 50975], OccultAetheryte.CrownOfKarnak, 42, weakness: Weakness.Fire), // Imbalanced Diet
+        new(55, 63909, Territory.NorthHorn, new Vector3(169.9999f, 4f, -136f), [49832, 49827, 50974], OccultAetheryte.UnhallowedHamlet, 15, trigger: 14897, weakness: Weakness.Ice), // Web of Terror
+        new(56, 63909, Territory.NorthHorn, new Vector3(238.0022f, 15f, 367f), [49833, 49828, 50976], OccultAetheryte.CrownOfKarnak, 18, weakness: Weakness.Ice), // A Beast Unleashed
+        new(57, 63909, Territory.NorthHorn, new Vector3(224f, 52f, -860f), [49832, 49827, 51974, 51984, 50975], OccultAetheryte.SinkingSanctuary, 28, weakness: Weakness.Wind), // Dark Artistry
+        new(58, 63909, Territory.NorthHorn, new Vector3(-390f, 67.99994f, 700f), [49833, 49828, 50976], OccultAetheryte.SuspendedMasonry, 12, weakness: Weakness.Lightning), // Familiar Tactics
+        new(59, 63909, Territory.NorthHorn, new Vector3(807f, 61f, -562f), [49831, 49826, 51972, 51983, 50974], OccultAetheryte.SinkingSanctuary, 29, weakness: Weakness.Fire), // Appalling Behavior
+        new(60, 63909, Territory.NorthHorn, new Vector3(152f, 70f, 716f), [49833, 49828, 51980, 50975], OccultAetheryte.CrownOfKarnak, 22, weakness: Weakness.Lightning), // Tiny Terror
+        new(61, 63909, Territory.NorthHorn, new Vector3(-150f, 70f, -860f), [49832, 49827, 51985, 50976], OccultAetheryte.MolderingOutskirts, 33, weakness: Weakness.Lightning), // Lost on the Wind
+        new(62, 63909, Territory.NorthHorn, new Vector3(-82f, 12f, 485f), [49833, 49828, 50974], OccultAetheryte.SinkingSanctuary, 31, weakness: Weakness.Ice), // Ahead of the Competition
+        new(63, 63909, Territory.NorthHorn, new Vector3(500f, 56.00003f, -310f), [49831, 49826, 51982, 50976], OccultAetheryte.SinkingSanctuary, 27, weakness: Weakness.Wind), // Accept No Imitators
 
         new(64, 63978, Territory.NorthHorn, new Vector3(-320.06552f, 11.4999996f, 422.0136f), [], OccultAetheryte.SuspendedMasonry, 0), // The Forked Tower: Magic
         new(65, 63978, Territory.NorthHorn, new Vector3(-320.06552f, 11.4999996f, 422.0136f), [], OccultAetheryte.SuspendedMasonry, 0), // The Forked Tower: Magic Extreme
