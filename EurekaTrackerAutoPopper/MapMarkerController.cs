@@ -16,7 +16,6 @@ public unsafe class MapMarkerController : IDisposable
 {
     private const float MiniMapMarkerRadius = 300.0f;
     private const float RefreshRadius = 150.0f;
-    private const float FlagMarkerRadius = 20.0f;
 
     private readonly Plugin Plugin;
 
@@ -30,7 +29,6 @@ public unsafe class MapMarkerController : IDisposable
     private bool HasMarkersToRemove;
 
     private Vector3 LastPlayerPos = Vector3.Zero;
-    private Vector3 LastFlagPos = Vector3.Zero;
 
     public MapMarkerController(Plugin plugin)
     {
@@ -110,15 +108,7 @@ public unsafe class MapMarkerController : IDisposable
             return;
         }
 
-        var flagPos = Vector3.Zero;
-        if (agentMap->FlagMarkerCount > 0)
-        {
-            var flag = agentMap->FlagMapMarkers[0];
-            flagPos = new Vector3(flag.XFloat, 0, flag.YFloat);
-        }
-
         NeedsRefresh |= Utils.GetDistance(local.Position, LastPlayerPos) > RefreshRadius;
-        NeedsRefresh |= flagPos != LastFlagPos;
         if (!NeedsRefresh)
             return;
 
@@ -127,7 +117,6 @@ public unsafe class MapMarkerController : IDisposable
         NeedsRefresh = false;
         HasMarkersToRemove = true;
         LastPlayerPos = local.Position;
-        LastFlagPos = flagPos;
 
         var territory = Plugin.ClientState.TerritoryType;
         if (TerritoryHelper.PlayerInEureka())
@@ -282,23 +271,25 @@ public unsafe class MapMarkerController : IDisposable
         if (!TerritoryHelper.IsCorrectMap(agentMap->CurrentMapId))
             return;
 
+        if (map == 0)
+            map = Plugin.ClientState.MapId;
+
         var mapPos = worldPos;
 
-        var useKtk = Utils.GetDistance(worldPos, LastPlayerPos) > MiniMapMarkerRadius &&
-                     Utils.GetDistance(worldPos with { Y = 0 }, LastFlagPos) > FlagMarkerRadius;
+        var useKtk = Utils.GetDistance(worldPos, LastPlayerPos) > MiniMapMarkerRadius;
         if (useKtk || agentMap->CurrentMapId != map)
         {
             MapOverlayController.AddMarker(new MapMarkerInfo
             {
                 AllowAnyMap = false,
-                MapId = map == 0 ? agentMap->CurrentMapId : map,
+                MapId = map,
                 Position = new Vector2(mapPos.X, mapPos.Z),
                 IconId = (uint)icon,
             });
         }
         else
         {
-            if (map != 0 && agentMap->SelectedMapId != map)
+            if (agentMap->SelectedMapId != map)
                 return;
 
             if ((Territory)Plugin.ClientState.TerritoryType == Territory.Hydatos)
