@@ -41,7 +41,7 @@ public class TrackerHandler
         Plugin = plugin;
 
         Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AnonKey}");
-        Client.DefaultRequestHeaders.Add("Prefer", "return=representation");
+        Client.DefaultRequestHeaders.Add("Prefer", "return=representation; resolution=ignore-duplicates; on_conflict=last_fate");
 
         Client.DefaultRequestHeaders.Add("User-Agent", $"Eureka Linker {Plugin.PluginInterface.Manifest.AssemblyVersion}");
     }
@@ -357,6 +357,7 @@ public class TrackerHandler
 
             var response = await Client.GetAsync($"{BaseUrl}{TableName}?last_fate=eq.{UpcomingTracker.LastFateHash}&territory=eq.{UpcomingTracker.Territory}");
             var content = await response.Content.ReadAsStringAsync();
+            Plugin.Log.Debug($"Instance Search ({response.StatusCode}) | Content: {content} | Hash: {UpcomingTracker.LastFateHash}");
 
             return JsonConvert.DeserializeObject<ExistingTracker[]>(content);
         }
