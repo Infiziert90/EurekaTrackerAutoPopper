@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Dalamud.Game.Gui.Dtr;
 
 namespace EurekaTrackerAutoPopper;
@@ -47,7 +48,7 @@ public class PotDtrBar : IDisposable
             return;
         }
 
-        var potInfo = Plugin.BunnyWindow.GetOccultPotInfo();
+        var potInfo = GetOccultPotInfo();
         if (potInfo == null)
         {
             DtrEntry.Shown = false;
@@ -55,7 +56,6 @@ public class PotDtrBar : IDisposable
         }
 
         var (displayFate, lastFate) = potInfo.Value;
-
         if (displayFate.Alive)
         {
             DtrEntry.Text = $"Pot: Active{displayFate.Position}";
@@ -83,10 +83,36 @@ public class PotDtrBar : IDisposable
 
     private void OnClick(DtrInteractionEvent e)
     {
-        var potInfo = Plugin.BunnyWindow.GetOccultPotInfo();
+        var potInfo = GetOccultPotInfo();
         if (potInfo == null)
             return;
 
         Plugin.OpenMap(potInfo.Value.DisplayFate.MapDataLink);
+    }
+
+    private (Fate DisplayFate, Fate LastFate)? GetOccultPotInfo()
+    {
+        var bunnies = Plugin.Fates.GetBunnyForTerritory().ToArray();
+        if (bunnies.Length == 0)
+            return null;
+
+        var sortedFates = bunnies.OrderBy(bnuuuy => bnuuuy.LastSeenAlive).ToArray();
+        var nextSpawn = sortedFates[0];
+        var lastAlive = sortedFates[^1];
+
+        // If it is -1 there hasn't been any pop yet
+        if (nextSpawn.LastSeenAlive == -1 && lastAlive.LastSeenAlive == -1)
+            return (nextSpawn, nextSpawn);
+
+        // If our last alive is still active then show it
+        if (lastAlive.Alive)
+            return (lastAlive, lastAlive);
+
+        // Apply the time of latest spawn to calculate next respawn
+        // Set LastSeenAlive to 30min previously
+        if (nextSpawn.LastSeenAlive == -1)
+            nextSpawn.LastSeenAlive = lastAlive.SpawnTime - OccultRespawn;
+
+        return (nextSpawn, lastAlive);
     }
 }
