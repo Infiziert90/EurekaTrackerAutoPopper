@@ -41,7 +41,7 @@ public class TrackerHandler
         Plugin = plugin;
 
         Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AnonKey}");
-        Client.DefaultRequestHeaders.Add("Prefer", "return=representation; resolution=ignore-duplicates; on_conflict=last_fate");
+        Client.DefaultRequestHeaders.Add("Prefer", "return=representation, resolution=ignore-duplicates, on_conflict=last_fate");
 
         Client.DefaultRequestHeaders.Add("User-Agent", $"Eureka Linker {Plugin.PluginInterface.Manifest.AssemblyVersion}");
     }
@@ -279,6 +279,8 @@ public class TrackerHandler
             if (CurrentTracker != null && UpcomingTracker != null)
             {
                 CurrentTracker.Table = TableName;
+                CurrentTracker.Version = Plugin.PluginInterface.Manifest.AssemblyVersion.ToString();
+
                 CurrentTracker.LastFateHash = UpcomingTracker.LastFateHash;
                 CurrentTracker.Server = UpcomingTracker.Server;
                 CurrentTracker.FateTimestamp = UpcomingTracker.FateTimestamp;
@@ -374,7 +376,7 @@ public class TrackerHandler
 
             var response = await Client.GetAsync($"{BaseUrl}{TableName}?last_fate=eq.{UpcomingTracker.LastFateHash}&territory=eq.{UpcomingTracker.Territory}");
             var content = await response.Content.ReadAsStringAsync();
-            Plugin.Log.Debug($"Instance Search ({response.StatusCode}) | Content: {content} | Hash: {UpcomingTracker.LastFateHash}");
+            Plugin.Log.Debug($"Instance Search ({response.StatusCode}) | Hash: {UpcomingTracker.LastFateHash} | Timestamp: {UpcomingTracker.FateTimestamp} | Content: {content}");
 
             return JsonConvert.DeserializeObject<ExistingTracker[]>(content);
         }

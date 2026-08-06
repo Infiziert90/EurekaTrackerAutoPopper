@@ -260,11 +260,11 @@ public class Fates
         new(59, 63909, Territory.NorthHorn, new Vector3(807f, 61f, -562f), [49831, 49826, 51972, 51983, 50974], OccultAetheryte.SinkingSanctuary, 29, weakness: Weakness.Fire), // Appalling Behavior
         new(60, 63909, Territory.NorthHorn, new Vector3(152f, 70f, 716f), [49833, 49828, 51980, 50975], OccultAetheryte.CrownOfKarnak, 22, weakness: Weakness.Lightning), // Tiny Terror
         new(61, 63909, Territory.NorthHorn, new Vector3(-150f, 70f, -860f), [49832, 49827, 51985, 50976], OccultAetheryte.MolderingOutskirts, 33, weakness: Weakness.Lightning), // Lost on the Wind
-        new(62, 63909, Territory.NorthHorn, new Vector3(-82f, 12f, 485f), [49833, 49828, 50974], OccultAetheryte.SinkingSanctuary, 31, weakness: Weakness.Ice), // Ahead of the Competition
+        new(62, 63909, Territory.NorthHorn, new Vector3(-82f, 12f, 485f), [49833, 49828, 50974], OccultAetheryte.SuspendedMasonry, 31, weakness: Weakness.Ice), // Ahead of the Competition
         new(63, 63909, Territory.NorthHorn, new Vector3(500f, 56.00003f, -310f), [49831, 49826, 51982, 50976], OccultAetheryte.SinkingSanctuary, 27, weakness: Weakness.Wind), // Accept No Imitators
 
-        new(64, 63978, Territory.NorthHorn, new Vector3(-320.06552f, 11.4999996f, 422.0136f), [], OccultAetheryte.SuspendedMasonry, 0), // The Forked Tower: Magic
-        new(65, 63978, Territory.NorthHorn, new Vector3(-320.06552f, 11.4999996f, 422.0136f), [], OccultAetheryte.SuspendedMasonry, 0), // The Forked Tower: Magic Extreme
+        new(64, 63978, Territory.NorthHorn, new Vector3(-320.06552f, 11.4999996f, 422.0136f), [], OccultAetheryte.SuspendedMasonry, 20), // The Forked Tower: Magic
+        new(65, 63978, Territory.NorthHorn, new Vector3(-320.06552f, 11.4999996f, 422.0136f), [], OccultAetheryte.SuspendedMasonry, 20), // The Forked Tower: Magic Extreme
     ];
 
     public IEnumerable<Fate> GetBunnyForTerritory()

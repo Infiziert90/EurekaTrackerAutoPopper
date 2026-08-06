@@ -345,6 +345,7 @@ public class Plugin : IDalamudPlugin
             Framework.Update -= OccultCheck;
             Framework.Update -= OccultPotCheck;
             Framework.Update -= UpdateDtr;
+            Chat.LogMessage -= OccultDeathLogMessage;
 
             PotDtrBar.Hide();
 
