@@ -104,14 +104,23 @@ public class TrackerHandler
         [JsonProperty("pot_history")]
         public string PotHistory = string.Empty;
 
+        [JsonProperty("server")]
+        public uint Server;
+
+        [JsonProperty("fate_timestamp")]
+        public int FateTimestamp;
+
+
         [JsonConstructor]
         public NewTracker() {}
 
-        public NewTracker(uint dcId, uint fateId, int timestamp, Fates fateManager) : base(TableName)
+        public NewTracker(uint dcId, uint fateId, int timestamp, Fates fateManager, uint server) : base(TableName)
         {
             Territory = Plugin.ClientState.TerritoryType;
             TrackerType = 1;
             Datacenter = (ushort)dcId;
+            FateTimestamp = timestamp;
+            Server = server;
 
             EncounterHistory = JsonConvert.SerializeObject(fateManager.GetCEsSkipExtremeForTerritory().Select(f => new ShareableFate(f)));
             FateHistory = JsonConvert.SerializeObject(fateManager.GetFatesForTerritory().Select(f => new ShareableFate(f)));
@@ -165,6 +174,12 @@ public class TrackerHandler
 
         [JsonProperty("pot_history")]
         public string PotHistory = string.Empty;
+
+        [JsonProperty("server")]
+        public uint Server;
+
+        [JsonProperty("fate_timestamp")]
+        public int FateTimestamp;
 
         [JsonIgnore]
         public ShareableFate[] Encounters = [];
@@ -236,7 +251,7 @@ public class TrackerHandler
             return;
 
         var dcId = localPlayer.CurrentWorld.Value.DataCenter.RowId;
-        UpcomingTracker = new NewTracker(dcId, fate.FateId, fate.StartTimeEpoch, Plugin.Fates);
+        UpcomingTracker = new NewTracker(dcId, fate.FateId, fate.StartTimeEpoch, Plugin.Fates, Plugin.HookManager.ServerId);
         Task.Run(async () => await DelayedInstanceCheck());
     }
 
@@ -265,6 +280,8 @@ public class TrackerHandler
             {
                 CurrentTracker.Table = TableName;
                 CurrentTracker.LastFateHash = UpcomingTracker.LastFateHash;
+                CurrentTracker.Server = UpcomingTracker.Server;
+                CurrentTracker.FateTimestamp = UpcomingTracker.FateTimestamp;
 
                 CurrentTracker.EncounterHistory = UpcomingTracker.EncounterHistory;
                 CurrentTracker.FateHistory = UpcomingTracker.FateHistory;
