@@ -1,7 +1,6 @@
 ﻿// ReSharper disable ExplicitCallerInfoArgument
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
@@ -44,6 +43,8 @@ public class TrackerHandler
         Client.DefaultRequestHeaders.Add("Prefer", "return=representation, resolution=ignore-duplicates, on_conflict=last_fate");
 
         Client.DefaultRequestHeaders.Add("User-Agent", $"Eureka Linker {Plugin.PluginInterface.Manifest.AssemblyVersion}");
+
+        // Task.Run(async () => await GetEntry());
     }
 
     public void Dispose()
@@ -110,6 +111,8 @@ public class TrackerHandler
         [JsonProperty("fate_timestamp")]
         public int FateTimestamp;
 
+        [JsonProperty("fate")]
+        public uint Fate;
 
         [JsonConstructor]
         public NewTracker() {}
@@ -121,25 +124,17 @@ public class TrackerHandler
             Datacenter = (ushort)dcId;
             FateTimestamp = timestamp;
             Server = server;
+            Fate = fateId;
 
             EncounterHistory = JsonConvert.SerializeObject(fateManager.GetCEsSkipExtremeForTerritory().Select(f => new ShareableFate(f)));
             FateHistory = JsonConvert.SerializeObject(fateManager.GetFatesForTerritory().Select(f => new ShareableFate(f)));
             PotHistory = JsonConvert.SerializeObject(fateManager.GetBunnyForTerritory().Select(f => new ShareableFate(f)));
 
-            using var stream = new MemoryStream();
-            using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
-            {
-                writer.Write(dcId);
-                writer.Write(fateId);
-                writer.Write(timestamp);
-            }
-
-            stream.Position = 0;
-            using (var hash = SHA256.Create())
-            {
-                var result = hash.ComputeHash(stream);
-                LastFateHash = string.Join("", result.Select(b => $"{b:X2}"));
-            }
+            Span<byte> buffer = stackalloc byte[12]; // 3 ints * 4 bytes each
+            BitConverter.TryWriteBytes(buffer[0..4], dcId);
+            BitConverter.TryWriteBytes(buffer[4..8], fateId);
+            BitConverter.TryWriteBytes(buffer[8..12], timestamp);
+            LastFateHash = string.Join("", SHA256.HashData(buffer).Select(b => $"{b:X2}"));
         }
     }
 
@@ -181,6 +176,9 @@ public class TrackerHandler
         [JsonProperty("fate_timestamp")]
         public int FateTimestamp;
 
+        [JsonProperty("fate")]
+        public uint Fate;
+
         [JsonIgnore]
         public ShareableFate[] Encounters = [];
 
@@ -199,8 +197,6 @@ public class TrackerHandler
             Encounters = JsonConvert.DeserializeObject<ShareableFate[]>(EncounterHistory) ?? [];
             Fates = JsonConvert.DeserializeObject<ShareableFate[]>(FateHistory) ?? [];
             Pots = JsonConvert.DeserializeObject<ShareableFate[]>(PotHistory) ?? [];
-
-            LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         }
 
         public void Update(Fates fateManager)
@@ -284,6 +280,7 @@ public class TrackerHandler
                 CurrentTracker.LastFateHash = UpcomingTracker.LastFateHash;
                 CurrentTracker.Server = UpcomingTracker.Server;
                 CurrentTracker.FateTimestamp = UpcomingTracker.FateTimestamp;
+                CurrentTracker.Fate = UpcomingTracker.Fate;
 
                 CurrentTracker.EncounterHistory = UpcomingTracker.EncounterHistory;
                 CurrentTracker.FateHistory = UpcomingTracker.FateHistory;
@@ -414,4 +411,33 @@ public class TrackerHandler
             Plugin.Log.Error(e, "Upload failed");
         }
     }
+
+    // private long LastUpdate;
+    // private async Task GetEntry()
+    // {
+    //     try
+    //     {
+    //         while (true)
+    //         {
+    //             await Task.Delay(100);
+    //
+    //             var response = await Client.GetAsync($"{BaseUrl}OccultTrackerV3?id=eq.195016");
+    //             var content = await response.Content.ReadAsStringAsync();
+    //             var trackers = JsonConvert.DeserializeObject<ExistingTracker[]>(content);
+    //             var tracker = trackers[0];
+    //
+    //             Plugin.Log.Debug(content);
+    //             if (tracker.LastUpdate > LastUpdate)
+    //             {
+    //                 LastUpdate = tracker.LastUpdate;
+    //
+    //                 Plugin.Log.Information($"\nServer: {tracker.Server}Hash: {tracker.LastFateHash}\nTimestamp: {tracker.FateTimestamp}\nDC: {tracker.Datacenter}\nFate: {tracker.Fate}\nLast Update: {tracker.LastUpdate}\nVersion: {tracker.Version}");
+    //             }
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Plugin.Log.Error(ex, $"Error");
+    //     }
+    // }
 }
