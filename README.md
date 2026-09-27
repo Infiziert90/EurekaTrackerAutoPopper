@@ -15,6 +15,7 @@ Occult:
 - Pot Timer Window
 - Map Markers For Treasure, Bunny, Pot, Survey Points
 - Occult Tracker
+- IPC for other plugins (e.g. BOCCHI): `EurekaLinker.ApiVersion`, `EurekaLinker.Pot.GetTimers`, `EurekaLinker.Pot.GetInstanceKey`
 
 Website (https://tracker.xivstats.com/):
 - A simple tracker for occult
