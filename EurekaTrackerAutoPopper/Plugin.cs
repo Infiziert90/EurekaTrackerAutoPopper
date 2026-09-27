@@ -68,6 +68,7 @@ public class Plugin : IDalamudPlugin
     public readonly TrackerHandler TrackerHandler;
     public readonly TexEdit TexEdit;
     public readonly PenumbraIpc PenumbraIpc;
+    public readonly PotIpc PotIpc;
     public readonly PotDtrBar PotDtrBar;
     public readonly MapMarkerController MapMarkerController;
     public readonly HookManager HookManager;
@@ -103,6 +104,7 @@ public class Plugin : IDalamudPlugin
 
         Fates = new Fates(this);
         TrackerHandler = new TrackerHandler(this);
+        PotIpc = new PotIpc(this);
         PotDtrBar = new PotDtrBar(this);
         MapMarkerController = new MapMarkerController(this);
 
@@ -147,6 +149,7 @@ public class Plugin : IDalamudPlugin
         GC.SuppressFinalize(this);
 
         PenumbraIpc.Dispose();
+        PotIpc.Dispose();
         Fates.Dispose();
         TrackerHandler.Dispose();
         PotDtrBar.Dispose();
