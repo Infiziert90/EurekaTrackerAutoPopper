@@ -195,36 +195,36 @@ public static class OccultChests
         {
             Territory.NorthHorn,
             [
-                new Vector3(927.0178f, 54f, -155.2175f), // Counter: 50 // Treasures: Pot Bronze: 25,Pot Silver: 22,Pot Gold: 3 // FateId: 0:13, 2072:37
-                new Vector3(929.4178f, 54f, -1.817501f), // Counter: 55 // Treasures: Pot Bronze: 32,Pot Silver: 22,Pot Gold: 1 // FateId: 0:10, 2072:45
-                new Vector3(939.2178f, 80.269966f, -273.1175f), // Counter: 55 // Treasures: Pot Bronze: 26,Pot Silver: 24,Pot Gold: 5 // FateId: 0:15, 2072:40
-                new Vector3(912.2978f, 61.18964f, -461.5099f), // Counter: 57 // Treasures: Pot Bronze: 28,Pot Silver: 20,Pot Gold: 9 // FateId: 0:14, 2072:43
-                new Vector3(385f, 33f, -177f), // Counter: 57 // Treasures: Pot Bronze: 29,Pot Silver: 23,Pot Gold: 5 // FateId: 0:8, 2072:49
-                new Vector3(-536.1014f, 87.01824f, 149.8447f), // Counter: 57 // Treasures: Pot Bronze: 31,Pot Silver: 16,Pot Gold: 10 // FateId: 0:7, 2072:50
-                new Vector3(830.0979f, 77.75924f, -148.9099f), // Counter: 59 // Treasures: Pot Bronze: 27,Pot Silver: 24,Pot Gold: 8 // FateId: 0:10, 2072:49
-                new Vector3(-530f, 67.77658f, -58f), // Counter: 60 // Treasures: Pot Bronze: 32,Pot Silver: 24,Pot Gold: 4 // FateId: 0:8, 2072:52
-                new Vector3(-251.781f, 65.949005f, -864.3828f), // Counter: 61 // Treasures: Pot Bronze: 30,Pot Silver: 26,Pot Gold: 5 // FateId: 0:11, 2072:50
-                new Vector3(889.2178f, 53.999996f, 155.9825f), // Counter: 62 // Treasures: Pot Bronze: 39,Pot Silver: 19,Pot Gold: 4 // FateId: 0:21, 1976:1, 2072:40
-                new Vector3(-596f, 41.869873f, -285f), // Counter: 62 // Treasures: Pot Bronze: 35,Pot Silver: 19,Pot Gold: 8 // FateId: 0:9, 2072:53
-                new Vector3(-223.8233f, 10.891144f, -353.9438f), // Counter: 63 // Treasures: Pot Bronze: 36,Pot Silver: 17,Pot Gold: 10 // FateId: 0:24, 2072:39
-                new Vector3(-190f, 61.75258f, -763f), // Counter: 64 // Treasures: Pot Bronze: 34,Pot Silver: 24,Pot Gold: 6 // FateId: 0:15, 2072:49
-                new Vector3(-498.7f, 11.051006f, 128.9f), // Counter: 64 // Treasures: Pot Bronze: 31,Pot Silver: 23,Pot Gold: 10 // FateId: 0:10, 2072:54
-                new Vector3(-86f, 60.596237f, -737f), // Counter: 65 // Treasures: Pot Bronze: 34,Pot Silver: 24,Pot Gold: 7 // FateId: 0:10, 2072:55
-                new Vector3(32.4f, 56.835186f, -777.3f), // Counter: 66 // Treasures: Pot Bronze: 36,Pot Silver: 22,Pot Gold: 8 // FateId: 0:16, 2072:50
-                new Vector3(948.5978f, 63.594563f, -567.0099f), // Counter: 66 // Treasures: Pot Bronze: 33,Pot Silver: 25,Pot Gold: 8 // FateId: 0:15, 2072:51
-                new Vector3(-252.1626f, 66.55432f, -879.5855f), // Counter: 67 // Treasures: Pot Bronze: 34,Pot Silver: 22,Pot Gold: 11 // FateId: 0:16, 2072:51
-                new Vector3(546.56f, 36.120197f, 143.3104f), // Counter: 67 // Treasures: Pot Bronze: 37,Pot Silver: 25,Pot Gold: 5 // FateId: 0:13, 2072:54
-                new Vector3(321.198f, 59.85f, -889.8872f), // Counter: 68 // Treasures: Pot Bronze: 30,Pot Silver: 30,Pot Gold: 8 // FateId: 0:16, 2072:52
-                new Vector3(928.8978f, 74.0003f, -332.8099f), // Counter: 69 // Treasures: Pot Bronze: 31,Pot Silver: 29,Pot Gold: 9 // FateId: 0:11, 2072:58
-                new Vector3(593f, 39.622505f, 34f), // Counter: 69 // Treasures: Pot Bronze: 31,Pot Silver: 27,Pot Gold: 11 // FateId: 0:15, 2072:54
-                new Vector3(782.4979f, 70.34123f, -56.4099f), // Counter: 71 // Treasures: Pot Bronze: 36,Pot Silver: 30,Pot Gold: 5 // FateId: 0:20, 2072:51
-                new Vector3(810.8979f, 78.39757f, -278.8099f), // Counter: 71 // Treasures: Pot Bronze: 40,Pot Silver: 27,Pot Gold: 4 // FateId: 0:10, 2072:61
-                new Vector3(1.768392f, 71.555756f, -872.2798f), // Counter: 71 // Treasures: Pot Bronze: 43,Pot Silver: 23,Pot Gold: 5 // FateId: 0:19, 2072:52
-                new Vector3(440.298f, 60.615795f, -926.5872f), // Counter: 71 // Treasures: Pot Bronze: 36,Pot Silver: 29,Pot Gold: 6 // FateId: 0:15, 2072:56
-                new Vector3(452.6f, 57.10005f, -310.3f), // Counter: 75 // Treasures: Pot Bronze: 34,Pot Silver: 32,Pot Gold: 9 // FateId: 0:17, 2072:58
-                new Vector3(151.9998f, 61.106945f, -842.0175f), // Counter: 76 // Treasures: Pot Bronze: 41,Pot Silver: 29,Pot Gold: 6 // FateId: 0:8, 2072:68
-                new Vector3(714.698f, 69.24771f, 262.6901f), // Counter: 76 // Treasures: Pot Bronze: 37,Pot Silver: 30,Pot Gold: 9 // FateId: 0:21, 2072:55
-                new Vector3(-455.989f, 39.688915f, -365.5418f), // Counter: 82 // Treasures: Pot Bronze: 44,Pot Silver: 32,Pot Gold: 6 // FateId: 0:25, 2072:57
+                new Vector3(927.0178f, 54f, -155.2175f),
+                new Vector3(929.4178f, 54f, -1.817501f),
+                new Vector3(939.2178f, 80.269966f, -273.1175f),
+                new Vector3(912.2978f, 61.18964f, -461.5099f),
+                new Vector3(385f, 33f, -177f),
+                new Vector3(-536.1014f, 87.01824f, 149.8447f),
+                new Vector3(830.0979f, 77.75924f, -148.9099f),
+                new Vector3(-530f, 67.77658f, -58f),
+                new Vector3(-251.781f, 65.949005f, -864.3828f),
+                new Vector3(889.2178f, 53.999996f, 155.9825f),
+                new Vector3(-596f, 41.869873f, -285f),
+                new Vector3(-223.8233f, 10.891144f, -353.9438f),
+                new Vector3(-190f, 61.75258f, -763f),
+                new Vector3(-498.7f, 11.051006f, 128.9f),
+                new Vector3(-86f, 60.596237f, -737f),
+                new Vector3(32.4f, 56.835186f, -777.3f),
+                new Vector3(948.5978f, 63.594563f, -567.0099f),
+                new Vector3(-252.1626f, 66.55432f, -879.5855f),
+                new Vector3(546.56f, 36.120197f, 143.3104f),
+                new Vector3(321.198f, 59.85f, -889.8872f),
+                new Vector3(928.8978f, 74.0003f, -332.8099f),
+                new Vector3(593f, 39.622505f, 34f),
+                new Vector3(782.4979f, 70.34123f, -56.4099f),
+                new Vector3(810.8979f, 78.39757f, -278.8099f),
+                new Vector3(1.768392f, 71.555756f, -872.2798f),
+                new Vector3(440.298f, 60.615795f, -926.5872f),
+                new Vector3(452.6f, 57.10005f, -310.3f),
+                new Vector3(151.9998f, 61.106945f, -842.0175f),
+                new Vector3(714.698f, 69.24771f, 271.6901f),
+                new Vector3(-455.989f, 39.688915f, -365.5418f),
             ]
         },
     };
@@ -268,36 +268,36 @@ public static class OccultChests
         {
             Territory.NorthHorn,
             [
-                new Vector3(-113.4943f, 5.0879984f, -74.15943f), // Counter: 45 // Treasures: Pot Bronze: 22,Pot Silver: 17,Pot Gold: 6 // FateId: 0:10, 2073:35
-                new Vector3(-960f, 48f, -425.8f), // Counter: 49 // Treasures: Pot Bronze: 16,Pot Silver: 20,Pot Gold: 13 // FateId: 0:7, 2073:42
-                new Vector3(-834f, 18.913685f, -587.4f), // Counter: 49 // Treasures: Pot Bronze: 24,Pot Silver: 23,Pot Gold: 2 // FateId: 0:12, 2073:37
-                new Vector3(-853.493f, 58f, -323.8983f), // Counter: 52 // Treasures: Pot Bronze: 22,Pot Silver: 26,Pot Gold: 4 // FateId: 0:9, 2073:43
-                new Vector3(-586.3f, 47.81013f, -715.2f), // Counter: 53 // Treasures: Pot Bronze: 28,Pot Silver: 25 // FateId: 0:14, 2073:39
-                new Vector3(71.10001f, 81.074875f, 942.3f), // Counter: 54 // Treasures: Pot Bronze: 28,Pot Silver: 20,Pot Gold: 6 // FateId: 0:11, 2073:43
-                new Vector3(93.4f, 3.7155468f, -114.3f), // Counter: 55 // Treasures: Pot Bronze: 29,Pot Silver: 23,Pot Gold: 3 // FateId: 0:12, 2073:43
-                new Vector3(210f, 98.400055f, 916f), // Counter: 56 // Treasures: Pot Bronze: 29,Pot Silver: 22,Pot Gold: 5 // FateId: 0:13, 2073:43
-                new Vector3(28.10088f, 3.9999995f, -16.69861f), // Counter: 57 // Treasures: Pot Bronze: 33,Pot Silver: 20,Pot Gold: 4 // FateId: 0:17, 2073:40
-                new Vector3(0.9425046f, 41.80327f, 623.2599f), // Counter: 57 // Treasures: Pot Bronze: 29,Pot Silver: 21,Pot Gold: 7 // FateId: 0:15, 2073:42
-                new Vector3(-628.4385f, 49.07533f, -449.5009f), // Counter: 59 // Treasures: Pot Bronze: 27,Pot Silver: 25,Pot Gold: 7 // FateId: 0:12, 2073:47
-                new Vector3(11.98766f, 68.15505f, 795.707f), // Counter: 59 // Treasures: Pot Bronze: 35,Pot Silver: 18,Pot Gold: 6 // FateId: 0:11, 2073:48
-                new Vector3(-339.8588f, 85.47024f, 861.5197f), // Counter: 62 // Treasures: Pot Bronze: 30,Pot Silver: 23,Pot Gold: 9 // FateId: 0:7, 2073:54, 1977:1
-                new Vector3(-88.43135f, 2.400001f, 4.891054f), // Counter: 62 // Treasures: Pot Bronze: 19,Pot Silver: 35,Pot Gold: 8 // FateId: 0:15, 2073:47
-                new Vector3(-127f, 71.47446f, 808.4f), // Counter: 63 // Treasures: Pot Bronze: 33,Pot Silver: 23,Pot Gold: 7 // FateId: 0:18, 2073:45
-                new Vector3(-184.5137f, 71.1816f, 667.8036f), // Counter: 64 // Treasures: Pot Bronze: 29,Pot Silver: 27,Pot Gold: 8 // FateId: 0:17, 2073:47
-                new Vector3(52f, 25.316154f, 552f), // Counter: 66 // Treasures: Pot Bronze: 36,Pot Silver: 23,Pot Gold: 7 // FateId: 0:12, 2073:54
-                new Vector3(-109.5452f, 8.047999f, -210.1855f), // Counter: 66 // Treasures: Pot Bronze: 37,Pot Silver: 20,Pot Gold: 9 // FateId: 0:12, 2073:54
-                new Vector3(194.2296f, -0.3000001f, 352.9844f), // Counter: 66 // Treasures: Pot Bronze: 29,Pot Silver: 26,Pot Gold: 11 // FateId: 0:11, 2073:55
-                new Vector3(-330f, 42f, -628f), // Counter: 66 // Treasures: Pot Bronze: 29,Pot Silver: 26,Pot Gold: 11 // FateId: 0:20, 2073:46
-                new Vector3(190.3622f, 3.880325f, -204.7095f), // Counter: 67 // Treasures: Pot Bronze: 38,Pot Silver: 23,Pot Gold: 6 // FateId: 0:18, 2073:49
-                new Vector3(237.9156f, -0.29999995f, 309.4334f), // Counter: 67 // Treasures: Pot Bronze: 35,Pot Silver: 25,Pot Gold: 7 // FateId: 0:13, 2073:54
-                new Vector3(-512f, 41.999996f, -389f), // Counter: 68 // Treasures: Pot Bronze: 37,Pot Silver: 26,Pot Gold: 5 // FateId: 0:13, 2073:55
-                new Vector3(-975.4507f, 17.57744f, -526.2878f), // Counter: 68 // Treasures: Pot Bronze: 32,Pot Silver: 26,Pot Gold: 10 // FateId: 0:13, 2073:55
-                new Vector3(47.6f, 3.8843424f, -218.3f), // Counter: 69 // Treasures: Pot Bronze: 32,Pot Silver: 34,Pot Gold: 3 // FateId: 0:19, 2073:50
-                new Vector3(-269.6122f, 107.93719f, 875.6997f), // Counter: 70 // Treasures: Pot Bronze: 39,Pot Silver: 27,Pot Gold: 4 // FateId: 0:15, 2073:55
-                new Vector3(-15.89468f, 4.0000005f, -20.29277f), // Counter: 71 // Treasures: Pot Bronze: 36,Pot Silver: 28,Pot Gold: 7 // FateId: 0:10, 2073:61
-                new Vector3(-747.4032f, 28.970308f, -492.1095f), // Counter: 72 // Treasures: Pot Bronze: 33,Pot Silver: 32,Pot Gold: 7 // FateId: 0:14, 2073:58
-                new Vector3(-259.6f, 3.6823246f, 56.9f), // Counter: 74 // Treasures: Pot Bronze: 35,Pot Silver: 36,Pot Gold: 3 // FateId: 0:15, 2073:59
-                new Vector3(-172.6f, 6.0019975f, 103.2f), // Counter: 76 // Treasures: Pot Bronze: 35,Pot Silver: 31,Pot Gold: 10 // FateId: 0:22, 2073:54
+                new Vector3(-113.4943f, 5.0879984f, -74.15943f),
+                new Vector3(-960f, 48f, -425.8f),
+                new Vector3(-828f, 18.892918f, -564.4f),
+                new Vector3(-853.493f, 58f, -323.8983f),
+                new Vector3(-586.3f, 47.81013f, -715.2f),
+                new Vector3(71.10001f, 81.074875f, 942.3f),
+                new Vector3(93.4f, 3.7155468f, -114.3f),
+                new Vector3(210f, 98.400055f, 916f),
+                new Vector3(28.10088f, 3.9999995f, -16.69861f),
+                new Vector3(-6.185815f, 41.73103f, 622.1703f),
+                new Vector3(-628.4385f, 49.07533f, -449.5009f),
+                new Vector3(11.98766f, 68.15505f, 795.707f),
+                new Vector3(-339.8588f, 85.47024f, 861.5197f),
+                new Vector3(-88.43135f, 2.400001f, 4.891054f),
+                new Vector3(-125.7059f, 71.5862f, 803.5704f),
+                new Vector3(-180.9548f, 71.38401f, 675.1011f),
+                new Vector3(52f, 25.316154f, 552f),
+                new Vector3(-109.5452f, 8.047999f, -210.1855f),
+                new Vector3(194.2296f, -0.3000001f, 352.9844f),
+                new Vector3(-330f, 42f, -628f),
+                new Vector3(190.3622f, 3.880325f, -204.7095f),
+                new Vector3(237.9156f, -0.29999995f, 309.4334f),
+                new Vector3(-512f, 41.999996f, -389f),
+                new Vector3(-975.4507f, 17.57744f, -526.2878f),
+                new Vector3(47.6f, 3.8843424f, -218.3f),
+                new Vector3(-269.6122f, 107.93719f, 875.6997f),
+                new Vector3(-15.89468f, 4.0000005f, -20.29277f),
+                new Vector3(-766.1633f, 24.576601f, -505.5652f),
+                new Vector3(-269.235f, 3.1228786f, 54.85862f),
+                new Vector3(-191.7885f, 6.001998f, 132.8951f),
             ]
         },
     };
@@ -306,51 +306,51 @@ public static class OccultChests
     {
         { Territory.SouthHorn,
             [
-                new Vector3(-676.4631f, 5f, -769.7955f), // Counter: 123 // Treasures: Gold: 123
-                new Vector3(-823.9183f, 140.00032f, 677.6934f), // Counter: 118 // Treasures: Gold: 118
-                new Vector3(-886.4718f, 107f, 712.4964f), // Counter: 118 // Treasures: Gold: 118
-                new Vector3(-625.7809f, 171f, 810.8691f), // Counter: 114 // Treasures: Gold: 114
-                new Vector3(-813.9943f, 5f, -663.3634f), // Counter: 108 // Treasures: Gold: 108
-                new Vector3(-842.8967f, 75.76903f, -125.0559f), // Counter: 107 // Treasures: Gold: 107
-                new Vector3(-680.0345f, 201f, 739.9117f), // Counter: 107 // Treasures: Gold: 107
-                new Vector3(-793.0552f, 5f, -777.3126f), // Counter: 106 // Treasures: Gold: 106
-                new Vector3(-708.6777f, 171f, 669.5714f), // Counter: 105 // Treasures: Gold: 105
-                new Vector3(-718.0424f, 5f, -633.8791f), // Counter: 105 // Treasures: Gold: 105
-                new Vector3(-868.8489f, 67.5054f, -59.44909f), // Counter: 100 // Treasures: Gold: 100
-                new Vector3(-803.5182f, 3f, -602.7497f), // Counter: 96 // Treasures: Gold: 96
-                new Vector3(-732.2048f, 139f, 828.8491f), // Counter: 95 // Treasures: Gold: 95
-                new Vector3(-659.1158f, 12.198493f, -508.7968f), // Counter: 95 // Treasures: Gold: 95
-                new Vector3(-785.997f, 162.39513f, 790.5948f), // Counter: 95 // Treasures: Gold: 95
-                new Vector3(-840.8771f, 107.26465f, -250.273f), // Counter: 90 // Treasures: Gold: 90
-                new Vector3(-708.687f, 141.16982f, -139.3283f), // Counter: 85 // Treasures: Gold: 85
-                new Vector3(-796.66f, 114.15647f, -228.9318f), // Counter: 83 // Treasures: Gold: 83
-                new Vector3(-776.6315f, 5f, -486.978f), // Counter: 80 // Treasures: Gold: 80
-                new Vector3(-758.8058f, 127.66496f, -183.164f), // Counter: 77 // Treasures: Gold: 77
+                new Vector3(-676.4631f, 5f, -769.7955f),
+                new Vector3(-823.9183f, 140.00032f, 677.6934f),
+                new Vector3(-886.4718f, 107f, 712.4964f),
+                new Vector3(-625.7809f, 171f, 810.8691f),
+                new Vector3(-813.9943f, 5f, -663.3634f),
+                new Vector3(-842.8967f, 75.76903f, -125.0559f),
+                new Vector3(-680.0345f, 201f, 739.9117f),
+                new Vector3(-793.0552f, 5f, -777.3126f),
+                new Vector3(-708.6777f, 171f, 669.5714f),
+                new Vector3(-718.0424f, 5f, -633.8791f),
+                new Vector3(-868.8489f, 67.5054f, -59.44909f),
+                new Vector3(-803.5182f, 3f, -602.7497f),
+                new Vector3(-732.2048f, 139f, 828.8491f),
+                new Vector3(-659.1158f, 12.198493f, -508.7968f),
+                new Vector3(-785.997f, 162.39513f, 790.5948f),
+                new Vector3(-840.8771f, 107.26465f, -250.273f),
+                new Vector3(-708.687f, 141.16982f, -139.3283f),
+                new Vector3(-796.66f, 114.15647f, -228.9318f),
+                new Vector3(-776.6315f, 5f, -486.978f),
+                new Vector3(-758.8058f, 127.66496f, -183.164f),
             ] // 20
         },
         {
             Territory.NorthHorn,
             [
-                new Vector3(782.8808f, 60.390976f, -611.7695f), // Counter: 8 // Treasures: Pot Gold: 8 // FateId: 0:8
-                new Vector3(925.6533f, 70.21527f, -906.2195f), // Counter: 7 // Treasures: Pot Gold: 7 // FateId: 0:7
-                new Vector3(909f, 97.05797f, -961.8f), // Counter: 7 // Treasures: Pot Gold: 7 // FateId: 0:7
-                new Vector3(-661f, 160f, 937f), // Counter: 6 // Treasures: Pot Gold: 6 // FateId: 0:6
-                new Vector3(-527f, 160.1012f, 834f), // Counter: 6 // Treasures: Pot Gold: 6 // FateId: 0:6
-                new Vector3(-631.9453f, 160f, 808.8979f), // Counter: 6 // Treasures: Pot Gold: 6 // FateId: 0:6
-                new Vector3(-809f, 6.3495464f, -879f), // Counter: 4 // Treasures: Pot Gold: 4 // FateId: 0:4
-                new Vector3(671.2f, 60.99496f, -550.1f), // Counter: 4 // Treasures: Pot Gold: 4 // FateId: 0:4
-                new Vector3(701f, 59.999992f, -945f), // Counter: 4 // Treasures: Pot Gold: 4 // FateId: 0:4
-                new Vector3(-623f, 160f, 883f), // Counter: 4 // Treasures: Pot Gold: 4 // FateId: 0:4
-                new Vector3(-585f, 160f, 842f), // Counter: 4 // Treasures: Pot Gold: 4 // FateId: 0:4
-                new Vector3(-656.9f, 23.036425f, -799.3f), // Counter: 3 // Treasures: Pot Gold: 3 // FateId: 0:3
-                new Vector3(-839.9977f, 160f, 740f), // Counter: 3 // Treasures: Pot Gold: 3 // FateId: 0:3
-                new Vector3(-487.8f, 48.000015f, -953.2f), // Counter: 3 // Treasures: Pot Gold: 3 // FateId: 0:3
-                new Vector3(-603f, 32f, -869f), // Counter: 3 // Treasures: Pot Gold: 3 // FateId: 0:3
-                new Vector3(-637.2283f, 32f, -950.4841f), // Counter: 2 // Treasures: Pot Gold: 2 // FateId: 0:2
-                new Vector3(-866f, -41.01304f, -775f), // Counter: 2 // Treasures: Pot Gold: 2 // FateId: 0:2
-                new Vector3(626.3f, 61.119125f, -844.9f), // Counter: 1 // Treasures: Pot Gold: 1 // FateId: 0:1
-                new Vector3(943.4631f, 70.21487f, -879.5159f), // Counter: 1 // Treasures: Pot Gold: 1 // FateId: 0:1
-                new Vector3(-449.6f, 45.6567f, -967.0001f), // Counter: 1 // Treasures: Pot Gold: 1 // FateId: 0:1
+                new Vector3(782.8808f, 60.390976f, -611.7695f),
+                new Vector3(925.6533f, 70.21527f, -906.2195f),
+                new Vector3(909f, 97.05797f, -961.8f),
+                new Vector3(-664.6724f, 160f, 932.4708f),
+                new Vector3(-527f, 160.1012f, 834f),
+                new Vector3(-628.8144f, 160f, 812.0912f),
+                new Vector3(-815.6496f, 5.407212f, -868.7636f),
+                new Vector3(671.2f, 60.99496f, -550.1f),
+                new Vector3(701f, 59.999992f, -945f),
+                new Vector3(-623f, 160f, 883f),
+                new Vector3(-583.8305f, 160f, 838.1748f),
+                new Vector3(-656.9f, 23.036425f, -799.3f),
+                new Vector3(-779.2819f, 160.12f, 689.3682f),
+                new Vector3(-487.8f, 48.000015f, -953.2f),
+                new Vector3(-600f, 32f, -875f),
+                new Vector3(-637.2283f, 32f, -950.4841f),
+                new Vector3(-866f, -41.01304f, -775f),
+                new Vector3(626.3f, 61.119125f, -844.9f),
+                new Vector3(943.4631f, 70.21487f, -879.5159f),
+                new Vector3(-449.6f, 45.6567f, -967.0001f),
             ]
         },
     };
