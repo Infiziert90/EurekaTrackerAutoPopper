@@ -16,6 +16,7 @@ public class PenumbraIpc : IDisposable
     private readonly Dictionary<string, string> Paths;
     private readonly AddTemporaryModAll AddTemporaryModAllFunc = new(Plugin.PluginInterface);
     private readonly RemoveTemporaryModAll RemoveTemporaryModAllFunc = new(Plugin.PluginInterface);
+    private readonly GetCollection GetCollectionFunc = new(Plugin.PluginInterface);
 
     public Icons GetReplacedIcon => ActiveReplacement ? Icons.CarrotReplaced : Icons.Carrot;
 
@@ -38,6 +39,20 @@ public class PenumbraIpc : IDisposable
 
         try
         {
+            ActiveReplacement = false;
+            var hasCollection = GetCollection();
+            if (!hasCollection.HasValue)
+            {
+                Plugin.Log.Warning($"Penumbra replacement not possible, Interface was null");
+                return;
+            }
+
+            if (hasCollection.Value.Id == Guid.Empty)
+            {
+                Plugin.Log.Warning($"Penumbra replacement not possible, Interface set to No Mods");
+                return;
+            }
+
             var r = AddTemporaryModAll();
             if (r != PenumbraApiEc.Success)
             {
@@ -63,6 +78,9 @@ public class PenumbraIpc : IDisposable
 
     private PenumbraApiEc RemoveTemporaryModAll()
         => RemoveTemporaryModAllFunc.Invoke(ModName, 99);
+
+    private (Guid Id, string Name)? GetCollection()
+        => GetCollectionFunc.Invoke(ApiCollectionType.Interface);
 
     public void Dispose()
     {
