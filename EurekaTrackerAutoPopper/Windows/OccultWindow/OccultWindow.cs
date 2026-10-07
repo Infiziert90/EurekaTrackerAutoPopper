@@ -209,8 +209,7 @@ public class OccultWindow : Window, IDisposable
             Helper.BulletLink("Lunar Forays Group", "https://discord.gg/d5gNTMmqbp");
             Helper.BulletLink("Savage Slimes", "https://discord.gg/SavageSlimes");
             Helper.BulletLink("Late Night", "https://discord.gg/28SRRADTK3");
-            Helper.BulletLink("A Late Night Reborn", "https://discord.gg/psuzsjEZWR");
-            Helper.BulletLink("CBT", "https://discord.gg/8HUKDA745x");
+            Helper.BulletLink("A Late Night Reborn", "https://discord.gg/ALNR");
             Helper.BulletLink("Students of Baldesion", "https://discord.gg/students-of-baldesion");
             Helper.BulletLink("Occult Crescent Chaos!", "https://discord.gg/k5wV3GWKzW");
             Helper.BulletLink("Double Edge", "https://discord.gg/doubleedge");
