@@ -121,8 +121,9 @@ export const DATACENTER_NAMES = {
         region: "China"
     },
     151: {
-        name: "[empty]",
-        selectable: false
+        name: "陸行鳥",
+        selectable: true,
+        region: "Taiwan"
     },
     201: {
         name: "Eorzea",
