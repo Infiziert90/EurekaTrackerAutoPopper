@@ -39,11 +39,11 @@
 {#if eorzeaTimeString}
     <div class="flex {stacked ? 'flex-col items-end gap-0.5' : 'items-center gap-3'} text-sm">
         <span class="flex items-baseline gap-1 whitespace-nowrap" title={localized(CLOCK_LABELS.eorzea.full, $currentLanguage)}>
-            <span class="bg-slate-700 text-white px-1 text-xs">{localized(CLOCK_LABELS.eorzea.short, $currentLanguage)}</span>
+            <span class="bg-slate-700 text-white px-1 py-1 text-xs leading-none [text-box:trim-both_cap_alphabetic]">{localized(CLOCK_LABELS.eorzea.short, $currentLanguage)}</span>
             <span class="tabular-nums">{eorzeaTimeString}</span>
         </span>
         <span class="flex items-baseline gap-1 whitespace-nowrap" title={localized(CLOCK_LABELS.local.full, $currentLanguage)}>
-            <span class="bg-slate-700 text-white px-1 text-xs">{localized(CLOCK_LABELS.local.short, $currentLanguage)}</span>
+            <span class="bg-slate-700 text-white px-1 py-1 text-xs leading-none [text-box:trim-both_cap_alphabetic]">{localized(CLOCK_LABELS.local.short, $currentLanguage)}</span>
             <span class="tabular-nums">{localTime}</span>
         </span>
     </div>
