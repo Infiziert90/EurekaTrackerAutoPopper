@@ -3,16 +3,14 @@
     import { page } from "$app/stores";
     import { base } from "$app/paths";
     import { goto } from "$app/navigation";
-    import { BASE_URL, API_HEADERS, DATACENTER_NAMES, ITEM, WEAKNESS, XIVAPI_BASE_URL } from "$lib/const";
+    import { BASE_URL, API_HEADERS, ITEM, WEAKNESS, XIVAPI_BASE_URL } from "$lib/const";
     import { getZone, isEditable, isKnownZone, DEFAULT_TRACKER_TYPE } from "$lib/zones";
     import { currentLanguage } from "$lib/stores";
-    import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Unlock, Skull, Link, Clipboard } from "@lucide/svelte";
+    import { LoaderPinwheel, Frown, CircleQuestionMark, Pyramid, Lock, Skull } from "@lucide/svelte";
     import toast from 'svelte-5-french-toast'
     import AutoTimeFormatted from "../../components/AutoTimeFormatted.svelte";
-    import ClickToCopyButton from "../../components/ClickToCopyButton.svelte";
     import ItemIcon from "../../components/ItemIcon.svelte";
-    import LanguageSwitcher from "../../components/LanguageSwitcher.svelte";
-    import PasswordButton from "../../components/PasswordButton.svelte";
+    import TrackerHeader from "../../components/TrackerHeader.svelte";
     import { calculateOccultRespawn, formatSeconds, calculatePotStatus, isAlive, calculateCECooldown, localized, localizedName, localizedSuffix } from "$lib/utils";
 
     import {Tooltip} from "flowbite-svelte";
@@ -464,84 +462,14 @@
             {/if}
         </div>
     {:else}
-        <div class="bg-slate-950 p-2 mb-2 relative z-10 overscroll-pseudo-elt">
-            <div class="max-w-6xl px-8 mx-auto flex flex-col gap-5 lg:flex-row items-center justify-between">
-                <h1>
-                    <a href={`${base}/`} aria-label="Occult Tracker">
-                        <img
-                            src={`${base}/logo.svg`}
-                            alt="Occult Tracker"
-                            height="80"
-                            class="h-14 md:h-20 w-auto"
-                        />
-                    </a>
-                </h1>
-                <div class="flex grow flex-row flex-wrap items-center justify-center lg:justify-between gap-2">
-                    <div>
-                        <table class="text-sm border-separate border-spacing-x-4 border-spacing-y-0.5 align-middle"><tbody>
-
-                            <!-- Tracker ID row -->
-                            <tr>
-                                <td>
-                                    ID: <span class="font-mono bg-white text-black px-1">{uid}</span>
-                                </td>
-                                <td>
-                                    <div class="flex items-center gap-2">
-                                        <ClickToCopyButton text={uid} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <Clipboard class="w-4 h-4" />
-                                        </ClickToCopyButton>
-                                        <ClickToCopyButton text={`${$page.url.origin}${base}/${uid}`} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <Link class="w-4 h-4" />
-                                        </ClickToCopyButton>
-                                        {#if canEdit}
-                                            {#if !isPasswordUnlocked}
-                                                <PasswordButton
-                                                    expectedPassword={trackerResults.password}
-                                                    on:passwordCorrect={handlePasswordCorrect}
-                                                    class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                                >
-                                                    <Lock class="w-4 h-4" />
-                                                </PasswordButton>
-                                            {:else}
-                                                <div class="text-green-400" title="Tracker unlocked">
-                                                    <Unlock class="w-4 h-4" />
-                                                </div>
-                                            {/if}
-                                        {/if}
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- Password row -->
-                            {#if isPasswordUnlocked && trackerResults.password}
-                                <tr>
-                                    <td>
-                                        Pwd: <span class="bg-white text-black px-1">{trackerResults.password}</span>
-                                    </td>
-                                    <td>
-                                        <ClickToCopyButton text={trackerResults.password} class="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <Clipboard class="w-4 h-4" />
-                                        </ClickToCopyButton>
-                                    </td>
-                                </tr>
-                            {/if}
-                            <!-- Datacenter row -->
-                            <tr>
-                                <td>
-                                    DC: <span class="bg-white text-black px-1">{DATACENTER_NAMES[trackerResults.datacenter]?.name || "Unknown"}</span>
-                                </td>
-                            </tr>
-                            <!-- Zone row -->
-                            <tr>
-                                <td>
-                                    <span class="bg-slate-700 text-white px-1">{localized(zone.label, $currentLanguage, "Unknown")}</span>
-                                </td>
-                            </tr>
-                        </tbody></table>
-                    </div>
-                    <LanguageSwitcher />
-                </div>
-            </div>
-        </div>
+        <TrackerHeader
+            {uid}
+            {zone}
+            tracker={trackerResults}
+            {canEdit}
+            {isPasswordUnlocked}
+            onPasswordCorrect={handlePasswordCorrect}
+        />
 
         <div class="px-4">
             {#if !isKnownZone(territory)}

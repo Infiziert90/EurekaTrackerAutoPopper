@@ -388,6 +388,8 @@ export const NORTH_HORN = {
     potFateIds: Object.keys(POT_FATES).map(Number),
     encounterIds: Object.keys(ENCOUNTERS).map(Number),
 
+    weatherRate: 168,
+
     towerId: 64,
     towerIcon: "ui/icon/063000/063978_hr1.tex",
     towerSpawnTimer: 3600, // unconfirmed
