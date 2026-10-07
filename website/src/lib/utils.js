@@ -146,6 +146,11 @@ export function formatSeconds(secondsToFormat, format = 'simple') {
         if (minutes) parts.push(`${minutes}m`);
         parts.push(`${seconds}s`);
         finalString = parts.join(' ');
+    } else if (format === 'compact') {
+        // Fixed width: 1h05 or 04:32
+        finalString = hours
+            ? `${hours}h${minutes.toString().padStart(2, '0')}`
+            : `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     } else if (format === 'full') {
         const parts = [];
         if (hours) parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
