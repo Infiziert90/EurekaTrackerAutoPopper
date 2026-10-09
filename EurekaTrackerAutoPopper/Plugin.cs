@@ -27,6 +27,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game.Chat;
+using EurekaTrackerAutoPopper.Windows.BozjaWindow;
 using KamiToolKit;
 
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
@@ -57,6 +58,7 @@ public class Plugin : IDalamudPlugin
     private readonly WindowSystem WindowSystem = new("Eureka Linker");
     private readonly MainWindow MainWindow;
     public readonly OccultWindow OccultWindow;
+    public readonly BozjaWindow BozjaWindow;
     private readonly QuestWindow QuestWindow;
     private readonly LogWindow LogWindow;
     public readonly BunnyWindow BunnyWindow;
@@ -110,6 +112,7 @@ public class Plugin : IDalamudPlugin
 
         MainWindow = new MainWindow(this);
         OccultWindow = new OccultWindow(this);
+        BozjaWindow = new BozjaWindow(this);
         QuestWindow = new QuestWindow();
         LogWindow = new LogWindow();
         BunnyWindow = new BunnyWindow(this);
@@ -117,6 +120,7 @@ public class Plugin : IDalamudPlugin
         FastSwitchOverlay = new FastSwitchOverlay(this);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(OccultWindow);
+        WindowSystem.AddWindow(BozjaWindow);
         WindowSystem.AddWindow(QuestWindow);
         WindowSystem.AddWindow(LogWindow);
         WindowSystem.AddWindow(BunnyWindow);
@@ -178,6 +182,7 @@ public class Plugin : IDalamudPlugin
 
         MainWindow.Dispose();
         OccultWindow.Dispose();
+        BozjaWindow.Dispose();
         QuestWindow.Dispose();
         LogWindow.Dispose();
         BunnyWindow.Dispose();
@@ -224,6 +229,14 @@ public class Plugin : IDalamudPlugin
     private void OnOccultCommand(string command, string args)
     {
         OccultWindow.Toggle();
+    }
+
+    [Command("/elbozja")]
+    [Aliases("/elb")]
+    [HelpMessage("Opens bozja helper window")]
+    private void OnBozjaCommand(string command, string args)
+    {
+        BozjaWindow.Toggle();
     }
 
     [Command("/elquest")]
@@ -280,10 +293,8 @@ public class Plugin : IDalamudPlugin
             Configuration.UploadNotification = false;
             Configuration.Save();
 
-            Chat.Print(Utils.SuccessMessage("Important"));
-            Chat.Print(Utils.SuccessMessage("This plugin uploads anonymized instance data. " +
-                                            "For more information on the exact data collected please see the upload tab in the configuration menu. " +
-                                            "You can opt out of any and all forms of data collection."));
+            Chat.Print(Utils.SuccessMessage(Language.Important));
+            Chat.Print(Utils.SuccessMessage(Language.Upload_Note));
         }
 
         if (TerritoryHelper.PlayerInEureka())
@@ -314,6 +325,13 @@ public class Plugin : IDalamudPlugin
             Framework.Update += UpdateDtr;
             Chat.LogMessage += OccultDeathLogMessage;
 
+            Fates.RegisterEvents();
+
+            // Set forked tower timer to when the client joined south horn
+            Fates.GetNormalTowerForTerritory().InstanceJoinedTimer = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        }
+        else if (TerritoryHelper.PlayerInBozja())
+        {
             Fates.RegisterEvents();
 
             // Set forked tower timer to when the client joined south horn
@@ -651,7 +669,7 @@ public class Plugin : IDalamudPlugin
         foreach (var actor in ObjectTable.Where(gameObject => gameObject.ObjectKind == ObjectKind.Treasure))
         {
             // This range should include all random coffer
-            if ((Territory)Plugin.ClientState.TerritoryType == Territory.SouthHorn)
+            if ((Territory)ClientState.TerritoryType == Territory.SouthHorn)
             {
                 if (actor.BaseId is > 1856 or < 1789)
                     return;

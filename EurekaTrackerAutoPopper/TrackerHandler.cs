@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.ClientState.Objects.SubKinds;
+using EurekaTrackerAutoPopper.Data;
 using Newtonsoft.Json;
 
 namespace EurekaTrackerAutoPopper;
@@ -43,8 +44,6 @@ public class TrackerHandler
         Client.DefaultRequestHeaders.Add("Prefer", "return=representation, resolution=ignore-duplicates, on_conflict=last_fate");
 
         Client.DefaultRequestHeaders.Add("User-Agent", $"Eureka Linker {Plugin.PluginInterface.Manifest.AssemblyVersion}");
-
-        // Task.Run(async () => await GetEntry());
     }
 
     public void Dispose()
@@ -411,33 +410,4 @@ public class TrackerHandler
             Plugin.Log.Error(e, "Upload failed");
         }
     }
-
-    // private long LastUpdate;
-    // private async Task GetEntry()
-    // {
-    //     try
-    //     {
-    //         while (true)
-    //         {
-    //             await Task.Delay(100);
-    //
-    //             var response = await Client.GetAsync($"{BaseUrl}OccultTrackerV3?id=eq.195016");
-    //             var content = await response.Content.ReadAsStringAsync();
-    //             var trackers = JsonConvert.DeserializeObject<ExistingTracker[]>(content);
-    //             var tracker = trackers[0];
-    //
-    //             Plugin.Log.Debug(content);
-    //             if (tracker.LastUpdate > LastUpdate)
-    //             {
-    //                 LastUpdate = tracker.LastUpdate;
-    //
-    //                 Plugin.Log.Information($"\nServer: {tracker.Server}Hash: {tracker.LastFateHash}\nTimestamp: {tracker.FateTimestamp}\nDC: {tracker.Datacenter}\nFate: {tracker.Fate}\nLast Update: {tracker.LastUpdate}\nVersion: {tracker.Version}");
-    //             }
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Plugin.Log.Error(ex, $"Error");
-    //     }
-    // }
 }

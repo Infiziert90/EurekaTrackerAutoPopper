@@ -1,13 +1,12 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using EurekaTrackerAutoPopper.Resources;
 using Dalamud.Bindings.ImGui;
+using EurekaTrackerAutoPopper.Data;
 
 namespace EurekaTrackerAutoPopper.Windows.Overlay;
 
@@ -24,14 +23,14 @@ public class BunnyWindow : Window, IDisposable
 
     public BunnyWindow(Plugin plugin) : base("Bunny##EurekaLinker")
     {
+        Plugin = plugin;
+
         Flags = ImGuiWindowFlags.AlwaysAutoResize;
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(135, 70),
-            MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
+            MaximumSize = new Vector2(float.MaxValue, float.MaxValue),
         };
-
-        Plugin = plugin;
     }
 
     public void Dispose() { }
@@ -42,35 +41,6 @@ public class BunnyWindow : Window, IDisposable
         InOccult = TerritoryHelper.PlayerInOccult();
 
         return InEureka || InOccult;
-    }
-
-    public (Fate DisplayFate, Fate LastFate)? GetOccultPotInfo()
-    {
-        if (!InOccult)
-            return null;
-
-        var bunnies = Plugin.Fates.GetBunnyForTerritory().ToArray();
-        if (bunnies.Length == 0)
-            return null;
-
-        var sortedFates = bunnies.OrderBy(bnuuuy => bnuuuy.LastSeenAlive).ToArray();
-        var nextSpawn = sortedFates[0];
-        var lastAlive = sortedFates[^1];
-
-        // If it is -1 there hasn't been any pop yet
-        if (nextSpawn.LastSeenAlive == -1 && lastAlive.LastSeenAlive == -1)
-            return (nextSpawn, nextSpawn);
-
-        // If our last alive is still active then show it
-        if (lastAlive.Alive)
-            return (lastAlive, lastAlive);
-
-        // Apply the time of latest spawn to calculate next respawn
-        // Set LastSeenAlive to 30min previously
-        if (nextSpawn.LastSeenAlive == -1)
-            nextSpawn.LastSeenAlive = lastAlive.SpawnTime - OccultRespawn;
-
-        return (nextSpawn, lastAlive);
     }
 
     public override void Draw()
@@ -119,16 +89,17 @@ public class BunnyWindow : Window, IDisposable
             }
 
             ImGui.TextUnformatted($"{bunny.Name}{bunny.Position}");
-            ImGui.SameLine();
-            using (ImRaii.PushFont(UiBuilder.IconFont))
-            {
-                if (ImGui.Selectable($"{FontAwesomeIcon.Flag.ToIconString()}##{bunny.FateId}"))
-                    Plugin.OpenMap(bunny.MapDataLink);
-            }
+            if (ImGui.IsItemHovered())
+                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+
+            if (ImGui.IsItemClicked())
+                Plugin.OpenMap(bunny.MapDataLink);
 
             if (bunny.Alive)
             {
                 ImGui.TextColored(ImGuiColors.HealerGreen, Language.BunnyWindowStatusAlive);
+                ImGui.SameLine();
+                ImGui.TextUnformatted($"({bunny.Progress}%)");
             }
             else
             {

@@ -4,6 +4,7 @@ using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text.SeStringHandling;
+using EurekaTrackerAutoPopper.Data;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;

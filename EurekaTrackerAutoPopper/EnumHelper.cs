@@ -45,6 +45,9 @@ public enum Territory : uint
     Pyros = 795,
     Hydatos = 827,
 
+    Bozja = 920,
+    Zadnor = 975,
+
     SouthHorn = 1252,
     NorthHorn = 1346,
 }
@@ -55,6 +58,9 @@ public enum Map : uint
     Pagos = 467,
     Pyros = 484,
     Hydatos = 515,
+
+    Bozja = 606,
+    Zadnor = 665,
 
     SouthHorn = 967,
     NorthHorn = 1135,
@@ -101,6 +107,7 @@ public static class TerritoryHelper
     private static readonly HashSet<Territory> BunnyTerritories = [Territory.Pagos, Territory.Pyros, Territory.Hydatos, Territory.SouthHorn, Territory.NorthHorn];
     private static readonly HashSet<Territory> OccultTerritories = [Territory.SouthHorn, Territory.NorthHorn];
     private static readonly HashSet<Map> OccultMaps = [Map.SouthHorn, Map.NorthHorn, Map.NorthSubterrane];
+    private static readonly HashSet<Territory> BozjaTerritories = [Territory.Bozja, Territory.Zadnor];
 
     private static Territory CurrentTerritory
         => (Territory)Plugin.ClientState.TerritoryType;
@@ -125,6 +132,9 @@ public static class TerritoryHelper
 
     public static bool IsOccultMap(uint mapId)
         => OccultMaps.Contains((Map)mapId);
+
+    public static bool PlayerInBozja()
+        => BozjaTerritories.Contains(CurrentTerritory);
 }
 
 public static class EnumExtensions
@@ -190,6 +200,8 @@ public static class EnumExtensions
             Territory.Pagos => Map.Pagos,
             Territory.Pyros => Map.Pyros,
             Territory.Hydatos => Map.Hydatos,
+            Territory.Bozja => Map.Bozja,
+            Territory.Zadnor => Map.Zadnor,
             Territory.SouthHorn => Map.SouthHorn,
             Territory.NorthHorn => Map.NorthHorn,
             _ => throw new ArgumentOutOfRangeException(nameof(territory), territory, null),

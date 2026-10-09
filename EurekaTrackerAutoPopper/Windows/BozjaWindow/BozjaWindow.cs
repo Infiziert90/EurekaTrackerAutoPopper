@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Textures;
@@ -14,15 +13,15 @@ using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using Dalamud.Bindings.ImGui;
 using EurekaTrackerAutoPopper.Data;
 
-namespace EurekaTrackerAutoPopper.Windows.OccultWindow;
+namespace EurekaTrackerAutoPopper.Windows.BozjaWindow;
 
-public class OccultWindow : Window, IDisposable
+public class BozjaWindow : Window, IDisposable
 {
     private const int TowerSpawnTimer = 3600;
 
     private readonly Plugin Plugin;
 
-    public OccultWindow(Plugin plugin) : base("Occult Helper##EurekaLinker")
+    public BozjaWindow(Plugin plugin) : base("Bozja Helper##EurekaLinker")
     {
         Flags = ImGuiWindowFlags.NoScrollbar;
 
@@ -48,7 +47,7 @@ public class OccultWindow : Window, IDisposable
 
     public override void Draw()
     {
-        using var tabBar = ImRaii.TabBar("OccultTabs");
+        using var tabBar = ImRaii.TabBar("BozjaTabs");
         if (!tabBar.Success)
             return;
 
@@ -66,25 +65,14 @@ public class OccultWindow : Window, IDisposable
             return;
 
         Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderActiveCE);
-        if (Plugin.Fates.GetCEWithoutSpecial().FirstOrDefault(f => f.Alive) is { } criticalEncounter)
+        foreach (var criticalEncounter in Plugin.Fates.GetCEWithoutSpecial().Where(f => f.Alive))
             DrawFateInfo(criticalEncounter, true);
 
         DrawSeparator();
 
         Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderActiveFate);
-        if (Plugin.Fates.GetFatesForTerritory().FirstOrDefault(f => f.Alive) is {} fate)
+        foreach (var fate in Plugin.Fates.GetFatesForTerritory().Where(f => f.Alive))
             DrawFateInfo(fate, true);
-
-        DrawSeparator();
-
-        if (Plugin.Configuration.EngagementsShowPot)
-        {
-            Helper.TextColored(ImGuiColors.DalamudOrange, Language.HeaderActivePot);
-            if (Plugin.Fates.GetBunnyForTerritory().FirstOrDefault(f => f.Alive) is { } potFate)
-                DrawFateInfo(potFate, true);
-
-            DrawSeparator();
-        }
 
         if (ImGui.CollapsingHeader(Language.CollapseablePreviousEngagements))
         {
@@ -112,45 +100,15 @@ public class OccultWindow : Window, IDisposable
 
     private void TabTower()
     {
-        using var tabItem = ImRaii.TabItem($"{Language.TabHeaderTower}{CheckTowerActivity()}###TowerTab");
+        var towerEngagement = Plugin.Fates.GetNormalTowerForTerritory();
+        using var tabItem = ImRaii.TabItem($"{towerEngagement.Name}{CheckTowerActivity()}###TowerTab");
         if (!tabItem.Success)
             return;
 
-        var towerEngagement = Plugin.Fates.GetNormalTowerForTerritory();
-        var isSouthTower = towerEngagement.FateId == 48;
         if (towerEngagement.SpawnTime > 0)
             DrawFateInfo(towerEngagement, false, true);
         else
             Helper.TextColored(ImGuiColors.DalamudOrange, Language.ForkedTowerNotSeen);
-
-        ImGuiHelpers.ScaledDummy(5.0f);
-        ImGui.Separator();
-        ImGuiHelpers.ScaledDummy(5.0f);
-
-        var local = Plugin.ObjectTable.LocalPlayer;
-        if (local == null)
-            return;
-
-        if (Utils.Distance(towerEngagement.WorldPos, local.Position) > 20.0f)
-        {
-            Helper.TextColored(ImGuiColors.DalamudOrange, Language.ForkedTowerNotOnPlatform);
-        }
-        else
-        {
-            var playersClose = Utils.GetTowerCharacter(towerEngagement, isSouthTower ? 20 : 40);
-
-            Helper.TextColored(ImGuiColors.HealerGreen, Language.ForkedTowerInfoPlayerCount.Format(isSouthTower ? 20 : 40, playersClose.Length));
-            if (ImGui.CollapsingHeader(Language.ForkedTowerInfoPlayerListCollapseable))
-            {
-                var length = Math.Clamp(playersClose.Length, 2, 10);
-                using var child = ImRaii.Child("PlayerListChild", new Vector2(0, ImGui.GetTextLineHeightWithSpacing() * length), true);
-                if (child.Success)
-                {
-                    foreach (var player in playersClose.Skip(1).Cast<IPlayerCharacter>())
-                        ImGui.TextUnformatted($"{player.Name.TextValue}@{player.HomeWorld.Value.Name.ToString()}");
-                }
-            }
-        }
 
         ImGuiHelpers.ScaledDummy(5.0f);
         ImGui.Separator();
@@ -190,50 +148,6 @@ public class OccultWindow : Window, IDisposable
                 if (activeCE != null)
                     Helper.TextColored(ImGuiColors.TankBlue, $"-5 Minute [{activeCE.Name} - {activeCE.Progress}%]");
             }
-        }
-
-        if (ImGui.CollapsingHeader(Language.ForkedTowerInfoJoinRun))
-        {
-            Helper.WrappedTextWithColor(ImGuiColors.AttentionForeground, Language.ForkedTowerInfoNote1);
-            Helper.WrappedTextWithColor(ImGuiColors.AttentionForeground, Language.ForkedTowerInfoNote2);
-
-            ImGuiHelpers.ScaledDummy(5.0f);
-
-            Helper.WrappedTextWithColor(ImGuiColors.DalamudOrange, Language.ForkedTowerInfoWarning1);
-            ImGuiHelpers.ScaledDummy(5.0f);
-            Helper.WrappedTextWithColor(ImGuiColors.DalamudOrange, Language.ForkedTowerInfoWarning2);
-
-            ImGuiHelpers.ScaledDummy(10.0f);
-
-            Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, Language.ForkedTowerInfoJoinDiscordList);
-            Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "EU:");
-            Helper.BulletLink("Lunar Forays Group", "https://discord.gg/d5gNTMmqbp");
-            Helper.BulletLink("Savage Slimes", "https://discord.gg/SavageSlimes");
-            Helper.BulletLink("Late Night", "https://discord.gg/28SRRADTK3");
-            Helper.BulletLink("A Late Night Reborn", "https://discord.gg/ALNR");
-            Helper.BulletLink("Students of Baldesion", "https://discord.gg/students-of-baldesion");
-            Helper.BulletLink("Occult Crescent Chaos!", "https://discord.gg/k5wV3GWKzW");
-            Helper.BulletLink("Double Edge", "https://discord.gg/doubleedge");
-            Helper.BulletLink("Forked Tower Enjoyer Light", "https://discord.gg/forkedtower");
-            Helper.BulletLink("Light Savage Lemmings (German)", "https://discord.gg/p3QwFREXJP");
-            Helper.BulletLink("Conclave d'Exploration (French)", "https://discord.gg/CgSRvTEHh8");
-
-            ImGuiHelpers.ScaledDummy(10.0f);
-
-            Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "NA:");
-            Helper.BulletLink("Field Op Enjoyer", "https://discord.gg/foexiv");
-            Helper.BulletLink("ABBA+", "https://discord.gg/abbaffxiv");
-            Helper.BulletLink("CAFE", "https://discord.gg/c-a-f-e");
-            Helper.BulletLink("CEM", "https://discord.gg/cem");
-            Helper.BulletLink("DFO", "https://discord.gg/vjwYEeubeN");
-            Helper.BulletLink("The Help Lines", "https://discord.gg/thehelplines");
-
-            ImGuiHelpers.ScaledDummy(10.0f);
-
-            Helper.WrappedTextWithColor(ImGuiColors.HealerGreen, "OCE/JP:");
-            Helper.BulletLink("Content Achievers [OCE + JP]", "https://discord.gg/FJFxr2U");
-            Helper.BulletLink("Murder of Geese [OCE]", "https://discord.gg/zpGRYsZpRA");
-            Helper.BulletLink("Once Upon a Fork [Elemental DC]", "https://discord.gg/GJxnnYKVHQ");
         }
     }
 
@@ -342,15 +256,6 @@ public class OccultWindow : Window, IDisposable
 
         if (ImGui.IsItemClicked())
             Plugin.OpenMap(fate.MapDataLink);
-
-        if (fate.Weakness != Weakness.None)
-        {
-            ImGui.SameLine();
-            var weaknessIcon = Plugin.TextureManager.GetFromGameIcon(new GameIconLookup((uint)fate.Weakness)).GetWrapOrEmpty();
-            ImGui.Image(weaknessIcon.Handle, ImGuiHelpers.ScaledVector2(14, 20));
-            if (ImGui.IsItemHovered())
-                Helper.Tooltip(fate.Weakness.ToName());
-        }
 
         string state, time;
         if (fate.State == DynamicEventState.Inactive)
@@ -569,7 +474,7 @@ public class OccultWindow : Window, IDisposable
             {
                 var respawnTimer = fate.TriggeredBy != 0 ? 3600 : 7200;
                 if (fate.DeathTime + respawnTimer < currentTime)
-                    Helper.RightTextColored(ImGuiColors.HealerGreen, Language.TrackerCanPop);
+                    Helper.RightTextColored(ImGuiColors.HealerGreen,  Language.TrackerCanPop);
                 else
                     Helper.RightText(Utils.TimeToClockFormat(TimeSpan.FromSeconds(fate.DeathTime + respawnTimer - currentTime)));
             }

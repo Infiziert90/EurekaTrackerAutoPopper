@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Dalamud.Game.Gui.Dtr;
+using EurekaTrackerAutoPopper.Data;
 
 namespace EurekaTrackerAutoPopper;
 

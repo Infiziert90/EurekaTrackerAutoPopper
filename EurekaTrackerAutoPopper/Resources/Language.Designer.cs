@@ -1122,6 +1122,15 @@ namespace EurekaTrackerAutoPopper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Important.
+        /// </summary>
+        internal static string Important {
+            get {
+                return ResourceManager.GetString("Important", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fire and Earth.
         /// </summary>
         internal static string LogCategoryFE {
@@ -2127,6 +2136,159 @@ namespace EurekaTrackerAutoPopper.Resources {
         internal static string TableLabelMonster {
             get {
                 return ResourceManager.GetString("TableLabelMonster", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Battle.
+        /// </summary>
+        internal static string TrackerBattle {
+            get {
+                return ResourceManager.GetString("TrackerBattle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can pop.
+        /// </summary>
+        internal static string TrackerCanPop {
+            get {
+                return ResourceManager.GetString("TrackerCanPop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy tracker instance id to clipboard..
+        /// </summary>
+        internal static string TrackerCopy {
+            get {
+                return ResourceManager.GetString("TrackerCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drops.
+        /// </summary>
+        internal static string TrackerDrops {
+            get {
+                return ResourceManager.GetString("TrackerDrops", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encounter.
+        /// </summary>
+        internal static string TrackerEncounter {
+            get {
+                return ResourceManager.GetString("TrackerEncounter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Upload Permission Granted..
+        /// </summary>
+        internal static string TrackerError {
+            get {
+                return ResourceManager.GetString("TrackerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kills.
+        /// </summary>
+        internal static string TrackerKills {
+            get {
+                return ResourceManager.GetString("TrackerKills", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last Seen.
+        /// </summary>
+        internal static string TrackerLast {
+            get {
+                return ResourceManager.GetString("TrackerLast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to N/A.
+        /// </summary>
+        internal static string TrackerNA {
+            get {
+                return ResourceManager.GetString("TrackerNA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open tracker website..
+        /// </summary>
+        internal static string TrackerOpenLink {
+            get {
+                return ResourceManager.GetString("TrackerOpenLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pop Timer.
+        /// </summary>
+        internal static string TrackerPop {
+            get {
+                return ResourceManager.GetString("TrackerPop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recruiting.
+        /// </summary>
+        internal static string TrackerRecruiting {
+            get {
+                return ResourceManager.GetString("TrackerRecruiting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Searching active tracker....
+        /// </summary>
+        internal static string TrackerSearch {
+            get {
+                return ResourceManager.GetString("TrackerSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Awaiting next fate before searching again ....
+        /// </summary>
+        internal static string TrackerSearchAgain {
+            get {
+                return ResourceManager.GetString("TrackerSearchAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting.
+        /// </summary>
+        internal static string TrackerStarting {
+            get {
+                return ResourceManager.GetString("TrackerStarting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger.
+        /// </summary>
+        internal static string TrackerTrigger {
+            get {
+                return ResourceManager.GetString("TrackerTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This plugin uploads anonymized instance data. For more information on the exact data collected please see the upload tab in the configuration menu. You can opt out of any and all forms of data collection..
+        /// </summary>
+        internal static string Upload_Note {
+            get {
+                return ResourceManager.GetString("Upload_Note", resourceCulture);
             }
         }
         
